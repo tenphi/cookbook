@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { cp, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -7,7 +8,10 @@ const output = join(packageRoot, "dist");
 
 await mkdir(output, { recursive: true });
 for (const path of ["components", "overrides", "routes"]) {
-  await cp(join(source, path), join(output, path), { recursive: true });
+  const sourcePath = join(source, path);
+  if (existsSync(sourcePath)) {
+    await cp(sourcePath, join(output, path), { recursive: true });
+  }
 }
 await cp(join(source, "styles.css"), join(output, "styles.css"));
 await cp(join(source, "styles.d.ts"), join(output, "styles.d.ts"));
