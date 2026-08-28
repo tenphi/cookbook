@@ -1,5 +1,13 @@
 # tasty-docs
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`45bbffa`](https://github.com/tenphi/tasty-docs/commit/45bbffa8d54efcbbd406178caa027b6eace0b0e1), [`db4d3c6`](https://github.com/tenphi/tasty-docs/commit/db4d3c60d0b182341158968dd557b03f8de28641)]:
+  - @tenphi/starlight@0.2.1
+  - @tenphi/docs@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

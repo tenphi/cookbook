@@ -1,5 +1,24 @@
 # @tenphi/starlight
 
+## 0.2.1
+
+### Patch Changes
+
+- [#6](https://github.com/tenphi/tasty-docs/pull/6) [`45bbffa`](https://github.com/tenphi/tasty-docs/commit/45bbffa8d54efcbbd406178caa027b6eace0b0e1) Thanks [@tenphi](https://github.com/tenphi)! - Restore structural borders, use 6px control and 10px card radii, self-host
+  Onest and JetBrains Mono as the default fonts, and align controls with the
+  surface elevation state model and Tabler iconography. Selected navigation uses
+  the fixed accent surface in every color scheme, and appearance controls use
+  balanced icon, label, and outer spacing. Elevated surfaces use two-step Glaze
+  tone intervals instead of approximate text blends. Buttons and search inputs
+  use border-defined, shadow-free control styling. The documentation shell is now
+  borderless and roomier, with quieter selected navigation, a compact appearance
+  control, keyboard-labelled search, and optional primary navigation tabs.
+
+- [#4](https://github.com/tenphi/tasty-docs/pull/4) [`db4d3c6`](https://github.com/tenphi/tasty-docs/commit/db4d3c60d0b182341158968dd557b03f8de28641) Thanks [@tenphi](https://github.com/tenphi)! - Apply the public card radius to Expressive Code frames without overriding the
+  copy button's intrinsic dimensions.
+- Updated dependencies []:
+  - @tenphi/docs@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
