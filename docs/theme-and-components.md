@@ -62,7 +62,9 @@ Components consume semantic colors consistently: `surface`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
-same resolved values.
+same resolved values. Surface elevation uses Glaze's contrast-uniform tone
+axis: `surface-2` advances two tone steps and `surface-3` advances four from the
+base surface, with proportionally wider steps in high-contrast mode.
 
 Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and

@@ -16,6 +16,15 @@ describe("Glaze theme adapter", () => {
     expect(theme.css).toContain("prefers-contrast:more");
     expect(theme.css).toContain("--td-text:");
     expect(theme.css).toContain("--td-border:");
+    expect(theme.css).toContain("--td-surface-2:oklch(");
+    expect(theme.css).toContain("--td-surface-3:oklch(");
+    expect(theme.css).not.toContain(
+      "--td-surface-2:color-mix(in oklab,var(--td-text)",
+    );
+    expect(theme.colors.surface2.light).toBe("oklch(0.9789 0 0)");
+    expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
+    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0004 0)");
+    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0004 0)");
     expect(theme.css).toContain("--td-surface-2-hover:");
     expect(theme.css).toContain("--td-surface-2-pressed:");
     expect(theme.css).toContain("--td-surface-3-hover:");
