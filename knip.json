@@ -1,4 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignoreDependencies": ["@arethetypeswrong/cli", "publint", "unrun"]
+  "ignoreDependencies": [
+    "@arethetypeswrong/cli",
+    "@fontsource-variable/jetbrains-mono",
+    "@fontsource-variable/onest",
+    "publint",
+    "unrun"
+  ]
 }
