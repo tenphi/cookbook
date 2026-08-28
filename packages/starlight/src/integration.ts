@@ -8,6 +8,7 @@ import {
   createDocsGraph,
   assertValidDocs,
   type DocsConfig,
+  type NavigationItem,
 } from "@tenphi/docs";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
@@ -51,12 +52,10 @@ export default function tastyDocs(
         : {}),
       customCss: ["virtual:tasty-docs/theme.css", cssPath],
       ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
-      sidebar: [
-        {
-          label: "Documentation",
-          items: [{ autogenerate: { directory: "" } }],
-        },
-      ],
+      ...(options.config?.components?.overrides
+        ? { components: options.config.components.overrides }
+        : {}),
+      sidebar: starlightSidebar(options.config?.navigation),
     }),
   ] satisfies AstroIntegration[];
   let projectRoot = options.root;
@@ -234,6 +233,47 @@ export default function tastyDocs(
       },
     },
   };
+}
+
+function starlightSidebar(navigation: DocsConfig["navigation"]): unknown[] {
+  const items = Array.isArray(navigation) ? navigation : navigation?.items;
+  if (!items?.length) {
+    return [
+      {
+        label: "Documentation",
+        items: [{ autogenerate: { directory: "" } }],
+      },
+    ];
+  }
+  return items.map(starlightSidebarItem);
+}
+
+function starlightSidebarItem(item: NavigationItem): unknown {
+  if (typeof item === "string") return { slug: routeToSlug(item) };
+  if ("items" in item) {
+    return {
+      label: item.label,
+      items: item.items.map(starlightSidebarItem),
+    };
+  }
+  if ("autogenerate" in item) {
+    return {
+      label: item.label,
+      items: [
+        {
+          autogenerate: {
+            directory: routeToSlug(item.autogenerate.directory, false),
+          },
+        },
+      ],
+    };
+  }
+  return { label: item.label, link: item.link };
+}
+
+function routeToSlug(route: string, rootAsIndex = true): string {
+  const slug = route.replace(/^\/+|\/+$/g, "");
+  return slug || (rootAsIndex ? "index" : "");
 }
 
 export function tastyStarlight(

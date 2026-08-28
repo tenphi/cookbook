@@ -3,6 +3,9 @@
 Static, repository-native documentation built with Astro, Starlight, Tasty,
 and Glaze.
 
+[Read the documentation](https://tastydocs.tenphi.me) or browse the
+[repository-native source](docs/index.md).
+
 ## Quick start
 
 ```sh
@@ -22,4 +25,4 @@ The workspace contains four fixed-version packages:
 - `@tenphi/docs` — configuration, package acquisition, content graph, and diagnostics.
 - `@tenphi/starlight` — the official static renderer and theme.
 
-See the package READMEs for public APIs. Node.js 22.14 or newer is required.
+Node.js 22.14 or newer is required.
