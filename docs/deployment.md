@@ -58,11 +58,12 @@ export default defineConfig({
 ```
 
 Configure the custom domain in the repository's Pages settings and point DNS
-at the GitHub Pages host. A `CNAME` file in the uploaded artifact can preserve
-the domain across deployments.
+at the GitHub Pages host. For a custom Actions workflow, GitHub stores the
+domain in the Pages settings; a `CNAME` file in the artifact is ignored and is
+not required.
 
 This site is deployed by the repository's Pages workflow to
-`tastydocs.tenphi.me` and includes that domain in its artifact.
+`tastydocs.tenphi.me` with HTTPS enforcement enabled.
 
 ## Other static hosts
 
