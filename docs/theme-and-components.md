@@ -68,7 +68,9 @@ Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
 pressed states build on that elevated surface without changing the border.
 Inputs stay on their surrounding surface so their border remains the visual
-boundary.
+boundary. Selected navigation uses the fixed-mode `accent-surface` and its
+paired `accent-surface-text`, so the brand fill does not drift toward the
+adaptive link color in dark mode.
 
 ## Design tokens
 

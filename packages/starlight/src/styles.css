@@ -196,6 +196,13 @@
     border-radius: var(--radius);
   }
 
+  #starlight__sidebar a[aria-current="page"],
+  #starlight__sidebar a[aria-current="page"]:hover,
+  #starlight__sidebar a[aria-current="page"]:focus {
+    color: var(--td-accent-surface-text);
+    background: var(--td-accent-surface);
+  }
+
   starlight-theme-select label {
     block-size: var(--control-height);
     border: var(--border-width) solid var(--td-border);
@@ -736,8 +743,8 @@
   }
 
   .td-shell__nav a[aria-current="page"] {
-    color: var(--td-accent-text);
-    background: var(--sl-color-accent-low);
+    color: var(--td-accent-surface-text);
+    background: var(--td-accent-surface);
   }
 
   .td-shell__main {
