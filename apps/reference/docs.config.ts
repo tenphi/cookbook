@@ -34,20 +34,9 @@ export default defineDocsConfig({
       textSoft: "#626875",
     },
     tokens: {
-      $radius: "0.5rem",
-      "$card-radius": "0.875rem",
       "$border-width": "1px",
       "$content-width": "52rem",
       "$sidebar-width": "18rem",
-    },
-    presets: {
-      body: {
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      },
-      heading: {
-        fontFamily: "'Avenir Next', Avenir, 'Segoe UI', sans-serif",
-        fontWeight: 700,
-      },
     },
   },
 });

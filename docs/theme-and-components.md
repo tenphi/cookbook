@@ -73,8 +73,8 @@ Token names follow Tasty conventions: `$name` becomes the CSS custom property
 theme: {
   tokens: {
     "$gap": "0.5rem",
-    "$radius": "0.5rem",
-    "$card-radius": "0.875rem",
+    "$radius": "6px",
+    "$card-radius": "10px",
     "$border-width": "1px",
     "$outline-width": "2px",
     "$outline-offset": "2px",
@@ -92,8 +92,9 @@ soft card theme possible without one-off component overrides.
 ## Typography presets
 
 The built-in presets are `body`, `heading`, `h1` through `h6`, `small`, and
-`code`. Presets merge property-by-property, so changing a font does not require
-copying its size, weight, or line height:
+`code`. Onest is self-hosted and used for body and heading text by default;
+JetBrains Mono is self-hosted for code. Presets merge property-by-property, so
+changing a font does not require copying its size, weight, or line height:
 
 ```ts
 theme: {

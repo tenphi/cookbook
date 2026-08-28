@@ -90,8 +90,8 @@ theme: {
     textSoft: "#626875"
   },
   tokens: {
-    "$radius": "0.5rem",
-    "$card-radius": "0.875rem",
+    "$radius": "6px",
+    "$card-radius": "10px",
     "$border-width": "1px",
     "$content-width": "52rem",
     "$sidebar-width": "18rem"
@@ -106,9 +106,11 @@ theme: {
 }
 ```
 
-The default brand is `#315efb`. `palette` supplies semantic Glaze inputs rather
-than component colors, so the whole interface continues to adapt in dark and
-high-contrast modes. A requested APCA floor below 45 requires the explicit
+The default brand is `#315efb`; controls use a `6px` radius and cards use
+`10px`. Onest is the default body and heading family, while JetBrains Mono is
+used for code. `palette` supplies semantic Glaze inputs rather than component
+colors, so the whole interface continues to adapt in dark and high-contrast
+modes. A requested APCA floor below 45 requires the explicit
 `unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).
 

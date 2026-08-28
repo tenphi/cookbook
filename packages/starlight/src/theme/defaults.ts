@@ -6,8 +6,8 @@ import type {
 
 export const DEFAULT_THEME_TOKENS = {
   $gap: "0.5rem",
-  $radius: "0.375rem",
-  "$card-radius": "0.75rem",
+  $radius: "6px",
+  "$card-radius": "10px",
   "$border-width": "1px",
   "$outline-width": "2px",
   "$outline-offset": "2px",
@@ -17,9 +17,9 @@ export const DEFAULT_THEME_TOKENS = {
 } satisfies ThemeTokens;
 
 const BODY_FONT =
-  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji'";
+  "'Onest Variable', Onest, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const MONO_FONT =
-  "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+  "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
 
 export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
   body: {
@@ -31,7 +31,7 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
     boldFontWeight: 700,
   },
   heading: {
-    fontFamily: "var(--body-font-family)",
+    fontFamily: BODY_FONT,
     fontSize: "1rem",
     lineHeight: 1.2,
     letterSpacing: "-0.015em",

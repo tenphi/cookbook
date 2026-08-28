@@ -1,3 +1,6 @@
+@import "@fontsource-variable/onest/wght.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
 @layer starlight.reset, starlight.base, starlight.core, starlight.content, starlight.components, starlight.utils, tasty-docs;
 
 @layer tasty-docs {
@@ -44,7 +47,7 @@
     --sl-color-bg-accent: var(--td-accent-surface);
     --sl-color-hairline-light: var(--td-border);
     --sl-color-hairline: var(--td-border);
-    --sl-color-hairline-shade: var(--td-surface);
+    --sl-color-hairline-shade: var(--td-border);
     --sl-color-backdrop-overlay: var(--td-overlay);
     --sl-color-accent-low: color-mix(
       in oklab,
