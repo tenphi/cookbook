@@ -75,12 +75,70 @@ export type BrandConfig =
       unsafeContrast?: boolean;
     };
 
+export type ThemeTokenValue = string | number;
+
+/**
+ * Tasty design tokens. `$name` is emitted as `--name`; existing `--name`
+ * custom-property keys remain supported for compatibility.
+ */
+export interface ThemeTokens {
+  $gap?: ThemeTokenValue;
+  $radius?: ThemeTokenValue;
+  "$card-radius"?: ThemeTokenValue;
+  "$border-width"?: ThemeTokenValue;
+  "$outline-width"?: ThemeTokenValue;
+  "$outline-offset"?: ThemeTokenValue;
+  "$content-width"?: ThemeTokenValue;
+  "$sidebar-width"?: ThemeTokenValue;
+  "$control-height"?: ThemeTokenValue;
+  [name: `$${string}`]: ThemeTokenValue | undefined;
+  [customProperty: `--${string}`]: ThemeTokenValue | undefined;
+}
+
+export interface TypographyPreset {
+  fontFamily?: string;
+  fontSize?: ThemeTokenValue;
+  lineHeight?: ThemeTokenValue;
+  letterSpacing?: ThemeTokenValue;
+  fontWeight?: ThemeTokenValue;
+  boldFontWeight?: ThemeTokenValue;
+  iconSize?: ThemeTokenValue;
+  textTransform?: ThemeTokenValue;
+  fontStyle?: ThemeTokenValue;
+}
+
+/** Built-in presets can be overridden and additional Tasty presets may be added. */
+export interface TypographyPresets {
+  body?: TypographyPreset;
+  heading?: TypographyPreset;
+  h1?: TypographyPreset;
+  h2?: TypographyPreset;
+  h3?: TypographyPreset;
+  h4?: TypographyPreset;
+  h5?: TypographyPreset;
+  h6?: TypographyPreset;
+  small?: TypographyPreset;
+  code?: TypographyPreset;
+  [name: string]: TypographyPreset | undefined;
+}
+
+/** Semantic palette inputs. Glaze resolves every value for all appearance modes. */
+export interface ThemePaletteConfig {
+  /** Light-scheme page surface; dark and high-contrast values adapt. */
+  surface?: GlazeColorValue;
+  /** Primary reading text seed, resolved against `surface`. */
+  text?: GlazeColorValue;
+  /** Secondary text seed, resolved against `surface`. */
+  textSoft?: GlazeColorValue;
+}
+
 export interface ThemeConfig {
   variant?: string;
   brand?: BrandConfig;
+  palette?: ThemePaletteConfig;
   states?: Record<string, string>;
-  tokens?: Record<string, string | number>;
-  presets?: Record<string, unknown>;
+  tokens?: ThemeTokens;
+  presets?: TypographyPresets;
   styles?: Record<string, unknown>;
   contrastLevel?: number | "auto";
 }

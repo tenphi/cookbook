@@ -61,6 +61,7 @@
     "@tenphi/glaze": "catalog:",
     "@tenphi/tasty": "catalog:",
     "pagefind": "catalog:",
+    "react": "^18.3.1 || ^19.0.0",
     "tsx": "^4.20.6"
   },
   "peerDependencies": {

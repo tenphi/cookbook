@@ -10,6 +10,12 @@ import {
   type DocsConfig,
   type NavigationItem,
 } from "@tenphi/docs";
+import {
+  configure,
+  type ConfigTokens,
+  type Styles,
+  type TypographyPreset,
+} from "@tenphi/tasty/core";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
 import { resolveDocsTheme } from "./theme/index.js";
@@ -36,6 +42,7 @@ export default function tastyDocs(
       docsTheme.diagnostics.map((diagnostic) => diagnostic.message).join("\n"),
     );
   }
+  configureTastyTheme(options.config?.theme, docsTheme);
   const cssPath = fileURLToPath(new URL("./styles.css", import.meta.url));
   const searchClientPath = fileURLToPath(
     new URL("./client/search.js", import.meta.url),
@@ -233,6 +240,57 @@ export default function tastyDocs(
       },
     },
   };
+}
+
+function configureTastyTheme(
+  theme: DocsConfig["theme"],
+  resolved: ReturnType<typeof resolveDocsTheme>,
+): void {
+  const tokens = Object.fromEntries(
+    Object.entries(resolved.tokens).filter(([name]) => name.startsWith("$")),
+  ) as ConfigTokens;
+  Object.assign(tokens, {
+    "#surface": "var(--td-surface)",
+    "#surface-2": "var(--td-surface-2)",
+    "#surface-3": "var(--td-surface-3)",
+    "#text": "var(--td-text)",
+    "#text-soft": "var(--td-text-soft)",
+    "#border": "var(--td-border)",
+    "#border-strong": "var(--td-border-strong)",
+    "#accent-text": "var(--td-accent-text)",
+    "#accent-surface": "var(--td-accent-surface)",
+    "#accent-surface-text": "var(--td-accent-surface-text)",
+    "#focus": "var(--td-focus)",
+  } satisfies ConfigTokens);
+
+  const globalStyles = anatomyStyles(theme?.styles);
+  configure({
+    ...(theme?.states ? { states: theme.states } : {}),
+    units: {
+      x: "var(--gap)",
+      r: "var(--radius)",
+      cr: "var(--card-radius)",
+      bw: "var(--border-width)",
+    },
+    tokens,
+    presets: resolved.presets as Record<string, TypographyPreset>,
+    ...(globalStyles ? { globalStyles } : {}),
+  });
+}
+
+function anatomyStyles(
+  styles: Record<string, unknown> | undefined,
+): Record<string, Styles> | undefined {
+  if (!styles) return undefined;
+  return Object.fromEntries(
+    Object.entries(styles)
+      .filter((entry): entry is [string, Styles] => isRecord(entry[1]))
+      .map(([name, value]) => [`[data-tasty-anatomy="${name}"]`, value]),
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function starlightSidebar(navigation: DocsConfig["navigation"]): unknown[] {

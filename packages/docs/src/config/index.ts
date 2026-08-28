@@ -29,6 +29,16 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   ]),
   search: new Set(["enabled"]),
   components: new Set(["overrides"]),
+  theme: new Set([
+    "variant",
+    "brand",
+    "palette",
+    "states",
+    "tokens",
+    "presets",
+    "styles",
+    "contrastLevel",
+  ]),
   build: new Set([
     "strict",
     "ci",
@@ -175,4 +185,9 @@ export type {
   SearchConfig,
   SiteConfig,
   ThemeConfig,
+  ThemePaletteConfig,
+  ThemeTokens,
+  ThemeTokenValue,
+  TypographyPreset,
+  TypographyPresets,
 } from "../types.js";
