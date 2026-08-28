@@ -11,6 +11,7 @@ export const DEFAULT_THEME_TOKENS = {
   "$border-width": "1px",
   "$outline-width": "2px",
   "$outline-offset": "2px",
+  "$layout-width": "87.5rem",
   "$content-width": "58rem",
   "$sidebar-width": "17.5rem",
   "$control-height": "2.5rem",

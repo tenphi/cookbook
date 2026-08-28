@@ -268,8 +268,10 @@
     display: flex;
     flex-direction: column;
     inline-size: 100%;
+    max-inline-size: calc(var(--layout-width) - (var(--sl-sidebar-pad-x) * 2));
     block-size: 100%;
     min-inline-size: 0;
+    margin-inline: auto;
   }
 
   .td-header__primary {
@@ -781,7 +783,14 @@
     justify-content: space-between;
     gap: calc(var(--gap) * 3);
     inline-size: 100%;
+    max-inline-size: calc(var(--layout-width) - (var(--gap) * 6));
     min-block-size: 4.5rem;
+    margin-inline: auto;
+  }
+
+  .td-shell__header > .td-top-tabs {
+    max-inline-size: calc(var(--layout-width) - (var(--gap) * 6));
+    margin-inline: auto;
   }
 
   .td-shell__header-primary > a {
@@ -962,8 +971,8 @@
   .td-shell__layout {
     display: grid;
     grid-template-columns: minmax(13rem, var(--sidebar-width)) minmax(0, 1fr);
-    max-width: calc(var(--sidebar-width) + var(--content-width) + 10rem);
-    margin: auto;
+    inline-size: min(100%, var(--layout-width));
+    margin-inline: auto;
   }
 
   .td-shell__nav {
@@ -1103,6 +1112,22 @@
 
     .td-top-tabs {
       display: none;
+    }
+  }
+
+  @media (min-width: 50rem) {
+    :root:has(.td-top-tabs) body > .page > .header,
+    .td-shell__header:has(.td-top-tabs) {
+      border-bottom: var(--border-width) solid var(--td-border);
+    }
+
+    .main-frame {
+      inline-size: min(100%, var(--layout-width));
+      margin-inline: auto;
+    }
+
+    .sidebar-pane {
+      inset-inline-start: max(0px, calc((100% - var(--layout-width)) / 2));
     }
   }
 

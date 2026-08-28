@@ -89,15 +89,18 @@ theme: {
     "$outline-width": "2px",
     "$outline-offset": "2px",
     "$control-height": "2.5rem",
-      "$content-width": "58rem",
-      "$sidebar-width": "17.5rem"
+    "$layout-width": "87.5rem",
+    "$content-width": "58rem",
+    "$sidebar-width": "17.5rem"
   }
 }
 ```
 
-`radius` is the control and navigation radius; `card-radius` is the larger
-surface radius. Keeping those roles separate makes a sharp control theme or a
-soft card theme possible without one-off component overrides.
+`layout-width` caps and centers the complete documentation shell, while
+`content-width` limits the reading column inside it. `radius` is the control
+and navigation radius; `card-radius` is the larger surface radius. Keeping
+those roles separate makes a sharp control theme or a soft card theme possible
+without one-off component overrides.
 
 ## Typography presets
 

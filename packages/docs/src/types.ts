@@ -95,6 +95,7 @@ export interface ThemeTokens {
   "$border-width"?: ThemeTokenValue;
   "$outline-width"?: ThemeTokenValue;
   "$outline-offset"?: ThemeTokenValue;
+  "$layout-width"?: ThemeTokenValue;
   "$content-width"?: ThemeTokenValue;
   "$sidebar-width"?: ThemeTokenValue;
   "$control-height"?: ThemeTokenValue;
