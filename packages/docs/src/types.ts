@@ -63,8 +63,15 @@ export type NavigationItem =
   | { label: string; autogenerate: { directory: string } }
   | { label: string; link: string };
 
+export interface NavigationTab {
+  label: string;
+  link: string;
+}
+
 export interface NavigationConfig {
   items?: NavigationItem[];
+  /** Optional primary navigation rendered as a compact row below the header. */
+  tabs?: NavigationTab[];
 }
 
 export type BrandConfig =

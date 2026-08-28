@@ -6,39 +6,39 @@ import type {
 
 export const DEFAULT_THEME_TOKENS = {
   $gap: "0.5rem",
-  $radius: "0.375rem",
-  "$card-radius": "0.75rem",
+  $radius: "6px",
+  "$card-radius": "10px",
   "$border-width": "1px",
   "$outline-width": "2px",
   "$outline-offset": "2px",
-  "$content-width": "52rem",
-  "$sidebar-width": "18rem",
+  "$content-width": "58rem",
+  "$sidebar-width": "17.5rem",
   "$control-height": "2.5rem",
 } satisfies ThemeTokens;
 
 const BODY_FONT =
-  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji'";
+  "'Onest Variable', Onest, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 const MONO_FONT =
-  "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+  "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
 
 export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
   body: {
     fontFamily: BODY_FONT,
     fontSize: "1rem",
-    lineHeight: 1.7,
+    lineHeight: 1.75,
     letterSpacing: "0",
     fontWeight: 400,
-    boldFontWeight: 700,
+    boldFontWeight: 650,
   },
   heading: {
-    fontFamily: "var(--body-font-family)",
+    fontFamily: BODY_FONT,
     fontSize: "1rem",
     lineHeight: 1.2,
-    letterSpacing: "-0.015em",
-    fontWeight: 700,
-    boldFontWeight: 800,
+    letterSpacing: "-0.018em",
+    fontWeight: 650,
+    boldFontWeight: 750,
   },
-  h1: heading("2.625rem", 1.08, "-0.03em"),
+  h1: heading("3rem", 1.08, "-0.035em"),
   h2: heading("2rem", 1.15, "-0.025em"),
   h3: heading("1.5rem", 1.2, "-0.015em"),
   h4: heading("1.25rem", 1.25, "-0.01em"),

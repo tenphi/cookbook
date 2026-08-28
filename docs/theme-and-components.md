@@ -62,7 +62,17 @@ Components consume semantic colors consistently: `surface`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
-same resolved values.
+same resolved values. Surface elevation uses Glaze's contrast-uniform tone
+axis: `surface-2` advances two tone steps and `surface-3` advances four from the
+base surface, with proportionally wider steps in high-contrast mode.
+
+Interactive controls step up exactly one surface level: a control on `surface`
+uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
+pressed states build on that elevated surface without changing the border.
+Inputs stay on their surrounding surface so their border remains the visual
+boundary. Selected navigation uses the fixed-mode `accent-surface` and its
+paired `accent-surface-text`, so the brand fill does not drift toward the
+adaptive link color in dark mode.
 
 ## Design tokens
 
@@ -73,14 +83,14 @@ Token names follow Tasty conventions: `$name` becomes the CSS custom property
 theme: {
   tokens: {
     "$gap": "0.5rem",
-    "$radius": "0.5rem",
-    "$card-radius": "0.875rem",
+    "$radius": "6px",
+    "$card-radius": "10px",
     "$border-width": "1px",
     "$outline-width": "2px",
     "$outline-offset": "2px",
     "$control-height": "2.5rem",
-    "$content-width": "58rem",
-    "$sidebar-width": "20rem"
+      "$content-width": "58rem",
+      "$sidebar-width": "17.5rem"
   }
 }
 ```
@@ -92,8 +102,9 @@ soft card theme possible without one-off component overrides.
 ## Typography presets
 
 The built-in presets are `body`, `heading`, `h1` through `h6`, `small`, and
-`code`. Presets merge property-by-property, so changing a font does not require
-copying its size, weight, or line height:
+`code`. Onest is self-hosted and used for body and heading text by default;
+JetBrains Mono is self-hosted for code. Presets merge property-by-property, so
+changing a font does not require copying its size, weight, or line height:
 
 ```ts
 theme: {

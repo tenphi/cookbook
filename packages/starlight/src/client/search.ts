@@ -16,10 +16,29 @@ const base =
   "/";
 const basePath = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
 
-open?.addEventListener("click", () => {
+const openDialog = () => {
   dialog?.showModal();
   input?.focus();
+};
+
+open?.addEventListener("click", openDialog);
+
+window.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+    if (dialog?.open) dialog.close();
+    else openDialog();
+    event.preventDefault();
+  }
 });
+
+const shortcut = document.querySelector<HTMLElement>(
+  "[data-docs-search-shortcut]",
+);
+const shortcutKey = shortcut?.querySelector("kbd");
+if (shortcutKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+  shortcutKey.textContent = "⌘";
+  open?.setAttribute("aria-keyshortcuts", "Meta+K");
+}
 
 type Pagefind = {
   search(query: string): Promise<{

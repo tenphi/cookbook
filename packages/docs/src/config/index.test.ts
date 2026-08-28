@@ -35,4 +35,21 @@ describe("docs configuration", () => {
       }),
     ).not.toThrow();
   });
+
+  it("preserves optional primary navigation tabs", () => {
+    const config = normalizeDocsConfig({
+      navigation: {
+        items: ["/"],
+        tabs: [
+          { label: "Docs", link: "/" },
+          { label: "GitHub", link: "https://github.com/example/project" },
+        ],
+      },
+    });
+
+    expect(config.navigation.tabs).toEqual([
+      { label: "Docs", link: "/" },
+      { label: "GitHub", link: "https://github.com/example/project" },
+    ]);
+  });
 });

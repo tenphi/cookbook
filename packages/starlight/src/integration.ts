@@ -50,6 +50,14 @@ export default function tastyDocs(
   const appearanceClientPath = fileURLToPath(
     new URL("./client/appearance.js", import.meta.url),
   );
+  const headerPath = fileURLToPath(
+    new URL("./overrides/Header.astro", import.meta.url),
+  );
+  const components = {
+    Header: headerPath,
+    ...options.config?.components?.overrides,
+  };
+  const tabs = navigationTabs(options.config?.navigation);
   const inner = [
     tastyIntegration({ islands: false }),
     starlight({
@@ -59,9 +67,7 @@ export default function tastyDocs(
         : {}),
       customCss: ["virtual:tasty-docs/theme.css", cssPath],
       ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
-      ...(options.config?.components?.overrides
-        ? { components: options.config.components.overrides }
-        : {}),
+      components,
       sidebar: starlightSidebar(options.config?.navigation),
     }),
   ] satisfies AstroIntegration[];
@@ -98,16 +104,20 @@ export default function tastyDocs(
               external: ["@tenphi/docs"],
             },
             plugins: [
-              virtualDocsPlugin(docsTheme.css, () => ({
-                entries: graph?.entries ?? [],
-                routes: graph?.routes ?? [],
-                site: graph?.config.site ?? options.config?.site ?? {},
-                base: graph?.config.build.base ?? base,
-                search:
-                  graph?.config.search.enabled ??
-                  options.config?.search?.enabled ??
-                  true,
-              })),
+              virtualDocsPlugin(
+                docsTheme.css,
+                () => ({
+                  entries: graph?.entries ?? [],
+                  routes: graph?.routes ?? [],
+                  site: graph?.config.site ?? options.config?.site ?? {},
+                  base: graph?.config.build.base ?? base,
+                  search:
+                    graph?.config.search.enabled ??
+                    options.config?.search?.enabled ??
+                    true,
+                }),
+                { tabs },
+              ),
             ],
             resolve: {
               alias: [
@@ -306,6 +316,10 @@ function starlightSidebar(navigation: DocsConfig["navigation"]): unknown[] {
   return items.map(starlightSidebarItem);
 }
 
+function navigationTabs(navigation: DocsConfig["navigation"]) {
+  return Array.isArray(navigation) ? [] : (navigation?.tabs ?? []);
+}
+
 function starlightSidebarItem(item: NavigationItem): unknown {
   if (typeof item === "string") return { slug: routeToSlug(item) };
   if ("items" in item) {
@@ -355,20 +369,29 @@ async function callInner<K extends keyof AstroIntegration["hooks"]>(
   }
 }
 
-function virtualDocsPlugin(css: string, getContent: () => unknown) {
+function virtualDocsPlugin(
+  css: string,
+  getContent: () => unknown,
+  layout: { tabs: ReturnType<typeof navigationTabs> },
+) {
   const themeId = "\0virtual:tasty-docs/theme.css";
   const configId = "\0virtual:tasty-docs/config";
+  const layoutId = "\0virtual:tasty-docs/layout";
   return {
     name: "tasty-docs-theme",
     resolveId(id: string) {
       if (id === "virtual:tasty-docs/theme.css") return themeId;
       if (id === "virtual:tasty-docs/config") return configId;
+      if (id === "virtual:tasty-docs/layout") return layoutId;
       return undefined;
     },
     load(id: string) {
       if (id === themeId) return css;
       if (id === configId) {
         return `export const content = ${JSON.stringify(getContent())};`;
+      }
+      if (id === layoutId) {
+        return `export const layout = ${JSON.stringify(layout)};`;
       }
       return undefined;
     },

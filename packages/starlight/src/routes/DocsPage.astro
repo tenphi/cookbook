@@ -1,6 +1,7 @@
 ---
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import { content } from "virtual:tasty-docs/config";
+import { layout } from "virtual:tasty-docs/layout";
 import "virtual:tasty-docs/theme.css";
 import "../styles.css";
 
@@ -26,6 +27,18 @@ export async function getStaticPaths() {
 const { entry, routes, html, site, base, search } = Astro.props;
 const withBase = (route) =>
   `${base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`}${route}` || "/";
+const normalizePath = (route) => {
+  const normalized = `/${route.replace(/^\/+|\/+$/g, "")}`;
+  return normalized === "/" ? normalized : normalized.replace(/\/$/, "");
+};
+const isCurrentTab = (link) => {
+  if (!link.startsWith("/")) return false;
+  const target = normalizePath(link);
+  const current = normalizePath(entry.route);
+  return (
+    current === target || (target !== "/" && current.startsWith(`${target}/`))
+  );
+};
 ---
 
 <!doctype html>
@@ -47,32 +60,62 @@ const withBase = (route) =>
       data-tasty-anatomy="Header"
       data-docs-base={base}
     >
-      <a href={withBase("/")}>{site.title ?? "Documentation"}</a>
-      <div class="td-shell__actions">
-        <label>
-          <span class="td-visually-hidden">Color theme</span>
-          <select data-docs-theme aria-label="Color theme">
-            <option value="system">System theme</option>
-            <option value="light">Light theme</option>
-            <option value="dark">Dark theme</option>
-          </select>
-        </label>
-        <label>
-          <span class="td-visually-hidden">Contrast</span>
-          <select data-docs-contrast aria-label="Contrast">
-            <option value="system">System contrast</option>
-            <option value="normal">Normal contrast</option>
-            <option value="more">High contrast</option>
-          </select>
-        </label>
-        {
-          search && (
-            <button type="button" data-docs-search-open aria-haspopup="dialog">
-              Search
-            </button>
-          )
-        }
+      <div class="td-shell__header-primary">
+        <a href={withBase("/")}>{site.title ?? "Documentation"}</a>
+        <div class="td-shell__actions">
+          <label class="td-appearance-control" title="Color theme">
+            <span class="td-visually-hidden">Color theme</span>
+            <select data-docs-theme aria-label="Color theme">
+              <option value="system">System theme</option>
+              <option value="light">Light theme</option>
+              <option value="dark">Dark theme</option>
+            </select>
+          </label>
+          <label
+            class="td-appearance-control td-appearance-control--contrast"
+            title="Contrast"
+          >
+            <span class="td-visually-hidden">Contrast</span>
+            <select data-docs-contrast aria-label="Contrast">
+              <option value="system">System contrast</option>
+              <option value="normal">Normal contrast</option>
+              <option value="more">High contrast</option>
+            </select>
+          </label>
+          {
+            search && (
+              <button
+                type="button"
+                data-docs-search-open
+                aria-haspopup="dialog"
+                aria-keyshortcuts="Control+K"
+              >
+                <span>Search</span>
+                <kbd data-docs-search-shortcut>
+                  <>
+                    <kbd>Ctrl</kbd>
+                    <kbd>K</kbd>
+                  </>
+                </kbd>
+              </button>
+            )
+          }
+        </div>
       </div>
+      {
+        layout.tabs.length > 0 && (
+          <nav class="td-top-tabs" aria-label="Primary">
+            {layout.tabs.map((tab) => (
+              <a
+                href={tab.link.startsWith("/") ? withBase(tab.link) : tab.link}
+                aria-current={isCurrentTab(tab.link) ? "page" : undefined}
+              >
+                {tab.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
     </header>
     <div class="td-shell__layout">
       <nav

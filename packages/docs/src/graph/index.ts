@@ -105,6 +105,11 @@ export async function createDocsGraph(
     await transformEntry(entry, absoluteMap, routeMap, config, diagnostics);
   }
   validateNavigation(config.navigation.items ?? [], routeMap, diagnostics);
+  validateNavigation(
+    (config.navigation.tabs ?? []).map(({ label, link }) => ({ label, link })),
+    routeMap,
+    diagnostics,
+  );
 
   entries.sort((left, right) => left.route.localeCompare(right.route));
   const routes: DocsRoute[] = entries.map((entry) => ({

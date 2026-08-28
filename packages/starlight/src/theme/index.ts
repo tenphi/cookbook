@@ -20,6 +20,8 @@ export interface ResolvedDocsTheme {
   css: string;
   colors: {
     surface: Record<string, string>;
+    surface2: Record<string, string>;
+    surface3: Record<string, string>;
     text: Record<string, string>;
     textSoft: Record<string, string>;
     accentText: Record<string, string>;
@@ -53,14 +55,35 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       ? { contrastLevel: theme.contrastLevel }
       : {}),
   } as const;
+  const surfaceFrom = theme.palette?.surface ?? "#ffffff";
   const surface = glaze.color({
-    from: theme.palette?.surface ?? "#ffffff",
+    from: surfaceFrom,
     mode: "auto",
     // Near-white brand surfaces can carry a numerically large OKHSL
     // saturation that becomes vivid when tone-inverted. Preserve the authored
     // light surface, but keep dark chrome in the neutral-surface range.
     darkSaturation: 0.35,
   });
+  const surface2 = glaze.color(
+    {
+      from: surfaceFrom,
+      base: surface,
+      tone: ["-2", "-4"],
+      mode: "auto",
+      darkSaturation: 0.35,
+    },
+    glazeOptions,
+  );
+  const surface3 = glaze.color(
+    {
+      from: surfaceFrom,
+      base: surface,
+      tone: ["-4", "-8"],
+      mode: "auto",
+      darkSaturation: 0.35,
+    },
+    glazeOptions,
+  );
   const text = glaze.color(
     {
       from: theme.palette?.text ?? "#20232a",
@@ -139,6 +162,8 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
   const outputOptions = { modes: { highContrast: true } } as const;
   const colors = {
     surface: surface.json(outputOptions),
+    surface2: surface2.json(outputOptions),
+    surface3: surface3.json(outputOptions),
     text: text.json(outputOptions),
     textSoft: textSoft.json(outputOptions),
     accentText: accentText.json(outputOptions),
@@ -198,14 +223,18 @@ function themeCss(
   const declarations = (mode: string): string =>
     [
       `--td-surface:${colors.surface[mode]}`,
+      `--td-surface-2:${colors.surface2[mode]}`,
+      `--td-surface-3:${colors.surface3[mode]}`,
       `--td-text:${colors.text[mode]}`,
       `--td-text-soft:${colors.textSoft[mode]}`,
       `--td-accent-text:${colors.accentText[mode]}`,
       `--td-accent-surface:${colors.accentSurface[mode]}`,
       `--td-accent-surface-text:${colors.accentSurfaceText[mode]}`,
       `--td-focus:${colors.focus[mode]}`,
-      "--td-surface-2:color-mix(in oklab,var(--td-text) 4%,var(--td-surface))",
-      "--td-surface-3:color-mix(in oklab,var(--td-text) 8%,var(--td-surface))",
+      "--td-surface-2-hover:color-mix(in oklab,var(--td-text) 3%,var(--td-surface-2))",
+      "--td-surface-2-pressed:color-mix(in oklab,var(--td-text) 9%,var(--td-surface-2))",
+      "--td-surface-3-hover:color-mix(in oklab,var(--td-text) 3%,var(--td-surface-3))",
+      "--td-surface-3-pressed:color-mix(in oklab,var(--td-text) 9%,var(--td-surface-3))",
       "--td-border:color-mix(in oklab,var(--td-text) 18%,var(--td-surface))",
       "--td-border-strong:color-mix(in oklab,var(--td-text) 34%,var(--td-surface))",
       "--td-shadow:color-mix(in oklab,var(--td-text) 16%,transparent)",
