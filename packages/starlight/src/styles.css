@@ -204,7 +204,11 @@
   }
 
   starlight-theme-select label {
+    box-sizing: border-box;
+    inline-size: calc(var(--sl-select-width) + 1.5rem);
     block-size: var(--control-height);
+    gap: var(--gap);
+    padding-inline: calc(var(--gap) * 1.25);
     border: var(--border-width) solid var(--td-border);
     background: var(--td-surface-3);
     transition:
@@ -222,10 +226,23 @@
     background: var(--td-surface-3-pressed);
   }
 
+  starlight-theme-select label:has(select:focus-visible) {
+    outline: var(--outline-width) solid var(--td-focus);
+    outline-offset: var(--outline-offset);
+  }
+
   starlight-theme-select select {
+    flex: 1;
+    inline-size: auto;
+    min-inline-size: 0;
     min-block-size: 0;
     block-size: 100%;
-    padding-block: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  starlight-theme-select select:focus-visible {
+    outline: 0;
   }
 
   site-search button[data-open-modal] {
@@ -325,16 +342,13 @@
 
   starlight-theme-select label::before,
   starlight-theme-select label::after {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    translate: 0 -50%;
+    position: static;
+    translate: none;
     pointer-events: none;
   }
 
   starlight-theme-select label::before {
     --td-control-icon: var(--td-icon-device);
-    inset-inline-start: 0;
   }
 
   starlight-theme-select label:has(option[value="light"]:checked)::before {
@@ -347,7 +361,6 @@
 
   starlight-theme-select label::after {
     --td-control-icon: var(--td-icon-chevron-down);
-    inset-inline-end: 0;
   }
 
   starlight-menu-button button::before {
