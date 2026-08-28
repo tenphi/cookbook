@@ -44,6 +44,7 @@ export default defineDocsConfig({
     },
     tokens: {
       "$border-width": "1px",
+      "$layout-width": "87.5rem",
       "$content-width": "58rem",
       "$sidebar-width": "17.5rem",
     },

@@ -99,6 +99,7 @@ theme: {
     "$radius": "6px",
     "$card-radius": "10px",
     "$border-width": "1px",
+    "$layout-width": "87.5rem",
     "$content-width": "58rem",
     "$sidebar-width": "17.5rem"
   },
@@ -114,8 +115,9 @@ theme: {
 
 The default brand is `#315efb`; controls use a `6px` radius and cards use
 `10px`. Onest is the default body and heading family, while JetBrains Mono is
-used for code. The default reading column is `58rem`, paired with a `17.5rem`
-sidebar. `palette` supplies semantic Glaze inputs rather than component colors,
+used for code. The default layout is capped at `87.5rem` (1400px), matching the
+Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `palette`
+supplies semantic Glaze inputs rather than component colors,
 so the whole interface continues to adapt in dark and high-contrast modes. A requested APCA floor below 45 requires the explicit
 `unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).

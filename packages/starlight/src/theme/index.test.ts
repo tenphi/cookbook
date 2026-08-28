@@ -31,6 +31,7 @@ describe("Glaze theme adapter", () => {
     expect(theme.css).toContain("--td-surface-3-pressed:");
     expect(theme.css).toContain("--radius:6px");
     expect(theme.css).toContain("--card-radius:10px");
+    expect(theme.css).toContain("--layout-width:87.5rem");
     expect(theme.presets.body?.fontFamily).toContain("'Onest Variable'");
     expect(theme.presets.heading?.fontFamily).toContain("'Onest Variable'");
     expect(theme.presets.code?.fontFamily).toContain(
@@ -45,6 +46,7 @@ describe("Glaze theme adapter", () => {
         $radius: "4px",
         "$card-radius": "10px",
         "$border-width": "2px",
+        "$layout-width": "72rem",
         "--legacy-token": "3rem",
       },
       presets: {
@@ -60,6 +62,7 @@ describe("Glaze theme adapter", () => {
     expect(theme.css).toContain("--radius:4px");
     expect(theme.css).toContain("--card-radius:10px");
     expect(theme.css).toContain("--border-width:2px");
+    expect(theme.css).toContain("--layout-width:72rem");
     expect(theme.css).toContain("--legacy-token:3rem");
     expect(theme.css).toContain("--body-font-family:Inter, sans-serif");
     expect(theme.css).toContain("--heading-font-family:Newsreader, serif");
