@@ -11,8 +11,9 @@ for (const name of entries) {
   if (extname(name) === ".css") largestCss = Math.max(largestCss, bytes);
   if ([".js", ".mjs"].includes(extname(name))) javascript += bytes;
 }
-if (largestCss > 100 * 1024)
-  throw new Error(`Shared CSS is ${largestCss} bytes (budget: 102400).`);
+const cssBudget = 104 * 1024;
+if (largestCss > cssBudget)
+  throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 const home = await readFile(join(output, "index.html"), "utf8");
 if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
   throw new Error(

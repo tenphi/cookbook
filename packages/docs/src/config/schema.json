@@ -24,7 +24,28 @@
         "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } }
       }
     },
-    "navigation": { "type": ["object", "array"] },
+    "navigation": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/navigationItem" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/navigationItem" }
+            },
+            "tabs": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/navigationTab" }
+            }
+          }
+        }
+      ]
+    },
     "theme": {
       "type": "object",
       "additionalProperties": false,
@@ -68,6 +89,55 @@
     "build": { "type": "object" }
   },
   "$defs": {
+    "navigationItem": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "items"],
+          "properties": {
+            "label": { "type": "string" },
+            "items": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/navigationItem" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "autogenerate"],
+          "properties": {
+            "label": { "type": "string" },
+            "autogenerate": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["directory"],
+              "properties": { "directory": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "link"],
+          "properties": {
+            "label": { "type": "string" },
+            "link": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "navigationTab": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "link"],
+      "properties": {
+        "label": { "type": "string" },
+        "link": { "type": "string" }
+      }
+    },
     "typographyPreset": {
       "type": "object",
       "additionalProperties": false,

@@ -50,6 +50,25 @@ describe("content graph", () => {
     );
   });
 
+  it("validates internal primary navigation tabs", async () => {
+    const root = await createDocsFixture({ "README.md": "# Fixture\n" });
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        navigation: {
+          tabs: [{ label: "Missing", link: "/missing" }],
+        },
+      },
+    });
+
+    expect(graph.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_NAV_TARGET_NOT_FOUND",
+        message: "Navigation target does not exist: /missing.",
+      }),
+    );
+  });
+
   it("rejects sources outside the repository unless explicitly enabled", async () => {
     const root = await createDocsFixture({ "README.md": "# Fixture\n" });
     const graph = await createDocsGraph({

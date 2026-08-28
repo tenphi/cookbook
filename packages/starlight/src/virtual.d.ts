@@ -8,3 +8,8 @@ declare module "virtual:tasty-docs/config" {
     search: boolean;
   };
 }
+
+declare module "virtual:tasty-docs/layout" {
+  import type { NavigationTab } from "@tenphi/docs";
+  export const layout: { tabs: NavigationTab[] };
+}

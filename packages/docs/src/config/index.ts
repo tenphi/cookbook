@@ -181,6 +181,7 @@ export type {
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,
+  NavigationTab,
   NormalizedDocsConfig,
   SearchConfig,
   SiteConfig,

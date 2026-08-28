@@ -89,8 +89,8 @@ theme: {
     "$outline-width": "2px",
     "$outline-offset": "2px",
     "$control-height": "2.5rem",
-    "$content-width": "58rem",
-    "$sidebar-width": "20rem"
+      "$content-width": "58rem",
+      "$sidebar-width": "17.5rem"
   }
 }
 ```
