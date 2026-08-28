@@ -1,6 +1,6 @@
 {
   "name": "tasty-docs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Repository-native static documentation for Astro",
   "type": "module",
   "keywords": [

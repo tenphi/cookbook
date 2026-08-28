@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/starlight",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Astro and Starlight renderer for Tasty Docs",
   "type": "module",
   "sideEffects": [
