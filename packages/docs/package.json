@@ -1,0 +1,80 @@
+{
+  "name": "@tenphi/docs",
+  "version": "0.1.0",
+  "description": "Repository-native content and configuration engine for Tasty Docs",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js"
+    },
+    "./content": {
+      "types": "./dist/content/index.d.ts",
+      "import": "./dist/content/index.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown/index.d.ts",
+      "import": "./dist/markdown/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js"
+    },
+    "./schema.json": "./dist/config/schema.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown --config tsdown.config.ts && mkdir -p dist/config && cp src/config/schema.json dist/config/schema.json",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22.14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "directory": "packages/docs"
+  },
+  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "bugs": {
+    "url": "https://github.com/tenphi/tasty-docs/issues"
+  },
+  "author": "Andrey Yamanov",
+  "license": "MIT",
+  "dependencies": {
+    "@tenphi/glaze": "catalog:",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-gfm": "^3.1.0",
+    "mdast-util-to-markdown": "^2.1.2",
+    "micromark-extension-gfm": "^3.0.0",
+    "npm-package-arg": "^14.0.0",
+    "pacote": "^22.0.0",
+    "tinyglobby": "^0.2.15",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.15.2",
+    "@types/npm-package-arg": "^6.1.4",
+    "@types/pacote": "^11.1.8",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

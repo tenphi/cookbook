@@ -1,0 +1,191 @@
+@layer tasty-docs {
+  :root {
+    --sl-color-accent-low: color-mix(
+      in oklab,
+      var(--td-accent-surface) 18%,
+      var(--td-surface)
+    );
+    --sl-color-accent: var(--td-accent-text);
+    --sl-color-accent-high: var(--td-accent-text);
+    --sl-content-width: var(--content-width, 50rem);
+  }
+
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--td-focus);
+    outline-offset: 3px;
+  }
+
+  .td-card {
+    display: block;
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-bg-nav);
+  }
+
+  .td-preview {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    overflow: clip;
+  }
+
+  .td-preview__stage {
+    padding: 1.5rem;
+    background: var(--td-surface);
+  }
+  .td-preview__code {
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+
+  .td-shell {
+    min-height: 100vh;
+    color: #20232a;
+    background: var(--td-surface);
+    font:
+      1rem/1.7 system-ui,
+      sans-serif;
+  }
+  :root[data-theme="light"] .td-shell {
+    color: #20232a;
+  }
+  :root[data-theme="dark"] .td-shell {
+    color: #eceef5;
+  }
+  .td-shell__header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.25rem;
+    border-bottom: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+    background: color-mix(in oklab, var(--td-surface) 94%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .td-shell__header a {
+    color: var(--td-accent-text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .td-shell__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .td-shell__actions :where(select, button) {
+    min-height: 2.25rem;
+  }
+  .td-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .td-shell__layout {
+    display: grid;
+    grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+    max-width: 86rem;
+    margin: auto;
+  }
+  .td-shell__nav {
+    padding: 1.5rem;
+    border-inline-end: 1px solid
+      color-mix(in oklab, currentColor 18%, transparent);
+  }
+  .td-shell__nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .td-shell__nav a {
+    display: block;
+    padding: 0.3rem 0.5rem;
+    color: var(--td-accent-text);
+    border-radius: 0.35rem;
+  }
+  .td-shell__main {
+    width: min(100%, var(--content-width, 52rem));
+    padding: 2rem clamp(1.25rem, 4vw, 3rem) 5rem;
+  }
+  .td-shell__main img {
+    max-width: 100%;
+    height: auto;
+  }
+  .td-shell__main :where(pre, table) {
+    max-width: 100%;
+    overflow: auto;
+  }
+  .td-shell__main :where(a) {
+    color: var(--td-accent-text);
+  }
+  .td-shell__main :where(h1, h2, h3) {
+    line-height: 1.2;
+  }
+  [data-docs-search] {
+    width: min(42rem, calc(100% - 2rem));
+    padding: 1.25rem;
+    color: inherit;
+    background: var(--td-surface);
+    border: 1px solid var(--td-focus);
+    border-radius: 0.75rem;
+  }
+  [data-docs-search]::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+  [data-docs-search] form {
+    float: inline-end;
+  }
+  [data-docs-search] label,
+  [data-docs-search] input {
+    display: block;
+    width: 100%;
+  }
+  [data-docs-search] input {
+    margin-block: 0.4rem 1rem;
+    padding: 0.6rem;
+  }
+  .td-skip {
+    position: fixed;
+    inset: 0.5rem auto auto 0.5rem;
+    z-index: 4;
+    translate: 0 -150%;
+    padding: 0.5rem 0.8rem;
+    background: var(--td-accent-surface);
+    color: var(--td-accent-surface-text);
+  }
+  .td-skip:focus {
+    translate: 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .td-shell {
+      color: #eceef5;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .td-shell__layout {
+      grid-template-columns: 1fr;
+    }
+    .td-shell__nav {
+      border-inline-end: 0;
+      border-bottom: 1px solid
+        color-mix(in oklab, currentColor 18%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

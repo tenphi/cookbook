@@ -1,0 +1,20 @@
+{
+  "name": "reference",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .astro"
+  },
+  "dependencies": {
+    "@tenphi/starlight": "workspace:*",
+    "astro": "catalog:",
+    "tasty-docs": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

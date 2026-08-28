@@ -1,0 +1,52 @@
+{
+  "name": "create-tasty-docs",
+  "version": "0.1.0",
+  "description": "Create a reproducible Tasty Docs site from a published npm package",
+  "type": "module",
+  "bin": {
+    "create-tasty-docs": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown --config tsdown.config.ts",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22.14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "directory": "packages/create"
+  },
+  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "bugs": {
+    "url": "https://github.com/tenphi/tasty-docs/issues"
+  },
+  "author": "Andrey Yamanov",
+  "license": "MIT",
+  "dependencies": {
+    "@tenphi/docs": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

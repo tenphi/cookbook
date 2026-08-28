@@ -1,0 +1,10 @@
+---
+interface Props {
+  label?: string;
+}
+const { label = "Examples" } = Astro.props;
+---
+
+<div class="td-tabs" role="group" aria-label={label} data-tasty-anatomy="Tabs">
+  <slot />
+</div>

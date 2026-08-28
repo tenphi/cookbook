@@ -1,0 +1,45 @@
+{
+  "name": "tasty-docs-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=22.14"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean",
+    "typecheck": "pnpm build && pnpm -r run typecheck",
+    "test": "pnpm build && vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "knip": "knip",
+    "build:reference": "pnpm --filter reference build",
+    "check:boundaries": "node scripts/check-package-boundaries.mjs",
+    "check:packages": "node scripts/smoke-packages.mjs",
+    "check:install": "node scripts/smoke-install-paths.mjs",
+    "check:publishing": "pnpm --filter './packages/**' exec publint && pnpm --filter './packages/**' exec attw --profile esm-only --pack .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "changeset": "changeset",
+    "version:packages": "changeset version",
+    "release": "changeset publish"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.29.8",
+    "@eslint/js": "10.0.1",
+    "@tenphi/eslint-plugin-tasty": "1.0.4",
+    "@types/node": "^22.15.2",
+    "eslint": "10.9.1",
+    "knip": "6.32.2",
+    "prettier": "^3.9.0",
+    "prettier-plugin-astro": "0.14.1",
+    "publint": "0.3.24",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}

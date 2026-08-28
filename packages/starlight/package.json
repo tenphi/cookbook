@@ -1,0 +1,76 @@
+{
+  "name": "@tenphi/starlight",
+  "version": "0.1.0",
+  "description": "Astro and Starlight renderer for Tasty Docs",
+  "type": "module",
+  "sideEffects": [
+    "./dist/styles.css",
+    "./dist/client/*.js"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./content": {
+      "types": "./dist/content.d.ts",
+      "import": "./dist/content.js"
+    },
+    "./components": {
+      "types": "./dist/components-public.d.ts",
+      "import": "./dist/components.js"
+    },
+    "./styles": {
+      "types": "./dist/styles.d.ts",
+      "default": "./dist/styles.css"
+    },
+    "./client/*": "./dist/client/*.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsdown --config tsdown.config.ts && node ../../scripts/pack-assets.mjs",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22.14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "directory": "packages/starlight"
+  },
+  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "bugs": {
+    "url": "https://github.com/tenphi/tasty-docs/issues"
+  },
+  "author": "Andrey Yamanov",
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.2.4",
+    "@astrojs/starlight": "catalog:",
+    "@tenphi/docs": "workspace:*",
+    "@tenphi/glaze": "catalog:",
+    "@tenphi/tasty": "catalog:",
+    "pagefind": "catalog:",
+    "tsx": "^4.20.6"
+  },
+  "peerDependencies": {
+    "astro": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "astro": "catalog:",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "tenphi/tasty-docs" }
+  ],
+  "commit": false,
+  "fixed": [
+    ["create-tasty-docs", "tasty-docs", "@tenphi/docs", "@tenphi/starlight"]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
+  "privatePackages": { "version": false, "tag": false }
+}

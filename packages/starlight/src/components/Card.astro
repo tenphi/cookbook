@@ -1,0 +1,14 @@
+---
+interface Props {
+  title?: string;
+  href?: string;
+}
+
+const { title, href } = Astro.props;
+const Tag = href ? "a" : "article";
+---
+
+<Tag class="td-card" href={href} data-tasty-anatomy="Card">
+  {title && <h3 data-tasty-anatomy="CardTitle">{title}</h3>}
+  <div data-tasty-anatomy="CardBody"><slot /></div>
+</Tag>

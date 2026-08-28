@@ -1,0 +1,31 @@
+---
+interface Props {
+  title: string;
+  html?: string;
+  css?: string;
+  javascript?: string;
+}
+
+const { title, html = "", css = "", javascript } = Astro.props;
+const source = `<!doctype html><meta charset="utf-8"><style>${css}</style>${html}${javascript ? `<script>${javascript}<\/script>` : ""}`;
+---
+
+<figure class="td-preview" aria-label={title} data-tasty-anatomy="Preview">
+  <figcaption><strong>{title}</strong></figcaption>
+  {
+    javascript ? (
+      <iframe title={title} sandbox="allow-scripts" srcdoc={source} />
+    ) : (
+      <div class="td-preview__stage">
+        <template
+          shadowrootmode="open"
+          set:html={`<style>${css}</style>${html}`}
+        />
+      </div>
+    )
+  }
+  <details class="td-preview__code">
+    <summary>View source</summary>
+    <pre><code>{source}</code></pre>
+  </details>
+</figure>

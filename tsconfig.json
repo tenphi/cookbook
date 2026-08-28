@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/docs" },
+    { "path": "./packages/starlight" },
+    { "path": "./packages/facade" },
+    { "path": "./packages/create" }
+  ]
+}

@@ -1,0 +1,127 @@
+---
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import { content } from "virtual:tasty-docs/config";
+import "virtual:tasty-docs/theme.css";
+import "../styles.css";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const processor = await createMarkdownProcessor();
+  return Promise.all(
+    content.entries.map(async (entry) => ({
+      params: { route: entry.route === "/" ? undefined : entry.route.slice(1) },
+      props: {
+        entry,
+        routes: content.routes,
+        html: (await processor.render(entry.transformedBody)).code,
+        site: content.site,
+        base: content.base,
+        search: content.search,
+      },
+    })),
+  );
+}
+
+const { entry, routes, html, site, base, search } = Astro.props;
+const withBase = (route) =>
+  `${base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`}${route}` || "/";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{entry.title} | {site.title ?? "Documentation"}</title>
+    {
+      entry.description && (
+        <meta name="description" content={entry.description} />
+      )
+    }
+  </head>
+  <body class="td-shell">
+    <a class="td-skip" href="#main-content">Skip to content</a>
+    <header
+      class="td-shell__header"
+      data-tasty-anatomy="Header"
+      data-docs-base={base}
+    >
+      <a href={withBase("/")}>{site.title ?? "Documentation"}</a>
+      <div class="td-shell__actions">
+        <label>
+          <span class="td-visually-hidden">Color theme</span>
+          <select data-docs-theme aria-label="Color theme">
+            <option value="system">System theme</option>
+            <option value="light">Light theme</option>
+            <option value="dark">Dark theme</option>
+          </select>
+        </label>
+        <label>
+          <span class="td-visually-hidden">Contrast</span>
+          <select data-docs-contrast aria-label="Contrast">
+            <option value="system">System contrast</option>
+            <option value="normal">Normal contrast</option>
+            <option value="more">High contrast</option>
+          </select>
+        </label>
+        {
+          search && (
+            <button type="button" data-docs-search-open aria-haspopup="dialog">
+              Search
+            </button>
+          )
+        }
+      </div>
+    </header>
+    <div class="td-shell__layout">
+      <nav
+        class="td-shell__nav"
+        aria-label="Documentation"
+        data-tasty-anatomy="Sidebar"
+      >
+        <ul>
+          {
+            routes.map((route) => (
+              <li>
+                <a
+                  href={withBase(route.route)}
+                  aria-current={
+                    route.route === entry.route ? "page" : undefined
+                  }
+                >
+                  {route.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <main
+        id="main-content"
+        class="td-shell__main"
+        data-pagefind-body
+        data-tasty-anatomy="Article"
+      >
+        <h1>{entry.title}</h1>
+        <div set:html={html} />
+      </main>
+    </div>
+    {
+      search && (
+        <dialog data-docs-search aria-labelledby="td-search-title">
+          <form method="dialog">
+            <button aria-label="Close search">Close</button>
+          </form>
+          <h2 id="td-search-title">Search documentation</h2>
+          <label>
+            Search{" "}
+            <input type="search" data-docs-search-input autocomplete="off" />
+          </label>
+          <div data-docs-search-status aria-live="polite" />
+          <ul data-docs-search-results />
+        </dialog>
+      )
+    }
+  </body>
+</html>

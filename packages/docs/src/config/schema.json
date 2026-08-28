@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tasty.style/schemas/tasty-docs.schema.json",
+  "title": "Tasty Docs configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "repository": { "type": "string", "format": "uri" }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowOutsideRoot": { "type": "boolean", "default": false },
+        "localizeRepositoryLinks": { "type": "boolean", "default": false },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } }
+      }
+    },
+    "navigation": { "type": ["object", "array"] },
+    "theme": { "type": "object" },
+    "markdown": { "type": "object" },
+    "search": { "type": "object" },
+    "components": { "type": "object" },
+    "build": { "type": "object" }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "oneOf": [
+        { "required": ["file"] },
+        { "required": ["glob"] },
+        { "required": ["package"] }
+      ]
+    }
+  }
+}
