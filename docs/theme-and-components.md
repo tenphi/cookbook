@@ -64,6 +64,12 @@ Components consume semantic colors consistently: `surface`, `surface-2`,
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values.
 
+Interactive controls step up exactly one surface level: a control on `surface`
+uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
+pressed states build on that elevated surface without changing the border.
+Inputs stay on their surrounding surface so their border remains the visual
+boundary.
+
 ## Design tokens
 
 Token names follow Tasty conventions: `$name` becomes the CSS custom property

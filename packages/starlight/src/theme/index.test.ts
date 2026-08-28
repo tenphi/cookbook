@@ -16,6 +16,10 @@ describe("Glaze theme adapter", () => {
     expect(theme.css).toContain("prefers-contrast:more");
     expect(theme.css).toContain("--td-text:");
     expect(theme.css).toContain("--td-border:");
+    expect(theme.css).toContain("--td-surface-2-hover:");
+    expect(theme.css).toContain("--td-surface-2-pressed:");
+    expect(theme.css).toContain("--td-surface-3-hover:");
+    expect(theme.css).toContain("--td-surface-3-pressed:");
     expect(theme.css).toContain("--radius:6px");
     expect(theme.css).toContain("--card-radius:10px");
     expect(theme.presets.body?.fontFamily).toContain("'Onest Variable'");
