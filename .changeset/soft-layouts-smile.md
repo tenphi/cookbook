@@ -7,4 +7,5 @@ Onest and JetBrains Mono as the default fonts, and align controls with the
 surface elevation state model and Tabler iconography. Selected navigation uses
 the fixed accent surface in every color scheme, and appearance controls use
 balanced icon, label, and outer spacing. Elevated surfaces use two-step Glaze
-tone intervals instead of approximate text blends.
+tone intervals instead of approximate text blends. Buttons and search inputs
+use border-defined, shadow-free control styling.

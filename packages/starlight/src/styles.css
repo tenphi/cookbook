@@ -155,6 +155,7 @@
   :where(button, input, select, textarea):not(:where(.expressive-code *)) {
     min-height: var(--control-height);
     border-radius: var(--radius);
+    box-shadow: none;
   }
 
   .expressive-code {
@@ -167,6 +168,7 @@
   .expressive-code .copy button {
     border-radius: var(--radius);
     background: var(--td-surface-3);
+    box-shadow: none;
   }
 
   .expressive-code .copy button::before {
@@ -248,7 +250,7 @@
   site-search button[data-open-modal] {
     border: var(--border-width) solid var(--td-border);
     background: var(--td-surface-3);
-    box-shadow: var(--sl-shadow-sm);
+    box-shadow: none;
     transition:
       color 120ms ease,
       background-color 120ms ease;
@@ -267,7 +269,7 @@
     border-width: var(--border-width);
     border-color: var(--td-border);
     background: var(--td-surface-2);
-    box-shadow: var(--sl-shadow-sm);
+    box-shadow: none;
     transition:
       color 120ms ease,
       background-color 120ms ease;
@@ -404,6 +406,7 @@
   #starlight__search .pagefind-ui__search-input {
     border-color: var(--td-border);
     background: var(--td-surface);
+    box-shadow: none;
   }
 
   #starlight__search .pagefind-ui__form::before {
@@ -433,7 +436,7 @@
     inline-size: var(--control-height);
     block-size: var(--control-height);
     padding: 0;
-    box-shadow: var(--sl-shadow-sm);
+    box-shadow: none;
   }
 
   starlight-menu-button button:hover,
