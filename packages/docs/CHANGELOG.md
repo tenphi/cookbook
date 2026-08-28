@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.2.0
+
+### Minor Changes
+
+- [#2](https://github.com/tenphi/tasty-docs/pull/2) [`f8438de`](https://github.com/tenphi/tasty-docs/commit/f8438de111c229b49910528a83f0bfe729e9a777) Thanks [@tenphi](https://github.com/tenphi)! - Add semantic palette inputs, public shape and layout tokens, composable typography presets with separate body and heading fonts, and consistent token-driven styling across both renderers.
+
 ## 0.1.1
 
 ### Patch Changes
