@@ -7,7 +7,7 @@ const source = join(packageRoot, "src");
 const output = join(packageRoot, "dist");
 
 await mkdir(output, { recursive: true });
-for (const path of ["components", "overrides", "routes"]) {
+for (const path of ["components", "icons", "overrides", "routes"]) {
   const sourcePath = join(source, path);
   if (existsSync(sourcePath)) {
     await cp(sourcePath, join(output, path), { recursive: true });
