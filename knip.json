@@ -1,4 +1,4 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignoreDependencies": ["@arethetypeswrong/cli", "publint"]
+  "ignoreDependencies": ["@arethetypeswrong/cli", "publint", "unrun"]
 }
