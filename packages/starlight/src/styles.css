@@ -136,9 +136,15 @@
     outline-offset: var(--outline-offset);
   }
 
-  :where(button, input, select, textarea) {
+  :where(button, input, select, textarea):not(:where(.expressive-code *)) {
     min-height: var(--control-height);
     border-radius: var(--radius);
+  }
+
+  .expressive-code {
+    --ec-brdRad: calc(var(--card-radius) - var(--border-width));
+    --ec-brdWd: var(--border-width);
+    --ec-brdCol: var(--td-border);
   }
 
   starlight-theme-select label,
