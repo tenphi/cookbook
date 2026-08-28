@@ -1,5 +1,12 @@
 # create-tasty-docs
 
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies [[`f8438de`](https://github.com/tenphi/tasty-docs/commit/f8438de111c229b49910528a83f0bfe729e9a777)]:
+  - @tenphi/docs@0.2.0
+
 ## 0.1.1
 
 ### Patch Changes
