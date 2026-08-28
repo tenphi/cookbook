@@ -229,6 +229,9 @@ importers:
       pagefind:
         specifier: 'catalog:'
         version: 1.5.2
+      react:
+        specifier: ^18.3.1 || ^19.0.0
+        version: 19.2.8
       tsx:
         specifier: ^4.20.6
         version: 4.23.12
@@ -8373,8 +8376,7 @@ snapshots:
 
   radix3@1.1.2: {}
 
-  react@19.2.8:
-    optional: true
+  react@19.2.8: {}
 
   read-yaml-file@1.1.0:
     dependencies:

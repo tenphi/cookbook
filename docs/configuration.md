@@ -84,19 +84,32 @@ theme: {
     from: "#2f5bff",
     contrast: { apca: 45 }
   },
+  palette: {
+    surface: "#fcfcff",
+    text: "#20232a",
+    textSoft: "#626875"
+  },
   tokens: {
-    "--content-width": "52rem",
-    "--sidebar-width": "18rem"
+    "$radius": "0.5rem",
+    "$card-radius": "0.875rem",
+    "$border-width": "1px",
+    "$content-width": "52rem",
+    "$sidebar-width": "18rem"
   },
   states: {},
-  presets: {},
+  presets: {
+    body: { fontFamily: "Inter, sans-serif" },
+    heading: { fontFamily: "Newsreader, serif", fontWeight: 650 }
+  },
   styles: {},
   contrastLevel: "auto"
 }
 ```
 
-The default brand is `#315efb`. A requested APCA floor below 45 requires the
-explicit `unsafeContrast: true` escape hatch. Learn more in
+The default brand is `#315efb`. `palette` supplies semantic Glaze inputs rather
+than component colors, so the whole interface continues to adapt in dark and
+high-contrast modes. A requested APCA floor below 45 requires the explicit
+`unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).
 
 ## Markdown

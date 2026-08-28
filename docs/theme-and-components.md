@@ -37,18 +37,91 @@ Tasty Docs rejects a normal APCA target below 45 unless
 `unsafeContrast: true` is present. That escape hatch is intentionally visible
 in configuration reviews.
 
-## Layout tokens
+## Semantic palette
 
-Override CSS custom properties without replacing templates:
+`brand` controls accent text, fills, and focus. The optional palette inputs
+control the neutral reading surface. The authored surface is preserved in the
+light scheme; its dark counterpart is deliberately desaturated so a nearly
+white tint cannot turn into vivid dark chrome when its tone is inverted. Glaze
+resolves all values independently for light, dark, normal, and high-contrast
+modes:
+
+```ts
+theme: {
+  brand: "#2f5bff",
+  palette: {
+    surface: "#fffdf8",
+    text: "#211f1c",
+    textSoft: "#66615a"
+  },
+  contrastLevel: "auto"
+}
+```
+
+Components consume semantic colors consistently: `surface`, `surface-2`,
+`surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
+`accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
+these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
+same resolved values.
+
+## Design tokens
+
+Token names follow Tasty conventions: `$name` becomes the CSS custom property
+`--name`. Existing `--name` keys are still accepted for compatibility.
 
 ```ts
 theme: {
   tokens: {
-    "--content-width": "58rem",
-    "--sidebar-width": "20rem"
+    "$gap": "0.5rem",
+    "$radius": "0.5rem",
+    "$card-radius": "0.875rem",
+    "$border-width": "1px",
+    "$outline-width": "2px",
+    "$outline-offset": "2px",
+    "$control-height": "2.5rem",
+    "$content-width": "58rem",
+    "$sidebar-width": "20rem"
   }
 }
 ```
+
+`radius` is the control and navigation radius; `card-radius` is the larger
+surface radius. Keeping those roles separate makes a sharp control theme or a
+soft card theme possible without one-off component overrides.
+
+## Typography presets
+
+The built-in presets are `body`, `heading`, `h1` through `h6`, `small`, and
+`code`. Presets merge property-by-property, so changing a font does not require
+copying its size, weight, or line height:
+
+```ts
+theme: {
+  presets: {
+    body: {
+      fontFamily: "Inter, system-ui, sans-serif"
+    },
+    heading: {
+      fontFamily: "Newsreader, Georgia, serif",
+      fontWeight: 650
+    },
+    h1: {
+      fontSize: "3rem",
+      letterSpacing: "-0.035em"
+    },
+    code: {
+      fontFamily: "Berkeley Mono, ui-monospace, monospace"
+    }
+  }
+}
+```
+
+Heading presets reference the `heading` family and weights; body, navigation,
+and controls reference `body`. Additional named presets are passed through to
+Tasty SSR for use in custom MDX components.
+
+The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
+are useful when building a theme editor or presenting a reset action.
 
 The default renderer emits static CSS. Appearance controls add only the small
 client behavior needed to persist a selected scheme.

@@ -25,13 +25,64 @@
       }
     },
     "navigation": { "type": ["object", "array"] },
-    "theme": { "type": "object" },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variant": { "type": "string" },
+        "brand": {},
+        "palette": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "surface": {},
+            "text": {},
+            "textSoft": {}
+          }
+        },
+        "states": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "tokens": {
+          "type": "object",
+          "propertyNames": { "pattern": "^(\\$|--)[a-zA-Z0-9_-]+$" },
+          "additionalProperties": { "type": ["string", "number"] }
+        },
+        "presets": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/typographyPreset" }
+        },
+        "styles": { "type": "object" },
+        "contrastLevel": {
+          "oneOf": [
+            { "const": "auto" },
+            { "type": "number", "minimum": 0, "maximum": 100 }
+          ]
+        }
+      }
+    },
     "markdown": { "type": "object" },
     "search": { "type": "object" },
     "components": { "type": "object" },
     "build": { "type": "object" }
   },
   "$defs": {
+    "typographyPreset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fontFamily": { "type": "string" },
+        "fontSize": { "type": ["string", "number"] },
+        "lineHeight": { "type": ["string", "number"] },
+        "letterSpacing": { "type": ["string", "number"] },
+        "fontWeight": { "type": ["string", "number"] },
+        "boldFontWeight": { "type": ["string", "number"] },
+        "iconSize": { "type": ["string", "number"] },
+        "textTransform": { "type": ["string", "number"] },
+        "fontStyle": { "type": ["string", "number"] }
+      }
+    },
     "source": {
       "type": "object",
       "oneOf": [
