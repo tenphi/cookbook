@@ -693,10 +693,6 @@
     box-shadow: none;
   }
 
-  mobile-starlight-toc nav {
-    border-block-end: var(--border-width) solid var(--td-border);
-  }
-
   mobile-starlight-toc summary {
     padding-inline: var(--sl-content-pad-x);
   }
@@ -1239,7 +1235,6 @@
       --sl-nav-pad-x: 1rem;
       --sl-nav-gap: 0.5rem;
       --sl-menu-button-size: 2.25rem;
-      --sl-mobile-toc-height: 2.5rem;
     }
 
     .td-header__primary {
@@ -1284,6 +1279,24 @@
 
     .td-top-tabs {
       display: none;
+    }
+  }
+
+  @media (max-width: 71.99rem) {
+    :root[data-has-toc] {
+      --sl-mobile-toc-height: calc(2.5rem + (var(--gap) * 3));
+    }
+
+    mobile-starlight-toc nav {
+      padding-block-start: calc(var(--gap) * 3);
+    }
+
+    mobile-starlight-toc summary {
+      block-size: 2.5rem;
+    }
+
+    :root[data-has-toc] main > .content-panel:first-of-type {
+      padding-block-start: 0;
     }
   }
 
