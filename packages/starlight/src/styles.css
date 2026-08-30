@@ -1284,11 +1284,11 @@
 
   @media (max-width: 71.99rem) {
     :root[data-has-toc] {
-      --sl-mobile-toc-height: calc(2.5rem + (var(--gap) * 3));
+      --sl-mobile-toc-height: 2.5rem;
     }
 
     mobile-starlight-toc nav {
-      padding-block-start: calc(var(--gap) * 3);
+      border-block-end: var(--border-width) solid var(--td-border);
     }
 
     mobile-starlight-toc summary {
@@ -1297,6 +1297,17 @@
 
     :root[data-has-toc] main > .content-panel:first-of-type {
       padding-block-start: 0;
+    }
+  }
+
+  @media (min-width: 50rem) and (max-width: 71.99rem) {
+    :root[data-has-toc] {
+      --sl-mobile-toc-height: calc(2.5rem + (var(--gap) * 3));
+    }
+
+    mobile-starlight-toc nav {
+      padding-block-start: calc(var(--gap) * 3);
+      border-block-end: 0;
     }
   }
 
