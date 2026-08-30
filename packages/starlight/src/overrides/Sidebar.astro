@@ -3,6 +3,7 @@ import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
 import { layout } from "virtual:tasty-docs/layout";
 import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
 import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
+import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 
 const fullSidebar = Astro.locals.starlightRoute.sidebar;
@@ -26,6 +27,11 @@ const sidebar =
       ? []
       : fullSidebar;
 ---
+
+<MobileNavigationTabs
+  base={import.meta.env.BASE_URL}
+  currentPath={Astro.url.pathname}
+/>
 
 <SidebarPersister>
   <SidebarSublist sublist={sidebar} />

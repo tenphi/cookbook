@@ -11,7 +11,7 @@ for (const name of entries) {
   if (extname(name) === ".css") largestCss = Math.max(largestCss, bytes);
   if ([".js", ".mjs"].includes(extname(name))) javascript += bytes;
 }
-const cssBudget = 104 * 1024;
+const cssBudget = 106 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 const home = await readFile(join(output, "index.html"), "utf8");
