@@ -66,6 +66,8 @@ export type NavigationItem =
 export interface NavigationTab {
   label: string;
   link: string;
+  /** Sidebar tree shown while this tab is active. */
+  items?: NavigationItem[];
 }
 
 export interface NavigationConfig {

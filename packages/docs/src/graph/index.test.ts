@@ -69,6 +69,41 @@ describe("content graph", () => {
     );
   });
 
+  it("validates deeply nested navigation owned by a tab", async () => {
+    const root = await createDocsFixture({ "README.md": "# Fixture\n" });
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        navigation: {
+          tabs: [
+            {
+              label: "Guide",
+              link: "/",
+              items: [
+                {
+                  label: "Level one",
+                  items: [
+                    {
+                      label: "Level two",
+                      items: ["/missing-at-level-three"],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(graph.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_NAV_TARGET_NOT_FOUND",
+        message: "Navigation target does not exist: /missing-at-level-three.",
+      }),
+    );
+  });
+
   it("rejects sources outside the repository unless explicitly enabled", async () => {
     const root = await createDocsFixture({ "README.md": "# Fixture\n" });
     const graph = await createDocsGraph({

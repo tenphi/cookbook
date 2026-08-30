@@ -135,7 +135,11 @@
       "required": ["label", "link"],
       "properties": {
         "label": { "type": "string" },
-        "link": { "type": "string" }
+        "link": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/navigationItem" }
+        }
       }
     },
     "typographyPreset": {

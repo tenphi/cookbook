@@ -2,6 +2,9 @@
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
 import { content } from "virtual:tasty-docs/config";
 import { layout } from "virtual:tasty-docs/layout";
+import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
+import NavigationTree from "../components/NavigationTree.astro";
+import { activeNavigationTab, navigationItemsForPath } from "../navigation.js";
 import "virtual:tasty-docs/theme.css";
 import "../styles.css";
 
@@ -27,18 +30,10 @@ export async function getStaticPaths() {
 const { entry, routes, html, site, base, search } = Astro.props;
 const withBase = (route) =>
   `${base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`}${route}` || "/";
-const normalizePath = (route) => {
-  const normalized = `/${route.replace(/^\/+|\/+$/g, "")}`;
-  return normalized === "/" ? normalized : normalized.replace(/\/$/, "");
-};
-const isCurrentTab = (link) => {
-  if (!link.startsWith("/")) return false;
-  const target = normalizePath(link);
-  const current = normalizePath(entry.route);
-  return (
-    current === target || (target !== "/" && current.startsWith(`${target}/`))
-  );
-};
+const activeTab = activeNavigationTab(layout.tabs, entry.route);
+const navigationItems =
+  navigationItemsForPath(layout, entry.route) ??
+  routes.map((route) => route.route);
 ---
 
 <!doctype html>
@@ -105,10 +100,10 @@ const isCurrentTab = (link) => {
       {
         layout.tabs.length > 0 && (
           <nav class="td-top-tabs" aria-label="Primary">
-            {layout.tabs.map((tab) => (
+            {layout.tabs.map((tab, index) => (
               <a
                 href={tab.link.startsWith("/") ? withBase(tab.link) : tab.link}
-                aria-current={isCurrentTab(tab.link) ? "page" : undefined}
+                aria-current={index === activeTab ? "page" : undefined}
               >
                 {tab.label}
               </a>
@@ -123,22 +118,13 @@ const isCurrentTab = (link) => {
         aria-label="Documentation"
         data-tasty-anatomy="Sidebar"
       >
-        <ul>
-          {
-            routes.map((route) => (
-              <li>
-                <a
-                  href={withBase(route.route)}
-                  aria-current={
-                    route.route === entry.route ? "page" : undefined
-                  }
-                >
-                  {route.title}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        <MobileNavigationTabs base={base} currentPath={entry.route} />
+        <NavigationTree
+          items={navigationItems}
+          routes={routes}
+          current={entry.route}
+          base={base}
+        />
       </nav>
       <main
         id="main-content"

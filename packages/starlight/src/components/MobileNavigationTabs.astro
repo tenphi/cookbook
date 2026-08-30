@@ -1,0 +1,40 @@
+---
+import { layout } from "virtual:tasty-docs/layout";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+
+interface Props {
+  base?: string;
+  currentPath: string;
+}
+
+const { base = "/", currentPath } = Astro.props;
+const basePath = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
+const activeTab = activeNavigationTab(
+  layout.tabs,
+  navigationPath(currentPath, basePath || "/"),
+);
+
+function tabHref(link: string): string {
+  return link.startsWith("/") ? `${basePath}${link}` || "/" : link;
+}
+---
+
+{
+  layout.tabs.length > 0 && (
+    <nav class="td-mobile-tabs print:hidden" aria-label="Sections">
+      <span class="td-mobile-tabs__label">Sections</span>
+      <ul>
+        {layout.tabs.map((tab, index) => (
+          <li>
+            <a
+              href={tabHref(tab.link)}
+              aria-current={index === activeTab ? "page" : undefined}
+            >
+              {tab.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

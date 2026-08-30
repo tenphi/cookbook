@@ -1,0 +1,98 @@
+---
+import type { DocsRoute, NavigationItem } from "@tenphi/docs";
+import { normalizeNavigationPath } from "../navigation.js";
+
+interface Props {
+  items: NavigationItem[];
+  routes: DocsRoute[];
+  current: string;
+  base: string;
+  nested?: boolean;
+}
+
+const { items, routes, current, base, nested = false } = Astro.props;
+const routeTitle = new Map(routes.map((route) => [route.route, route.title]));
+const withBase = (route: string) =>
+  route.startsWith("/")
+    ? `${base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`}${route}` ||
+      "/"
+    : route;
+const labelFor = (route: string) =>
+  routeTitle.get(normalizeNavigationPath(route)) ??
+  normalizeNavigationPath(route).split("/").filter(Boolean).at(-1) ??
+  "Home";
+const isCurrent = (route: string) =>
+  route.startsWith("/") && normalizeNavigationPath(route) === current;
+const generatedItems = (directory: string): NavigationItem[] => {
+  const root = normalizeNavigationPath(directory);
+  return routes
+    .filter(
+      (route) =>
+        root === "/" ||
+        route.route === root ||
+        route.route.startsWith(`${root}/`),
+    )
+    .map((route) => route.route);
+};
+---
+
+<ul class:list={{ "td-shell__nav-root": !nested }}>
+  {
+    items.map((item) => {
+      if (typeof item === "string") {
+        return (
+          <li>
+            <a
+              href={withBase(item)}
+              aria-current={isCurrent(item) ? "page" : undefined}
+            >
+              {labelFor(item)}
+            </a>
+          </li>
+        );
+      }
+      if ("items" in item) {
+        return (
+          <li>
+            <details open>
+              <summary>{item.label}</summary>
+              <Astro.self
+                items={item.items}
+                routes={routes}
+                current={current}
+                base={base}
+                nested
+              />
+            </details>
+          </li>
+        );
+      }
+      if ("autogenerate" in item) {
+        return (
+          <li>
+            <details open>
+              <summary>{item.label}</summary>
+              <Astro.self
+                items={generatedItems(item.autogenerate.directory)}
+                routes={routes}
+                current={current}
+                base={base}
+                nested
+              />
+            </details>
+          </li>
+        );
+      }
+      return (
+        <li>
+          <a
+            href={withBase(item.link)}
+            aria-current={isCurrent(item.link) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>

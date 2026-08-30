@@ -12,27 +12,44 @@ export default defineDocsConfig({
   },
   navigation: {
     tabs: [
-      { label: "Docs", link: "/" },
-      { label: "Getting started", link: "/getting-started" },
-      { label: "Configuration", link: "/configuration" },
-      { label: "Theme", link: "/theme-and-components" },
-      { label: "Architecture", link: "/architecture" },
-    ],
-    items: [
-      "/",
       {
-        label: "Start here",
-        items: ["/getting-started", "/content-sources"],
+        label: "Docs",
+        link: "/",
+        items: ["/"],
       },
       {
-        label: "Customize",
-        items: ["/configuration", "/theme-and-components"],
+        label: "Guide",
+        link: "/getting-started",
+        items: [
+          "/getting-started",
+          {
+            label: "Author content",
+            items: [
+              "/content-sources",
+              {
+                label: "Customize",
+                items: [
+                  "/configuration",
+                  {
+                    label: "Presentation",
+                    items: ["/theme-and-components"],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
-        label: "Operate",
+        label: "Operations",
+        link: "/cli",
         items: ["/cli", "/deployment"],
       },
-      "/architecture",
+      {
+        label: "Architecture",
+        link: "/architecture",
+        items: ["/architecture"],
+      },
     ],
   },
   theme: {
