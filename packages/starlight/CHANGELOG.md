@@ -1,5 +1,16 @@
 # @tenphi/starlight
 
+## 0.3.0
+
+### Minor Changes
+
+- [#7](https://github.com/tenphi/tasty-docs/pull/7) [`9ea4169`](https://github.com/tenphi/tasty-docs/commit/9ea4169c27e2c279a21c7563858359aadbaedd2b) Thanks [@tenphi](https://github.com/tenphi)! - Add a public layout-width token, center the complete documentation frame at a 1400px default maximum, and render a persistent divider beneath desktop navigation tabs.
+
+### Patch Changes
+
+- Updated dependencies [[`9ea4169`](https://github.com/tenphi/tasty-docs/commit/9ea4169c27e2c279a21c7563858359aadbaedd2b)]:
+  - @tenphi/docs@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes
