@@ -1,5 +1,17 @@
 # tasty-docs
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9](https://github.com/tenphi/tasty-docs/pull/9) [`27bf290`](https://github.com/tenphi/tasty-docs/commit/27bf290dfaa178e416ec990816ec79839760d390) Thanks [@tenphi](https://github.com/tenphi)! - Add independent per-tab sidebar trees with recursive nesting, route-based tab ownership, and matching standalone renderer support. Expose configured sections in mobile navigation, serve validated local content assets in development, attach the desktop tab row directly to its divider, tighten article spacing, refine responsive header and page-outline placement, and improve table readability and overflow behavior.
+
+### Patch Changes
+
+- Updated dependencies [[`27bf290`](https://github.com/tenphi/tasty-docs/commit/27bf290dfaa178e416ec990816ec79839760d390)]:
+  - @tenphi/docs@0.4.0
+  - @tenphi/starlight@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
