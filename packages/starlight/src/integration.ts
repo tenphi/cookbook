@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
-import { cp, mkdir } from "node:fs/promises";
+import { cp, mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
+import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import starlight from "./starlight-runtime.js";
 import {
@@ -83,6 +83,17 @@ export default function tastyDocs(
   let graphConfig = options.config;
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let usingStarlight = false;
+
+  async function loadGraph(refresh = false) {
+    if (!graph || refresh) {
+      graph = await createDocsGraph({
+        ...(projectRoot ? { root: projectRoot } : {}),
+        ...(graphConfig ? { config: graphConfig } : {}),
+      });
+      assertValidDocs(graph);
+    }
+    return graph;
+  }
 
   return {
     name: "tasty-docs",
@@ -201,14 +212,46 @@ export default function tastyDocs(
           context,
         );
       },
+      "astro:server:setup": async ({ server }) => {
+        let assets = docsAssetMap(await loadGraph());
+        server.middlewares.use(async (request, response, next) => {
+          if (request.method !== "GET" && request.method !== "HEAD") {
+            next();
+            return;
+          }
+          const pathname = requestPath(request.url);
+          if (!pathname.includes("/_tasty-assets/")) {
+            next();
+            return;
+          }
+          let asset = assets.get(pathname);
+          if (!asset) {
+            try {
+              assets = docsAssetMap(await loadGraph(true));
+            } catch {
+              next();
+              return;
+            }
+            asset = assets.get(pathname);
+          }
+          if (!asset?.sourcePath) {
+            next();
+            return;
+          }
+          try {
+            const body = await readFile(asset.sourcePath);
+            response.statusCode = 200;
+            response.setHeader("Content-Type", assetContentType(pathname));
+            response.setHeader("Content-Length", body.byteLength);
+            response.setHeader("Cache-Control", "no-cache");
+            response.end(request.method === "HEAD" ? undefined : body);
+          } catch {
+            next();
+          }
+        });
+      },
       "astro:build:start": async (context) => {
-        if (!graph) {
-          graph = await createDocsGraph({
-            ...(projectRoot ? { root: projectRoot } : {}),
-            ...(graphConfig ? { config: graphConfig } : {}),
-          });
-          assertValidDocs(graph);
-        }
+        await loadGraph();
         await callInner(
           usingStarlight ? inner : inner.slice(0, 1),
           "astro:build:start",
@@ -258,6 +301,44 @@ export default function tastyDocs(
       },
     },
   };
+}
+
+function docsAssetMap(graph: Awaited<ReturnType<typeof createDocsGraph>>) {
+  return new Map(
+    graph.assets.flatMap((asset) =>
+      asset.publicPath && asset.sourcePath
+        ? [[asset.publicPath, asset] as const]
+        : [],
+    ),
+  );
+}
+
+function requestPath(url: string | undefined): string {
+  try {
+    return decodeURIComponent(new URL(url ?? "/", "http://localhost").pathname);
+  } catch {
+    return "";
+  }
+}
+
+function assetContentType(pathname: string): string {
+  switch (extname(pathname).toLowerCase()) {
+    case ".avif":
+      return "image/avif";
+    case ".gif":
+      return "image/gif";
+    case ".jpeg":
+    case ".jpg":
+      return "image/jpeg";
+    case ".png":
+      return "image/png";
+    case ".svg":
+      return "image/svg+xml";
+    case ".webp":
+      return "image/webp";
+    default:
+      return "application/octet-stream";
+  }
 }
 
 function configureTastyTheme(
