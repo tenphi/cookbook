@@ -465,7 +465,7 @@
   }
 
   main > .content-panel:first-of-type {
-    padding-block-start: clamp(3rem, 7vh, 5rem);
+    padding-block-start: calc(var(--gap) * 3);
     padding-block-end: calc(var(--gap) * 2);
   }
 
@@ -1148,8 +1148,7 @@
 
   .td-shell__main {
     width: min(100%, var(--content-width));
-    padding: clamp(3rem, 7vh, 5rem) clamp(1.5rem, 5vw, 4rem)
-      calc(var(--gap) * 10);
+    padding: calc(var(--gap) * 3) clamp(1.5rem, 5vw, 4rem) calc(var(--gap) * 10);
   }
 
   .td-shell__main img {
