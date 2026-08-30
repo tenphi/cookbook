@@ -1,0 +1,36 @@
+---
+import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
+import { layout } from "virtual:tasty-docs/layout";
+import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
+import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+
+const fullSidebar = Astro.locals.starlightRoute.sidebar;
+const currentPath = navigationPath(
+  Astro.url.pathname,
+  import.meta.env.BASE_URL,
+);
+const activeTab = activeNavigationTab(layout.tabs, currentPath);
+const groupIndex =
+  (activeTab >= 0 ? layout.tabs[activeTab]?.sidebarGroup : undefined) ??
+  layout.fallbackSidebarGroup;
+const selectedGroup = layout.sectioned
+  ? groupIndex === undefined
+    ? undefined
+    : fullSidebar[groupIndex]
+  : undefined;
+const sidebar =
+  selectedGroup?.type === "group"
+    ? selectedGroup.entries
+    : layout.sectioned
+      ? []
+      : fullSidebar;
+---
+
+<SidebarPersister>
+  <SidebarSublist sublist={sidebar} />
+</SidebarPersister>
+
+<div class="md:sl-hidden">
+  <MobileMenuFooter />
+</div>

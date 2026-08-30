@@ -10,6 +10,6 @@ declare module "virtual:tasty-docs/config" {
 }
 
 declare module "virtual:tasty-docs/layout" {
-  import type { NavigationTab } from "@tenphi/docs";
-  export const layout: { tabs: NavigationTab[] };
+  import type { ResolvedNavigationLayout } from "./navigation.js";
+  export const layout: ResolvedNavigationLayout;
 }

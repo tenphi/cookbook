@@ -18,6 +18,10 @@ import {
 } from "@tenphi/tasty/core";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
+import {
+  resolveNavigationLayout,
+  type ResolvedNavigationLayout,
+} from "./navigation.js";
 import { resolveDocsTheme } from "./theme/index.js";
 
 const packageRequire = createRequire(import.meta.url);
@@ -53,11 +57,15 @@ export default function tastyDocs(
   const headerPath = fileURLToPath(
     new URL("./overrides/Header.astro", import.meta.url),
   );
+  const sidebarPath = fileURLToPath(
+    new URL("./overrides/Sidebar.astro", import.meta.url),
+  );
   const components = {
     Header: headerPath,
+    Sidebar: sidebarPath,
     ...options.config?.components?.overrides,
   };
-  const tabs = navigationTabs(options.config?.navigation);
+  const navigation = resolveNavigationLayout(options.config?.navigation);
   const inner = [
     tastyIntegration({ islands: false }),
     starlight({
@@ -68,7 +76,7 @@ export default function tastyDocs(
       customCss: ["virtual:tasty-docs/theme.css", cssPath],
       ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
       components,
-      sidebar: starlightSidebar(options.config?.navigation),
+      sidebar: starlightSidebar(navigation),
     }),
   ] satisfies AstroIntegration[];
   let projectRoot = options.root;
@@ -116,7 +124,7 @@ export default function tastyDocs(
                     options.config?.search?.enabled ??
                     true,
                 }),
-                { tabs },
+                navigation,
               ),
             ],
             resolve: {
@@ -303,21 +311,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function starlightSidebar(navigation: DocsConfig["navigation"]): unknown[] {
-  const items = Array.isArray(navigation) ? navigation : navigation?.items;
-  if (!items?.length) {
-    return [
-      {
-        label: "Documentation",
-        items: [{ autogenerate: { directory: "" } }],
-      },
-    ];
-  }
-  return items.map(starlightSidebarItem);
-}
+function starlightSidebar(layout: ResolvedNavigationLayout): unknown[] {
+  const fallback = layout.items?.length
+    ? layout.items.map(starlightSidebarItem)
+    : [{ autogenerate: { directory: "" } }];
+  if (!layout.sectioned) return fallback;
 
-function navigationTabs(navigation: DocsConfig["navigation"]) {
-  return Array.isArray(navigation) ? [] : (navigation?.tabs ?? []);
+  return [
+    ...(layout.fallbackSidebarGroup !== undefined
+      ? [
+          {
+            label: "Documentation",
+            items: (layout.items ?? []).map(starlightSidebarItem),
+          },
+        ]
+      : []),
+    ...layout.tabs.flatMap((tab) =>
+      tab.items !== undefined
+        ? [{ label: tab.label, items: tab.items.map(starlightSidebarItem) }]
+        : [],
+    ),
+  ];
 }
 
 function starlightSidebarItem(item: NavigationItem): unknown {
@@ -372,7 +386,7 @@ async function callInner<K extends keyof AstroIntegration["hooks"]>(
 function virtualDocsPlugin(
   css: string,
   getContent: () => unknown,
-  layout: { tabs: ReturnType<typeof navigationTabs> },
+  layout: ResolvedNavigationLayout,
 ) {
   const themeId = "\0virtual:tasty-docs/theme.css";
   const configId = "\0virtual:tasty-docs/config";

@@ -41,14 +41,39 @@ describe("docs configuration", () => {
       navigation: {
         items: ["/"],
         tabs: [
-          { label: "Docs", link: "/" },
+          {
+            label: "Docs",
+            link: "/",
+            items: [
+              {
+                label: "Learn",
+                items: [
+                  {
+                    label: "Foundations",
+                    items: [{ label: "Home", link: "/" }],
+                  },
+                ],
+              },
+            ],
+          },
           { label: "GitHub", link: "https://github.com/example/project" },
         ],
       },
     });
 
     expect(config.navigation.tabs).toEqual([
-      { label: "Docs", link: "/" },
+      {
+        label: "Docs",
+        link: "/",
+        items: [
+          {
+            label: "Learn",
+            items: [
+              { label: "Foundations", items: [{ label: "Home", link: "/" }] },
+            ],
+          },
+        ],
+      },
       { label: "GitHub", link: "https://github.com/example/project" },
     ]);
   });
