@@ -69,9 +69,13 @@ export default function cookbook(
   const sidebarPath = fileURLToPath(
     new URL("./overrides/Sidebar.astro", import.meta.url),
   );
+  const mobileMenuFooterPath = fileURLToPath(
+    new URL("./overrides/MobileMenuFooter.astro", import.meta.url),
+  );
   const components = {
     Header: headerPath,
     Sidebar: sidebarPath,
+    MobileMenuFooter: mobileMenuFooterPath,
     ...options.config?.components?.overrides,
   };
   const navigation = resolveNavigationLayout(options.config?.navigation);

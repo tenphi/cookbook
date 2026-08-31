@@ -30,6 +30,9 @@ function tabHref(link: string): string {
     <div class="td-header__search print:hidden">
       {shouldRenderSearch && <Search />}
     </div>
+    <div class="td-header__mobile-theme md:sl-hidden print:hidden">
+      <ThemeSelect />
+    </div>
     <div class="td-header__tools sl-hidden md:sl-flex print:hidden">
       <div class="td-header__social"><SocialIcons /></div>
       <ThemeSelect />

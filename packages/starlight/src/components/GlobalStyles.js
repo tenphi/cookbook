@@ -6,7 +6,6 @@ import chevronRightIcon from "../icons/chevron-right.svg?raw";
 import closeIcon from "../icons/close.svg?raw";
 import contrastIcon from "../icons/contrast.svg?raw";
 import deviceIcon from "../icons/device-desktop.svg?raw";
-import menuIcon from "../icons/menu.svg?raw";
 import moonIcon from "../icons/moon.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
 import sunIcon from "../icons/sun.svg?raw";
@@ -321,7 +320,7 @@ export default function GlobalStyles() {
     display: "grid",
     gridTemplateColumns:
       "minmax(9rem, $sidebar-width) minmax(12rem, 28rem) minmax(5rem, 1fr)",
-    alignItems: "center",
+    placeItems: "center stretch",
     flexGrow: "1",
     flexShrink: "1",
     flexBasis: "0%",
@@ -331,7 +330,13 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".td-header__title, .td-header__search", {
+    display: "flex",
+    alignItems: "center",
     minInlineSize: "0",
+  });
+
+  useGlobalStyles(".td-header__search site-search", {
+    inlineSize: "100%",
   });
 
   useGlobalStyles(".td-header__tools", {
@@ -377,9 +382,10 @@ export default function GlobalStyles() {
     paddingBlockStart: "($gap * 0.75)",
     paddingBlockEnd: "$gap",
     color: "#text-soft",
-    fontSize: "$small-font-size",
-    fontWeight: "$body-bold-font-weight",
-    lineHeight: "$small-line-height",
+    fontSize: "$navigation-font-size",
+    fontWeight: "$navigation-bold-font-weight",
+    lineHeight: "$navigation-line-height",
+    letterSpacing: "$navigation-letter-spacing",
     textDecoration: "none",
     whiteSpace: "nowrap",
   });
@@ -414,9 +420,10 @@ export default function GlobalStyles() {
     paddingInlineStart: "($gap * 1.25)",
     paddingInlineEnd: "($gap * 1.25)",
     color: "#text",
-    fontSize: "$small-font-size",
-    fontWeight: "$body-bold-font-weight",
-    lineHeight: "$small-line-height",
+    fontSize: "$navigation-font-size",
+    fontWeight: "$navigation-bold-font-weight",
+    lineHeight: "$navigation-line-height",
+    letterSpacing: "$navigation-letter-spacing",
   });
 
   useGlobalStyles(".td-mobile-tabs ul", {
@@ -439,9 +446,10 @@ export default function GlobalStyles() {
     minBlockSize: "2.25rem",
     padding: "($gap * 0.75) ($gap * 1.25)",
     color: "#text-soft",
-    fontSize: "$small-font-size",
-    fontWeight: "$body-bold-font-weight",
-    lineHeight: "$small-line-height",
+    fontSize: "$navigation-font-size",
+    fontWeight: "$navigation-font-weight",
+    lineHeight: "$navigation-line-height",
+    letterSpacing: "$navigation-letter-spacing",
     textDecoration: "none",
     radius: "$radius",
   });
@@ -574,14 +582,14 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    "site-search button[data-open-modal] > svg, .pagination-links a > svg, starlight-theme-select .caret, starlight-menu-button button > svg, mobile-starlight-toc .toggle > svg, #starlight__sidebar summary > svg.caret",
+    "site-search button[data-open-modal] > svg, .pagination-links a > svg, starlight-theme-select .caret, mobile-starlight-toc .toggle > svg, #starlight__sidebar summary > svg.caret",
     {
       hide: true,
     },
   );
 
   useGlobalStyles(
-    'site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, starlight-menu-button button::before, mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after, [data-docs-search-open]::before, [data-docs-search] button[aria-label="Close search"]::before, .td-shell__actions label:has([data-docs-theme])::before',
+    'site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after, [data-docs-search-open]::before, [data-docs-search] button[aria-label="Close search"]::before, .td-shell__actions label:has([data-docs-theme])::before',
     {
       content: '""',
       display: "block",
@@ -625,19 +633,6 @@ export default function GlobalStyles() {
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="next"]::before', {
     mask: `url("${iconUrl(arrowLeftIcon)}") center / contain no-repeat`,
   });
-
-  useGlobalStyles("starlight-menu-button button::before", {
-    mask: `url("${iconUrl(menuIcon)}") center / contain no-repeat`,
-    inlineSize: "1.125rem",
-    blockSize: "1.125rem",
-  });
-
-  useGlobalStyles(
-    'starlight-menu-button[aria-expanded="true"] button::before',
-    {
-      mask: `url("${iconUrl(closeIcon)}") center / contain no-repeat`,
-    },
-  );
 
   useGlobalStyles(
     "mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
@@ -709,6 +704,36 @@ export default function GlobalStyles() {
     padding: "0",
     color: "#text-soft",
     boxShadow: "none",
+  });
+
+  useGlobalStyles("starlight-menu-button button > svg", {
+    inlineSize: "1.125rem",
+    blockSize: "1.125rem",
+  });
+
+  useGlobalStyles(".td-mobile-preferences", {
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    rowGap: "($gap * 2)",
+    columnGap: "($gap * 2)",
+    paddingBlockStart: "$gap",
+    paddingBlockEnd: "$gap",
+    borderBlockStart: "$border-width solid #border",
+  });
+
+  useGlobalStyles(".td-mobile-preferences__social", {
+    display: "flex",
+    alignItems: "center",
+    rowGap: "($gap * 2)",
+    columnGap: "($gap * 2)",
+    marginInlineEnd: "auto",
+    paddingBlockStart: "($gap * 2)",
+    paddingBlockEnd: "($gap * 2)",
+  });
+
+  useGlobalStyles(".td-mobile-preferences__social:empty", {
+    hide: true,
   });
 
   useGlobalStyles(
@@ -1236,10 +1261,83 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".td-header__search", {
+    position: {
+      "@media(max-width: 49.99rem)": "fixed",
+    },
+    zIndex: {
+      "@media(max-width: 49.99rem)": "10",
+    },
+    top: {
+      "@media(max-width: 49.99rem)":
+        "(($sl-nav-height - $sl-menu-button-size) / 2)",
+    },
+    insetInlineEnd: {
+      "@media(max-width: 49.99rem)":
+        "($sl-nav-pad-x + (($sl-menu-button-size + $sl-nav-gap) * 2))",
+    },
+    placeItems: {
+      "@media(max-width: 49.99rem)": "center",
+    },
+    inlineSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
+    blockSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
     marginInlineStart: {
-      "@media(max-width: 49.99rem)": "auto",
+      "@media(max-width: 49.99rem)": "0",
     },
   });
+
+  useGlobalStyles(".td-header__search site-search", {
+    inlineSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
+    blockSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
+  });
+
+  useGlobalStyles(".td-header__mobile-theme", {
+    display: {
+      "@media(max-width: 49.99rem)": "grid",
+    },
+    position: {
+      "@media(max-width: 49.99rem)": "fixed",
+    },
+    zIndex: {
+      "@media(max-width: 49.99rem)": "10",
+    },
+    top: {
+      "@media(max-width: 49.99rem)":
+        "(($sl-nav-height - $sl-menu-button-size) / 2)",
+    },
+    insetInlineEnd: {
+      "@media(max-width: 49.99rem)":
+        "($sl-nav-pad-x + $sl-menu-button-size + $sl-nav-gap)",
+    },
+    placeItems: {
+      "@media(max-width: 49.99rem)": "center",
+    },
+    inlineSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
+    blockSize: {
+      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+    },
+  });
+
+  useGlobalStyles(
+    ".td-header__mobile-theme starlight-theme-select label, .td-header__mobile-theme starlight-theme-select select",
+    {
+      inlineSize: {
+        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+      },
+      blockSize: {
+        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+      },
+    },
+  );
 
   useGlobalStyles(".site-title, .site-title", {
     fontSize: {

@@ -127,6 +127,7 @@ export interface TypographyPresets {
   h4?: TypographyPreset;
   h5?: TypographyPreset;
   h6?: TypographyPreset;
+  navigation?: TypographyPreset;
   small?: TypographyPreset;
   code?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;

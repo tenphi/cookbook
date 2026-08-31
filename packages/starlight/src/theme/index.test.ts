@@ -45,6 +45,9 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.code?.fontFamily).toContain(
       "'JetBrains Mono Variable'",
     );
+    expect(theme.presets.body?.lineHeight).toBe(1.65);
+    expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
+    expect(theme.presets.navigation?.fontWeight).toBe(540);
   });
 
   it("resolves Tasty tokens and typography presets into the shared theme", () => {
