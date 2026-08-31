@@ -28,6 +28,7 @@ import {
   configureComponentStyles,
   resolveLegacyAnatomyStyles,
 } from "./components/component-styles.js";
+import { cookbookStates } from "./components/tasty-states.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = dirname(packageRequire.resolve("@astrojs/starlight"));
@@ -409,7 +410,10 @@ function configureTastyTheme(
   const globalStyles = resolveLegacyAnatomyStyles(theme?.styles);
 
   configure({
-    ...(theme?.states ? { states: theme.states } : {}),
+    states: {
+      ...cookbookStates,
+      ...theme?.states,
+    },
     units: TASTY_UNITS,
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,

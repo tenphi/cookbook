@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["packages/starlight/tasty.config.ts"],
+  "ignore": ["packages/starlight/src/tasty.config.js"],
   "ignoreDependencies": [
     "@arethetypeswrong/cli",
     "@astrojs/react",

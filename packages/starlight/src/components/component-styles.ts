@@ -6,20 +6,26 @@ import {
   type CookbookComponentName,
 } from "@tenphi/docs";
 
-let configuredStyles: ComponentStylesConfig = {};
+// Astro can load the integration and renderer through separate module graphs.
+// Keep their component configuration on the shared process global.
+const sharedConfiguration = globalThis as typeof globalThis & {
+  __tenphiCookbookComponentStyles?: ComponentStylesConfig;
+};
 const cookbookComponentNames = new Set<string>(COOKBOOK_COMPONENT_NAMES);
 
 export function configureComponentStyles(
   styles: ComponentStylesConfig | undefined,
 ): void {
-  configuredStyles = styles ?? {};
+  sharedConfiguration.__tenphiCookbookComponentStyles = styles ?? {};
 }
 
 export function resolveComponentStyles(
   name: CookbookComponentName,
   defaults: Styles,
 ): Styles {
-  const configured = configuredStyles[name] as ComponentStyleConfig | undefined;
+  const configured = sharedConfiguration.__tenphiCookbookComponentStyles?.[
+    name
+  ] as ComponentStyleConfig | undefined;
   if (!configured) return defaults;
   if (isModeConfig(configured)) {
     const styles = configured.styles as Styles;
@@ -28,6 +34,19 @@ export function resolveComponentStyles(
       : mergeStyles(defaults, styles);
   }
   return mergeStyles(defaults, configured as Styles);
+}
+
+export function resolveComponentStyleOverride(
+  name: CookbookComponentName,
+): { mode: "extend" | "replace"; styles: Styles } | undefined {
+  const configured = sharedConfiguration.__tenphiCookbookComponentStyles?.[
+    name
+  ] as ComponentStyleConfig | undefined;
+  if (!configured) return undefined;
+  if (isModeConfig(configured)) {
+    return { mode: configured.mode, styles: configured.styles as Styles };
+  }
+  return { mode: "extend", styles: configured as Styles };
 }
 
 /** Preserve custom anatomy names from the pre-component style API. */

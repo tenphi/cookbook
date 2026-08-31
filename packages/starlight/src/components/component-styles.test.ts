@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   configureComponentStyles,
   resolveLegacyAnatomyStyles,
+  resolveComponentStyleOverride,
   resolveComponentStyles,
 } from "./component-styles.js";
 
@@ -40,6 +41,24 @@ describe("component style configuration", () => {
     });
     expect(resolveComponentStyles("Card", defaults)).toEqual({
       display: "grid",
+    });
+  });
+
+  it("normalizes configured component overrides for Tasty composition", () => {
+    expect(resolveComponentStyleOverride("Card")).toBeUndefined();
+
+    configureComponentStyles({ Card: { padding: "3x" } });
+    expect(resolveComponentStyleOverride("Card")).toEqual({
+      mode: "extend",
+      styles: { padding: "3x" },
+    });
+
+    configureComponentStyles({
+      Card: { mode: "replace", styles: { display: "grid" } },
+    });
+    expect(resolveComponentStyleOverride("Card")).toEqual({
+      mode: "replace",
+      styles: { display: "grid" },
     });
   });
 

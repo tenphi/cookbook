@@ -5,6 +5,9 @@ import chevronRightIcon from "../icons/chevron-right.svg?raw";
 import closeIcon from "../icons/close.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
 import { svgIconUrl } from "./svg-icon.js";
+import { configureCookbookStates } from "./tasty-states.js";
+
+configureCookbookStates();
 
 // These global rules bridge Cookbook tokens into markup owned by Astro,
 // Starlight, Expressive Code, and Pagefind. Cookbook-owned components use
@@ -211,8 +214,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("#starlight__sidebar .sidebar-content", {
-    rowGap: "($gap * 3)",
-    columnGap: "($gap * 3)",
+    gap: "($gap * 3)",
     paddingBlockStart: "($gap * 4)",
     paddingBlockEnd: "($gap * 6)",
   });
@@ -270,7 +272,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("site-search button[data-open-modal]", {
-    border: "$border-width solid #border",
+    border: true,
     fill: "#surface",
     boxShadow: "none",
     transition: "color 120ms ease, background-color 120ms ease",
@@ -305,14 +307,14 @@ export default function GlobalStyles() {
   useGlobalStyles("main .pagination-links", {
     gridTemplateColumns: {
       "": "repeat(2, minmax(0, 1fr))",
-      "@media(max-width: 40rem)": "1fr",
+      "@small": "1fr",
     },
   });
 
   useGlobalStyles('main .pagination-links a[rel="next"]:first-child', {
     gridColumn: {
       "": "2",
-      "@media(max-width: 40rem)": "1",
+      "@small": "1",
     },
   });
 
@@ -383,12 +385,11 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("site-search button[data-close-modal]", {
-    rowGap: "0.375rem",
-    columnGap: "0.375rem",
+    gap: "0.375rem",
     paddingInlineStart: "0.625rem",
     paddingInlineEnd: "0.625rem",
     color: "#text",
-    border: "$border-width solid #border",
+    border: true,
     radius: "$radius",
   });
 
@@ -417,7 +418,7 @@ export default function GlobalStyles() {
     "starlight-menu-button button, mobile-starlight-toc .toggle",
     {
       color: "#text",
-      border: "$border-width solid #border",
+      border: true,
       radius: "$radius",
       fill: "#surface-3",
       transition: "color 120ms ease, background-color 120ms ease",
@@ -467,8 +468,7 @@ export default function GlobalStyles() {
   useGlobalStyles(
     "mobile-starlight-toc .toggle, mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
     {
-      rowGap: "$gap",
-      columnGap: "$gap",
+      gap: "$gap",
       padding: "0",
       color: "#text-soft",
       fontSize: "$small-font-size",
@@ -507,7 +507,7 @@ export default function GlobalStyles() {
     color: "#text-soft",
     fontSize: "$small-font-size",
     lineHeight: "$small-line-height",
-    border: "$border-width solid #border",
+    border: true,
     radius: "$card-radius",
     scrollbarWidth: "thin",
   });
@@ -551,7 +551,7 @@ export default function GlobalStyles() {
     fontSize: "$code-font-size",
     lineHeight: "$code-line-height",
     letterSpacing: "$code-letter-spacing",
-    border: "$border-width solid #border",
+    border: true,
     radius: "$card-radius",
   });
 
@@ -561,16 +561,16 @@ export default function GlobalStyles() {
 
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
     "$sl-nav-height": {
-      "@media(max-width: 49.99rem)": "3.5rem",
+      "@mobile": "3.5rem",
     },
     "$sl-nav-pad-x": {
-      "@media(max-width: 49.99rem)": "1rem",
+      "@mobile": "1rem",
     },
     "$sl-nav-gap": {
-      "@media(max-width: 49.99rem)": "0.5rem",
+      "@mobile": "0.5rem",
     },
     "$sl-menu-button-size": {
-      "@media(max-width: 49.99rem)": "2.25rem",
+      "@mobile": "2.25rem",
     },
   });
 
@@ -578,25 +578,25 @@ export default function GlobalStyles() {
     "site-search button[data-open-modal], site-search button[data-open-modal]",
     {
       justifyContent: {
-        "@media(max-width: 49.99rem)": "center",
+        "@mobile": "center",
       },
       inlineSize: {
-        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+        "@mobile": "$sl-menu-button-size",
       },
       blockSize: {
-        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+        "@mobile": "$sl-menu-button-size",
       },
       minBlockSize: {
-        "@media(max-width: 49.99rem)": "0",
+        "@mobile": "0",
       },
       padding: {
-        "@media(max-width: 49.99rem)": "0",
+        "@mobile": "0",
       },
       color: {
-        "@media(max-width: 49.99rem)": "#text-soft",
+        "@mobile": "#text-soft",
       },
       fill: {
-        "@media(max-width: 49.99rem)": "#surface-3",
+        "@mobile": "#surface-3",
       },
     },
   );
@@ -605,10 +605,10 @@ export default function GlobalStyles() {
     "site-search button[data-open-modal]:hover, site-search button[data-open-modal]:hover",
     {
       color: {
-        "@media(max-width: 49.99rem)": "#text",
+        "@mobile": "#text",
       },
       fill: {
-        "@media(max-width: 49.99rem)": "#surface-3-hover",
+        "@mobile": "#surface-3-hover",
       },
     },
   );
@@ -617,32 +617,32 @@ export default function GlobalStyles() {
     "site-search button[data-open-modal]:active, site-search button[data-open-modal]:active",
     {
       color: {
-        "@media(max-width: 49.99rem)": "#text",
+        "@mobile": "#text",
       },
       fill: {
-        "@media(max-width: 49.99rem)": "#surface-3-pressed",
+        "@mobile": "#surface-3-pressed",
       },
     },
   );
 
   useGlobalStyles("site-search button[data-open-modal]::before", {
     inlineSize: {
-      "@media(max-width: 49.99rem)": "1.125rem",
+      "@mobile": "1.125rem",
     },
     blockSize: {
-      "@media(max-width: 49.99rem)": "1.125rem",
+      "@mobile": "1.125rem",
     },
   });
 
   useGlobalStyles(":root[data-has-toc]", {
     "$sl-mobile-toc-height": {
-      "@media(max-width: 71.99rem)": "2.5rem",
+      "@narrow-layout": "2.5rem",
     },
   });
 
   useGlobalStyles("mobile-starlight-toc nav", {
     borderBlockEnd: {
-      "@media(max-width: 71.99rem)": "$border-width solid #border",
+      "@narrow-layout": "$border-width solid #border",
     },
   });
 
@@ -650,72 +650,71 @@ export default function GlobalStyles() {
     "mobile-starlight-toc summary, mobile-starlight-toc summary",
     {
       blockSize: {
-        "@media(max-width: 71.99rem)": "2.5rem",
+        "@narrow-layout": "2.5rem",
       },
     },
   );
 
   useGlobalStyles(":root[data-has-toc] main > .content-panel:first-of-type", {
     paddingBlockStart: {
-      "@media(max-width: 71.99rem)": "0",
+      "@narrow-layout": "0",
     },
   });
 
   useGlobalStyles(":root[data-has-toc], :root[data-has-toc]", {
     "$sl-mobile-toc-height": {
-      "@media(min-width: 50rem) & @media(max-width: 71.99rem)":
-        "calc(2.5rem + ($gap * 3))",
+      "@medium-layout": "calc(2.5rem + ($gap * 3))",
     },
   });
 
   useGlobalStyles("mobile-starlight-toc nav, mobile-starlight-toc nav", {
     paddingBlockStart: {
-      "@media(min-width: 50rem) & @media(max-width: 71.99rem)": "($gap * 3)",
+      "@medium-layout": "($gap * 3)",
     },
     borderBlockEnd: {
-      "@media(min-width: 50rem) & @media(max-width: 71.99rem)": "0",
+      "@medium-layout": "0",
     },
   });
 
   useGlobalStyles(":root:has(.td-top-tabs) body > .page > .header", {
     paddingBlockStart: {
-      "@media(min-width: 50rem)": "0",
+      "@desktop": "0",
     },
     paddingBlockEnd: {
-      "@media(min-width: 50rem)": "0",
+      "@desktop": "0",
     },
   });
 
   useGlobalStyles("body > .page > .header", {
     borderBottom: {
-      "@media(min-width: 50rem)": "$border-width solid #border",
+      "@desktop": "$border-width solid #border",
     },
   });
 
   useGlobalStyles(".main-frame", {
     inlineSize: {
-      "@media(min-width: 50rem)": "min(100%, $layout-width)",
+      "@desktop": "min(100%, $layout-width)",
     },
     marginInlineStart: {
-      "@media(min-width: 50rem)": "auto",
+      "@desktop": "auto",
     },
     marginInlineEnd: {
-      "@media(min-width: 50rem)": "auto",
+      "@desktop": "auto",
     },
   });
 
   useGlobalStyles(".sidebar-pane", {
     insetInlineStart: {
-      "@media(min-width: 50rem)": "max(0px, calc((100% - $layout-width) / 2))",
+      "@desktop": "max(0px, calc((100% - $layout-width) / 2))",
     },
   });
 
   useGlobalStyles("*, *::before, *::after", {
     scrollBehavior: {
-      "@media(prefers-reduced-motion: reduce)": "auto",
+      "@reduced-motion": "auto",
     },
     transitionDuration: {
-      "@media(prefers-reduced-motion: reduce)": "0.01ms",
+      "@reduced-motion": "0.01ms",
     },
   });
 
