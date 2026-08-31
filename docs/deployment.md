@@ -63,7 +63,7 @@ domain in the Pages settings; a `CNAME` file in the artifact is ignored and is
 not required.
 
 This site is deployed by the repository's Pages workflow to
-`tastydocs.tenphi.me` with HTTPS enforcement enabled.
+`cookbook.tenphi.me` with HTTPS enforcement enabled.
 
 ## Other static hosts
 
