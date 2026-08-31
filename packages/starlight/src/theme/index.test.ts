@@ -31,8 +31,8 @@ describe("Glaze theme adapter", () => {
     );
     expect(theme.colors.surface2.light).toBe("oklch(0.9789 0 0)");
     expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
-    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0004 0)");
-    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0004 0)");
+    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0003 0)");
+    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0003 0)");
     expect(tokens["#surface-2-hover"]).toContain("color-mix");
     expect(tokens["#surface-2-pressed"]).toContain("color-mix");
     expect(tokens["#surface-3-hover"]).toContain("color-mix");
@@ -73,5 +73,21 @@ describe("Glaze theme adapter", () => {
     expect(tokens["$border-width"]).toBe("2px");
     expect(tokens["$layout-width"]).toBe("72rem");
     expect(tokens).not.toHaveProperty("--legacy-token");
+  });
+
+  it("builds restrained surface colors in two-tone steps", () => {
+    const theme = resolveDocsTheme({
+      palette: { surface: "#fcfcff" },
+    });
+
+    expect(theme.colors.surface.light).toBe("oklch(0.9919 0.004 286.33)");
+    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0138 286.33)");
+    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0222 286.33)");
+    expect(theme.colors.surface2.lightContrast).toBe(
+      theme.colors.surface2.light,
+    );
+    expect(theme.colors.surface3.lightContrast).toBe(
+      theme.colors.surface3.light,
+    );
   });
 });

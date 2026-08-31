@@ -218,7 +218,7 @@ export default function GlobalStyles() {
     position: "relative",
     display: "inline-flex",
     alignItems: "center",
-    inlineSize: "auto",
+    inlineSize: "$control-height",
     blockSize: "$control-height",
     padding: "0",
     border: "0",
@@ -228,26 +228,27 @@ export default function GlobalStyles() {
   useGlobalStyles("starlight-theme-select .label-icon", {
     position: "absolute",
     zIndex: "1",
-    insetInlineStart: "0.75rem",
+    insetInlineStart: "50%",
     inlineSize: "1rem",
     blockSize: "1rem",
     color: "#text-soft",
+    translate: "-50% 0",
     pointerEvents: "none",
   });
 
   useGlobalStyles("starlight-theme-select select", {
     appearance: "base-select",
     position: "static",
-    inlineSize: "auto",
-    minInlineSize: "7rem",
+    inlineSize: "$control-height",
+    minInlineSize: "0",
     blockSize: "$control-height",
     paddingBlockStart: "0",
     paddingBlockEnd: "0",
-    paddingInlineStart: "2.25rem",
-    paddingInlineEnd: "0.75rem",
+    paddingInlineStart: "0",
+    paddingInlineEnd: "0",
     margin: "0",
-    color: "#text",
-    fontSize: "$small-font-size",
+    color: "#clear",
+    fontSize: "0",
     fontWeight: "$body-bold-font-weight",
     border: "$border-width solid #border",
     fill: "#surface-3",
@@ -265,16 +266,12 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("starlight-theme-select select::picker-icon", {
-    color: "#text-soft",
-    transition: "rotate 120ms ease",
-  });
-
-  useGlobalStyles("starlight-theme-select select:open::picker-icon", {
-    rotate: "180deg",
+    hide: true,
   });
 
   useGlobalStyles("::picker(select)", {
     appearance: "base-select",
+    minInlineSize: "8rem",
     marginBlockStart: "0.5rem",
     padding: "0.375rem",
     color: "#text",
@@ -287,6 +284,7 @@ export default function GlobalStyles() {
   useGlobalStyles("starlight-theme-select option", {
     padding: "0.625rem 0.75rem",
     color: "#text",
+    fontSize: "$small-font-size",
     radius: "$radius",
     fill: "#surface-2",
   });

@@ -59,27 +59,29 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     from: surfaceFrom,
     mode: "auto",
     // Near-white brand surfaces can carry a numerically large OKHSL
-    // saturation that becomes vivid when tone-inverted. Preserve the authored
-    // light surface, but keep dark chrome in the neutral-surface range.
+    // saturation that becomes vivid as the ramp moves away from white. Reduce
+    // saturation along the light ramp and keep dark chrome nearly neutral.
     darkSaturation: 0.35,
   });
   const surface2 = glaze.color(
     {
       from: surfaceFrom,
       base: surface,
-      tone: ["-2", "-4"],
+      tone: "-2",
       mode: "auto",
-      darkSaturation: 0.35,
+      saturationFactor: 0.9,
+      darkSaturation: 0.325,
     },
     glazeOptions,
   );
   const surface3 = glaze.color(
     {
       from: surfaceFrom,
-      base: surface,
-      tone: ["-4", "-8"],
+      base: surface2,
+      tone: "-2",
       mode: "auto",
-      darkSaturation: 0.35,
+      saturationFactor: 0.8,
+      darkSaturation: 0.3,
     },
     glazeOptions,
   );
