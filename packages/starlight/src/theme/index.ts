@@ -27,6 +27,7 @@ export interface ResolvedDocsTheme {
     accentSurface: Record<string, string>;
     accentSurfaceText: Record<string, string>;
     focus: Record<string, string>;
+    shadow: Record<string, string>;
   };
   tokens: ThemeTokens;
   presets: Record<string, TypographyPreset>;
@@ -133,9 +134,40 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     contrast: { apca: 60 },
     mode: "auto",
   });
-
   const resolvedSurface = surface.resolve();
   const resolvedAccent = accentText.resolve();
+  const shadowTheme = glaze(
+    {
+      hue: variantToOkhsl(resolvedSurface.light).h,
+      saturation: variantToOkhsl(resolvedSurface.light).s * 100,
+      darkHue: variantToOkhsl(resolvedSurface.dark).h,
+      darkSaturation: variantToOkhsl(resolvedSurface.dark).s * 100,
+    },
+    undefined,
+    glazeOptions,
+  );
+  shadowTheme.colors({
+    surface: {
+      from: surfaceFrom,
+      mode: "auto",
+      darkSaturation: 0.35,
+    },
+    text: {
+      from: theme.palette?.text ?? "#20232a",
+      base: "surface",
+      role: "text",
+      contrast: { apca: [75, 90] },
+      mode: "auto",
+    },
+    shadow: {
+      type: "shadow",
+      bg: "surface",
+      fg: "text",
+      intensity: [12, 20],
+      tuning: { alphaMax: 0.28 },
+    },
+  });
+
   const scores = {
     light: score(resolvedAccent.light, resolvedSurface.light),
     dark: score(resolvedAccent.dark, resolvedSurface.dark),
@@ -161,6 +193,8 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     }
   }
   const outputOptions = { modes: { highContrast: true } } as const;
+  const shadow = shadowTheme.json(outputOptions).shadow;
+  if (!shadow) throw new Error("The Glaze shadow token failed to resolve.");
   const colors = {
     surface: surface.json(outputOptions),
     surface2: surface2.json(outputOptions),
@@ -171,6 +205,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     accentSurface: accentSurface.json(outputOptions),
     accentSurfaceText: accentSurfaceText.json(outputOptions),
     focus: focus.json(outputOptions),
+    shadow,
   };
   return {
     colors,

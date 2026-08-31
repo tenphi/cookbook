@@ -270,12 +270,14 @@ export default function GlobalStyles() {
 
   useGlobalStyles("::picker(select)", {
     appearance: "base-select",
+    display: "grid",
+    rowGap: "1px",
     minInlineSize: "8rem",
     marginBlockStart: "0.5rem",
-    padding: "0.375rem",
+    padding: "4px",
     color: "#text",
     border: "$border-width solid #border",
-    radius: "$radius",
+    radius: "$card-radius",
     fill: "#surface-2",
     boxShadow: "0 0.75rem 2rem #shadow",
   });

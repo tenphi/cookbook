@@ -37,7 +37,7 @@ export function tastyTokens(theme: ResolvedDocsTheme): ConfigTokens {
     "#accent-surface": colorStates(theme.colors.accentSurface),
     "#accent-surface-text": colorStates(theme.colors.accentSurfaceText),
     "#focus": colorStates(theme.colors.focus),
-    "#shadow": mix("#text", 16, "transparent"),
+    "#shadow": colorStates(theme.colors.shadow),
     "#overlay": mix("#text", 58, "transparent"),
   } satisfies ConfigTokens);
 

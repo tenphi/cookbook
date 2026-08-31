@@ -48,6 +48,9 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.body?.lineHeight).toBe(1.65);
     expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
     expect(theme.presets.navigation?.fontWeight).toBe(540);
+    expect(theme.colors.shadow.light).toMatch(/^oklch\(/);
+    expect(theme.colors.shadow.dark).toMatch(/^oklch\(/);
+    expect(theme.colors.shadow.dark).not.toBe(theme.colors.shadow.light);
   });
 
   it("resolves Tasty tokens and typography presets into the shared theme", () => {
