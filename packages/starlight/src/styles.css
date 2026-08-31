@@ -1158,6 +1158,15 @@
     overflow: auto;
   }
 
+  .td-shell__main :where(pre):not(:where(.td-preview *)) {
+    padding: calc(var(--gap) * 1.5) calc(var(--gap) * 2);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
+    letter-spacing: var(--code-letter-spacing);
+    border: var(--border-width) solid var(--td-border);
+    border-radius: var(--card-radius);
+  }
+
   .td-shell__main a {
     color: var(--td-accent-text);
   }
@@ -1320,8 +1329,8 @@
       padding-block: 0;
     }
 
-    :root:has(.td-top-tabs) body > .page > .header,
-    .td-shell__header:has(.td-top-tabs) {
+    body > .page > .header,
+    .td-shell__header {
       border-bottom: var(--border-width) solid var(--td-border);
     }
 
