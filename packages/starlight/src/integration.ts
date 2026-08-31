@@ -63,12 +63,6 @@ export default function cookbook(
   }
   configureTastyTheme(options.config?.theme, docsTheme);
   configureComponentStyles(options.config?.theme?.styles);
-  const searchClientPath = fileURLToPath(
-    new URL("./client/search.js", import.meta.url),
-  );
-  const appearanceClientPath = fileURLToPath(
-    new URL("./client/appearance.js", import.meta.url),
-  );
   const headerPath = fileURLToPath(
     new URL("./overrides/Header.astro", import.meta.url),
   );
@@ -95,20 +89,11 @@ export default function cookbook(
     islands: false,
     css: { mode: "extract" },
   }) as unknown as AstroIntegration;
-  const starlightIntegration = starlight({
-    title: options.config?.site?.title ?? "Documentation",
-    ...(options.config?.site?.description
-      ? { description: options.config.site.description }
-      : {}),
-    ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
-    components,
-    sidebar: starlightSidebar(navigation),
-  });
-  let inner: AstroIntegration[] = [tasty, starlightIntegration];
+  let inner: AstroIntegration[] = [tasty];
   let projectRoot = options.root;
   let graphConfig = options.config;
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
-  let usingStarlight = false;
+  let usingContentCollection = false;
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
@@ -128,7 +113,6 @@ export default function cookbook(
         const react = (
           await importNative(pathToFileURL(astroReactIntegration).href)
         ).default();
-        inner = [react, tasty, starlightIntegration];
         if (
           context.config.integrations.some(
             (integration) => integration.name === "@astrojs/starlight",
@@ -144,7 +128,28 @@ export default function cookbook(
           ...options.config,
           build: { ...options.config?.build, base },
         };
-        usingStarlight = hasContentConfig(context.config.srcDir);
+        usingContentCollection = hasContentConfig(context.config.srcDir);
+        const starlightIntegration = starlight({
+          title: options.config?.site?.title ?? "Documentation",
+          ...(options.config?.site?.description
+            ? { description: options.config.site.description }
+            : {}),
+          ...(options.config?.search?.enabled === false
+            ? { pagefind: false }
+            : {}),
+          ...(!usingContentCollection ? { disable404Route: true } : {}),
+          components,
+          sidebar: usingContentCollection ? starlightSidebar(navigation) : [],
+        });
+        inner = [react, tasty, starlightIntegration];
+        let markdownRuntime = {
+          image: context.config.image,
+          markdown: context.config.markdown,
+          srcDir: context.config.srcDir,
+        };
+        let markdownRenderer: ReturnType<
+          typeof markdownRuntime.markdown.processor.createRenderer
+        >;
         context.updateConfig({
           base,
           output: "static",
@@ -160,8 +165,39 @@ export default function cookbook(
             plugins: [
               virtualDocsPlugin(async () => {
                 const loaded = await loadGraph();
+                const entries = usingContentCollection
+                  ? loaded.entries
+                  : await Promise.all(
+                      loaded.entries.map(async (entry) => {
+                        const { image, markdown, srcDir } = markdownRuntime;
+                        markdownRenderer ??= markdown.processor.createRenderer({
+                          image,
+                          syntaxHighlight: markdown.syntaxHighlight,
+                          shikiConfig: markdown.shikiConfig,
+                          gfm: markdown.gfm,
+                          smartypants: markdown.smartypants,
+                        } as unknown as Parameters<
+                          typeof markdown.processor.createRenderer
+                        >[0]);
+                        const renderer = await markdownRenderer;
+                        const rendered = await renderer.render(
+                          entry.transformedBody,
+                          {
+                            frontmatter: entry.frontmatter,
+                            fileURL: starlightContentUrl(entry.route, srcDir),
+                          },
+                        );
+                        return {
+                          ...entry,
+                          rendered: {
+                            html: rendered.code,
+                            headings: rendered.metadata.headings,
+                          },
+                        };
+                      }),
+                    );
                 return {
-                  entries: loaded.entries,
+                  entries,
                   routes: loaded.routes,
                   site: documentedSite(loaded),
                   base: loaded.config.build.base,
@@ -197,28 +233,17 @@ export default function cookbook(
         });
         await callInner(inner.slice(0, 2), "astro:config:setup", context);
 
-        if (!usingStarlight) {
+        if (!usingContentCollection) {
           graph = await createDocsGraph({
             root: projectRoot,
             config: graphConfig,
           });
           assertValidDocs(graph);
-          if (graph.config.search.enabled) {
-            context.injectScript(
-              "page",
-              `import ${JSON.stringify(searchClientPath)};`,
-            );
-          }
-          context.injectScript(
-            "page",
-            `import ${JSON.stringify(appearanceClientPath)};`,
-          );
           context.injectRoute({
             pattern: "[...route]",
             entrypoint: new URL("./routes/DocsPage.astro", import.meta.url),
             prerender: true,
           });
-          return;
         }
 
         // Starlight inserts its own follow-up integrations immediately after
@@ -238,7 +263,9 @@ export default function cookbook(
             await callInner(
               [starlightWithPlugins],
               "astro:config:setup",
-              context,
+              usingContentCollection
+                ? context
+                : withoutStarlightDocsRoute(context),
             );
           } finally {
             const placeholderIndex =
@@ -247,13 +274,21 @@ export default function cookbook(
               context.config.integrations.splice(placeholderIndex, 1);
           }
         }
+        context.config.integrations.push({
+          name: "cookbook-markdown-renderer",
+          hooks: {
+            "astro:config:setup": ({ config }) => {
+              markdownRuntime = {
+                image: config.image,
+                markdown: config.markdown,
+                srcDir: config.srcDir,
+              };
+            },
+          },
+        });
       },
       "astro:config:done": async (context) => {
-        await callInner(
-          usingStarlight ? inner : inner.slice(0, 2),
-          "astro:config:done",
-          context,
-        );
+        await callInner(inner, "astro:config:done", context);
       },
       "astro:server:setup": async ({ server }) => {
         let assets = docsAssetMap(await loadGraph());
@@ -295,18 +330,10 @@ export default function cookbook(
       },
       "astro:build:start": async (context) => {
         await loadGraph();
-        await callInner(
-          usingStarlight ? inner : inner.slice(0, 2),
-          "astro:build:start",
-          context,
-        );
+        await callInner(inner, "astro:build:start", context);
       },
       "astro:build:done": async (context) => {
-        await callInner(
-          usingStarlight ? inner : inner.slice(0, 2),
-          "astro:build:done",
-          context,
-        );
+        await callInner(inner, "astro:build:done", context);
         if (!graph) return;
         const output = fileURLToPath(context.dir);
         for (const asset of graph.assets) {
@@ -315,35 +342,14 @@ export default function cookbook(
           await mkdir(dirname(target), { recursive: true });
           await cp(asset.sourcePath, target);
         }
-        if (!usingStarlight && graph.config.search.enabled) {
-          const { close, createIndex } = await import("pagefind");
-          const created = await createIndex({
-            rootSelector: "[data-pagefind-body]",
-          });
-          if (!created.index || created.errors.length > 0) {
-            throw new Error(
-              `Pagefind failed to start: ${created.errors.join("; ")}`,
-            );
-          }
-          const indexed = await created.index.addDirectory({ path: output });
-          if (indexed.errors.length > 0) {
-            throw new Error(
-              `Pagefind failed to index the site: ${indexed.errors.join("; ")}`,
-            );
-          }
-          const written = await created.index.writeFiles({
-            outputPath: join(output, "pagefind"),
-          });
-          await close();
-          if (written.errors.length > 0) {
-            throw new Error(
-              `Pagefind failed to write the index: ${written.errors.join("; ")}`,
-            );
-          }
-        }
       },
     },
   };
+}
+
+function starlightContentUrl(route: string, srcDir: URL): URL {
+  const slug = route === "/" ? "index" : route.replace(/^\/+|\/+$/g, "");
+  return new URL(`content/docs/${slug}.md`, srcDir);
 }
 
 function docsAssetMap(graph: Awaited<ReturnType<typeof createDocsGraph>>) {
@@ -493,6 +499,21 @@ async function callInner<K extends keyof AstroIntegration["hooks"]>(
       );
     }
   }
+}
+
+function withoutStarlightDocsRoute(
+  context: HookParameters<"astro:config:setup">,
+): HookParameters<"astro:config:setup"> {
+  return new Proxy(context, {
+    get(target, property, receiver) {
+      if (property !== "injectRoute") {
+        return Reflect.get(target, property, receiver);
+      }
+      return (route: Parameters<typeof context.injectRoute>[0]) => {
+        if (route.pattern !== "[...slug]") context.injectRoute(route);
+      };
+    },
+  });
 }
 
 function virtualDocsPlugin(

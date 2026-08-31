@@ -147,21 +147,12 @@ export interface ThemePaletteConfig {
 
 /** Cookbook components whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
-  "AppearanceControl",
   "Card",
-  "DocsArticle",
-  "DocsLayout",
-  "DocsSidebar",
   "Logo",
   "MobileMenuFooter",
   "MobileNavigationTabs",
-  "NavigationTree",
   "PackageVersion",
   "Preview",
-  "SearchDialog",
-  "SearchTrigger",
-  "SkipLink",
-  "StandaloneHeader",
   "Steps",
   "Tabs",
   "ThemeSelect",

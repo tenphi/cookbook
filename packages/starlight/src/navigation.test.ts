@@ -4,6 +4,7 @@ import {
   navigationItemsForPath,
   navigationPath,
   resolveNavigationLayout,
+  starlightPageSidebar,
 } from "./navigation.js";
 
 describe("section navigation", () => {
@@ -66,5 +67,59 @@ describe("section navigation", () => {
     expect(navigationPath("/manual/api/client/", "/manual/")).toBe(
       "/api/client",
     );
+  });
+
+  it("builds manual sidebars when pages do not use a content collection", () => {
+    const routes = [
+      {
+        route: "/",
+        entryId: "home",
+        sourcePath: "README.md",
+        title: "Home",
+      },
+      {
+        route: "/api/client",
+        entryId: "client",
+        sourcePath: "docs/api/client.md",
+        title: "Client",
+      },
+      {
+        route: "/configuration",
+        entryId: "configuration",
+        sourcePath: "docs/configuration.md",
+        title: "Configuration",
+      },
+    ];
+
+    expect(starlightPageSidebar(layout, routes)).toEqual([
+      {
+        label: "Documentation",
+        items: [{ label: "fallback", link: "/fallback" }],
+      },
+      { label: "Docs", items: [{ label: "Home", link: "/" }] },
+      {
+        label: "Guide",
+        items: [
+          {
+            label: "Level one",
+            items: [
+              {
+                label: "Level two",
+                items: [{ label: "Configuration", link: "/configuration" }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: "API",
+        items: [
+          {
+            label: "Generated",
+            items: [{ label: "Client", link: "/api/client" }],
+          },
+        ],
+      },
+    ]);
   });
 });

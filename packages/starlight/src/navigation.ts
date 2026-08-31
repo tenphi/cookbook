@@ -1,4 +1,9 @@
-import type { DocsConfig, NavigationItem, NavigationTab } from "@tenphi/docs";
+import type {
+  DocsConfig,
+  DocsRoute,
+  NavigationItem,
+  NavigationTab,
+} from "@tenphi/docs";
 
 export interface ResolvedNavigationTab extends NavigationTab {
   /** Index of the tab's resolved Starlight sidebar group. */
@@ -11,6 +16,10 @@ export interface ResolvedNavigationLayout {
   tabs: ResolvedNavigationTab[];
   sectioned: boolean;
 }
+
+export type StarlightPageSidebarItem =
+  | { label: string; link: string }
+  | { label: string; items: StarlightPageSidebarItem[] };
 
 export function resolveNavigationLayout(
   navigation: DocsConfig["navigation"],
@@ -42,6 +51,59 @@ export function navigationItemsForPath(
   return active >= 0 && layout.tabs[active]?.items !== undefined
     ? layout.tabs[active].items
     : layout.items;
+}
+
+/** Build a manual Starlight sidebar for graph-backed custom pages. */
+export function starlightPageSidebar(
+  layout: ResolvedNavigationLayout,
+  routes: DocsRoute[],
+): StarlightPageSidebarItem[] {
+  const titles = new Map(routes.map((route) => [route.route, route.title]));
+  const labelFor = (route: string) =>
+    titles.get(normalizeNavigationPath(route)) ??
+    normalizeNavigationPath(route).split("/").filter(Boolean).at(-1) ??
+    "Home";
+  const generatedItems = (directory: string) => {
+    const root = normalizeNavigationPath(directory);
+    return routes
+      .filter(
+        (route) =>
+          root === "/" ||
+          route.route === root ||
+          route.route.startsWith(`${root}/`),
+      )
+      .map((route) => ({ label: route.title, link: route.route }));
+  };
+  const convert = (item: NavigationItem): StarlightPageSidebarItem => {
+    if (typeof item === "string") {
+      return { label: labelFor(item), link: item };
+    }
+    if ("items" in item) {
+      return { label: item.label, items: item.items.map(convert) };
+    }
+    if ("autogenerate" in item) {
+      return {
+        label: item.label,
+        items: generatedItems(item.autogenerate.directory),
+      };
+    }
+    return item;
+  };
+  const fallback = layout.items?.length
+    ? layout.items.map(convert)
+    : routes.map((route) => ({ label: route.title, link: route.route }));
+  if (!layout.sectioned) return fallback;
+
+  return [
+    ...(layout.fallbackSidebarGroup !== undefined
+      ? [{ label: "Documentation", items: fallback }]
+      : []),
+    ...layout.tabs.flatMap((tab) =>
+      tab.items !== undefined
+        ? [{ label: tab.label, items: tab.items.map(convert) }]
+        : [],
+    ),
+  ];
 }
 
 /** Pick one tab, preferring its own URL before routes owned by its sidebar. */
