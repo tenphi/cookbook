@@ -17,7 +17,7 @@ const ROOT_KEYS = new Set([
 ]);
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
-  site: new Set(["title", "description", "url", "repository"]),
+  site: new Set(["title", "version", "description", "url", "repository"]),
   content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
   markdown: new Set([
     "stripLeadingBadges",

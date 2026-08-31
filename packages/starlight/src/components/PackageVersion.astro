@@ -1,0 +1,16 @@
+---
+interface Props {
+  version?: string;
+}
+
+const version = Astro.props.version?.trim();
+const label = version?.startsWith("v") ? version : version ? `v${version}` : "";
+---
+
+{
+  label && (
+    <span class="td-package-version" aria-label={`Version ${version}`}>
+      {label}
+    </span>
+  )
+}

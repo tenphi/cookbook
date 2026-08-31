@@ -148,19 +148,16 @@ export default function cookbook(
               ],
             },
             plugins: [
-              virtualDocsPlugin(
-                () => ({
-                  entries: graph?.entries ?? [],
-                  routes: graph?.routes ?? [],
-                  site: graph?.config.site ?? options.config?.site ?? {},
-                  base: graph?.config.build.base ?? base,
-                  search:
-                    graph?.config.search.enabled ??
-                    options.config?.search?.enabled ??
-                    true,
-                }),
-                navigation,
-              ),
+              virtualDocsPlugin(async () => {
+                const loaded = await loadGraph();
+                return {
+                  entries: loaded.entries,
+                  routes: loaded.routes,
+                  site: documentedSite(loaded),
+                  base: loaded.config.build.base,
+                  search: loaded.config.search.enabled,
+                };
+              }, navigation),
             ],
             resolve: {
               alias: [
@@ -349,6 +346,24 @@ function docsAssetMap(graph: Awaited<ReturnType<typeof createDocsGraph>>) {
   );
 }
 
+function documentedSite(
+  graph: Awaited<ReturnType<typeof createDocsGraph>>,
+): Awaited<ReturnType<typeof createDocsGraph>>["config"]["site"] {
+  if (graph.config.site.version) return graph.config.site;
+  const packages = new Set(
+    graph.entries.flatMap((entry) =>
+      entry.package?.resolved ? [entry.package.resolved] : [],
+    ),
+  );
+  if (packages.size !== 1) return graph.config.site;
+  const resolved = packages.values().next().value;
+  if (!resolved) return graph.config.site;
+  const separator = resolved.lastIndexOf("@");
+  if (separator <= 0 || separator === resolved.length - 1)
+    return graph.config.site;
+  return { ...graph.config.site, version: resolved.slice(separator + 1) };
+}
+
 function requestPath(url: string | undefined): string {
   try {
     return decodeURIComponent(new URL(url ?? "/", "http://localhost").pathname);
@@ -481,7 +496,7 @@ async function callInner<K extends keyof AstroIntegration["hooks"]>(
 }
 
 function virtualDocsPlugin(
-  getContent: () => unknown,
+  getContent: () => unknown | Promise<unknown>,
   layout: ResolvedNavigationLayout,
 ) {
   const configId = "\0virtual:cookbook/config";
@@ -493,9 +508,9 @@ function virtualDocsPlugin(
       if (id === "virtual:cookbook/layout") return layoutId;
       return undefined;
     },
-    load(id: string) {
+    async load(id: string) {
       if (id === configId) {
-        return `export const content = ${JSON.stringify(getContent())};`;
+        return `export const content = ${JSON.stringify(await getContent())};`;
       }
       if (id === layoutId) {
         return `export const layout = ${JSON.stringify(layout)};`;

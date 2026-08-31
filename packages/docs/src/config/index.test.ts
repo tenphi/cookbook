@@ -11,6 +11,14 @@ describe("docs configuration", () => {
     );
   });
 
+  it("preserves documented package metadata", () => {
+    const config = normalizeDocsConfig({
+      site: { title: "Example", version: "1.2.3" },
+    });
+
+    expect(config.site).toMatchObject({ title: "Example", version: "1.2.3" });
+  });
+
   it("guards the normal-mode accessibility floor", () => {
     expect(() =>
       normalizeDocsConfig({

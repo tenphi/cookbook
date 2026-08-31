@@ -335,6 +335,29 @@ export default function GlobalStyles() {
     minInlineSize: "0",
   });
 
+  useGlobalStyles(".td-header__title", {
+    columnGap: "$gap",
+    overflow: "hidden",
+  });
+
+  useGlobalStyles(".td-package-version", {
+    display: "inline-flex",
+    alignItems: "center",
+    flexShrink: "0",
+    minBlockSize: "1.5rem",
+    paddingInlineStart: "($gap * 0.75)",
+    paddingInlineEnd: "($gap * 0.75)",
+    color: "#text-soft",
+    fill: "#surface-2",
+    border: "$border-width solid #border",
+    radius: "999px",
+    fontSize: "$small-font-size",
+    fontWeight: "$small-font-weight",
+    lineHeight: "$small-line-height",
+    letterSpacing: "$small-letter-spacing",
+    whiteSpace: "nowrap",
+  });
+
   useGlobalStyles(".td-header__search site-search", {
     inlineSize: "100%",
   });
@@ -860,13 +883,20 @@ export default function GlobalStyles() {
     marginInlineEnd: "auto",
   });
 
+  useGlobalStyles(".td-shell__brand", {
+    display: "flex",
+    alignItems: "center",
+    columnGap: "$gap",
+    minInlineSize: "0",
+  });
+
   useGlobalStyles(".td-shell__header > .td-top-tabs", {
     maxInlineSize: "($layout-width - ($gap * 6))",
     marginInlineStart: "auto",
     marginInlineEnd: "auto",
   });
 
-  useGlobalStyles(".td-shell__header-primary > a", {
+  useGlobalStyles(".td-shell__brand > a", {
     color: "#text",
     fontFamily: "$heading-font-family",
     fontWeight: "$heading-font-weight",
@@ -1260,6 +1290,13 @@ export default function GlobalStyles() {
     },
   });
 
+  useGlobalStyles(".td-header__title", {
+    maxInlineSize: {
+      "@media(max-width: 49.99rem)":
+        "(100% - (($sl-menu-button-size + $sl-nav-gap) * 3))",
+    },
+  });
+
   useGlobalStyles(".td-header__search", {
     position: {
       "@media(max-width: 49.99rem)": "fixed",
@@ -1327,11 +1364,22 @@ export default function GlobalStyles() {
     },
   });
 
+  useGlobalStyles(".td-header__mobile-theme starlight-theme-select", {
+    display: "grid",
+    placeItems: "center",
+    inlineSize: "$sl-menu-button-size",
+    blockSize: "$sl-menu-button-size",
+    lineHeight: "0",
+  });
+
   useGlobalStyles(
     ".td-header__mobile-theme starlight-theme-select label, .td-header__mobile-theme starlight-theme-select select",
     {
       inlineSize: {
         "@media(max-width: 49.99rem)": "$sl-menu-button-size",
+      },
+      minBlockSize: {
+        "@media(max-width: 49.99rem)": "0",
       },
       blockSize: {
         "@media(max-width: 49.99rem)": "$sl-menu-button-size",

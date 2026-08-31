@@ -1,8 +1,10 @@
 import { defineDocsConfig } from "@tenphi/cookbook";
+import cookbookPackage from "../../packages/facade/package.json" with { type: "json" };
 
 export default defineDocsConfig({
   site: {
     title: "Cookbook",
+    version: cookbookPackage.version,
     description: "Repository-native documentation for Astro.",
     url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",

@@ -25,14 +25,19 @@ are errors.
 ```ts
 site: {
   title: "Example Project",
+  version: "1.2.3",
   description: "Documentation for Example Project",
   url: "https://docs.example.com",
   repository: "https://github.com/example/project"
 }
 ```
 
-`url` is the canonical deployed origin. Set Astro's `site` value too when the
-host needs absolute canonical URLs or sitemap metadata.
+`version` is the documented package version shown beside the site title. A site
+with one locked npm package source infers its version automatically; set this
+field for local or multi-package documentation. Read it from the package
+manifest when possible so it remains current. `url` is the canonical deployed
+origin. Set Astro's `site` value too when the host needs absolute canonical URLs
+or sitemap metadata.
 
 ## Content
 

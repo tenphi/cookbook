@@ -16,6 +16,8 @@ export interface DocsDiagnostic {
 
 export interface SiteConfig {
   title?: string;
+  /** Version of the documented package, rendered beside the site title. */
+  version?: string;
   description?: string;
   url?: string;
   repository?: string;
