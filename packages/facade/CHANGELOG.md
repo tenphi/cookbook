@@ -1,5 +1,19 @@
 # @tenphi/cookbook
 
+## 0.5.0
+
+### Minor Changes
+
+- [#11](https://github.com/tenphi/cookbook/pull/11) [`5ead3fc`](https://github.com/tenphi/cookbook/commit/5ead3fcba924dfa7317d217e8bd5aa1a21c0fa53) Thanks [@tenphi](https://github.com/tenphi)! - Rename the project to Cookbook, publish the public integration as
+  `@tenphi/cookbook`, and move the package creator to
+  `@tenphi/create-cookbook`.
+
+### Patch Changes
+
+- Updated dependencies [[`5ead3fc`](https://github.com/tenphi/cookbook/commit/5ead3fcba924dfa7317d217e8bd5aa1a21c0fa53)]:
+  - @tenphi/docs@0.5.0
+  - @tenphi/starlight@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
