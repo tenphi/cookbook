@@ -1,5 +1,6 @@
 ---
 "@tenphi/starlight": patch
+"@tenphi/docs": patch
 ---
 
 Use the full Starlight theme, page outline, search, and Expressive Code renderer

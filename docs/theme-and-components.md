@@ -184,12 +184,10 @@ theme: {
 }
 ```
 
-The configurable component names are `AppearanceControl`, `Card`,
-`DocsArticle`, `DocsLayout`, `DocsSidebar`, `Logo`, `MobileMenuFooter`,
-`MobileNavigationTabs`, `NavigationTree`, `PackageVersion`, `Preview`,
-`SearchDialog`, `SearchTrigger`, `SkipLink`, `StandaloneHeader`, `Steps`,
-`Tabs`, `ThemeSelect`, `TopNavigation`, and `StarlightHeader`. Editor inference
-is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
+The configurable component names are `Card`, `Logo`, `MobileMenuFooter`,
+`MobileNavigationTabs`, `PackageVersion`, `Preview`, `Steps`, `Tabs`,
+`ThemeSelect`, `TopNavigation`, and `StarlightHeader`. Editor inference is
+provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
 `ComponentStyleConfig`, and `ComponentStylesConfig` types.
 
 `components.overrides` remains the structural escape hatch for replacing an

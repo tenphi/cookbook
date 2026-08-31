@@ -18,9 +18,6 @@ catalogs:
     astro:
       specifier: ^7.2.9
       version: 7.2.9
-    pagefind:
-      specifier: ^1.5.2
-      version: 1.5.2
     typescript:
       specifier: ^7.0.2
       version: 7.0.2
@@ -235,9 +232,6 @@ importers:
       '@tenphi/tasty':
         specifier: 'catalog:'
         version: 3.6.0(@babel/core@7.29.7(supports-color@7.2.0))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
-      pagefind:
-        specifier: 'catalog:'
-        version: 1.5.2
       react:
         specifier: ^18.3.1 || ^19.0.0
         version: 19.2.8

@@ -42,7 +42,6 @@ catalog:
   "@tenphi/glaze": 2.0.0
   typescript: ^7.0.2
   vitest: ^4.1.11
-  pagefind: ^1.5.2
 
 allowBuilds:
   esbuild: true

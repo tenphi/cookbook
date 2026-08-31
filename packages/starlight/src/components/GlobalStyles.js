@@ -598,30 +598,6 @@ export default function GlobalStyles() {
     fill: "#surface-2",
   });
 
-  useGlobalStyles(".td-shell__main img", {
-    maxInlineSize: "100%",
-    blockSize: "auto",
-    radius: "$radius",
-  });
-
-  useGlobalStyles(".td-shell__main :where(pre, table)", {
-    maxInlineSize: "100%",
-    overflow: "auto",
-  });
-
-  useGlobalStyles(".td-shell__main :where(pre):not(:where(.td-preview *))", {
-    padding: "($gap * 1.5) ($gap * 2)",
-    fontSize: "$code-font-size",
-    lineHeight: "$code-line-height",
-    letterSpacing: "$code-letter-spacing",
-    border: true,
-    radius: "$card-radius",
-  });
-
-  useGlobalStyles(".td-shell__main a", {
-    color: "#accent-text",
-  });
-
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
     "$sl-nav-height": {
       "@mobile": "3.5rem",
