@@ -1,5 +1,12 @@
 # @tenphi/docs
 
+## 0.6.1
+
+### Patch Changes
+
+- [#17](https://github.com/tenphi/cookbook/pull/17) [`8e60ef9`](https://github.com/tenphi/cookbook/commit/8e60ef998824ab97902c3fcd45c04f8937c06a53) Thanks [@tenphi](https://github.com/tenphi)! - Use the full Starlight theme, page outline, search, and Expressive Code renderer
+  by default when a project does not define an Astro content collection.
+
 ## 0.6.0
 
 ### Minor Changes
