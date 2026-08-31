@@ -13,14 +13,10 @@ export default defineDocsConfig({
   navigation: {
     tabs: [
       {
-        label: "Docs",
-        link: "/",
-        items: ["/"],
-      },
-      {
         label: "Guide",
-        link: "/getting-started",
+        link: "/",
         items: [
+          "/",
           "/getting-started",
           {
             label: "Author content",
@@ -41,14 +37,15 @@ export default defineDocsConfig({
         ],
       },
       {
-        label: "Operations",
+        label: "Reference",
         link: "/cli",
-        items: ["/cli", "/deployment"],
-      },
-      {
-        label: "Architecture",
-        link: "/architecture",
-        items: ["/architecture"],
+        items: [
+          {
+            label: "Operations",
+            items: ["/cli", "/deployment"],
+          },
+          "/architecture",
+        ],
       },
     ],
   },
