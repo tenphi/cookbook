@@ -1,16 +1,23 @@
 import { useGlobalStyles } from "@tenphi/tasty";
-import arrowLeftIcon from "../icons/arrow-left.svg?url";
-import arrowRightIcon from "../icons/arrow-right.svg?url";
-import chevronDownIcon from "../icons/chevron-down.svg?url";
-import chevronRightIcon from "../icons/chevron-right.svg?url";
-import closeIcon from "../icons/close.svg?url";
-import contrastIcon from "../icons/contrast.svg?url";
-import copyIcon from "../icons/copy.svg?url";
-import deviceIcon from "../icons/device-desktop.svg?url";
-import menuIcon from "../icons/menu.svg?url";
-import moonIcon from "../icons/moon.svg?url";
-import searchIcon from "../icons/search.svg?url";
-import sunIcon from "../icons/sun.svg?url";
+import arrowLeftIcon from "../icons/arrow-left.svg?raw";
+import arrowRightIcon from "../icons/arrow-right.svg?raw";
+import chevronDownIcon from "../icons/chevron-down.svg?raw";
+import chevronRightIcon from "../icons/chevron-right.svg?raw";
+import closeIcon from "../icons/close.svg?raw";
+import contrastIcon from "../icons/contrast.svg?raw";
+import copyIcon from "../icons/copy.svg?raw";
+import deviceIcon from "../icons/device-desktop.svg?raw";
+import menuIcon from "../icons/menu.svg?raw";
+import moonIcon from "../icons/moon.svg?raw";
+import searchIcon from "../icons/search.svg?raw";
+import sunIcon from "../icons/sun.svg?raw";
+
+// Tasty normalizes style values to lowercase. Escape the uppercase B so the
+// SVG's case-sensitive viewBox attribute survives CSS extraction.
+const iconUrl = (svg) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    svg.replace("viewbox=", "viewBox="),
+  ).replace("viewBox", "view%42ox")}`;
 
 // These global rules bridge Cookbook tokens into markup owned by Astro,
 // Starlight, Expressive Code, and Pagefind. Cookbook-owned components use
@@ -61,18 +68,6 @@ export default function GlobalStyles() {
     "$sl-shadow-sm": "none",
     "$sl-shadow-md": "0 0.5rem 1.5rem #shadow",
     "$sl-shadow-lg": "0 1rem 3rem #shadow",
-    "$td-icon-search": `url(${searchIcon})`,
-    "$td-icon-chevron-down": `url(${chevronDownIcon})`,
-    "$td-icon-chevron-right": `url(${chevronRightIcon})`,
-    "$td-icon-arrow-left": `url(${arrowLeftIcon})`,
-    "$td-icon-arrow-right": `url(${arrowRightIcon})`,
-    "$td-icon-copy": `url(${copyIcon})`,
-    "$td-icon-menu": `url(${menuIcon})`,
-    "$td-icon-close": `url(${closeIcon})`,
-    "$td-icon-device": `url(${deviceIcon})`,
-    "$td-icon-sun": `url(${sunIcon})`,
-    "$td-icon-moon": `url(${moonIcon})`,
-    "$td-icon-contrast": `url(${contrastIcon})`,
     "$sl-nav-height": "4.5rem",
     "$sl-nav-pad-x": "clamp(1.25rem, 2.5vw, 2rem)",
     "$sl-sidebar-pad-x": "1.5rem",
@@ -176,7 +171,7 @@ export default function GlobalStyles() {
     "$ec-brdRad": "calc($card-radius - $border-width)",
     "$ec-brdWd": "$border-width",
     "$ec-brdCol": "#border",
-    "$ec-frm-copyIcon": "var(--td-icon-copy)",
+    "$ec-frm-copyIcon": `url("${iconUrl(copyIcon)}")`,
   });
 
   useGlobalStyles(".expressive-code .copy button", {
@@ -535,40 +530,39 @@ export default function GlobalStyles() {
       inlineSize: "1rem",
       blockSize: "1rem",
       fill: "#current",
-      mask: "$td-control-icon center / contain no-repeat",
     },
   );
 
   useGlobalStyles(
     "site-search button[data-open-modal]::before, [data-docs-search-open]::before",
     {
-      "$td-control-icon": "var(--td-icon-search)",
+      mask: `url("${iconUrl(searchIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(
     'site-search button[data-close-modal]::before, [data-docs-search] button[aria-label="Close search"]::before',
     {
-      "$td-control-icon": "var(--td-icon-close)",
+      mask: `url("${iconUrl(closeIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(".pagination-links a::before", {
-    "$td-control-icon": "var(--td-icon-arrow-left)",
+    mask: `url("${iconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     inlineSize: "1.25rem",
     blockSize: "1.25rem",
   });
 
   useGlobalStyles('.pagination-links a[rel="next"]::before', {
-    "$td-control-icon": "var(--td-icon-arrow-right)",
+    mask: `url("${iconUrl(arrowRightIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="prev"]::before', {
-    "$td-control-icon": "var(--td-icon-arrow-right)",
+    mask: `url("${iconUrl(arrowRightIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="next"]::before', {
-    "$td-control-icon": "var(--td-icon-arrow-left)",
+    mask: `url("${iconUrl(arrowLeftIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles(
@@ -585,32 +579,32 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("starlight-theme-select label::before", {
-    "$td-control-icon": "var(--td-icon-device)",
+    mask: `url("${iconUrl(deviceIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles(
     'starlight-theme-select label:has(option[value="light"]:checked)::before',
     {
-      "$td-control-icon": "var(--td-icon-sun)",
+      mask: `url("${iconUrl(sunIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(
     'starlight-theme-select label:has(option[value="dark"]:checked)::before',
     {
-      "$td-control-icon": "var(--td-icon-moon)",
+      mask: `url("${iconUrl(moonIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(
     "starlight-theme-select label::after, starlight-theme-select label::after",
     {
-      "$td-control-icon": "var(--td-icon-chevron-down)",
+      mask: `url("${iconUrl(chevronDownIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles("starlight-menu-button button::before", {
-    "$td-control-icon": "var(--td-icon-menu)",
+    mask: `url("${iconUrl(menuIcon)}") center / contain no-repeat`,
     inlineSize: "1.125rem",
     blockSize: "1.125rem",
   });
@@ -618,14 +612,14 @@ export default function GlobalStyles() {
   useGlobalStyles(
     'starlight-menu-button[aria-expanded="true"] button::before',
     {
-      "$td-control-icon": "var(--td-icon-close)",
+      mask: `url("${iconUrl(closeIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(
     "mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
     {
-      "$td-control-icon": "var(--td-icon-chevron-right)",
+      mask: `url("${iconUrl(chevronRightIcon)}") center / contain no-repeat`,
       transition: "rotate 120ms ease",
     },
   );
@@ -665,11 +659,11 @@ export default function GlobalStyles() {
   useGlobalStyles("#starlight__search .pagefind-ui__form::before", {
     inlineSize: "1rem",
     blockSize: "1rem",
-    mask: "$td-icon-search center / contain no-repeat",
+    mask: `url("${iconUrl(searchIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles("#starlight__search .pagefind-ui__search-clear::before", {
-    mask: "$td-icon-close center / 1rem no-repeat",
+    mask: `url("${iconUrl(closeIcon)}") center / 1rem no-repeat`,
   });
 
   useGlobalStyles(
@@ -903,7 +897,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".td-shell__actions label:has([data-docs-theme])::before", {
-    "$td-control-icon": "var(--td-icon-device)",
+    mask: `url("${iconUrl(deviceIcon)}") center / contain no-repeat`,
     position: "absolute",
     zIndex: "1",
     insetBlockStart: "50%",
@@ -915,19 +909,18 @@ export default function GlobalStyles() {
   useGlobalStyles(
     '.td-shell__actions label:has([data-docs-theme] option[value="light"]:checked)::before',
     {
-      "$td-control-icon": "var(--td-icon-sun)",
+      mask: `url("${iconUrl(sunIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(
     '.td-shell__actions label:has([data-docs-theme] option[value="dark"]:checked)::before',
     {
-      "$td-control-icon": "var(--td-icon-moon)",
+      mask: `url("${iconUrl(moonIcon)}") center / contain no-repeat`,
     },
   );
 
   useGlobalStyles(".td-shell__actions label:has(select)::after", {
-    "$td-control-icon": "var(--td-icon-chevron-down)",
     content: '""',
     position: "absolute",
     zIndex: "1",
@@ -937,7 +930,7 @@ export default function GlobalStyles() {
     blockSize: "1rem",
     translate: "0 -50%",
     fill: "#text",
-    mask: "$td-control-icon center / contain no-repeat",
+    mask: `url("${iconUrl(chevronDownIcon)}") center / contain no-repeat`,
     pointerEvents: "none",
   });
 
@@ -946,13 +939,12 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".td-appearance-control--contrast::before", {
-    "$td-control-icon": "var(--td-icon-contrast)",
     content: '""',
     display: "block",
     inlineSize: "1rem",
     blockSize: "1rem",
     fill: "#text-soft",
-    mask: "$td-control-icon center / contain no-repeat",
+    mask: `url("${iconUrl(contrastIcon)}") center / contain no-repeat`,
     pointerEvents: "none",
   });
 
@@ -1056,7 +1048,7 @@ export default function GlobalStyles() {
     inlineSize: "1rem",
     blockSize: "1rem",
     fill: "#text-soft",
-    mask: "$td-icon-chevron-down center / contain no-repeat",
+    mask: `url("${iconUrl(chevronDownIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles(".td-shell__nav details:not([open]) > summary::after", {

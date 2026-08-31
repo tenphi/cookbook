@@ -6,14 +6,38 @@ const assets = join(output, "_astro");
 const entries = await readdir(assets);
 let largestCss = 0;
 let javascript = 0;
+let sharedCssPath;
 for (const name of entries) {
   const bytes = (await stat(join(assets, name))).size;
   if (extname(name) === ".css") largestCss = Math.max(largestCss, bytes);
   if ([".js", ".mjs"].includes(extname(name))) javascript += bytes;
+  if (name.startsWith("tasty.shared.") && extname(name) === ".css") {
+    sharedCssPath = join(assets, name);
+  }
 }
 const cssBudget = 106 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
+if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
+const sharedCss = await readFile(sharedCssPath, "utf8");
+if (/\)\s+:root\s*\{[^}]*--surface-color/.test(sharedCss)) {
+  throw new Error(
+    "Theme tokens were extracted beneath :root and cannot match the document root.",
+  );
+}
+if (!/:root:where\([^{}]+\)\s*\{[^}]*--surface-color/.test(sharedCss)) {
+  throw new Error(
+    "Theme-state color tokens are missing from shared Tasty CSS.",
+  );
+}
+if (!/mask:\s*url\("data:image\/svg\+xml/.test(sharedCss)) {
+  throw new Error("Extracted Tasty CSS is missing inline SVG icon masks.");
+}
+if (!sharedCss.includes("view%42ox")) {
+  throw new Error(
+    "Inline SVG masks lost their case-sensitive viewBox attribute.",
+  );
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
   throw new Error(

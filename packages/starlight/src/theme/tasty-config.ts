@@ -8,9 +8,13 @@ export const TASTY_UNITS = {
   bw: "var(--border-width)",
 } as const;
 
+// Token states are emitted on :root already. Keep these as ordinary state
+// selectors so Tasty attaches them to that root instead of generating an
+// impossible descendant `:root ... :root` selector.
 const LIGHT =
-  "@root(theme=light) | (@media(prefers-color-scheme: light) & @root(:not([data-theme])))";
-const HIGH_CONTRAST = "@root(contrast=more) | @media(prefers-contrast: more)";
+  "theme=light | (@media(prefers-color-scheme: light) & :not([data-theme]))";
+const HIGH_CONTRAST =
+  "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))";
 
 export function tastyTokens(theme: ResolvedDocsTheme): ConfigTokens {
   const tokens = Object.fromEntries(
@@ -45,7 +49,7 @@ function colorStates(colors: Record<string, string>) {
     "": colors.dark,
     [LIGHT]: colors.light,
     [HIGH_CONTRAST]: colors.darkContrast,
-    [`${LIGHT} & ${HIGH_CONTRAST}`]: colors.lightContrast,
+    [`(${LIGHT}) & (${HIGH_CONTRAST})`]: colors.lightContrast,
   };
 }
 
