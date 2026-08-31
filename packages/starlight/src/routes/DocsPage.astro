@@ -4,9 +4,10 @@ import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import NavigationTree from "../components/NavigationTree.astro";
+import GlobalStyles from "../components/GlobalStyles.js";
 import { activeNavigationTab, navigationItemsForPath } from "../navigation.js";
-import "virtual:cookbook/theme.css";
-import "../styles.css";
+import "@fontsource-variable/onest/wght.css";
+import "@fontsource-variable/jetbrains-mono/wght.css";
 
 export const prerender = true;
 
@@ -49,6 +50,7 @@ const navigationItems =
     }
   </head>
   <body class="td-shell">
+    <GlobalStyles />
     <a class="td-skip" href="#main-content">Skip to content</a>
     <header
       class="td-shell__header"

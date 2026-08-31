@@ -1,5 +1,5 @@
 import { readFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 
 const root = process.cwd();
 const facadeSource = join(root, "packages/facade/src");
@@ -31,4 +31,23 @@ for (const directory of ["docs", "starlight"]) {
   }
 }
 
+const starlightSource = join(root, "packages/starlight/src");
+for (const file of await walk(starlightSource)) {
+  if (extname(file) === ".css") {
+    throw new Error(
+      `Starlight styling must use Tasty style objects, not authored CSS: ${file}`,
+    );
+  }
+}
+
 console.log("Package boundaries are valid.");
+
+async function walk(directory) {
+  const files = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...(await walk(path)));
+    if (entry.isFile()) files.push(path);
+  }
+  return files;
+}

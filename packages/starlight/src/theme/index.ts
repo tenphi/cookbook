@@ -17,7 +17,6 @@ import type {
 import { resolveThemeTokens, resolveTypographyPresets } from "./defaults.js";
 
 export interface ResolvedDocsTheme {
-  css: string;
   colors: {
     surface: Record<string, string>;
     surface2: Record<string, string>;
@@ -172,7 +171,6 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     focus: focus.json(outputOptions),
   };
   return {
-    css: themeCss(colors, theme),
     colors,
     tokens: resolveThemeTokens(theme.tokens),
     presets: resolveTypographyPresets(theme.presets),
@@ -201,63 +199,4 @@ function luminance(variant: ResolvedColorVariant): number {
   return relativeLuminanceFromLinearRgb(
     okhslToLinearSrgb(h, s, l, variant.pastel),
   );
-}
-
-function themeCss(
-  colors: ResolvedDocsTheme["colors"],
-  theme: ThemeConfig,
-): string {
-  const tokens = resolveThemeTokens(theme.tokens);
-  const presets = resolveTypographyPresets(theme.presets);
-  const designDeclarations = [
-    ...Object.entries(tokens).map(
-      ([name, value]) => `${tokenProperty(name)}:${String(value)}`,
-    ),
-    ...Object.entries(presets).flatMap(([name, preset]) =>
-      Object.entries(preset).map(
-        ([property, value]) =>
-          `--${kebab(name)}-${kebab(property)}:${String(value)}`,
-      ),
-    ),
-  ].join(";");
-  const declarations = (mode: string): string =>
-    [
-      `--td-surface:${colors.surface[mode]}`,
-      `--td-surface-2:${colors.surface2[mode]}`,
-      `--td-surface-3:${colors.surface3[mode]}`,
-      `--td-text:${colors.text[mode]}`,
-      `--td-text-soft:${colors.textSoft[mode]}`,
-      `--td-accent-text:${colors.accentText[mode]}`,
-      `--td-accent-surface:${colors.accentSurface[mode]}`,
-      `--td-accent-surface-text:${colors.accentSurfaceText[mode]}`,
-      `--td-focus:${colors.focus[mode]}`,
-      "--td-surface-2-hover:color-mix(in oklab,var(--td-text) 3%,var(--td-surface-2))",
-      "--td-surface-2-pressed:color-mix(in oklab,var(--td-text) 9%,var(--td-surface-2))",
-      "--td-surface-3-hover:color-mix(in oklab,var(--td-text) 3%,var(--td-surface-3))",
-      "--td-surface-3-pressed:color-mix(in oklab,var(--td-text) 9%,var(--td-surface-3))",
-      "--td-border:color-mix(in oklab,var(--td-text) 18%,var(--td-surface))",
-      "--td-border-strong:color-mix(in oklab,var(--td-text) 34%,var(--td-surface))",
-      "--td-shadow:color-mix(in oklab,var(--td-text) 16%,transparent)",
-      "--td-overlay:color-mix(in oklab,var(--td-text) 58%,transparent)",
-    ].join(";");
-  return [
-    `:root{${designDeclarations};${declarations("dark")}}`,
-    `:root[data-theme=light]{${declarations("light")}}`,
-    `@media(prefers-color-scheme:light){:root:not([data-theme]){${declarations("light")}}}`,
-    `@media(prefers-contrast:more){:root{${declarations("darkContrast")}}:root[data-theme=light]{${declarations("lightContrast")}}@media(prefers-color-scheme:light){:root:not([data-theme]){${declarations("lightContrast")}}}}`,
-    `:root[data-contrast=more]{${declarations("darkContrast")}}`,
-    `:root[data-theme=light][data-contrast=more]{${declarations("lightContrast")}}`,
-  ].join("\n");
-}
-
-function tokenProperty(name: string): string {
-  if (name.startsWith("--")) return name;
-  return `--${name.replace(/^\$/, "")}`;
-}
-
-function kebab(value: string): string {
-  return value
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .replace(/[^a-zA-Z0-9_-]/g, "-")
-    .toLowerCase();
 }

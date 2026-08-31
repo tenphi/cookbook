@@ -1,14 +1,16 @@
 ---
+import { CardLink, CardRoot } from "./TastyComponents.js";
+
 interface Props {
   title?: string;
   href?: string;
 }
 
 const { title, href } = Astro.props;
-const Tag = href ? "a" : "article";
+const Root = href ? CardLink : CardRoot;
 ---
 
-<Tag class="td-card" href={href} data-tasty-anatomy="Card">
+<Root className="td-card" href={href} data-tasty-anatomy="Card">
   {title && <h3 data-tasty-anatomy="CardTitle">{title}</h3>}
   <div data-tasty-anatomy="CardBody"><slot /></div>
-</Tag>
+</Root>

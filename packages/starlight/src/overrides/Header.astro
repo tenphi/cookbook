@@ -7,6 +7,9 @@ import SocialIcons from "virtual:starlight/components/SocialIcons";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
+import GlobalStyles from "../components/GlobalStyles.js";
+import "@fontsource-variable/onest/wght.css";
+import "@fontsource-variable/jetbrains-mono/wght.css";
 
 const shouldRenderSearch =
   config.pagefind ||
@@ -20,6 +23,7 @@ function tabHref(link: string): string {
 }
 ---
 
+<GlobalStyles />
 <div class:list={["td-header", { "td-header--with-tabs": layout.tabs.length }]}>
   <div class="td-header__primary">
     <div class="td-header__title"><SiteTitle /></div>

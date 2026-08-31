@@ -137,8 +137,10 @@ Tasty SSR for use in custom MDX components.
 The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
 are useful when building a theme editor or presenting a reset action.
 
-The default renderer emits static CSS. Appearance controls add only the small
-client behavior needed to persist a selected scheme.
+The default renderer runs Tasty in Astro extract mode. Ordinary `tasty()` and
+`useGlobalStyles()` calls are collected into shared static CSS during the
+build, while appearance controls add only the small client behavior needed to
+persist a selected scheme.
 
 ## Astro and MDX components
 

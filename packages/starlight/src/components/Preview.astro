@@ -1,4 +1,6 @@
 ---
+import { PreviewRoot } from "./TastyComponents.js";
+
 interface Props {
   title: string;
   html?: string;
@@ -10,22 +12,31 @@ const { title, html = "", css = "", javascript } = Astro.props;
 const source = `<!doctype html><meta charset="utf-8"><style>${css}</style>${html}${javascript ? `<script>${javascript}<\/script>` : ""}`;
 ---
 
-<figure class="td-preview" aria-label={title} data-tasty-anatomy="Preview">
-  <figcaption><strong>{title}</strong></figcaption>
+<PreviewRoot
+  className="td-preview"
+  aria-label={title}
+  data-tasty-anatomy="Preview"
+>
+  <PreviewRoot.Caption><strong>{title}</strong></PreviewRoot.Caption>
   {
     javascript ? (
-      <iframe title={title} sandbox="allow-scripts" srcdoc={source} />
+      <PreviewRoot.Frame
+        className="td-preview__frame"
+        title={title}
+        sandbox="allow-scripts"
+        srcDoc={source}
+      />
     ) : (
-      <div class="td-preview__stage">
+      <PreviewRoot.Stage className="td-preview__stage">
         <template
           shadowrootmode="open"
           set:html={`<style>${css}</style>${html}`}
         />
-      </div>
+      </PreviewRoot.Stage>
     )
   }
-  <details class="td-preview__code">
-    <summary>View source</summary>
-    <pre><code>{source}</code></pre>
-  </details>
-</figure>
+  <PreviewRoot.Code className="td-preview__code">
+    <PreviewRoot.Summary>View source</PreviewRoot.Summary>
+    <PreviewRoot.Pre><code>{source}</code></PreviewRoot.Pre>
+  </PreviewRoot.Code>
+</PreviewRoot>
