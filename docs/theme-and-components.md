@@ -185,7 +185,7 @@ theme: {
 ```
 
 The configurable component names are `AppearanceControl`, `Card`,
-`DocsArticle`, `DocsLayout`, `DocsSidebar`, `MobileMenuFooter`,
+`DocsArticle`, `DocsLayout`, `DocsSidebar`, `Logo`, `MobileMenuFooter`,
 `MobileNavigationTabs`, `NavigationTree`, `PackageVersion`, `Preview`,
 `SearchDialog`, `SearchTrigger`, `SkipLink`, `StandaloneHeader`, `Steps`,
 `Tabs`, `ThemeSelect`, `TopNavigation`, and `StarlightHeader`. Editor inference
@@ -210,7 +210,7 @@ behavior needed to persist a selected scheme.
 The facade exposes supported components from `@tenphi/cookbook/components`:
 
 ```mdx
-import { Card, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
+import { Card, Logo, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
 
 <Card title="Package-first" href="/getting-started/">
   Generate a site from a locked npm artifact.
@@ -218,6 +218,7 @@ import { Card, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
 ```
 
 - `Card` renders a titled article or link.
+- `Logo` renders the Cookbook mark using the active brand color.
 - `Steps` provides an ordered steps container.
 - `Tabs` provides a labeled grouping container.
 - `Preview` isolates HTML and CSS with declarative Shadow DOM, or JavaScript

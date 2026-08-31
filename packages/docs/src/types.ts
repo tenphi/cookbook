@@ -152,6 +152,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "DocsArticle",
   "DocsLayout",
   "DocsSidebar",
+  "Logo",
   "MobileMenuFooter",
   "MobileNavigationTabs",
   "NavigationTree",

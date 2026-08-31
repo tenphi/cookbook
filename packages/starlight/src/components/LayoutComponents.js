@@ -9,6 +9,24 @@ import sunIcon from "../icons/sun.svg?raw";
 import { resolveComponentStyles } from "./component-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
 
+export const LogoRoot = tasty({
+  as: "span",
+  styles: resolveComponentStyles("Logo", {
+    display: "inline-grid",
+    flex: "0 0 auto",
+    inlineSize: "4rem",
+    blockSize: "4rem",
+    color: "#accent-surface",
+    lineHeight: "0",
+    Svg: {
+      $: "> svg",
+      display: "block",
+      inlineSize: "100%",
+      blockSize: "100%",
+    },
+  }),
+});
+
 export const PackageVersionRoot = tasty({
   as: "span",
   styles: resolveComponentStyles("PackageVersion", {
