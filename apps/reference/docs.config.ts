@@ -4,7 +4,7 @@ export default defineDocsConfig({
   site: {
     title: "Cookbook",
     description: "Repository-native documentation for Astro.",
-    url: "https://tastydocs.tenphi.me",
+    url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",
   },
   content: {

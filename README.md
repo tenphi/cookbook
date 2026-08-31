@@ -3,7 +3,7 @@
 Static, repository-native documentation built with Astro, Starlight, Tasty,
 and Glaze.
 
-[Read the documentation](https://tastydocs.tenphi.me) or browse the
+[Read the documentation](https://cookbook.tenphi.me) or browse the
 [repository-native source](docs/index.md).
 
 ## Quick start

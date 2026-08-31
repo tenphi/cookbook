@@ -6,7 +6,7 @@ import docs from "./docs.config.js";
 const repositoryRoot = fileURLToPath(new URL("../..", import.meta.url));
 
 export default defineConfig({
-  site: "https://tastydocs.tenphi.me",
+  site: "https://cookbook.tenphi.me",
   output: "static",
   integrations: [cookbook({ config: docs, root: repositoryRoot })],
 });
