@@ -47,7 +47,7 @@ try {
   );
   await writeFile(
     join(site, "README.md"),
-    "# Packed site\n\n[Read more](./docs/guide.md).\n",
+    "# Packed site\n\n[Read more](./docs/guide.md).\n\n## Example\n\n```js\nconst ready = true;\n```\n",
   );
   await writeFile(
     join(site, "astro.config.mjs"),
@@ -68,6 +68,18 @@ try {
     throw new Error(
       "Packed-package site did not contain the expected generated content.",
     );
+  }
+  for (const marker of [
+    "data-has-toc",
+    "td-header",
+    "right-sidebar",
+    "expressive-code",
+  ]) {
+    if (!html.includes(marker)) {
+      throw new Error(
+        `Packed convention page did not use the default Starlight theme: missing ${marker}.`,
+      );
+    }
   }
   if (/react-dom|tasty\/client|data-reactroot/i.test(html)) {
     throw new Error(

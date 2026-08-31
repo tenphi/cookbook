@@ -1,7 +1,16 @@
 declare module "virtual:cookbook/config" {
-  import type { DocsEntry, DocsRoute, SiteConfig } from "@tenphi/docs";
+  import type {
+    DocsEntry,
+    DocsHeading,
+    DocsRoute,
+    SiteConfig,
+  } from "@tenphi/docs";
   export const content: {
-    entries: DocsEntry[];
+    entries: Array<
+      DocsEntry & {
+        rendered?: { html: string; headings: DocsHeading[] };
+      }
+    >;
     routes: DocsRoute[];
     site: SiteConfig;
     base: string;

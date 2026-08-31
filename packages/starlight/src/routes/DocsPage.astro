@@ -1,197 +1,54 @@
 ---
-import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
-import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
-import NavigationTree from "../components/NavigationTree.astro";
-import GlobalStyles from "../components/GlobalStyles.js";
-import PackageVersion from "../components/PackageVersion.astro";
-import {
-  AppearanceControlRoot,
-  DocsArticleRoot,
-  DocsLayoutRoot,
-  DocsSidebarRoot,
-  SearchDialogRoot,
-  SearchTriggerRoot,
-  SkipLinkRoot,
-  StandaloneHeaderRoot,
-  TopNavigationRoot,
-  VisuallyHiddenRoot,
-} from "../components/LayoutComponents.js";
-import { activeNavigationTab, navigationItemsForPath } from "../navigation.js";
-import "@fontsource-variable/onest/wght.css";
-import "@fontsource-variable/jetbrains-mono/wght.css";
+import { starlightPageSidebar } from "../navigation.js";
 
 export const prerender = true;
 
-export async function getStaticPaths() {
-  const processor = await createMarkdownProcessor();
-  return Promise.all(
-    content.entries.map(async (entry) => ({
+export function getStaticPaths() {
+  return content.entries
+    .filter(
+      (entry) =>
+        import.meta.env.MODE !== "production" || !entry.frontmatter.draft,
+    )
+    .map((entry) => ({
       params: { route: entry.route === "/" ? undefined : entry.route.slice(1) },
-      props: {
-        entry,
-        routes: content.routes,
-        html: (await processor.render(entry.transformedBody)).code,
-        site: content.site,
-        base: content.base,
-        search: content.search,
-      },
-    })),
-  );
+      props: { entry, routes: content.routes },
+    }));
 }
 
-const { entry, routes, html, site, base, search } = Astro.props;
-const withBase = (route) =>
-  `${base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`}${route}` || "/";
-const activeTab = activeNavigationTab(layout.tabs, entry.route);
-const navigationItems =
-  navigationItemsForPath(layout, entry.route) ??
-  routes.map((route) => route.route);
+const { entry, routes } = Astro.props;
+if (!entry.rendered) {
+  throw new Error(`Cookbook did not render ${entry.sourcePath}.`);
+}
+const frontmatter = {
+  title: entry.title,
+  ...(entry.description ? { description: entry.description } : {}),
+  ...(entry.frontmatter.toc !== undefined
+    ? { tableOfContents: entry.frontmatter.toc }
+    : {}),
+  ...(entry.frontmatter.editUrl !== undefined
+    ? { editUrl: entry.frontmatter.editUrl }
+    : {}),
+  ...(entry.frontmatter.prev !== undefined
+    ? { prev: entry.frontmatter.prev }
+    : {}),
+  ...(entry.frontmatter.next !== undefined
+    ? { next: entry.frontmatter.next }
+    : {}),
+  ...(entry.frontmatter.search !== undefined
+    ? { pagefind: entry.frontmatter.search }
+    : {}),
+  ...(entry.frontmatter.head ? { head: entry.frontmatter.head } : {}),
+  ...(entry.frontmatter.draft ? { draft: true } : {}),
+};
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{entry.title} | {site.title ?? "Documentation"}</title>
-    {
-      entry.description && (
-        <meta name="description" content={entry.description} />
-      )
-    }
-  </head>
-  <body class="td-shell">
-    <GlobalStyles />
-    <SkipLinkRoot
-      className="td-skip"
-      href="#main-content"
-      data-tasty-anatomy="SkipLink"
-    >
-      Skip to content
-    </SkipLinkRoot>
-    <StandaloneHeaderRoot
-      className="td-shell__header"
-      data-tasty-anatomy="Header"
-      data-docs-base={base}
-    >
-      <div class="td-shell__header-primary">
-        <div class="td-shell__brand">
-          <a href={withBase("/")}>{site.title ?? "Documentation"}</a>
-          <PackageVersion version={site.version} />
-        </div>
-        <div class="td-shell__actions">
-          <AppearanceControlRoot
-            className="td-appearance-control"
-            title="Color theme"
-            data-tasty-anatomy="AppearanceControl"
-          >
-            <VisuallyHiddenRoot>Color theme</VisuallyHiddenRoot>
-            <select data-docs-theme aria-label="Color theme">
-              <option value="system">System theme</option>
-              <option value="light">Light theme</option>
-              <option value="dark">Dark theme</option>
-            </select>
-          </AppearanceControlRoot>
-          <AppearanceControlRoot
-            className="td-appearance-control td-appearance-control--contrast"
-            title="Contrast"
-            data-tasty-anatomy="AppearanceControl"
-          >
-            <VisuallyHiddenRoot>Contrast</VisuallyHiddenRoot>
-            <select data-docs-contrast aria-label="Contrast">
-              <option value="system">System contrast</option>
-              <option value="normal">Normal contrast</option>
-              <option value="more">High contrast</option>
-            </select>
-          </AppearanceControlRoot>
-          {
-            search && (
-              <SearchTriggerRoot
-                type="button"
-                data-docs-search-open
-                aria-haspopup="dialog"
-                aria-keyshortcuts="Control+K"
-                data-tasty-anatomy="SearchTrigger"
-              >
-                <span>Search</span>
-                <kbd data-docs-search-shortcut>
-                  <>
-                    <kbd>Ctrl</kbd>
-                    <kbd>K</kbd>
-                  </>
-                </kbd>
-              </SearchTriggerRoot>
-            )
-          }
-        </div>
-      </div>
-      {
-        layout.tabs.length > 0 && (
-          <TopNavigationRoot
-            className="td-top-tabs"
-            aria-label="Primary"
-            data-tasty-anatomy="TopNavigation"
-          >
-            {layout.tabs.map((tab, index) => (
-              <a
-                href={tab.link.startsWith("/") ? withBase(tab.link) : tab.link}
-                aria-current={index === activeTab ? "page" : undefined}
-              >
-                {tab.label}
-              </a>
-            ))}
-          </TopNavigationRoot>
-        )
-      }
-    </StandaloneHeaderRoot>
-    <DocsLayoutRoot
-      className="td-shell__layout"
-      data-tasty-anatomy="DocsLayout"
-    >
-      <DocsSidebarRoot
-        className="td-shell__nav"
-        aria-label="Documentation"
-        data-tasty-anatomy="DocsSidebar"
-      >
-        <MobileNavigationTabs base={base} currentPath={entry.route} />
-        <NavigationTree
-          items={navigationItems}
-          routes={routes}
-          current={entry.route}
-          base={base}
-        />
-      </DocsSidebarRoot>
-      <DocsArticleRoot
-        id="main-content"
-        className="td-shell__main"
-        data-pagefind-body
-        data-tasty-anatomy="DocsArticle"
-      >
-        <h1>{entry.title}</h1>
-        <div set:html={html} />
-      </DocsArticleRoot>
-    </DocsLayoutRoot>
-    {
-      search && (
-        <SearchDialogRoot
-          data-docs-search
-          aria-labelledby="td-search-title"
-          data-tasty-anatomy="SearchDialog"
-        >
-          <form method="dialog">
-            <button aria-label="Close search">Close</button>
-          </form>
-          <h2 id="td-search-title">Search documentation</h2>
-          <label>
-            Search{" "}
-            <input type="search" data-docs-search-input autocomplete="off" />
-          </label>
-          <div data-docs-search-status aria-live="polite" />
-          <ul data-docs-search-results />
-        </SearchDialogRoot>
-      )
-    }
-  </body>
-</html>
+<StarlightPage
+  frontmatter={frontmatter}
+  headings={entry.rendered.headings}
+  sidebar={starlightPageSidebar(layout, routes)}
+>
+  <div set:html={entry.rendered.html} />
+</StarlightPage>
