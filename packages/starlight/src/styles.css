@@ -1,13 +1,13 @@
 @import "@fontsource-variable/onest/wght.css";
 @import "@fontsource-variable/jetbrains-mono/wght.css";
 
-@layer starlight.reset, starlight.base, starlight.core, starlight.content, starlight.components, starlight.utils, tasty-docs;
+@layer starlight.reset, starlight.base, starlight.core, starlight.content, starlight.components, starlight.utils, cookbook;
 
-@layer tasty-docs {
+@layer cookbook {
   :root {
     color-scheme: dark;
 
-    /* Bridge the public Tasty Docs tokens into Starlight's internal contract. */
+    /* Bridge the public Cookbook tokens into Starlight's internal contract. */
     --sl-font: var(--body-font-family);
     --sl-font-mono: var(--code-font-family);
     --sl-line-height: var(--body-line-height);

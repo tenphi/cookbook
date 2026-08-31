@@ -1,10 +1,10 @@
 import { defineConfig } from "astro/config";
-import tastyDocs from "tasty-docs";
+import cookbook from "@tenphi/cookbook";
 
 export default defineConfig({
   base: "/manual/",
   integrations: [
-    tastyDocs({
+    cookbook({
       config: {
         navigation: {
           tabs: [

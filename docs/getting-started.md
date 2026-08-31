@@ -1,17 +1,17 @@
 ---
 title: Getting started
-description: Create documentation from an npm package or add Tasty Docs to an Astro project.
+description: Create documentation from an npm package or add Cookbook to an Astro project.
 sidebar:
   order: 2
 ---
 
-Tasty Docs requires Node.js 22.14 or newer. The package creator is the fastest
+Cookbook requires Node.js 22.14 or newer. The package creator is the fastest
 route when the project you want to document is already published to npm.
 
 ## Generate from an npm package
 
 ```sh
-npm create tasty-docs@latest my-package-docs -- \
+npm create @tenphi/cookbook@latest my-package-docs -- \
   --package @scope/package@latest \
   --yes
 cd my-package-docs
@@ -20,32 +20,32 @@ npm run dev
 
 The creator inspects the published artifact, discovers its README, `docs/`
 tree, and assets, then writes a minimal Astro project. It resolves the package
-specifier to an exact version and integrity hash in `tasty-docs.lock.json`.
+specifier to an exact version and integrity hash in `cookbook.lock.json`.
 Commit that lock file so local and CI builds use the same content.
 
 The documented package is not installed and its lifecycle scripts do not run.
-Use [`tasty-docs update`](./cli.md#update-package-content) when you intentionally
+Use [`cookbook update`](./cli.md#update-package-content) when you intentionally
 want to resolve a mutable tag or range again.
 
 ## Add to an Astro project
 
 ```sh
-npx astro add tasty-docs
+npx astro add @tenphi/cookbook
 ```
 
 The resulting Astro configuration needs one integration:
 
 ```ts
 import { defineConfig } from "astro/config";
-import tastyDocs from "tasty-docs";
+import cookbook from "@tenphi/cookbook";
 
 export default defineConfig({
-  integrations: [tastyDocs()],
+  integrations: [cookbook()],
 });
 ```
 
-With no options, Tasty Docs uses convention mode: a root `README.md` becomes
-the home page and `docs/**/*.{md,mdx}` becomes the rest of the site. Tasty Docs
+With no options, Cookbook uses convention mode: a root `README.md` becomes
+the home page and `docs/**/*.{md,mdx}` becomes the rest of the site. Cookbook
 already composes Starlight; do not add a second Starlight integration.
 
 ## Add explicit configuration
@@ -54,7 +54,7 @@ Create `docs.config.ts` when you need custom sources, navigation, or theme
 values:
 
 ```ts
-import { defineDocsConfig } from "tasty-docs";
+import { defineDocsConfig } from "@tenphi/cookbook";
 
 export default defineDocsConfig({
   site: {
@@ -76,12 +76,12 @@ Pass it to the integration:
 
 ```ts
 import { defineConfig } from "astro/config";
-import tastyDocs from "tasty-docs";
+import cookbook from "@tenphi/cookbook";
 import docs from "./docs.config.js";
 
 export default defineConfig({
   output: "static",
-  integrations: [tastyDocs({ config: docs })],
+  integrations: [cookbook({ config: docs })],
 });
 ```
 
@@ -97,12 +97,12 @@ advanced Starlight collection adapter:
 ```ts
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
-import tastyDocs from "tasty-docs";
+import cookbook from "@tenphi/cookbook";
 
 const repositoryRoot = fileURLToPath(new URL("../..", import.meta.url));
 
 export default defineConfig({
-  integrations: [tastyDocs({ root: repositoryRoot })],
+  integrations: [cookbook({ root: repositoryRoot })],
 });
 ```
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tasty.style/schemas/tasty-docs.schema.json",
-  "title": "Tasty Docs configuration",
+  "$id": "https://tasty.style/schemas/cookbook.schema.json",
+  "title": "Cookbook configuration",
   "type": "object",
   "additionalProperties": false,
   "properties": {

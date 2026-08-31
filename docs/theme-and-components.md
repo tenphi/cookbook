@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-Tasty Docs derives light, dark, and high-contrast values from one Glaze brand
+Cookbook derives light, dark, and high-contrast values from one Glaze brand
 input, then exposes the result through Tasty tokens and component anatomy.
 
 ## Brand color
@@ -33,7 +33,7 @@ The authored color remains exact when it already satisfies the required
 contrast against the page surface. Otherwise Glaze moves it only as far as the
 floor requires. Dark and high-contrast schemes resolve independently.
 
-Tasty Docs rejects a normal APCA target below 45 unless
+Cookbook rejects a normal APCA target below 45 unless
 `unsafeContrast: true` is present. That escape hatch is intentionally visible
 in configuration reviews.
 
@@ -142,10 +142,10 @@ client behavior needed to persist a selected scheme.
 
 ## Astro and MDX components
 
-The facade exposes supported components from `tasty-docs/components`:
+The facade exposes supported components from `@tenphi/cookbook/components`:
 
 ```mdx
-import { Card, Preview, Steps, Tabs } from "tasty-docs/components";
+import { Card, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
 
 <Card title="Package-first" href="/getting-started/">
   Generate a site from a locked npm artifact.

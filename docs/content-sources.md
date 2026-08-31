@@ -5,14 +5,14 @@ sidebar:
   order: 3
 ---
 
-Tasty Docs first collects every source and assigns each one a canonical route.
+Cookbook first collects every source and assigns each one a canonical route.
 Only then does it rewrite links and assets. That two-phase graph lets pages
 link across directories and source declarations without depending on discovery
 order.
 
 ## Convention mode
 
-When `content.sources` is omitted, Tasty Docs includes these sources when they
+When `content.sources` is omitted, Cookbook includes these sources when they
 exist:
 
 ```ts
@@ -79,7 +79,7 @@ Package sources read documentation from the actual npm artifact:
 ```
 
 A production build uses the exact version and integrity stored in
-`tasty-docs.lock.json`. The package creator writes this lock automatically.
+`cookbook.lock.json`. The package creator writes this lock automatically.
 Artifacts are integrity-checked, extracted with file-count and size limits,
 and cached by integrity.
 

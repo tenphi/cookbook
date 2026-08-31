@@ -1,4 +1,4 @@
-declare module "virtual:tasty-docs/config" {
+declare module "virtual:cookbook/config" {
   import type { DocsEntry, DocsRoute, SiteConfig } from "@tenphi/docs";
   export const content: {
     entries: DocsEntry[];
@@ -9,7 +9,7 @@ declare module "virtual:tasty-docs/config" {
   };
 }
 
-declare module "virtual:tasty-docs/layout" {
+declare module "virtual:cookbook/layout" {
   import type { ResolvedNavigationLayout } from "./navigation.js";
   export const layout: ResolvedNavigationLayout;
 }

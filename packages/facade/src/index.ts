@@ -30,4 +30,4 @@ export {
   DEFAULT_THEME_TOKENS,
   DEFAULT_TYPOGRAPHY_PRESETS,
 } from "@tenphi/starlight";
-export type { TastyDocsOptions } from "@tenphi/starlight";
+export type { CookbookOptions } from "@tenphi/starlight";

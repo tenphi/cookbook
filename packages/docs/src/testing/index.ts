@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 export async function createDocsFixture(
   files: Record<string, string | Uint8Array>,
 ): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "tasty-docs-fixture-"));
+  const root = await mkdtemp(join(tmpdir(), "cookbook-fixture-"));
   for (const [path, contents] of Object.entries(files)) {
     const target = join(root, path);
     await mkdir(dirname(target), { recursive: true });

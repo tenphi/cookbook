@@ -82,7 +82,7 @@ if (values.open) {
 
 function printHelp(code = 0): never {
   console.log(
-    `Usage: create-tasty-docs [destination] --package <specifier> [options]\n\nOptions:\n  --yes, -y\n  --brand <color>\n  --site <url>\n  --base <path>\n  --deploy github-pages|none\n  --package-manager npm|pnpm|yarn\n  --no-install\n  --vendor\n  --trust-package\n  --open`,
+    `Usage: create-cookbook [destination] --package <specifier> [options]\n\nOptions:\n  --yes, -y\n  --brand <color>\n  --site <url>\n  --base <path>\n  --deploy github-pages|none\n  --package-manager npm|pnpm|yarn\n  --no-install\n  --vendor\n  --trust-package\n  --open`,
   );
   process.exit(code);
 }

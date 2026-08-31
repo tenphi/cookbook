@@ -1,10 +1,10 @@
 {
-  "name": "create-tasty-docs",
+  "name": "@tenphi/create-cookbook",
   "version": "0.4.0",
-  "description": "Create a reproducible Tasty Docs site from a published npm package",
+  "description": "Create a reproducible Cookbook site from a published npm package",
   "type": "module",
   "bin": {
-    "create-tasty-docs": "./dist/cli.js"
+    "create-cookbook": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "url": "git+https://github.com/tenphi/cookbook.git",
     "directory": "packages/create"
   },
-  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "homepage": "https://github.com/tenphi/cookbook#readme",
   "bugs": {
-    "url": "https://github.com/tenphi/tasty-docs/issues"
+    "url": "https://github.com/tenphi/cookbook/issues"
   },
   "author": "Andrey Yamanov",
   "license": "MIT",

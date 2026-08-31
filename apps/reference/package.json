@@ -12,7 +12,7 @@
   "dependencies": {
     "@tenphi/starlight": "workspace:*",
     "astro": "catalog:",
-    "tasty-docs": "workspace:*"
+    "@tenphi/cookbook": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:"

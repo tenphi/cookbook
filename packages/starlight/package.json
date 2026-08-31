@@ -1,7 +1,7 @@
 {
   "name": "@tenphi/starlight",
   "version": "0.4.0",
-  "description": "Astro and Starlight renderer for Tasty Docs",
+  "description": "Astro and Starlight renderer for Cookbook",
   "type": "module",
   "sideEffects": [
     "./dist/styles.css",
@@ -45,12 +45,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "url": "git+https://github.com/tenphi/cookbook.git",
     "directory": "packages/starlight"
   },
-  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "homepage": "https://github.com/tenphi/cookbook#readme",
   "bugs": {
-    "url": "https://github.com/tenphi/tasty-docs/issues"
+    "url": "https://github.com/tenphi/cookbook/issues"
   },
   "author": "Andrey Yamanov",
   "license": "MIT",

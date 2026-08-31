@@ -5,7 +5,7 @@ sidebar:
   order: 7
 ---
 
-Tasty Docs always produces a static Astro build. The output in `dist/` can be
+Cookbook always produces a static Astro build. The output in `dist/` can be
 served by GitHub Pages, Cloudflare Pages, Netlify, Vercel static hosting, or a
 plain file server.
 
@@ -16,7 +16,7 @@ npm run build
 npm run preview
 ```
 
-Run [`tasty-docs doctor`](./cli.md#validate-with-doctor) in CI before building
+Run [`cookbook doctor`](./cli.md#validate-with-doctor) in CI before building
 when you want a focused content diagnostic step.
 
 ## GitHub Pages
@@ -37,18 +37,18 @@ environment so the deployment URL and protection rules remain visible in the
 repository.
 
 For an organization or user site, keep `base: "/"`. For a project site served
-at `https://owner.github.io/repository/`, configure both Astro and Tasty Docs
+at `https://owner.github.io/repository/`, configure both Astro and Cookbook
 with `base: "/repository/"`.
 
 ## Custom domains
 
-Set Astro's canonical site and Tasty Docs metadata to the same HTTPS origin:
+Set Astro's canonical site and Cookbook metadata to the same HTTPS origin:
 
 ```ts
 export default defineConfig({
   site: "https://docs.example.com",
   integrations: [
-    tastyDocs({
+    cookbook({
       config: {
         site: { url: "https://docs.example.com" },
       },

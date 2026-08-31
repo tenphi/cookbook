@@ -1,17 +1,17 @@
 ---
-title: Tasty Docs
+title: Cookbook
 description: Build a polished static documentation site from the Markdown your project already owns.
 sidebar:
   order: 1
 ---
 
-Tasty Docs turns repository Markdown or the documentation shipped in an npm
+Cookbook turns repository Markdown or the documentation shipped in an npm
 package into a complete static website. It combines Astro and Starlight with a
 Tasty/Glaze theme, strict content validation, and local Pagefind search.
 
-![Tasty Docs mark](./assets/mark.svg)
+![Cookbook mark](./assets/mark.svg)
 
-## Why Tasty Docs
+## Why Cookbook
 
 - **Repository-native.** Keep `README.md`, `docs/`, and local assets where they
   already live. Sources are transformed in memory and never rewritten.
@@ -30,19 +30,19 @@ Tasty/Glaze theme, strict content validation, and local Pagefind search.
 Create a documentation project from a published npm package:
 
 ```sh
-npm create tasty-docs@latest my-package-docs -- --package your-package
+npm create @tenphi/cookbook@latest my-package-docs -- --package your-package
 ```
 
 Or add the complete integration to an Astro project:
 
 ```sh
-npx astro add tasty-docs
+npx astro add @tenphi/cookbook
 ```
 
 Continue with [Getting started](./getting-started.md), then learn how
 [content sources](./content-sources.md) become routes.
 
-## This site dogfoods Tasty Docs
+## This site dogfoods Cookbook
 
 The pages you are reading live in this repository's root `docs/` directory.
 The small Astro app under `apps/reference` points the integration and content

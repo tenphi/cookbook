@@ -6,7 +6,7 @@ import { promisify } from "node:util";
 
 const run = promisify(execFile);
 const root = process.cwd();
-const temporary = await mkdtemp(join(tmpdir(), "tasty-docs-packs-"));
+const temporary = await mkdtemp(join(tmpdir(), "cookbook-packs-"));
 const packages = ["docs", "starlight", "facade", "create"];
 
 try {

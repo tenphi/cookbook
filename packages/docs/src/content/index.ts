@@ -86,7 +86,7 @@ export function createDocsLoader(
             : {}),
         });
       }
-      context.logger?.info(`Loaded ${graph.entries.length} Tasty Docs pages.`);
+      context.logger?.info(`Loaded ${graph.entries.length} Cookbook pages.`);
     },
   };
 }
@@ -123,7 +123,7 @@ function toLoaderEntry(entry: DocsEntry): {
       draft: entry.frontmatter.draft ?? false,
       ...(entry.description ? { description: entry.description } : {}),
       ...entry.frontmatter,
-      tastyDocs: {
+      cookbook: {
         sourcePath: entry.sourcePath,
         route: entry.route,
         headings: entry.headings,

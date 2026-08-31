@@ -1,4 +1,4 @@
-# Tasty Docs
+# Cookbook
 
 Static, repository-native documentation built with Astro, Starlight, Tasty,
 and Glaze.
@@ -9,19 +9,19 @@ and Glaze.
 ## Quick start
 
 ```sh
-npm create tasty-docs@latest my-package-docs -- --package your-package
+npm create @tenphi/cookbook@latest my-package-docs -- --package your-package
 ```
 
 For an existing Astro project:
 
 ```sh
-npx astro add tasty-docs
+npx astro add @tenphi/cookbook
 ```
 
 The workspace contains four fixed-version packages:
 
-- `create-tasty-docs` — package-first project creator.
-- `tasty-docs` — the public Astro integration and command facade.
+- `@tenphi/create-cookbook` — package-first project creator.
+- `@tenphi/cookbook` — the public Astro integration and command facade.
 - `@tenphi/docs` — configuration, package acquisition, content graph, and diagnostics.
 - `@tenphi/starlight` — the official static renderer and theme.
 

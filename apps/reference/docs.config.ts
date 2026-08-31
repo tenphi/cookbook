@@ -1,11 +1,11 @@
-import { defineDocsConfig } from "tasty-docs";
+import { defineDocsConfig } from "@tenphi/cookbook";
 
 export default defineDocsConfig({
   site: {
-    title: "Tasty Docs",
+    title: "Cookbook",
     description: "Repository-native documentation for Astro.",
     url: "https://tastydocs.tenphi.me",
-    repository: "https://github.com/tenphi/tasty-docs",
+    repository: "https://github.com/tenphi/cookbook",
   },
   content: {
     sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }],

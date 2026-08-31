@@ -5,12 +5,12 @@ sidebar:
   order: 6
 ---
 
-The `tasty-docs` package installs a CLI alongside the Astro integration.
+The `@tenphi/cookbook` package installs a CLI alongside the Astro integration.
 
 ## Validate with doctor
 
 ```sh
-npx tasty-docs doctor
+npx @tenphi/cookbook doctor
 ```
 
 `doctor` loads `docs.config.ts`, builds the content graph, and reports source,
@@ -20,13 +20,13 @@ without starting Astro.
 Run it against another directory with `--root`:
 
 ```sh
-npx tasty-docs doctor --root ./packages/example-docs
+npx @tenphi/cookbook doctor --root ./packages/example-docs
 ```
 
 Machine-readable output is available for scripts:
 
 ```sh
-npx tasty-docs doctor --json
+npx @tenphi/cookbook doctor --json
 ```
 
 A healthy JSON result contains the page count:
@@ -40,18 +40,18 @@ The process exits non-zero when any error diagnostic is present.
 ## Update package content
 
 ```sh
-npx tasty-docs update
+npx @tenphi/cookbook update
 ```
 
 `update` reads every requested package specifier in
-`tasty-docs.lock.json`, resolves it again through its configured registry, and
+`cookbook.lock.json`, resolves it again through its configured registry, and
 writes the new exact versions and integrity hashes. Review and commit the lock
 diff before deploying.
 
 Use JSON output when another tool consumes the updated lock:
 
 ```sh
-npx tasty-docs update --json
+npx @tenphi/cookbook update --json
 ```
 
 The command stops if the project has no package sources in its lock.
@@ -62,7 +62,7 @@ The package-first creator accepts a destination followed by a required package
 specifier:
 
 ```sh
-npm create tasty-docs@latest docs-site -- \
+npm create @tenphi/cookbook@latest docs-site -- \
   --package @scope/package@latest \
   --yes \
   --brand "#2f5bff" \

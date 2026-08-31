@@ -121,13 +121,13 @@ describe("content graph", () => {
   it("builds package sources from an integrity-marked vendored artifact", async () => {
     const integrity = "sha512-test-integrity";
     const root = await createDocsFixture({
-      ".tasty-docs/vendor/package/.tasty-docs-integrity": `${integrity}\n`,
-      ".tasty-docs/vendor/package/package.json": JSON.stringify({
+      ".cookbook/vendor/package/.cookbook-integrity": `${integrity}\n`,
+      ".cookbook/vendor/package/package.json": JSON.stringify({
         name: "fixture-package",
         version: "1.2.3",
       }),
-      ".tasty-docs/vendor/package/README.md": "# Vendored package\n",
-      ".tasty-docs/vendor/package/docs/api.md": "# API\n",
+      ".cookbook/vendor/package/README.md": "# Vendored package\n",
+      ".cookbook/vendor/package/docs/api.md": "# API\n",
     });
     const graph = await createDocsGraph({
       root,
@@ -140,7 +140,7 @@ describe("content graph", () => {
             resolved: "fixture-package@1.2.3",
             registry: "https://registry.npmjs.org/",
             integrity,
-            vendored: ".tasty-docs/vendor/package",
+            vendored: ".cookbook/vendor/package",
           },
         ],
       },

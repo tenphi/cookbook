@@ -9,7 +9,7 @@ Use `defineDocsConfig()` for type inference and immediate validation of unknown
 keys:
 
 ```ts
-import { defineDocsConfig } from "tasty-docs";
+import { defineDocsConfig } from "@tenphi/cookbook";
 
 export default defineDocsConfig({
   site: { title: "Example" },

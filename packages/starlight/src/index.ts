@@ -1,7 +1,7 @@
 export {
   default,
   tastyStarlight,
-  type TastyDocsOptions,
+  type CookbookOptions,
 } from "./integration.js";
 export { createStarlightCollection } from "./content.js";
 export { resolveDocsTheme, type ResolvedDocsTheme } from "./theme/index.js";

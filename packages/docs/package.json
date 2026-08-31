@@ -1,7 +1,7 @@
 {
   "name": "@tenphi/docs",
   "version": "0.4.0",
-  "description": "Repository-native content and configuration engine for Tasty Docs",
+  "description": "Repository-native content and configuration engine for Cookbook",
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -46,12 +46,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "url": "git+https://github.com/tenphi/cookbook.git",
     "directory": "packages/docs"
   },
-  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "homepage": "https://github.com/tenphi/cookbook#readme",
   "bugs": {
-    "url": "https://github.com/tenphi/tasty-docs/issues"
+    "url": "https://github.com/tenphi/cookbook/issues"
   },
   "author": "Andrey Yamanov",
   "license": "MIT",
