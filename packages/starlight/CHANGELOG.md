@@ -1,5 +1,24 @@
 # @tenphi/starlight
 
+## 0.6.0
+
+### Minor Changes
+
+- [#16](https://github.com/tenphi/cookbook/pull/16) [`61abff2`](https://github.com/tenphi/cookbook/commit/61abff2c613022df2ab5f621540b8fc99010a895) Thanks [@tenphi](https://github.com/tenphi)! - Move Cookbook UI styling to linted Tasty components and selector styles backed
+  by Glaze theme tokens, extract those styles into shared static CSS during Astro
+  builds without shipping the Tasty client runtime, and support displaying the
+  documented package version beside the site title, inferred from single-package
+  npm sources when possible. Cookbook-owned layout, navigation, appearance,
+  search, and header UI now use direct `tasty()` components whose defaults can be
+  extended or fully replaced through `theme.styles`.
+
+### Patch Changes
+
+- [#14](https://github.com/tenphi/cookbook/pull/14) [`689bf56`](https://github.com/tenphi/cookbook/commit/689bf56abbe9d7ef9eaa76c809bf238eec1ee149) Thanks [@tenphi](https://github.com/tenphi)! - Keep the desktop header divider visible without navigation tabs, and frame
+  plain Markdown code blocks with consistent padding, borders, and typography.
+- Updated dependencies [[`8e2d9c9`](https://github.com/tenphi/cookbook/commit/8e2d9c936116eca161cd19e4d78165d82b05c9ae)]:
+  - @tenphi/docs@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

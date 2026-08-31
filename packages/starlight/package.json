@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/starlight",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Astro and Starlight renderer for Cookbook",
   "type": "module",
   "sideEffects": [

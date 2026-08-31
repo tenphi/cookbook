@@ -1,5 +1,13 @@
 # @tenphi/docs
 
+## 0.6.0
+
+### Minor Changes
+
+- [#16](https://github.com/tenphi/cookbook/pull/16) [`8e2d9c9`](https://github.com/tenphi/cookbook/commit/8e2d9c936116eca161cd19e4d78165d82b05c9ae) Thanks [@tenphi](https://github.com/tenphi)! - Add typed Cookbook component-style configuration with explicit extension and
+  full-replacement modes, and expose the brand-colored Cookbook logo as a public
+  Tasty component.
+
 ## 0.5.0
 
 ### Minor Changes
