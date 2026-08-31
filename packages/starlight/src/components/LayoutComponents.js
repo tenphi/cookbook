@@ -148,6 +148,8 @@ export const StarlightHeaderRoot = customizeComponent(
       },
       Title: {
         $: ".td-header__title",
+        display: "flex",
+        flow: "row",
         gap: "$gap",
         overflow: "hidden",
         maxInlineSize: {
@@ -185,9 +187,15 @@ export const StarlightHeaderRoot = customizeComponent(
       },
       Tools: {
         $: ".td-header__tools",
+        display: "flex",
+        flow: "row",
         alignItems: "center",
         justifyContent: "flex-end",
         gap: "($gap * 1.5)",
+      },
+      ToolItem: {
+        $: ".td-header__tools > *",
+        margin: "0",
       },
       Social: {
         $: ".td-header__social",
@@ -224,6 +232,7 @@ export const ThemeSelectRoot = customizeComponent(
     styles: {
       display: "grid",
       placeItems: "center",
+      margin: "0",
       inlineSize: {
         "": "$control-height",
         "@mobile": "$sl-menu-button-size",

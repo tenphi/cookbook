@@ -461,6 +461,9 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles("mobile-starlight-toc summary", {
+    position: "relative",
+    alignItems: "center",
+    gap: "$gap",
     paddingInlineStart: "$sl-content-pad-x",
     paddingInlineEnd: "$sl-content-pad-x",
   });
@@ -469,6 +472,7 @@ export default function GlobalStyles() {
     "mobile-starlight-toc .toggle, mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
     {
       gap: "$gap",
+      margin: "0",
       padding: "0",
       color: "#text-soft",
       fontSize: "$small-font-size",
@@ -485,6 +489,65 @@ export default function GlobalStyles() {
     "mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
     {
       color: "#text",
+    },
+  );
+
+  useGlobalStyles("mobile-starlight-toc summary .toggle", {
+    gap: "$gap",
+    margin: "0",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown", {
+    position: "absolute",
+    inset: "100% top",
+    insetInlineStart: "$sl-content-pad-x",
+    zIndex: "1",
+    display: "block",
+    inlineSize: "min(22rem, (100% - ($sl-content-pad-x * 2)))",
+    maxBlockSize: "min(24rem, (100vh - ($sl-mobile-toc-height + ($gap * 4))))",
+    margin: "$gap 0 0",
+    padding: "4px",
+    overflow: "auto",
+    color: "#text",
+    border: true,
+    radius: "$card-radius",
+    fill: "#surface-2",
+    shadow: "0 0.75rem 2rem #shadow",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile", {
+    display: "grid",
+    gap: "1px",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a", {
+    display: "flex",
+    alignItems: "center",
+    minBlockSize: "2.5rem",
+    padding: "0.625rem 0.75rem",
+    color: "#text-soft",
+    radius: "$radius",
+    fill: "#surface-2",
+    textDecoration: "none",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a:hover", {
+    color: "#text",
+    fill: "#surface-2-hover",
+  });
+
+  useGlobalStyles(
+    'mobile-starlight-toc .dropdown .isMobile a[aria-current="true"]',
+    {
+      color: "#accent-text",
+      fill: "color-mix(in oklab, #accent-surface 12%, #surface-2)",
+    },
+  );
+
+  useGlobalStyles(
+    'mobile-starlight-toc .dropdown .isMobile a[aria-current="true"]::after',
+    {
+      blockSize: "1rem",
     },
   );
 
