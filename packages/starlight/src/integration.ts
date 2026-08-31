@@ -30,13 +30,13 @@ const tastyStaticMiddleware = packageRequire.resolve(
   "@tenphi/tasty/ssr/astro-middleware-static",
 );
 
-export interface TastyDocsOptions {
+export interface CookbookOptions {
   config?: DocsConfig;
   root?: string;
 }
 
-export default function tastyDocs(
-  options: TastyDocsOptions = {},
+export default function cookbook(
+  options: CookbookOptions = {},
 ): AstroIntegration {
   const docsTheme = resolveDocsTheme(options.config?.theme);
   if (
@@ -73,7 +73,7 @@ export default function tastyDocs(
       ...(options.config?.site?.description
         ? { description: options.config.site.description }
         : {}),
-      customCss: ["virtual:tasty-docs/theme.css", cssPath],
+      customCss: ["virtual:cookbook/theme.css", cssPath],
       ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
       components,
       sidebar: starlightSidebar(navigation),
@@ -96,7 +96,7 @@ export default function tastyDocs(
   }
 
   return {
-    name: "tasty-docs",
+    name: "cookbook",
     hooks: {
       "astro:config:setup": async (context) => {
         if (
@@ -105,7 +105,7 @@ export default function tastyDocs(
           )
         ) {
           throw new Error(
-            "Tasty Docs already includes Starlight. Remove the direct @astrojs/starlight integration before continuing.",
+            "Cookbook already includes Starlight. Remove the direct @astrojs/starlight integration before continuing.",
           );
         }
         projectRoot ??= fileURLToPath(context.config.root);
@@ -184,7 +184,7 @@ export default function tastyDocs(
         const starlightIntegration = inner[1];
         if (starlightIntegration) {
           const selfIndex = context.config.integrations.findIndex(
-            (integration) => integration.name === "tasty-docs",
+            (integration) => integration.name === "cookbook",
           );
           context.config.integrations.splice(
             selfIndex + 1,
@@ -469,15 +469,15 @@ function virtualDocsPlugin(
   getContent: () => unknown,
   layout: ResolvedNavigationLayout,
 ) {
-  const themeId = "\0virtual:tasty-docs/theme.css";
-  const configId = "\0virtual:tasty-docs/config";
-  const layoutId = "\0virtual:tasty-docs/layout";
+  const themeId = "\0virtual:cookbook/theme.css";
+  const configId = "\0virtual:cookbook/config";
+  const layoutId = "\0virtual:cookbook/layout";
   return {
-    name: "tasty-docs-theme",
+    name: "cookbook-theme",
     resolveId(id: string) {
-      if (id === "virtual:tasty-docs/theme.css") return themeId;
-      if (id === "virtual:tasty-docs/config") return configId;
-      if (id === "virtual:tasty-docs/layout") return layoutId;
+      if (id === "virtual:cookbook/theme.css") return themeId;
+      if (id === "virtual:cookbook/config") return configId;
+      if (id === "virtual:cookbook/layout") return layoutId;
       return undefined;
     },
     load(id: string) {

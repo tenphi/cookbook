@@ -13,7 +13,7 @@ import { promisify } from "node:util";
 
 const run = promisify(execFile);
 const root = process.cwd();
-const temporary = await mkdtemp(join(tmpdir(), "tasty-docs-install-"));
+const temporary = await mkdtemp(join(tmpdir(), "cookbook-install-"));
 const packed = join(temporary, "packed");
 const site = join(temporary, "site");
 
@@ -29,7 +29,7 @@ try {
   const byPrefix = (prefix) =>
     join(packed, tarballs.find((name) => name.startsWith(prefix)) ?? "missing");
   const packageJson = {
-    name: "tasty-docs-clean-install-smoke",
+    name: "cookbook-clean-install-smoke",
     version: "0.0.0",
     private: true,
     type: "module",
@@ -38,7 +38,7 @@ try {
       "@tenphi/docs": `file:${byPrefix("tenphi-docs-")}`,
       "@tenphi/starlight": `file:${byPrefix("tenphi-starlight-")}`,
       astro: "^7.2.9",
-      "tasty-docs": `file:${byPrefix("tasty-docs-")}`,
+      "@tenphi/cookbook": `file:${byPrefix("tenphi-cookbook-")}`,
     },
   };
   await writeFile(
@@ -51,7 +51,7 @@ try {
   );
   await writeFile(
     join(site, "astro.config.mjs"),
-    "import { defineConfig } from 'astro/config';\nimport tastyDocs from 'tasty-docs';\nexport default defineConfig({ integrations: [tastyDocs()] });\n",
+    "import { defineConfig } from 'astro/config';\nimport cookbook from '@tenphi/cookbook';\nexport default defineConfig({ integrations: [cookbook()] });\n",
   );
   await mkdir(join(site, "docs"), { recursive: true });
   await writeFile(

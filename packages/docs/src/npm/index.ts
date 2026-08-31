@@ -20,11 +20,11 @@ import type {
   PackageDiscovery,
   PackageLockSource,
   PackageManifest,
-  TastyDocsLock,
+  CookbookLock,
 } from "../types.js";
 
 const DEFAULT_REGISTRY = "https://registry.npmjs.org/";
-const LOCK_FILE = "tasty-docs.lock.json";
+const LOCK_FILE = "cookbook.lock.json";
 
 export interface ResolvePackageOptions {
   registry?: string;
@@ -62,11 +62,11 @@ export async function resolvePackageLock(
 
 export async function readDocsLock(
   root: string,
-): Promise<TastyDocsLock | undefined> {
+): Promise<CookbookLock | undefined> {
   try {
     const value = JSON.parse(
       await readFile(join(root, LOCK_FILE), "utf8"),
-    ) as TastyDocsLock;
+    ) as CookbookLock;
     validateLock(value);
     return value;
   } catch (error) {
@@ -77,7 +77,7 @@ export async function readDocsLock(
 
 export async function writeDocsLock(
   root: string,
-  lock: TastyDocsLock,
+  lock: CookbookLock,
 ): Promise<void> {
   validateLock(lock);
   await writeFile(
@@ -87,9 +87,9 @@ export async function writeDocsLock(
   );
 }
 
-export function validateLock(lock: TastyDocsLock): void {
+export function validateLock(lock: CookbookLock): void {
   if (lock.schemaVersion !== 1 || !Array.isArray(lock.sources)) {
-    throw new Error("Unsupported or invalid tasty-docs.lock.json.");
+    throw new Error("Unsupported or invalid cookbook.lock.json.");
   }
   for (const source of lock.sources) {
     if (
@@ -138,7 +138,7 @@ export async function materializePackage(
       );
     }
     const marker = (
-      await readFile(join(vendored, ".tasty-docs-integrity"), "utf8")
+      await readFile(join(vendored, ".cookbook-integrity"), "utf8")
     ).trim();
     if (marker !== source.integrity) {
       throw new Error(
@@ -149,12 +149,12 @@ export async function materializePackage(
     return vendored;
   }
   const cacheRoot = resolve(
-    config.cacheDir || join(homedir(), ".cache", "tasty-docs"),
+    config.cacheDir || join(homedir(), ".cache", "cookbook"),
     "artifacts",
   );
   const key = createHash("sha256").update(source.integrity).digest("hex");
   const destination = join(cacheRoot, key);
-  const marker = join(destination, ".tasty-docs-integrity");
+  const marker = join(destination, ".cookbook-integrity");
   try {
     if ((await readFile(marker, "utf8")).trim() === source.integrity)
       return destination;
@@ -182,7 +182,7 @@ export async function materializePackage(
     });
     await validateExtractedTree(temporary, config);
     await writeFile(
-      join(temporary, ".tasty-docs-integrity"),
+      join(temporary, ".cookbook-integrity"),
       `${source.integrity}\n`,
     );
     await rm(destination, { recursive: true, force: true });
@@ -205,7 +205,7 @@ async function validateExtractedTree(
     const directory = pending.pop();
     if (!directory) break;
     for (const name of await readdir(directory)) {
-      if (name === ".tasty-docs-integrity") continue;
+      if (name === ".cookbook-integrity") continue;
       const path = join(directory, name);
       const info = await lstat(path);
       const rel = relative(root, path);
@@ -242,7 +242,7 @@ export async function discoverPackage(root: string): Promise<PackageDiscovery> {
   const manifest = JSON.parse(
     await readFile(join(root, "package.json"), "utf8"),
   ) as PackageManifest;
-  const hints = manifest.tastyDocs;
+  const hints = manifest.cookbook;
   const homeCandidates = [hints?.index, "README.md", "readme.md"].filter(
     (candidate): candidate is string => Boolean(candidate),
   );
@@ -284,7 +284,7 @@ export function packageNameFromSpecifier(specifier: string): string {
 }
 
 export function lockForSource(
-  lock: TastyDocsLock | undefined,
+  lock: CookbookLock | undefined,
   requested: string,
 ): PackageLockSource {
   const match = lock?.sources.find(
@@ -295,13 +295,13 @@ export function lockForSource(
   );
   if (!match) {
     throw new Error(
-      `Package source ${requested} is not locked. Run "tasty-docs update" to create ${LOCK_FILE}.`,
+      `Package source ${requested} is not locked. Run "cookbook update" to create ${LOCK_FILE}.`,
     );
   }
   return match;
 }
 
-export function defaultLock(sources: PackageLockSource[]): TastyDocsLock {
+export function defaultLock(sources: PackageLockSource[]): CookbookLock {
   return { schemaVersion: 1, sources };
 }
 

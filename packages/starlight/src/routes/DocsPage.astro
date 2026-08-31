@@ -1,11 +1,11 @@
 ---
 import { createMarkdownProcessor } from "@astrojs/markdown-remark";
-import { content } from "virtual:tasty-docs/config";
-import { layout } from "virtual:tasty-docs/layout";
+import { content } from "virtual:cookbook/config";
+import { layout } from "virtual:cookbook/layout";
 import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import NavigationTree from "../components/NavigationTree.astro";
 import { activeNavigationTab, navigationItemsForPath } from "../navigation.js";
-import "virtual:tasty-docs/theme.css";
+import "virtual:cookbook/theme.css";
 import "../styles.css";
 
 export const prerender = true;

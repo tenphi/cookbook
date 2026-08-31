@@ -1,5 +1,5 @@
 {
-  "name": "tasty-docs",
+  "name": "@tenphi/cookbook",
   "version": "0.4.0",
   "description": "Repository-native static documentation for Astro",
   "type": "module",
@@ -11,7 +11,7 @@
     "static-site"
   ],
   "bin": {
-    "tasty-docs": "./dist/cli.js"
+    "cookbook": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -42,12 +42,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tenphi/tasty-docs.git",
+    "url": "git+https://github.com/tenphi/cookbook.git",
     "directory": "packages/facade"
   },
-  "homepage": "https://github.com/tenphi/tasty-docs#readme",
+  "homepage": "https://github.com/tenphi/cookbook#readme",
   "bugs": {
-    "url": "https://github.com/tenphi/tasty-docs/issues"
+    "url": "https://github.com/tenphi/cookbook/issues"
   },
   "author": "Andrey Yamanov",
   "license": "MIT",

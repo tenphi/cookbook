@@ -1,12 +1,14 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
-  "changelog": [
-    "@changesets/changelog-github",
-    { "repo": "tenphi/tasty-docs" }
-  ],
+  "changelog": ["@changesets/changelog-github", { "repo": "tenphi/cookbook" }],
   "commit": false,
   "fixed": [
-    ["create-tasty-docs", "tasty-docs", "@tenphi/docs", "@tenphi/starlight"]
+    [
+      "@tenphi/create-cookbook",
+      "@tenphi/cookbook",
+      "@tenphi/docs",
+      "@tenphi/starlight"
+    ]
   ],
   "linked": [],
   "access": "public",

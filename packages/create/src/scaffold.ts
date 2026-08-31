@@ -67,10 +67,10 @@ export async function scaffold(
   }
 
   const projectLock = options.vendor
-    ? { ...lock, vendored: ".tasty-docs/vendor/package" }
+    ? { ...lock, vendored: ".cookbook/vendor/package" }
     : lock;
   if (options.vendor && projectLock.vendored) {
-    await mkdir(join(destination, ".tasty-docs", "vendor"), {
+    await mkdir(join(destination, ".cookbook", "vendor"), {
       recursive: true,
     });
     await cp(packageRoot, join(destination, projectLock.vendored), {
@@ -111,7 +111,7 @@ function packageJson(packageManager: PackageManager): string {
   }[packageManager];
   return `${JSON.stringify(
     {
-      name: "tasty-docs-site",
+      name: "cookbook-site",
       version: "0.0.0",
       private: true,
       type: "module",
@@ -120,10 +120,10 @@ function packageJson(packageManager: PackageManager): string {
         dev: "astro dev",
         build: "astro build",
         preview: "astro preview",
-        doctor: "tasty-docs doctor",
-        update: "tasty-docs update",
+        doctor: "cookbook doctor",
+        update: "cookbook update",
       },
-      dependencies: { astro: "^7.2.9", "tasty-docs": "^0.1.0" },
+      dependencies: { astro: "^7.2.9", "@tenphi/cookbook": "^0.4.0" },
     },
     null,
     2,
@@ -141,7 +141,7 @@ function astroConfig(options: ScaffoldOptions): string {
     ...(options.brand ? { theme: { brand: { from: options.brand } } } : {}),
     ...(options.base ? { build: { base: options.base } } : {}),
   };
-  return `import { defineConfig } from 'astro/config';\nimport tastyDocs from 'tasty-docs';\n\nconst docs = ${JSON.stringify(docsConfig, null, 2)};\n\nexport default defineConfig({\n  ${options.site ? `site: ${JSON.stringify(options.site)},\n  ` : ""}${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}output: 'static',\n  integrations: [tastyDocs({ config: docs })],\n});\n`;
+  return `import { defineConfig } from 'astro/config';\nimport cookbook from '@tenphi/cookbook';\n\nconst docs = ${JSON.stringify(docsConfig, null, 2)};\n\nexport default defineConfig({\n  ${options.site ? `site: ${JSON.stringify(options.site)},\n  ` : ""}${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}output: 'static',\n  integrations: [cookbook({ config: docs })],\n});\n`;
 }
 
 function tsconfig(): string {

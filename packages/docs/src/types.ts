@@ -297,7 +297,7 @@ export interface PackageLockSource {
   vendored?: string;
 }
 
-export interface TastyDocsLock {
+export interface CookbookLock {
   schemaVersion: 1;
   sources: PackageLockSource[];
 }
@@ -308,7 +308,7 @@ export interface PackageManifest {
   description?: string;
   homepage?: string;
   repository?: string | { type?: string; url?: string; directory?: string };
-  tastyDocs?: {
+  cookbook?: {
     index?: string;
     include?: string[];
     exclude?: string[];
@@ -329,5 +329,5 @@ export interface PackageDiscovery {
 export interface CreateDocsGraphOptions {
   root?: string;
   config?: DocsConfig;
-  lock?: TastyDocsLock;
+  lock?: CookbookLock;
 }

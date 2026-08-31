@@ -15,7 +15,7 @@ afterEach(async () => {
 
 describe("createDocsLoader", () => {
   it("renders Markdown and exposes a Starlight-compatible virtual file path", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tasty-docs-loader-"));
+    const root = await mkdtemp(join(tmpdir(), "cookbook-loader-"));
     cleanups.push(root);
     await mkdir(join(root, "docs"));
     await writeFile(

@@ -1,4 +1,4 @@
-const STORAGE_KEY = "tasty-docs-appearance";
+const STORAGE_KEY = "cookbook-appearance";
 
 type Theme = "light" | "dark" | "system";
 type Contrast = "normal" | "more" | "system";

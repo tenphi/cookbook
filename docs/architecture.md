@@ -1,23 +1,23 @@
 ---
 title: Architecture
-description: Understand the four packages and the static content pipeline behind Tasty Docs.
+description: Understand the four packages and the static content pipeline behind Cookbook.
 sidebar:
   order: 8
 ---
 
-Tasty Docs keeps content concerns separate from rendering so another renderer
+Cookbook keeps content concerns separate from rendering so another renderer
 can consume the same validated graph in the future.
 
 ## Packages
 
-| Package             | Responsibility                                                                                              |
-| ------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `create-tasty-docs` | Inspect an npm artifact and scaffold a reproducible documentation project                                   |
-| `tasty-docs`        | Provide the memorable Astro integration, public config exports, and CLI                                     |
-| `@tenphi/docs`      | Discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics     |
-| `@tenphi/starlight` | Adapt the graph to Astro/Starlight and provide the Tasty/Glaze theme, components, search, and static assets |
+| Package                   | Responsibility                                                                                              |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `@tenphi/create-cookbook` | Inspect an npm artifact and scaffold a reproducible documentation project                                   |
+| `@tenphi/cookbook`        | Provide the memorable Astro integration, public config exports, and CLI                                     |
+| `@tenphi/docs`            | Discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics     |
+| `@tenphi/starlight`       | Adapt the graph to Astro/Starlight and provide the Tasty/Glaze theme, components, search, and static assets |
 
-The `tasty-docs` default export represents the complete product. Consumers do
+The `@tenphi/cookbook` default export represents the complete product. Consumers do
 not compose Starlight or renderer internals themselves.
 
 ## Build pipeline
@@ -88,5 +88,5 @@ and an end-to-end fixture. Its integration and Starlight content loader receive
 the repository root explicitly, then load this `docs/` tree. CI builds the same
 app before GitHub Pages publishes it.
 
-Return to [Tasty Docs](./index.md) or inspect the
-[repository](https://github.com/tenphi/tasty-docs).
+Return to [Cookbook](./index.md) or inspect the
+[repository](https://github.com/tenphi/cookbook).

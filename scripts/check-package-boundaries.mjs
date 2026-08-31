@@ -26,7 +26,7 @@ for (const directory of ["docs", "starlight"]) {
   const packageJson = JSON.parse(
     await readFile(join(root, "packages", directory, "package.json"), "utf8"),
   );
-  if (packageJson.dependencies?.["tasty-docs"]) {
+  if (packageJson.dependencies?.["@tenphi/cookbook"]) {
     throw new Error(`@tenphi/${directory} must not depend on the facade.`);
   }
 }
