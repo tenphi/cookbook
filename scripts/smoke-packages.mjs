@@ -55,7 +55,8 @@ try {
     }
     if (manifest.name === "@tenphi/starlight") {
       for (const required of [
-        "package/dist/styles.css",
+        "package/dist/components/GlobalStyles.js",
+        "package/dist/components/TastyComponents.js",
         "package/dist/routes/DocsPage.astro",
       ]) {
         if (!files.has(required))

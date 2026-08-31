@@ -1,6 +1,7 @@
 ---
 import type { DocsRoute, NavigationItem } from "@tenphi/docs";
 import { normalizeNavigationPath } from "../navigation.js";
+import { NavigationTreeRoot } from "./LayoutComponents.js";
 
 interface Props {
   items: NavigationItem[];
@@ -36,7 +37,10 @@ const generatedItems = (directory: string): NavigationItem[] => {
 };
 ---
 
-<ul class:list={{ "td-shell__nav-root": !nested }}>
+<NavigationTreeRoot
+  className={nested ? undefined : "td-shell__nav-root"}
+  data-tasty-anatomy="NavigationTree"
+>
   {
     items.map((item) => {
       if (typeof item === "string") {
@@ -95,4 +99,4 @@ const generatedItems = (directory: string): NavigationItem[] => {
       );
     })
   }
-</ul>
+</NavigationTreeRoot>

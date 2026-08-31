@@ -1,0 +1,22 @@
+---
+import { PackageVersionRoot } from "./LayoutComponents.js";
+
+interface Props {
+  version?: string;
+}
+
+const version = Astro.props.version?.trim();
+const label = version?.startsWith("v") ? version : version ? `v${version}` : "";
+---
+
+{
+  label && (
+    <PackageVersionRoot
+      className="td-package-version"
+      aria-label={`Version ${version}`}
+      data-tasty-anatomy="PackageVersion"
+    >
+      {label}
+    </PackageVersionRoot>
+  )
+}

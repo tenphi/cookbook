@@ -1,8 +1,10 @@
 import { defineDocsConfig } from "@tenphi/cookbook";
+import cookbookPackage from "../../packages/facade/package.json" with { type: "json" };
 
 export default defineDocsConfig({
   site: {
     title: "Cookbook",
+    version: cookbookPackage.version,
     description: "Repository-native documentation for Astro.",
     url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",
@@ -13,14 +15,10 @@ export default defineDocsConfig({
   navigation: {
     tabs: [
       {
-        label: "Docs",
-        link: "/",
-        items: ["/"],
-      },
-      {
         label: "Guide",
-        link: "/getting-started",
+        link: "/",
         items: [
+          "/",
           "/getting-started",
           {
             label: "Author content",
@@ -41,14 +39,15 @@ export default defineDocsConfig({
         ],
       },
       {
-        label: "Operations",
+        label: "Reference",
         link: "/cli",
-        items: ["/cli", "/deployment"],
-      },
-      {
-        label: "Architecture",
-        link: "/architecture",
-        items: ["/architecture"],
+        items: [
+          {
+            label: "Operations",
+            items: ["/cli", "/deployment"],
+          },
+          "/architecture",
+        ],
       },
     ],
   },

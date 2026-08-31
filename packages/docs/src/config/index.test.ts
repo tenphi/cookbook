@@ -1,5 +1,13 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { DocsConfigError, normalizeDocsConfig } from "./index.js";
+
+const schema = JSON.parse(
+  readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
+) as {
+  properties: { navigation: { oneOf?: unknown[] } };
+  $defs: { componentStyleConfig: { anyOf?: unknown[] } };
+};
 
 describe("docs configuration", () => {
   it("keeps defaults and rejects unknown keys", () => {
@@ -9,6 +17,14 @@ describe("docs configuration", () => {
     expect(() => normalizeDocsConfig({ typo: true } as never)).toThrow(
       DocsConfigError,
     );
+  });
+
+  it("preserves documented package metadata", () => {
+    const config = normalizeDocsConfig({
+      site: { title: "Example", version: "1.2.3" },
+    });
+
+    expect(config.site).toMatchObject({ title: "Example", version: "1.2.3" });
   });
 
   it("guards the normal-mode accessibility floor", () => {
@@ -34,6 +50,45 @@ describe("docs configuration", () => {
         },
       }),
     ).not.toThrow();
+  });
+
+  it("preserves component style extension and replacement configuration", () => {
+    const config = normalizeDocsConfig({
+      theme: {
+        styles: {
+          StarlightHeader: { padding: "2x" },
+          ThemeSelect: {
+            mode: "replace",
+            styles: { display: "grid" },
+          },
+        },
+      },
+    });
+
+    expect(config.theme.styles).toEqual({
+      StarlightHeader: { padding: "2x" },
+      ThemeSelect: {
+        mode: "replace",
+        styles: { display: "grid" },
+      },
+    });
+  });
+
+  it("publishes component style replacement in the JSON schema", () => {
+    expect(schema.properties.navigation.oneOf).toHaveLength(2);
+    expect(schema.$defs.componentStyleConfig.anyOf).toHaveLength(2);
+  });
+
+  it("rejects malformed component style replacement configuration", () => {
+    expect(() =>
+      normalizeDocsConfig({
+        theme: {
+          styles: {
+            ThemeSelect: { mode: "replace" },
+          },
+        },
+      } as never),
+    ).toThrow(/ThemeSelect\.styles/);
   });
 
   it("preserves optional primary navigation tabs", () => {

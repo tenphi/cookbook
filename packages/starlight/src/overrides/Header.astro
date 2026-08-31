@@ -5,8 +5,17 @@ import Search from "virtual:starlight/components/Search";
 import SiteTitle from "virtual:starlight/components/SiteTitle";
 import SocialIcons from "virtual:starlight/components/SocialIcons";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
+import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
+import GlobalStyles from "../components/GlobalStyles.js";
+import PackageVersion from "../components/PackageVersion.astro";
+import {
+  StarlightHeaderRoot,
+  TopNavigationRoot,
+} from "../components/LayoutComponents.js";
+import "@fontsource-variable/onest/wght.css";
+import "@fontsource-variable/jetbrains-mono/wght.css";
 
 const shouldRenderSearch =
   config.pagefind ||
@@ -20,11 +29,21 @@ function tabHref(link: string): string {
 }
 ---
 
-<div class:list={["td-header", { "td-header--with-tabs": layout.tabs.length }]}>
+<GlobalStyles />
+<StarlightHeaderRoot
+  className={`td-header${layout.tabs.length ? " td-header--with-tabs" : ""}`}
+  data-tasty-anatomy="StarlightHeader"
+>
   <div class="td-header__primary">
-    <div class="td-header__title"><SiteTitle /></div>
+    <div class="td-header__title">
+      <SiteTitle />
+      <PackageVersion version={content.site.version} />
+    </div>
     <div class="td-header__search print:hidden">
       {shouldRenderSearch && <Search />}
+    </div>
+    <div class="td-header__mobile-theme md:sl-hidden print:hidden">
+      <ThemeSelect />
     </div>
     <div class="td-header__tools sl-hidden md:sl-flex print:hidden">
       <div class="td-header__social"><SocialIcons /></div>
@@ -34,7 +53,11 @@ function tabHref(link: string): string {
   </div>
   {
     layout.tabs.length > 0 && (
-      <nav class="td-top-tabs print:hidden" aria-label="Primary">
+      <TopNavigationRoot
+        className="td-top-tabs print:hidden"
+        aria-label="Primary"
+        data-tasty-anatomy="TopNavigation"
+      >
         {layout.tabs.map((tab, index) => (
           <a
             href={tabHref(tab.link)}
@@ -43,7 +66,7 @@ function tabHref(link: string): string {
             {tab.label}
           </a>
         ))}
-      </nav>
+      </TopNavigationRoot>
     )
   }
-</div>
+</StarlightHeaderRoot>

@@ -41,17 +41,16 @@ Theme resolution has three deliberately separate layers:
 
 1. Glaze resolves semantic palette inputs into light, dark, and high-contrast
    colors.
-2. Stable design tokens and typography presets resolve into shared CSS custom
-   properties.
-3. The renderer maps those public properties onto Starlight internals and the
-   standalone shell; Tasty SSR receives the same token and preset definitions
-   for custom components.
+2. The Glaze values, design tokens, typography presets, states, and units are
+   registered directly with Tasty.
+3. Cookbook components use `tasty()` and the Tasty selector bridge styles DOM
+   owned by Astro, Starlight, Expressive Code, Pagefind, and rendered Markdown.
 
 The palette owns color relationships. Components never choose raw light/dark
 colors, and shape tokens never contain palette logic. This keeps a palette
-change, a density change, and a typography change independent. The final CSS
-layer is ordered after Starlight's layers so public tokens consistently win
-without selector-specificity tricks.
+change, a density change, and a typography change independent. Astro runs
+Tasty in extract mode, so these runtime style calls become a shared static CSS
+asset during the build; no Tasty styling runtime ships to the browser.
 
 ## Public graph API
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveDocsTheme } from "./index.js";
+import { tastyTokens } from "./tasty-config.js";
 
 describe("Glaze theme adapter", () => {
   it("emits all appearance modes at the configured APCA floors", () => {
@@ -11,32 +12,45 @@ describe("Glaze theme adapter", () => {
     expect(theme.contrast.dark).toBeGreaterThanOrEqual(44.95);
     expect(theme.contrast.lightContrast).toBeGreaterThanOrEqual(59.95);
     expect(theme.contrast.darkContrast).toBeGreaterThanOrEqual(59.95);
-    expect(theme.css).not.toContain("undefined");
-    expect(theme.css).toContain("[data-theme=light]");
-    expect(theme.css).toContain("prefers-contrast:more");
-    expect(theme.css).toContain("--td-text:");
-    expect(theme.css).toContain("--td-border:");
-    expect(theme.css).toContain("--td-surface-2:oklch(");
-    expect(theme.css).toContain("--td-surface-3:oklch(");
-    expect(theme.css).not.toContain(
-      "--td-surface-2:color-mix(in oklab,var(--td-text)",
+    const tokens = tastyTokens(theme);
+    expect(Object.values(tokens["#surface"] ?? {})).toEqual(
+      expect.arrayContaining([
+        theme.colors.surface.dark,
+        theme.colors.surface.light,
+        theme.colors.surface.darkContrast,
+        theme.colors.surface.lightContrast,
+      ]),
+    );
+    expect(Object.values(tokens["#text"] ?? {})).toEqual(
+      expect.arrayContaining([
+        theme.colors.text.dark,
+        theme.colors.text.light,
+        theme.colors.text.darkContrast,
+        theme.colors.text.lightContrast,
+      ]),
     );
     expect(theme.colors.surface2.light).toBe("oklch(0.9789 0 0)");
     expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
-    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0004 0)");
-    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0004 0)");
-    expect(theme.css).toContain("--td-surface-2-hover:");
-    expect(theme.css).toContain("--td-surface-2-pressed:");
-    expect(theme.css).toContain("--td-surface-3-hover:");
-    expect(theme.css).toContain("--td-surface-3-pressed:");
-    expect(theme.css).toContain("--radius:6px");
-    expect(theme.css).toContain("--card-radius:10px");
-    expect(theme.css).toContain("--layout-width:87.5rem");
+    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0003 0)");
+    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0003 0)");
+    expect(tokens["#surface-2-hover"]).toContain("color-mix");
+    expect(tokens["#surface-2-pressed"]).toContain("color-mix");
+    expect(tokens["#surface-3-hover"]).toContain("color-mix");
+    expect(tokens["#surface-3-pressed"]).toContain("color-mix");
+    expect(tokens.$radius).toBe("6px");
+    expect(tokens["$card-radius"]).toBe("10px");
+    expect(tokens["$layout-width"]).toBe("87.5rem");
     expect(theme.presets.body?.fontFamily).toContain("'Onest Variable'");
     expect(theme.presets.heading?.fontFamily).toContain("'Onest Variable'");
     expect(theme.presets.code?.fontFamily).toContain(
       "'JetBrains Mono Variable'",
     );
+    expect(theme.presets.body?.lineHeight).toBe(1.65);
+    expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
+    expect(theme.presets.navigation?.fontWeight).toBe(540);
+    expect(theme.colors.shadow.light).toMatch(/^oklch\(/);
+    expect(theme.colors.shadow.dark).toMatch(/^oklch\(/);
+    expect(theme.colors.shadow.dark).not.toBe(theme.colors.shadow.light);
   });
 
   it("resolves Tasty tokens and typography presets into the shared theme", () => {
@@ -59,12 +73,27 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.body?.fontFamily).toBe("Inter, sans-serif");
     expect(theme.presets.heading?.fontFamily).toBe("Newsreader, serif");
     expect(theme.presets.h1?.fontFamily).toBe("var(--heading-font-family)");
-    expect(theme.css).toContain("--radius:4px");
-    expect(theme.css).toContain("--card-radius:10px");
-    expect(theme.css).toContain("--border-width:2px");
-    expect(theme.css).toContain("--layout-width:72rem");
-    expect(theme.css).toContain("--legacy-token:3rem");
-    expect(theme.css).toContain("--body-font-family:Inter, sans-serif");
-    expect(theme.css).toContain("--heading-font-family:Newsreader, serif");
+    const tokens = tastyTokens(theme);
+    expect(tokens.$radius).toBe("4px");
+    expect(tokens["$card-radius"]).toBe("10px");
+    expect(tokens["$border-width"]).toBe("2px");
+    expect(tokens["$layout-width"]).toBe("72rem");
+    expect(tokens).not.toHaveProperty("--legacy-token");
+  });
+
+  it("builds restrained surface colors in two-tone steps", () => {
+    const theme = resolveDocsTheme({
+      palette: { surface: "#fcfcff" },
+    });
+
+    expect(theme.colors.surface.light).toBe("oklch(0.9919 0.004 286.33)");
+    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0138 286.33)");
+    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0222 286.33)");
+    expect(theme.colors.surface2.lightContrast).toBe(
+      theme.colors.surface2.light,
+    );
+    expect(theme.colors.surface3.lightContrast).toBe(
+      theme.colors.surface3.light,
+    );
   });
 });

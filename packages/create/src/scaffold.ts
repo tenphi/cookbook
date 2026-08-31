@@ -86,7 +86,7 @@ export async function scaffold(
     ),
     writeFile(
       join(destination, "astro.config.ts"),
-      astroConfig(options),
+      astroConfig(options, discovery.manifest.name),
       "utf8",
     ),
     writeFile(join(destination, "tsconfig.json"), tsconfig(), "utf8"),
@@ -130,13 +130,16 @@ function packageJson(packageManager: PackageManager): string {
   )}\n`;
 }
 
-function astroConfig(options: ScaffoldOptions): string {
+function astroConfig(options: ScaffoldOptions, packageName: string): string {
   const source = {
     package: options.package,
     ...(options.trustPackage ? { trust: "mdx" as const } : {}),
   };
   const docsConfig = {
-    ...(options.site ? { site: { url: options.site } } : {}),
+    site: {
+      title: packageName,
+      ...(options.site ? { url: options.site } : {}),
+    },
     content: { sources: [source] },
     ...(options.brand ? { theme: { brand: { from: options.brand } } } : {}),
     ...(options.base ? { build: { base: options.base } } : {}),

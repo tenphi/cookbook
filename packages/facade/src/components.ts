@@ -1,1 +1,1 @@
-export { Card, Preview, Steps, Tabs } from "@tenphi/starlight/components";
+export { Card, Logo, Preview, Steps, Tabs } from "@tenphi/starlight/components";

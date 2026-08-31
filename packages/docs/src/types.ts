@@ -16,6 +16,8 @@ export interface DocsDiagnostic {
 
 export interface SiteConfig {
   title?: string;
+  /** Version of the documented package, rendered beside the site title. */
+  version?: string;
   description?: string;
   url?: string;
   repository?: string;
@@ -127,6 +129,7 @@ export interface TypographyPresets {
   h4?: TypographyPreset;
   h5?: TypographyPreset;
   h6?: TypographyPreset;
+  navigation?: TypographyPreset;
   small?: TypographyPreset;
   code?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;
@@ -142,6 +145,51 @@ export interface ThemePaletteConfig {
   textSoft?: GlazeColorValue;
 }
 
+/** Cookbook components whose default Tasty styles can be customized. */
+export const COOKBOOK_COMPONENT_NAMES = [
+  "AppearanceControl",
+  "Card",
+  "DocsArticle",
+  "DocsLayout",
+  "DocsSidebar",
+  "Logo",
+  "MobileMenuFooter",
+  "MobileNavigationTabs",
+  "NavigationTree",
+  "PackageVersion",
+  "Preview",
+  "SearchDialog",
+  "SearchTrigger",
+  "SkipLink",
+  "StandaloneHeader",
+  "Steps",
+  "Tabs",
+  "ThemeSelect",
+  "TopNavigation",
+  "StarlightHeader",
+] as const;
+
+export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
+
+/** A serializable Tasty style object. */
+export type ComponentStyles = Record<string, unknown>;
+
+/**
+ * Plain style objects extend Cookbook defaults. Use `mode: "replace"` to
+ * discard a component's defaults and supply the complete style object.
+ */
+export type ComponentStyleConfig =
+  | ComponentStyles
+  | {
+      mode: "extend" | "replace";
+      styles: ComponentStyles;
+    };
+
+export type ComponentStylesConfig = Partial<
+  Record<CookbookComponentName, ComponentStyleConfig>
+> &
+  Record<string, ComponentStyleConfig | undefined>;
+
 export interface ThemeConfig {
   variant?: string;
   brand?: BrandConfig;
@@ -149,7 +197,8 @@ export interface ThemeConfig {
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;
-  styles?: Record<string, unknown>;
+  /** Direct Tasty component styles, keyed by Cookbook component name. */
+  styles?: ComponentStylesConfig;
   contrastLevel?: number | "auto";
 }
 

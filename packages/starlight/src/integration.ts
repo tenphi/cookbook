@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, extname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import starlight from "./starlight-runtime.js";
 import {
   createDocsGraph,
@@ -23,12 +23,27 @@ import {
   type ResolvedNavigationLayout,
 } from "./navigation.js";
 import { resolveDocsTheme } from "./theme/index.js";
+import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
+import {
+  configureComponentStyles,
+  resolveLegacyAnatomyStyles,
+} from "./components/component-styles.js";
+import { cookbookStates } from "./components/tasty-states.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = dirname(packageRequire.resolve("@astrojs/starlight"));
 const tastyStaticMiddleware = packageRequire.resolve(
   "@tenphi/tasty/ssr/astro-middleware-static",
 );
+const tastyExtractStaticMiddleware = packageRequire.resolve(
+  "@tenphi/tasty/ssr/astro-middleware-extract-static",
+);
+const astroReactServer = packageRequire.resolve("@astrojs/react/server.js");
+const astroReactClient = packageRequire.resolve("@astrojs/react/client.js");
+const astroReactIntegration = packageRequire.resolve("@astrojs/react");
+const importNative = new Function("specifier", "return import(specifier)") as (
+  specifier: string,
+) => Promise<{ default: () => AstroIntegration }>;
 
 export interface CookbookOptions {
   config?: DocsConfig;
@@ -47,7 +62,7 @@ export default function cookbook(
     );
   }
   configureTastyTheme(options.config?.theme, docsTheme);
-  const cssPath = fileURLToPath(new URL("./styles.css", import.meta.url));
+  configureComponentStyles(options.config?.theme?.styles);
   const searchClientPath = fileURLToPath(
     new URL("./client/search.js", import.meta.url),
   );
@@ -60,25 +75,36 @@ export default function cookbook(
   const sidebarPath = fileURLToPath(
     new URL("./overrides/Sidebar.astro", import.meta.url),
   );
+  const mobileMenuFooterPath = fileURLToPath(
+    new URL("./overrides/MobileMenuFooter.astro", import.meta.url),
+  );
+  const themeSelectPath = fileURLToPath(
+    new URL("./overrides/ThemeSelect.astro", import.meta.url),
+  );
   const components = {
     Header: headerPath,
     Sidebar: sidebarPath,
+    MobileMenuFooter: mobileMenuFooterPath,
+    ThemeSelect: themeSelectPath,
     ...options.config?.components?.overrides,
   };
   const navigation = resolveNavigationLayout(options.config?.navigation);
-  const inner = [
-    tastyIntegration({ islands: false }),
-    starlight({
-      title: options.config?.site?.title ?? "Documentation",
-      ...(options.config?.site?.description
-        ? { description: options.config.site.description }
-        : {}),
-      customCss: ["virtual:cookbook/theme.css", cssPath],
-      ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
-      components,
-      sidebar: starlightSidebar(navigation),
-    }),
-  ] satisfies AstroIntegration[];
+  // Tasty 3.6's integration shape is structurally compatible with Astro 7;
+  // its published helper type still models `site` as URL-only.
+  const tasty = tastyIntegration({
+    islands: false,
+    css: { mode: "extract" },
+  }) as unknown as AstroIntegration;
+  const starlightIntegration = starlight({
+    title: options.config?.site?.title ?? "Documentation",
+    ...(options.config?.site?.description
+      ? { description: options.config.site.description }
+      : {}),
+    ...(options.config?.search?.enabled === false ? { pagefind: false } : {}),
+    components,
+    sidebar: starlightSidebar(navigation),
+  });
+  let inner: AstroIntegration[] = [tasty, starlightIntegration];
   let projectRoot = options.root;
   let graphConfig = options.config;
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
@@ -99,6 +125,10 @@ export default function cookbook(
     name: "cookbook",
     hooks: {
       "astro:config:setup": async (context) => {
+        const react = (
+          await importNative(pathToFileURL(astroReactIntegration).href)
+        ).default();
+        inner = [react, tasty, starlightIntegration];
         if (
           context.config.integrations.some(
             (integration) => integration.name === "@astrojs/starlight",
@@ -120,23 +150,24 @@ export default function cookbook(
           output: "static",
           vite: {
             ssr: {
-              external: ["@tenphi/docs"],
+              external: [
+                "@tenphi/docs",
+                "react",
+                "react-dom",
+                "react-dom/server",
+              ],
             },
             plugins: [
-              virtualDocsPlugin(
-                docsTheme.css,
-                () => ({
-                  entries: graph?.entries ?? [],
-                  routes: graph?.routes ?? [],
-                  site: graph?.config.site ?? options.config?.site ?? {},
-                  base: graph?.config.build.base ?? base,
-                  search:
-                    graph?.config.search.enabled ??
-                    options.config?.search?.enabled ??
-                    true,
-                }),
-                navigation,
-              ),
+              virtualDocsPlugin(async () => {
+                const loaded = await loadGraph();
+                return {
+                  entries: loaded.entries,
+                  routes: loaded.routes,
+                  site: documentedSite(loaded),
+                  base: loaded.config.build.base,
+                  search: loaded.config.search.enabled,
+                };
+              }, navigation),
             ],
             resolve: {
               alias: [
@@ -148,11 +179,23 @@ export default function cookbook(
                   find: "@tenphi/tasty/ssr/astro-middleware-static",
                   replacement: tastyStaticMiddleware,
                 },
+                {
+                  find: "@tenphi/tasty/ssr/astro-middleware-extract-static",
+                  replacement: tastyExtractStaticMiddleware,
+                },
+                {
+                  find: "@astrojs/react/server.js",
+                  replacement: astroReactServer,
+                },
+                {
+                  find: "@astrojs/react/client.js",
+                  replacement: astroReactClient,
+                },
               ],
             },
           },
         });
-        await callInner(inner.slice(0, 1), "astro:config:setup", context);
+        await callInner(inner.slice(0, 2), "astro:config:setup", context);
 
         if (!usingStarlight) {
           graph = await createDocsGraph({
@@ -181,25 +224,25 @@ export default function cookbook(
         // Starlight inserts its own follow-up integrations immediately after
         // itself. Give it a temporary real position so Astro processes those
         // once, after this composite integration, rather than re-visiting us.
-        const starlightIntegration = inner[1];
-        if (starlightIntegration) {
+        const starlightWithPlugins = inner[2];
+        if (starlightWithPlugins) {
           const selfIndex = context.config.integrations.findIndex(
             (integration) => integration.name === "cookbook",
           );
           context.config.integrations.splice(
             selfIndex + 1,
             0,
-            starlightIntegration,
+            starlightWithPlugins,
           );
           try {
             await callInner(
-              [starlightIntegration],
+              [starlightWithPlugins],
               "astro:config:setup",
               context,
             );
           } finally {
             const placeholderIndex =
-              context.config.integrations.indexOf(starlightIntegration);
+              context.config.integrations.indexOf(starlightWithPlugins);
             if (placeholderIndex >= 0)
               context.config.integrations.splice(placeholderIndex, 1);
           }
@@ -207,7 +250,7 @@ export default function cookbook(
       },
       "astro:config:done": async (context) => {
         await callInner(
-          usingStarlight ? inner : inner.slice(0, 1),
+          usingStarlight ? inner : inner.slice(0, 2),
           "astro:config:done",
           context,
         );
@@ -253,14 +296,14 @@ export default function cookbook(
       "astro:build:start": async (context) => {
         await loadGraph();
         await callInner(
-          usingStarlight ? inner : inner.slice(0, 1),
+          usingStarlight ? inner : inner.slice(0, 2),
           "astro:build:start",
           context,
         );
       },
       "astro:build:done": async (context) => {
         await callInner(
-          usingStarlight ? inner : inner.slice(0, 1),
+          usingStarlight ? inner : inner.slice(0, 2),
           "astro:build:done",
           context,
         );
@@ -313,6 +356,24 @@ function docsAssetMap(graph: Awaited<ReturnType<typeof createDocsGraph>>) {
   );
 }
 
+function documentedSite(
+  graph: Awaited<ReturnType<typeof createDocsGraph>>,
+): Awaited<ReturnType<typeof createDocsGraph>>["config"]["site"] {
+  if (graph.config.site.version) return graph.config.site;
+  const packages = new Set(
+    graph.entries.flatMap((entry) =>
+      entry.package?.resolved ? [entry.package.resolved] : [],
+    ),
+  );
+  if (packages.size !== 1) return graph.config.site;
+  const resolved = packages.values().next().value;
+  if (!resolved) return graph.config.site;
+  const separator = resolved.lastIndexOf("@");
+  if (separator <= 0 || separator === resolved.length - 1)
+    return graph.config.site;
+  return { ...graph.config.site, version: resolved.slice(separator + 1) };
+}
+
 function requestPath(url: string | undefined): string {
   try {
     return decodeURIComponent(new URL(url ?? "/", "http://localhost").pathname);
@@ -345,51 +406,21 @@ function configureTastyTheme(
   theme: DocsConfig["theme"],
   resolved: ReturnType<typeof resolveDocsTheme>,
 ): void {
-  const tokens = Object.fromEntries(
-    Object.entries(resolved.tokens).filter(([name]) => name.startsWith("$")),
-  ) as ConfigTokens;
-  Object.assign(tokens, {
-    "#surface": "var(--td-surface)",
-    "#surface-2": "var(--td-surface-2)",
-    "#surface-3": "var(--td-surface-3)",
-    "#text": "var(--td-text)",
-    "#text-soft": "var(--td-text-soft)",
-    "#border": "var(--td-border)",
-    "#border-strong": "var(--td-border-strong)",
-    "#accent-text": "var(--td-accent-text)",
-    "#accent-surface": "var(--td-accent-surface)",
-    "#accent-surface-text": "var(--td-accent-surface-text)",
-    "#focus": "var(--td-focus)",
-  } satisfies ConfigTokens);
+  const tokens = tastyTokens(resolved) as ConfigTokens;
+  const globalStyles = resolveLegacyAnatomyStyles(theme?.styles);
 
-  const globalStyles = anatomyStyles(theme?.styles);
   configure({
-    ...(theme?.states ? { states: theme.states } : {}),
-    units: {
-      x: "var(--gap)",
-      r: "var(--radius)",
-      cr: "var(--card-radius)",
-      bw: "var(--border-width)",
+    states: {
+      ...cookbookStates,
+      ...theme?.states,
     },
+    units: TASTY_UNITS,
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,
-    ...(globalStyles ? { globalStyles } : {}),
+    ...(globalStyles
+      ? { globalStyles: globalStyles as Record<string, Styles> }
+      : {}),
   });
-}
-
-function anatomyStyles(
-  styles: Record<string, unknown> | undefined,
-): Record<string, Styles> | undefined {
-  if (!styles) return undefined;
-  return Object.fromEntries(
-    Object.entries(styles)
-      .filter((entry): entry is [string, Styles] => isRecord(entry[1]))
-      .map(([name, value]) => [`[data-tasty-anatomy="${name}"]`, value]),
-  );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function starlightSidebar(layout: ResolvedNavigationLayout): unknown[] {
@@ -465,25 +496,21 @@ async function callInner<K extends keyof AstroIntegration["hooks"]>(
 }
 
 function virtualDocsPlugin(
-  css: string,
-  getContent: () => unknown,
+  getContent: () => unknown | Promise<unknown>,
   layout: ResolvedNavigationLayout,
 ) {
-  const themeId = "\0virtual:cookbook/theme.css";
   const configId = "\0virtual:cookbook/config";
   const layoutId = "\0virtual:cookbook/layout";
   return {
-    name: "cookbook-theme",
+    name: "cookbook-data",
     resolveId(id: string) {
-      if (id === "virtual:cookbook/theme.css") return themeId;
       if (id === "virtual:cookbook/config") return configId;
       if (id === "virtual:cookbook/layout") return layoutId;
       return undefined;
     },
-    load(id: string) {
-      if (id === themeId) return css;
+    async load(id: string) {
       if (id === configId) {
-        return `export const content = ${JSON.stringify(getContent())};`;
+        return `export const content = ${JSON.stringify(await getContent())};`;
       }
       if (id === layoutId) {
         return `export const layout = ${JSON.stringify(layout)};`;

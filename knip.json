@@ -1,10 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["packages/starlight/src/tasty.config.js"],
   "ignoreDependencies": [
     "@arethetypeswrong/cli",
-    "@fontsource-variable/jetbrains-mono",
-    "@fontsource-variable/onest",
+    "@astrojs/react",
     "publint",
+    "react-dom",
     "unrun"
   ]
 }

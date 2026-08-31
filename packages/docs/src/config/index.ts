@@ -17,7 +17,7 @@ const ROOT_KEYS = new Set([
 ]);
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
-  site: new Set(["title", "description", "url", "repository"]),
+  site: new Set(["title", "version", "description", "url", "repository"]),
   content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
   markdown: new Set([
     "stripLeadingBadges",
@@ -112,6 +112,32 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       });
     }
   }
+
+  for (const [name, entry] of Object.entries(config.theme?.styles ?? {})) {
+    if (!isRecord(entry)) {
+      invalid(
+        diagnostics,
+        `theme.styles.${name} must be a Tasty style object.`,
+      );
+      continue;
+    }
+    if (
+      "mode" in entry &&
+      entry.mode !== "extend" &&
+      entry.mode !== "replace"
+    ) {
+      invalid(
+        diagnostics,
+        `theme.styles.${name}.mode must be "extend" or "replace".`,
+      );
+    }
+    if ("mode" in entry && !isRecord(entry.styles)) {
+      invalid(
+        diagnostics,
+        `theme.styles.${name}.styles must be a Tasty style object.`,
+      );
+    }
+  }
   return diagnostics;
 }
 
@@ -121,6 +147,18 @@ function unknown(diagnostics: DocsDiagnostic[], path: string): void {
     severity: "error",
     message: `Unknown configuration key "${path}".`,
   });
+}
+
+function invalid(diagnostics: DocsDiagnostic[], message: string): void {
+  diagnostics.push({
+    code: "DOCS_CONFIG_INVALID",
+    severity: "error",
+    message,
+  });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function normalizeDocsConfig(
@@ -174,6 +212,10 @@ export function defineDocsConfig<const T extends DocsConfig>(config: T): T {
 export type {
   BrandConfig,
   BuildConfig,
+  ComponentStyleConfig,
+  ComponentStyles,
+  ComponentStylesConfig,
+  CookbookComponentName,
   ComponentsConfig,
   ContentConfig,
   DocsConfig,
