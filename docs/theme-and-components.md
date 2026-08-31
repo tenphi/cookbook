@@ -137,10 +137,73 @@ Tasty SSR for use in custom MDX components.
 The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
 are useful when building a theme editor or presenting a reset action.
 
-The default renderer runs Tasty in Astro extract mode. Ordinary `tasty()` and
-`useGlobalStyles()` calls are collected into shared static CSS during the
-build, while appearance controls add only the small client behavior needed to
-persist a selected scheme.
+## Component styles
+
+Cookbook-owned interface elements are direct `tasty()` components. Configure
+their style objects by component name under `theme.styles`; the configuration
+is resolved before the component is created, so this is not a selector-based
+CSS override.
+
+A plain style object extends the defaults using Tasty's deep style merge:
+
+```ts
+theme: {
+  styles: {
+    ThemeSelect: {
+      Select: {
+        borderColor: "#border-strong"
+      },
+      Picker: {
+        padding: "1x",
+        shadow: "0 1rem 3rem #shadow"
+      }
+    },
+    TopNavigation: {
+      Link: { preset: "body" },
+      CurrentLink: { color: "#accent-text" }
+    }
+  }
+}
+```
+
+Use explicit replacement when a component must not inherit any built-in
+styles. The replacement is the complete Tasty style object, including any
+named descendant styles the component needs:
+
+```ts
+theme: {
+  styles: {
+    PackageVersion: {
+      mode: "replace",
+      styles: {
+        color: "#text-soft",
+        preset: "small"
+      }
+    }
+  }
+}
+```
+
+The configurable component names are `AppearanceControl`, `Card`,
+`DocsArticle`, `DocsLayout`, `DocsSidebar`, `MobileMenuFooter`,
+`MobileNavigationTabs`, `NavigationTree`, `PackageVersion`, `Preview`,
+`SearchDialog`, `SearchTrigger`, `SkipLink`, `StandaloneHeader`, `Steps`,
+`Tabs`, `ThemeSelect`, `TopNavigation`, and `StarlightHeader`. Editor inference
+is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
+`ComponentStyleConfig`, and `ComponentStylesConfig` types.
+
+`components.overrides` remains the structural escape hatch for replacing an
+Astro component. Prefer `theme.styles` when the markup and behavior remain the
+same.
+
+Custom names remain compatible with the earlier anatomy API: an unrecognized
+name targets a user-authored matching `data-tasty-anatomy` attribute. Built-in
+names never use that selector bridge.
+
+The default renderer runs Tasty in Astro extract mode. Direct components and
+the remaining document/vendor bridge styles are collected into shared static
+CSS during the build, while appearance controls add only the small client
+behavior needed to persist a selected scheme.
 
 ## Astro and MDX components
 

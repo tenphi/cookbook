@@ -6,6 +6,18 @@ import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import NavigationTree from "../components/NavigationTree.astro";
 import GlobalStyles from "../components/GlobalStyles.js";
 import PackageVersion from "../components/PackageVersion.astro";
+import {
+  AppearanceControlRoot,
+  DocsArticleRoot,
+  DocsLayoutRoot,
+  DocsSidebarRoot,
+  SearchDialogRoot,
+  SearchTriggerRoot,
+  SkipLinkRoot,
+  StandaloneHeaderRoot,
+  TopNavigationRoot,
+  VisuallyHiddenRoot,
+} from "../components/LayoutComponents.js";
 import { activeNavigationTab, navigationItemsForPath } from "../navigation.js";
 import "@fontsource-variable/onest/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
@@ -52,9 +64,15 @@ const navigationItems =
   </head>
   <body class="td-shell">
     <GlobalStyles />
-    <a class="td-skip" href="#main-content">Skip to content</a>
-    <header
-      class="td-shell__header"
+    <SkipLinkRoot
+      className="td-skip"
+      href="#main-content"
+      data-tasty-anatomy="SkipLink"
+    >
+      Skip to content
+    </SkipLinkRoot>
+    <StandaloneHeaderRoot
+      className="td-shell__header"
       data-tasty-anatomy="Header"
       data-docs-base={base}
     >
@@ -64,32 +82,38 @@ const navigationItems =
           <PackageVersion version={site.version} />
         </div>
         <div class="td-shell__actions">
-          <label class="td-appearance-control" title="Color theme">
-            <span class="td-visually-hidden">Color theme</span>
+          <AppearanceControlRoot
+            className="td-appearance-control"
+            title="Color theme"
+            data-tasty-anatomy="AppearanceControl"
+          >
+            <VisuallyHiddenRoot>Color theme</VisuallyHiddenRoot>
             <select data-docs-theme aria-label="Color theme">
               <option value="system">System theme</option>
               <option value="light">Light theme</option>
               <option value="dark">Dark theme</option>
             </select>
-          </label>
-          <label
-            class="td-appearance-control td-appearance-control--contrast"
+          </AppearanceControlRoot>
+          <AppearanceControlRoot
+            className="td-appearance-control td-appearance-control--contrast"
             title="Contrast"
+            data-tasty-anatomy="AppearanceControl"
           >
-            <span class="td-visually-hidden">Contrast</span>
+            <VisuallyHiddenRoot>Contrast</VisuallyHiddenRoot>
             <select data-docs-contrast aria-label="Contrast">
               <option value="system">System contrast</option>
               <option value="normal">Normal contrast</option>
               <option value="more">High contrast</option>
             </select>
-          </label>
+          </AppearanceControlRoot>
           {
             search && (
-              <button
+              <SearchTriggerRoot
                 type="button"
                 data-docs-search-open
                 aria-haspopup="dialog"
                 aria-keyshortcuts="Control+K"
+                data-tasty-anatomy="SearchTrigger"
               >
                 <span>Search</span>
                 <kbd data-docs-search-shortcut>
@@ -98,14 +122,18 @@ const navigationItems =
                     <kbd>K</kbd>
                   </>
                 </kbd>
-              </button>
+              </SearchTriggerRoot>
             )
           }
         </div>
       </div>
       {
         layout.tabs.length > 0 && (
-          <nav class="td-top-tabs" aria-label="Primary">
+          <TopNavigationRoot
+            className="td-top-tabs"
+            aria-label="Primary"
+            data-tasty-anatomy="TopNavigation"
+          >
             {layout.tabs.map((tab, index) => (
               <a
                 href={tab.link.startsWith("/") ? withBase(tab.link) : tab.link}
@@ -114,15 +142,18 @@ const navigationItems =
                 {tab.label}
               </a>
             ))}
-          </nav>
+          </TopNavigationRoot>
         )
       }
-    </header>
-    <div class="td-shell__layout">
-      <nav
-        class="td-shell__nav"
+    </StandaloneHeaderRoot>
+    <DocsLayoutRoot
+      className="td-shell__layout"
+      data-tasty-anatomy="DocsLayout"
+    >
+      <DocsSidebarRoot
+        className="td-shell__nav"
         aria-label="Documentation"
-        data-tasty-anatomy="Sidebar"
+        data-tasty-anatomy="DocsSidebar"
       >
         <MobileNavigationTabs base={base} currentPath={entry.route} />
         <NavigationTree
@@ -131,20 +162,24 @@ const navigationItems =
           current={entry.route}
           base={base}
         />
-      </nav>
-      <main
+      </DocsSidebarRoot>
+      <DocsArticleRoot
         id="main-content"
-        class="td-shell__main"
+        className="td-shell__main"
         data-pagefind-body
-        data-tasty-anatomy="Article"
+        data-tasty-anatomy="DocsArticle"
       >
         <h1>{entry.title}</h1>
         <div set:html={html} />
-      </main>
-    </div>
+      </DocsArticleRoot>
+    </DocsLayoutRoot>
     {
       search && (
-        <dialog data-docs-search aria-labelledby="td-search-title">
+        <SearchDialogRoot
+          data-docs-search
+          aria-labelledby="td-search-title"
+          data-tasty-anatomy="SearchDialog"
+        >
           <form method="dialog">
             <button aria-label="Close search">Close</button>
           </form>
@@ -155,7 +190,7 @@ const navigationItems =
           </label>
           <div data-docs-search-status aria-live="polite" />
           <ul data-docs-search-results />
-        </dialog>
+        </SearchDialogRoot>
       )
     }
   </body>

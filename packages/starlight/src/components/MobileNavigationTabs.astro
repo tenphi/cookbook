@@ -1,6 +1,7 @@
 ---
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
+import { MobileNavigationTabsRoot } from "./LayoutComponents.js";
 
 interface Props {
   base?: string;
@@ -21,7 +22,11 @@ function tabHref(link: string): string {
 
 {
   layout.tabs.length > 0 && (
-    <nav class="td-mobile-tabs print:hidden" aria-label="Sections">
+    <MobileNavigationTabsRoot
+      className="td-mobile-tabs print:hidden"
+      aria-label="Sections"
+      data-tasty-anatomy="MobileNavigationTabs"
+    >
       <span class="td-mobile-tabs__label">Sections</span>
       <ul>
         {layout.tabs.map((tab, index) => (
@@ -35,6 +40,6 @@ function tabHref(link: string): string {
           </li>
         ))}
       </ul>
-    </nav>
+    </MobileNavigationTabsRoot>
   )
 }

@@ -1,21 +1,10 @@
 import { useGlobalStyles } from "@tenphi/tasty";
 import arrowLeftIcon from "../icons/arrow-left.svg?raw";
 import arrowRightIcon from "../icons/arrow-right.svg?raw";
-import chevronDownIcon from "../icons/chevron-down.svg?raw";
 import chevronRightIcon from "../icons/chevron-right.svg?raw";
 import closeIcon from "../icons/close.svg?raw";
-import contrastIcon from "../icons/contrast.svg?raw";
-import deviceIcon from "../icons/device-desktop.svg?raw";
-import moonIcon from "../icons/moon.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
-import sunIcon from "../icons/sun.svg?raw";
-
-// Tasty normalizes style values to lowercase. Escape the uppercase B so the
-// SVG's case-sensitive viewBox attribute survives CSS extraction.
-const iconUrl = (svg) =>
-  `data:image/svg+xml,${encodeURIComponent(
-    svg.replace("viewbox=", "viewBox="),
-  ).replace("viewBox", "view%42ox")}`;
+import { svgIconUrl } from "./svg-icon.js";
 
 // These global rules bridge Cookbook tokens into markup owned by Astro,
 // Starlight, Expressive Code, and Pagefind. Cookbook-owned components use
@@ -91,7 +80,7 @@ export default function GlobalStyles() {
     fontFamily: "$body-font-family",
   });
 
-  useGlobalStyles("body, .td-shell", {
+  useGlobalStyles("body", {
     color: "#text",
     fill: "#surface",
     fontSize: "$body-font-size",
@@ -198,10 +187,8 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    'starlight-theme-select label, starlight-theme-select select, site-search button[data-open-modal], site-search dialog, .pagination-links a, a[aria-current="page"]',
-    {
-      radius: "$radius",
-    },
+    'site-search button[data-open-modal], site-search dialog, .pagination-links a, a[aria-current="page"]',
+    { radius: "$radius" },
   );
 
   useGlobalStyles(
@@ -211,283 +198,6 @@ export default function GlobalStyles() {
       fill: "color-mix( in oklab, #accent-surface 12%, #surface )",
     },
   );
-
-  useGlobalStyles("starlight-theme-select label", {
-    boxSizing: "border-box",
-    position: "relative",
-    display: "inline-flex",
-    alignItems: "center",
-    inlineSize: "$control-height",
-    blockSize: "$control-height",
-    padding: "0",
-    border: "0",
-    fill: "#clear",
-  });
-
-  useGlobalStyles("starlight-theme-select .label-icon", {
-    position: "absolute",
-    zIndex: "1",
-    insetInlineStart: "50%",
-    inlineSize: "1rem",
-    blockSize: "1rem",
-    color: "#text-soft",
-    translate: "-50% 0",
-    pointerEvents: "none",
-  });
-
-  useGlobalStyles("starlight-theme-select select", {
-    appearance: "base-select",
-    position: "static",
-    inlineSize: "$control-height",
-    minInlineSize: "0",
-    blockSize: "$control-height",
-    paddingBlockStart: "0",
-    paddingBlockEnd: "0",
-    paddingInlineStart: "0",
-    paddingInlineEnd: "0",
-    margin: "0",
-    color: "#clear",
-    fontSize: "0",
-    fontWeight: "$body-bold-font-weight",
-    border: "$border-width solid #border",
-    fill: "#surface-3",
-    boxShadow: "none",
-    cursor: "pointer",
-    transition: "color 120ms ease, background-color 120ms ease",
-  });
-
-  useGlobalStyles("starlight-theme-select select:hover", {
-    fill: "#surface-3-hover",
-  });
-
-  useGlobalStyles("starlight-theme-select select:active", {
-    fill: "#surface-3-pressed",
-  });
-
-  useGlobalStyles("starlight-theme-select select::picker-icon", {
-    hide: true,
-  });
-
-  useGlobalStyles("::picker(select)", {
-    appearance: "base-select",
-    display: "grid",
-    rowGap: "1px",
-    minInlineSize: "8rem",
-    marginBlockStart: "0.5rem",
-    padding: "4px",
-    color: "#text",
-    border: "$border-width solid #border",
-    radius: "$card-radius",
-    fill: "#surface-2",
-    boxShadow: "0 0.75rem 2rem #shadow",
-  });
-
-  useGlobalStyles("starlight-theme-select option", {
-    padding: "0.625rem 0.75rem",
-    color: "#text",
-    fontSize: "$small-font-size",
-    radius: "$radius",
-    fill: "#surface-2",
-  });
-
-  useGlobalStyles(
-    "starlight-theme-select option:hover, starlight-theme-select option:focus",
-    {
-      fill: "#surface-2-hover",
-    },
-  );
-
-  useGlobalStyles("starlight-theme-select option:checked", {
-    color: "#accent-text",
-    fill: "color-mix( in oklab, #accent-surface 12%, #surface-2 )",
-  });
-
-  useGlobalStyles("starlight-theme-select option::checkmark", {
-    order: "1",
-    marginInlineStart: "auto",
-  });
-
-  useGlobalStyles(".td-header", {
-    display: "flex",
-    flexDirection: "column",
-    inlineSize: "100%",
-    maxInlineSize: "($layout-width - ($sl-sidebar-pad-x * 2))",
-    blockSize: "100%",
-    minInlineSize: "0",
-    marginInlineStart: "auto",
-    marginInlineEnd: "auto",
-  });
-
-  useGlobalStyles(".td-header__primary", {
-    display: "grid",
-    gridTemplateColumns:
-      "minmax(9rem, $sidebar-width) minmax(12rem, 28rem) minmax(5rem, 1fr)",
-    placeItems: "center stretch",
-    flexGrow: "1",
-    flexShrink: "1",
-    flexBasis: "0%",
-    rowGap: "clamp(1rem, 2.5vw, 2.5rem)",
-    columnGap: "clamp(1rem, 2.5vw, 2.5rem)",
-    minBlockSize: "0",
-  });
-
-  useGlobalStyles(".td-header__title, .td-header__search", {
-    display: "flex",
-    alignItems: "center",
-    minInlineSize: "0",
-  });
-
-  useGlobalStyles(".td-header__title", {
-    columnGap: "$gap",
-    overflow: "hidden",
-  });
-
-  useGlobalStyles(".td-package-version", {
-    display: "inline-flex",
-    alignItems: "center",
-    flexShrink: "0",
-    minBlockSize: "1.5rem",
-    paddingInlineStart: "($gap * 0.75)",
-    paddingInlineEnd: "($gap * 0.75)",
-    color: "#text-soft",
-    fill: "#surface-2",
-    border: "$border-width solid #border",
-    radius: "999px",
-    fontSize: "$small-font-size",
-    fontWeight: "$small-font-weight",
-    lineHeight: "$small-line-height",
-    letterSpacing: "$small-letter-spacing",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles(".td-header__search site-search", {
-    inlineSize: "100%",
-  });
-
-  useGlobalStyles(".td-header__tools", {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    rowGap: "($gap * 1.5)",
-    columnGap: "($gap * 1.5)",
-  });
-
-  useGlobalStyles(".td-header__social", {
-    display: "flex",
-    alignItems: "center",
-  });
-
-  useGlobalStyles(".site-title", {
-    color: "#text",
-    fontWeight: "$heading-bold-font-weight",
-    letterSpacing: "$heading-letter-spacing",
-  });
-
-  useGlobalStyles(".td-top-tabs", {
-    display: "flex",
-    alignItems: "stretch",
-    rowGap: "clamp(1.25rem, 2.5vw, 2.5rem)",
-    columnGap: "clamp(1.25rem, 2.5vw, 2.5rem)",
-    inlineSize: "100%",
-    minBlockSize: "2.5rem",
-    overflowX: "auto",
-    scrollbarWidth: "none",
-  });
-
-  useGlobalStyles(".td-top-tabs::-webkit-scrollbar", {
-    hide: true,
-  });
-
-  useGlobalStyles(".td-top-tabs a", {
-    position: "relative",
-    display: "inline-flex",
-    alignItems: "center",
-    flexGrow: "0",
-    flexShrink: "0",
-    flexBasis: "auto",
-    paddingBlockStart: "($gap * 0.75)",
-    paddingBlockEnd: "$gap",
-    color: "#text-soft",
-    fontSize: "$navigation-font-size",
-    fontWeight: "$navigation-bold-font-weight",
-    lineHeight: "$navigation-line-height",
-    letterSpacing: "$navigation-letter-spacing",
-    textDecoration: "none",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles(".td-top-tabs a:hover", {
-    color: "#text",
-  });
-
-  useGlobalStyles('.td-top-tabs a[aria-current="page"]', {
-    color: "#accent-text",
-  });
-
-  useGlobalStyles('.td-top-tabs a[aria-current="page"]::after', {
-    content: '""',
-    position: "absolute",
-    inset: "auto 0 0",
-    blockSize: "2px",
-    radius: "999px",
-    fill: "#accent-surface",
-  });
-
-  useGlobalStyles(".td-mobile-tabs", {
-    display: "grid",
-    rowGap: "$gap",
-    columnGap: "$gap",
-    marginBlockEnd: "($gap * 2)",
-    paddingBlockEnd: "($gap * 2)",
-    borderBlockEnd: "$border-width solid #border",
-  });
-
-  useGlobalStyles(".td-mobile-tabs__label", {
-    paddingInlineStart: "($gap * 1.25)",
-    paddingInlineEnd: "($gap * 1.25)",
-    color: "#text",
-    fontSize: "$navigation-font-size",
-    fontWeight: "$navigation-bold-font-weight",
-    lineHeight: "$navigation-line-height",
-    letterSpacing: "$navigation-letter-spacing",
-  });
-
-  useGlobalStyles(".td-mobile-tabs ul", {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    rowGap: "$gap",
-    columnGap: "$gap",
-    padding: "0",
-    margin: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles(".td-mobile-tabs li", {
-    margin: "0",
-  });
-
-  useGlobalStyles(".td-mobile-tabs a", {
-    display: "flex",
-    alignItems: "center",
-    minBlockSize: "2.25rem",
-    padding: "($gap * 0.75) ($gap * 1.25)",
-    color: "#text-soft",
-    fontSize: "$navigation-font-size",
-    fontWeight: "$navigation-font-weight",
-    lineHeight: "$navigation-line-height",
-    letterSpacing: "$navigation-letter-spacing",
-    textDecoration: "none",
-    radius: "$radius",
-  });
-
-  useGlobalStyles(".td-mobile-tabs a:hover", {
-    color: "#text",
-    fill: "#surface-2-hover",
-  });
-
-  useGlobalStyles('.td-mobile-tabs a[aria-current="page"]', {
-    color: "#accent-text",
-    fill: "color-mix( in oklab, #accent-surface 12%, #surface )",
-  });
 
   useGlobalStyles(
     "body > .page > .header, .sidebar-pane, .right-sidebar, .content-panel + .content-panel, mobile-starlight-toc :where(nav, summary)",
@@ -607,14 +317,14 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    "site-search button[data-open-modal] > svg, .pagination-links a > svg, starlight-theme-select .caret, mobile-starlight-toc .toggle > svg, #starlight__sidebar summary > svg.caret",
+    "site-search button[data-open-modal] > svg, .pagination-links a > svg, mobile-starlight-toc .toggle > svg, #starlight__sidebar summary > svg.caret",
     {
       hide: true,
     },
   );
 
   useGlobalStyles(
-    'site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after, [data-docs-search-open]::before, [data-docs-search] button[aria-label="Close search"]::before, .td-shell__actions label:has([data-docs-theme])::before',
+    "site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
     {
       content: '""',
       display: "block",
@@ -627,42 +337,36 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(
-    "site-search button[data-open-modal]::before, [data-docs-search-open]::before",
-    {
-      mask: `url("${iconUrl(searchIcon)}") center / contain no-repeat`,
-    },
-  );
+  useGlobalStyles("site-search button[data-open-modal]::before", {
+    mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
+  });
 
-  useGlobalStyles(
-    'site-search button[data-close-modal]::before, [data-docs-search] button[aria-label="Close search"]::before',
-    {
-      mask: `url("${iconUrl(closeIcon)}") center / contain no-repeat`,
-    },
-  );
+  useGlobalStyles("site-search button[data-close-modal]::before", {
+    mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
+  });
 
   useGlobalStyles(".pagination-links a::before", {
-    mask: `url("${iconUrl(arrowLeftIcon)}") center / contain no-repeat`,
+    mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     inlineSize: "1.25rem",
     blockSize: "1.25rem",
   });
 
   useGlobalStyles('.pagination-links a[rel="next"]::before', {
-    mask: `url("${iconUrl(arrowRightIcon)}") center / contain no-repeat`,
+    mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="prev"]::before', {
-    mask: `url("${iconUrl(arrowRightIcon)}") center / contain no-repeat`,
+    mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="next"]::before', {
-    mask: `url("${iconUrl(arrowLeftIcon)}") center / contain no-repeat`,
+    mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles(
     "mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
     {
-      mask: `url("${iconUrl(chevronRightIcon)}") center / contain no-repeat`,
+      mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
       transition: "rotate 120ms ease",
     },
   );
@@ -702,11 +406,11 @@ export default function GlobalStyles() {
   useGlobalStyles("#starlight__search .pagefind-ui__form::before", {
     inlineSize: "1rem",
     blockSize: "1rem",
-    mask: `url("${iconUrl(searchIcon)}") center / contain no-repeat`,
+    mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
   });
 
   useGlobalStyles("#starlight__search .pagefind-ui__search-clear::before", {
-    mask: `url("${iconUrl(closeIcon)}") center / 1rem no-repeat`,
+    mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
   });
 
   useGlobalStyles(
@@ -734,31 +438,6 @@ export default function GlobalStyles() {
   useGlobalStyles("starlight-menu-button button > svg", {
     inlineSize: "1.125rem",
     blockSize: "1.125rem",
-  });
-
-  useGlobalStyles(".td-mobile-preferences", {
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    rowGap: "($gap * 2)",
-    columnGap: "($gap * 2)",
-    paddingBlockStart: "$gap",
-    paddingBlockEnd: "$gap",
-    borderBlockStart: "$border-width solid #border",
-  });
-
-  useGlobalStyles(".td-mobile-preferences__social", {
-    display: "flex",
-    alignItems: "center",
-    rowGap: "($gap * 2)",
-    columnGap: "($gap * 2)",
-    marginInlineEnd: "auto",
-    paddingBlockStart: "($gap * 2)",
-    paddingBlockEnd: "($gap * 2)",
-  });
-
-  useGlobalStyles(".td-mobile-preferences__social:empty", {
-    hide: true,
   });
 
   useGlobalStyles(
@@ -856,309 +535,6 @@ export default function GlobalStyles() {
     fill: "#surface-2",
   });
 
-  useGlobalStyles(".td-shell", {
-    minBlockSize: "100vh",
-  });
-
-  useGlobalStyles(".td-shell__header", {
-    position: "sticky",
-    top: "0",
-    zIndex: "2",
-    display: "flex",
-    flexDirection: "column",
-    paddingInlineStart: "clamp(1.25rem, 3vw, 2rem)",
-    paddingInlineEnd: "clamp(1.25rem, 3vw, 2rem)",
-    fill: "color-mix(in oklab, #surface 96%, #clear)",
-    backdropFilter: "blur(12px)",
-  });
-
-  useGlobalStyles(".td-shell__header-primary", {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    rowGap: "($gap * 3)",
-    columnGap: "($gap * 3)",
-    inlineSize: "100%",
-    maxInlineSize: "($layout-width - ($gap * 6))",
-    minBlockSize: "4.5rem",
-    marginInlineStart: "auto",
-    marginInlineEnd: "auto",
-  });
-
-  useGlobalStyles(".td-shell__brand", {
-    display: "flex",
-    alignItems: "center",
-    columnGap: "$gap",
-    minInlineSize: "0",
-  });
-
-  useGlobalStyles(".td-shell__header > .td-top-tabs", {
-    maxInlineSize: "($layout-width - ($gap * 6))",
-    marginInlineStart: "auto",
-    marginInlineEnd: "auto",
-  });
-
-  useGlobalStyles(".td-shell__brand > a", {
-    color: "#text",
-    fontFamily: "$heading-font-family",
-    fontWeight: "$heading-font-weight",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles(".td-shell__actions", {
-    display: "flex",
-    alignItems: "center",
-    rowGap: "$gap",
-    columnGap: "$gap",
-  });
-
-  useGlobalStyles(
-    ".td-shell__actions :where(select, button), [data-docs-search] :where(input, button)",
-    {
-      paddingInlineStart: "($gap * 1.5)",
-      paddingInlineEnd: "($gap * 1.5)",
-      color: "#text",
-      border: "$border-width solid #border",
-    },
-  );
-
-  useGlobalStyles(".td-shell__actions select, [data-docs-search] input", {
-    fill: "#surface",
-  });
-
-  useGlobalStyles(
-    ".td-shell__actions button, [data-docs-search] button, site-search button[data-close-modal]",
-    {
-      fill: "#surface-2",
-      transition: "background-color 120ms ease",
-    },
-  );
-
-  useGlobalStyles(
-    ".td-shell__actions button:hover, [data-docs-search] button:hover, site-search button[data-close-modal]:hover",
-    {
-      borderColor: "#border",
-      fill: "#surface-2-hover",
-    },
-  );
-
-  useGlobalStyles(
-    ".td-shell__actions button:active, [data-docs-search] button:active, site-search button[data-close-modal]:active",
-    {
-      fill: "#surface-2-pressed",
-    },
-  );
-
-  useGlobalStyles(".td-shell__actions label:has(select)", {
-    position: "relative",
-  });
-
-  useGlobalStyles(".td-appearance-control", {
-    display: "grid",
-    placeItems: "center",
-    inlineSize: "$control-height",
-    blockSize: "$control-height",
-    radius: "$radius",
-  });
-
-  useGlobalStyles(".td-appearance-control:hover", {
-    fill: "#surface-2-hover",
-  });
-
-  useGlobalStyles(".td-appearance-control select", {
-    position: "absolute",
-    inset: "0",
-    inlineSize: "100%",
-    blockSize: "100%",
-    padding: "0",
-    border: "0",
-    opacity: "0",
-    cursor: "pointer",
-  });
-
-  useGlobalStyles(".td-shell__actions label:has([data-docs-theme])::before", {
-    mask: `url("${iconUrl(deviceIcon)}") center / contain no-repeat`,
-    position: "absolute",
-    zIndex: "1",
-    insetBlockStart: "50%",
-    insetInlineStart: "50%",
-    translate: "-50% -50%",
-    pointerEvents: "none",
-  });
-
-  useGlobalStyles(
-    '.td-shell__actions label:has([data-docs-theme] option[value="light"]:checked)::before',
-    {
-      mask: `url("${iconUrl(sunIcon)}") center / contain no-repeat`,
-    },
-  );
-
-  useGlobalStyles(
-    '.td-shell__actions label:has([data-docs-theme] option[value="dark"]:checked)::before',
-    {
-      mask: `url("${iconUrl(moonIcon)}") center / contain no-repeat`,
-    },
-  );
-
-  useGlobalStyles(".td-shell__actions label:has(select)::after", {
-    content: '""',
-    position: "absolute",
-    zIndex: "1",
-    insetBlockStart: "50%",
-    insetInlineEnd: "0.75rem",
-    inlineSize: "1rem",
-    blockSize: "1rem",
-    translate: "0 -50%",
-    fill: "#text",
-    mask: `url("${iconUrl(chevronDownIcon)}") center / contain no-repeat`,
-    pointerEvents: "none",
-  });
-
-  useGlobalStyles(".td-appearance-control::after", {
-    hide: true,
-  });
-
-  useGlobalStyles(".td-appearance-control--contrast::before", {
-    content: '""',
-    display: "block",
-    inlineSize: "1rem",
-    blockSize: "1rem",
-    fill: "#text-soft",
-    mask: `url("${iconUrl(contrastIcon)}") center / contain no-repeat`,
-    pointerEvents: "none",
-  });
-
-  useGlobalStyles(".td-shell__actions select", {
-    paddingInlineEnd: "($gap * 4)",
-    appearance: "none",
-  });
-
-  useGlobalStyles(".td-shell__actions [data-docs-theme]", {
-    paddingInlineStart: "($gap * 4)",
-  });
-
-  useGlobalStyles("[data-docs-search-open]", {
-    display: "inline-flex",
-    alignItems: "center",
-    rowGap: "$gap",
-    columnGap: "$gap",
-  });
-
-  useGlobalStyles("[data-docs-search-open] > kbd", {
-    display: "flex",
-    rowGap: "0.125rem",
-    columnGap: "0.125rem",
-    marginInlineStart: "($gap * 1.5)",
-    color: "#text-soft",
-    fontSize: "0.75rem",
-    fontWeight: "500",
-  });
-
-  useGlobalStyles("[data-docs-search-open] kbd", {
-    fontFamily: "$body-font-family",
-  });
-
-  useGlobalStyles('[data-docs-search] button[aria-label="Close search"]', {
-    display: "grid",
-    placeItems: "center",
-    inlineSize: "$control-height",
-    padding: "0",
-    overflow: "hidden",
-    color: "#clear",
-  });
-
-  useGlobalStyles(
-    '[data-docs-search] button[aria-label="Close search"]::before',
-    {
-      color: "#text",
-    },
-  );
-
-  useGlobalStyles(".td-visually-hidden", {
-    position: "absolute",
-    inlineSize: "1px",
-    blockSize: "1px",
-    padding: "0",
-    margin: "-1px",
-    overflow: "hidden",
-    clip: "rect(0, 0, 0, 0)",
-    whiteSpace: "nowrap",
-    border: "0",
-  });
-
-  useGlobalStyles(".td-shell__layout", {
-    display: "grid",
-    gridTemplateColumns: "minmax(13rem, $sidebar-width) minmax(0, 1fr)",
-    inlineSize: "min(100%, $layout-width)",
-    marginInlineStart: "auto",
-    marginInlineEnd: "auto",
-  });
-
-  useGlobalStyles(".td-shell__nav", {
-    padding: "($gap * 5) ($gap * 3)",
-  });
-
-  useGlobalStyles(".td-shell__nav ul", {
-    margin: "0",
-    padding: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles(".td-shell__nav ul ul", {
-    paddingInlineStart: "($gap * 1.5)",
-  });
-
-  useGlobalStyles(".td-shell__nav details > summary", {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "($gap * 0.9) ($gap * 1.25)",
-    color: "#text",
-    fontWeight: "$body-bold-font-weight",
-    cursor: "pointer",
-    listStyle: "none",
-  });
-
-  useGlobalStyles(".td-shell__nav details > summary::-webkit-details-marker", {
-    hide: true,
-  });
-
-  useGlobalStyles(".td-shell__nav details > summary::after", {
-    content: '""',
-    inlineSize: "1rem",
-    blockSize: "1rem",
-    fill: "#text-soft",
-    mask: `url("${iconUrl(chevronDownIcon)}") center / contain no-repeat`,
-  });
-
-  useGlobalStyles(".td-shell__nav details:not([open]) > summary::after", {
-    rotate: "-90deg",
-  });
-
-  useGlobalStyles(".td-shell__nav a", {
-    display: "block",
-    padding: "($gap * 0.9) ($gap * 1.25)",
-    color: "#text-soft",
-    radius: "$radius",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles(".td-shell__nav a:hover", {
-    color: "#text",
-    fill: "#surface-2",
-  });
-
-  useGlobalStyles('.td-shell__nav a[aria-current="page"]', {
-    color: "#accent-text",
-    fontWeight: "$body-bold-font-weight",
-    fill: "color-mix( in oklab, #accent-surface 12%, #surface )",
-  });
-
-  useGlobalStyles(".td-shell__main", {
-    inlineSize: "min(100%, $content-width)",
-    padding: "($gap * 3) clamp(1.5rem, 5vw, 4rem) ($gap * 10)",
-  });
-
   useGlobalStyles(".td-shell__main img", {
     maxInlineSize: "100%",
     blockSize: "auto",
@@ -1183,85 +559,6 @@ export default function GlobalStyles() {
     color: "#accent-text",
   });
 
-  useGlobalStyles("[data-docs-search]", {
-    inlineSize: "min(42rem, calc(100% - 2rem))",
-    padding: "($gap * 2.5)",
-    color: "#text",
-    fill: "#surface",
-    border: "$border-width solid #border-strong",
-    radius: "$card-radius",
-    boxShadow: "$sl-shadow-lg",
-  });
-
-  useGlobalStyles("[data-docs-search]::backdrop", {
-    fill: "#overlay",
-  });
-
-  useGlobalStyles("[data-docs-search] form", {
-    float: "inline-end",
-  });
-
-  useGlobalStyles("[data-docs-search] label, [data-docs-search] input", {
-    display: "block",
-    inlineSize: "100%",
-  });
-
-  useGlobalStyles("[data-docs-search] input", {
-    marginBlockStart: "$gap",
-    marginBlockEnd: "($gap * 2)",
-  });
-
-  useGlobalStyles(".td-skip", {
-    position: "fixed",
-    inset: "$gap auto auto $gap",
-    zIndex: "4",
-    translate: "0 -150%",
-    padding: "$gap ($gap * 1.5)",
-    color: "#accent-surface-text",
-    radius: "$radius",
-    fill: "#accent-surface",
-  });
-
-  useGlobalStyles(".td-skip:focus", {
-    translate: "0",
-  });
-
-  useGlobalStyles(".td-shell__header, .td-shell__actions", {
-    alignItems: {
-      "@media(max-width: 48rem)": "stretch",
-    },
-  });
-
-  useGlobalStyles(".td-shell__header, .td-shell__header", {
-    paddingInlineStart: {
-      "@media(max-width: 48rem)": "1rem",
-    },
-    paddingInlineEnd: {
-      "@media(max-width: 48rem)": "1rem",
-    },
-  });
-
-  useGlobalStyles(".td-shell__actions, .td-shell__actions", {
-    flexWrap: {
-      "@media(max-width: 48rem)": "wrap",
-    },
-  });
-
-  useGlobalStyles(".td-shell__layout, .td-shell__layout", {
-    gridTemplateColumns: {
-      "@media(max-width: 48rem)": "1fr",
-    },
-  });
-
-  useGlobalStyles(".td-shell__nav, .td-shell__nav", {
-    paddingBlockStart: {
-      "@media(max-width: 48rem)": "($gap * 2)",
-    },
-    paddingBlockEnd: {
-      "@media(max-width: 48rem)": "($gap * 2)",
-    },
-  });
-
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
     "$sl-nav-height": {
       "@media(max-width: 49.99rem)": "3.5rem",
@@ -1274,127 +571,6 @@ export default function GlobalStyles() {
     },
     "$sl-menu-button-size": {
       "@media(max-width: 49.99rem)": "2.25rem",
-    },
-  });
-
-  useGlobalStyles(".td-header__primary, .td-header__primary", {
-    display: {
-      "@media(max-width: 49.99rem)": "flex",
-    },
-    justifyContent: {
-      "@media(max-width: 49.99rem)": "space-between",
-    },
-    rowGap: {
-      "@media(max-width: 49.99rem)": "$gap",
-    },
-    columnGap: {
-      "@media(max-width: 49.99rem)": "$gap",
-    },
-  });
-
-  useGlobalStyles(".td-header__title", {
-    maxInlineSize: {
-      "@media(max-width: 49.99rem)":
-        "(100% - (($sl-menu-button-size + $sl-nav-gap) * 3))",
-    },
-  });
-
-  useGlobalStyles(".td-header__search", {
-    position: {
-      "@media(max-width: 49.99rem)": "fixed",
-    },
-    zIndex: {
-      "@media(max-width: 49.99rem)": "10",
-    },
-    top: {
-      "@media(max-width: 49.99rem)":
-        "(($sl-nav-height - $sl-menu-button-size) / 2)",
-    },
-    insetInlineEnd: {
-      "@media(max-width: 49.99rem)":
-        "($sl-nav-pad-x + (($sl-menu-button-size + $sl-nav-gap) * 2))",
-    },
-    placeItems: {
-      "@media(max-width: 49.99rem)": "center",
-    },
-    inlineSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-    blockSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-    marginInlineStart: {
-      "@media(max-width: 49.99rem)": "0",
-    },
-  });
-
-  useGlobalStyles(".td-header__search site-search", {
-    inlineSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-    blockSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-  });
-
-  useGlobalStyles(".td-header__mobile-theme", {
-    display: {
-      "@media(max-width: 49.99rem)": "grid",
-    },
-    position: {
-      "@media(max-width: 49.99rem)": "fixed",
-    },
-    zIndex: {
-      "@media(max-width: 49.99rem)": "10",
-    },
-    top: {
-      "@media(max-width: 49.99rem)":
-        "(($sl-nav-height - $sl-menu-button-size) / 2)",
-    },
-    insetInlineEnd: {
-      "@media(max-width: 49.99rem)":
-        "($sl-nav-pad-x + $sl-menu-button-size + $sl-nav-gap)",
-    },
-    placeItems: {
-      "@media(max-width: 49.99rem)": "center",
-    },
-    inlineSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-    blockSize: {
-      "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-    },
-  });
-
-  useGlobalStyles(".td-header__mobile-theme starlight-theme-select", {
-    display: "grid",
-    placeItems: "center",
-    inlineSize: "$sl-menu-button-size",
-    blockSize: "$sl-menu-button-size",
-    lineHeight: "0",
-  });
-
-  useGlobalStyles(
-    ".td-header__mobile-theme starlight-theme-select label, .td-header__mobile-theme starlight-theme-select select",
-    {
-      inlineSize: {
-        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-      },
-      minBlockSize: {
-        "@media(max-width: 49.99rem)": "0",
-      },
-      blockSize: {
-        "@media(max-width: 49.99rem)": "$sl-menu-button-size",
-      },
-    },
-  );
-
-  useGlobalStyles(".site-title, .site-title", {
-    fontSize: {
-      "@media(max-width: 49.99rem)": "1.125rem",
-    },
-    lineHeight: {
-      "@media(max-width: 49.99rem)": "1.5rem",
     },
   });
 
@@ -1458,12 +634,6 @@ export default function GlobalStyles() {
     },
   });
 
-  useGlobalStyles(".td-top-tabs, .td-top-tabs", {
-    display: {
-      "@media(max-width: 49.99rem)": "none",
-    },
-  });
-
   useGlobalStyles(":root[data-has-toc]", {
     "$sl-mobile-toc-height": {
       "@media(max-width: 71.99rem)": "2.5rem",
@@ -1507,12 +677,6 @@ export default function GlobalStyles() {
     },
   });
 
-  useGlobalStyles(".td-mobile-tabs, .td-mobile-tabs", {
-    display: {
-      "@media(min-width: 50rem)": "none",
-    },
-  });
-
   useGlobalStyles(":root:has(.td-top-tabs) body > .page > .header", {
     paddingBlockStart: {
       "@media(min-width: 50rem)": "0",
@@ -1522,7 +686,7 @@ export default function GlobalStyles() {
     },
   });
 
-  useGlobalStyles("body > .page > .header, .td-shell__header", {
+  useGlobalStyles("body > .page > .header", {
     borderBottom: {
       "@media(min-width: 50rem)": "$border-width solid #border",
     },

@@ -10,6 +10,10 @@ import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import GlobalStyles from "../components/GlobalStyles.js";
 import PackageVersion from "../components/PackageVersion.astro";
+import {
+  StarlightHeaderRoot,
+  TopNavigationRoot,
+} from "../components/LayoutComponents.js";
 import "@fontsource-variable/onest/wght.css";
 import "@fontsource-variable/jetbrains-mono/wght.css";
 
@@ -26,7 +30,10 @@ function tabHref(link: string): string {
 ---
 
 <GlobalStyles />
-<div class:list={["td-header", { "td-header--with-tabs": layout.tabs.length }]}>
+<StarlightHeaderRoot
+  className={`td-header${layout.tabs.length ? " td-header--with-tabs" : ""}`}
+  data-tasty-anatomy="StarlightHeader"
+>
   <div class="td-header__primary">
     <div class="td-header__title">
       <SiteTitle />
@@ -46,7 +53,11 @@ function tabHref(link: string): string {
   </div>
   {
     layout.tabs.length > 0 && (
-      <nav class="td-top-tabs print:hidden" aria-label="Primary">
+      <TopNavigationRoot
+        className="td-top-tabs print:hidden"
+        aria-label="Primary"
+        data-tasty-anatomy="TopNavigation"
+      >
         {layout.tabs.map((tab, index) => (
           <a
             href={tabHref(tab.link)}
@@ -55,7 +66,7 @@ function tabHref(link: string): string {
             {tab.label}
           </a>
         ))}
-      </nav>
+      </TopNavigationRoot>
     )
   }
-</div>
+</StarlightHeaderRoot>

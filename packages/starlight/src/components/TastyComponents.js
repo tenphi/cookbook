@@ -1,8 +1,9 @@
 import { tasty } from "@tenphi/tasty";
+import { resolveComponentStyles } from "./component-styles.js";
 
 export const CardRoot = tasty({
   as: "article",
-  styles: {
+  styles: resolveComponentStyles("Card", {
     display: "grid",
     gap: "1.5x",
     padding: "2.5x",
@@ -26,7 +27,7 @@ export const CardRoot = tasty({
       $: "p",
       margin: "0",
     },
-  },
+  }),
 });
 
 export const CardLink = tasty(CardRoot, {
@@ -51,7 +52,7 @@ export const CardLink = tasty(CardRoot, {
 
 export const PreviewRoot = tasty({
   as: "figure",
-  styles: {
+  styles: resolveComponentStyles("Preview", {
     margin: "0",
     overflow: "clip",
     color: "#text",
@@ -89,7 +90,7 @@ export const PreviewRoot = tasty({
       margin: "0",
       radius: "0",
     },
-  },
+  }),
   elements: {
     Caption: "figcaption",
     Stage: "div",
@@ -102,7 +103,7 @@ export const PreviewRoot = tasty({
 
 export const StepsRoot = tasty({
   as: "ol",
-  styles: {
+  styles: resolveComponentStyles("Steps", {
     display: "grid",
     gap: "2x",
     padding: "4x left",
@@ -117,12 +118,12 @@ export const StepsRoot = tasty({
       color: "#accent-text",
       preset: "bold",
     },
-  },
+  }),
 });
 
 export const TabsRoot = tasty({
   as: "div",
-  styles: {
+  styles: resolveComponentStyles("Tabs", {
     display: "flex",
     flow: "row wrap",
     gap: "1x",
@@ -130,5 +131,5 @@ export const TabsRoot = tasty({
     border: "1bw solid #border",
     radius: "1cr",
     fill: "#surface-2",
-  },
+  }),
 });

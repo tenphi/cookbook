@@ -1,8 +1,12 @@
 export { default } from "@tenphi/starlight";
-export { defineDocsConfig } from "@tenphi/docs";
+export { COOKBOOK_COMPONENT_NAMES, defineDocsConfig } from "@tenphi/docs";
 export type {
   BrandConfig,
   BuildConfig,
+  ComponentStyleConfig,
+  ComponentStyles,
+  ComponentStylesConfig,
+  CookbookComponentName,
   ComponentsConfig,
   ContentConfig,
   DocsAsset,

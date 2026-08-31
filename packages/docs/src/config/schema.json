@@ -74,7 +74,10 @@
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/typographyPreset" }
         },
-        "styles": { "type": "object" },
+        "styles": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/componentStyleConfig" }
+        },
         "contrastLevel": {
           "oneOf": [
             { "const": "auto" },
@@ -156,6 +159,20 @@
         "textTransform": { "type": ["string", "number"] },
         "fontStyle": { "type": ["string", "number"] }
       }
+    },
+    "componentStyleConfig": {
+      "anyOf": [
+        { "type": "object" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "styles"],
+          "properties": {
+            "mode": { "enum": ["extend", "replace"] },
+            "styles": { "type": "object" }
+          }
+        }
+      ]
     },
     "source": {
       "type": "object",

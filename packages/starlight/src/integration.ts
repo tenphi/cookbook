@@ -24,6 +24,10 @@ import {
 } from "./navigation.js";
 import { resolveDocsTheme } from "./theme/index.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
+import {
+  configureComponentStyles,
+  resolveLegacyAnatomyStyles,
+} from "./components/component-styles.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = dirname(packageRequire.resolve("@astrojs/starlight"));
@@ -57,6 +61,7 @@ export default function cookbook(
     );
   }
   configureTastyTheme(options.config?.theme, docsTheme);
+  configureComponentStyles(options.config?.theme?.styles);
   const searchClientPath = fileURLToPath(
     new URL("./client/search.js", import.meta.url),
   );
@@ -72,10 +77,14 @@ export default function cookbook(
   const mobileMenuFooterPath = fileURLToPath(
     new URL("./overrides/MobileMenuFooter.astro", import.meta.url),
   );
+  const themeSelectPath = fileURLToPath(
+    new URL("./overrides/ThemeSelect.astro", import.meta.url),
+  );
   const components = {
     Header: headerPath,
     Sidebar: sidebarPath,
     MobileMenuFooter: mobileMenuFooterPath,
+    ThemeSelect: themeSelectPath,
     ...options.config?.components?.overrides,
   };
   const navigation = resolveNavigationLayout(options.config?.navigation);
@@ -397,30 +406,17 @@ function configureTastyTheme(
   resolved: ReturnType<typeof resolveDocsTheme>,
 ): void {
   const tokens = tastyTokens(resolved) as ConfigTokens;
+  const globalStyles = resolveLegacyAnatomyStyles(theme?.styles);
 
-  const globalStyles = anatomyStyles(theme?.styles);
   configure({
     ...(theme?.states ? { states: theme.states } : {}),
     units: TASTY_UNITS,
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,
-    ...(globalStyles ? { globalStyles } : {}),
+    ...(globalStyles
+      ? { globalStyles: globalStyles as Record<string, Styles> }
+      : {}),
   });
-}
-
-function anatomyStyles(
-  styles: Record<string, unknown> | undefined,
-): Record<string, Styles> | undefined {
-  if (!styles) return undefined;
-  return Object.fromEntries(
-    Object.entries(styles)
-      .filter((entry): entry is [string, Styles] => isRecord(entry[1]))
-      .map(([name, value]) => [`[data-tasty-anatomy="${name}"]`, value]),
-  );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function starlightSidebar(layout: ResolvedNavigationLayout): unknown[] {

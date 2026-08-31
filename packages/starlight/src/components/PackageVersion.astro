@@ -1,4 +1,6 @@
 ---
+import { PackageVersionRoot } from "./LayoutComponents.js";
+
 interface Props {
   version?: string;
 }
@@ -9,8 +11,12 @@ const label = version?.startsWith("v") ? version : version ? `v${version}` : "";
 
 {
   label && (
-    <span class="td-package-version" aria-label={`Version ${version}`}>
+    <PackageVersionRoot
+      className="td-package-version"
+      aria-label={`Version ${version}`}
+      data-tasty-anatomy="PackageVersion"
+    >
       {label}
-    </span>
+    </PackageVersionRoot>
   )
 }

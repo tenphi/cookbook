@@ -1,0 +1,69 @@
+---
+import Icon from "@astrojs/starlight/user-components/Icon.astro";
+import { ThemeSelectRoot } from "../components/LayoutComponents.js";
+---
+
+<ThemeSelectRoot data-tasty-anatomy="ThemeSelect">
+  <label>
+    <span class="sr-only">{Astro.locals.t("themeSelect.accessibleLabel")}</span>
+    <Icon name="laptop" class="label-icon" />
+    <select autocomplete="off">
+      <option value="dark">{Astro.locals.t("themeSelect.dark")}</option>
+      <option value="light">{Astro.locals.t("themeSelect.light")}</option>
+      <option value="auto" selected>{Astro.locals.t("themeSelect.auto")}</option
+      >
+    </select>
+  </label>
+</ThemeSelectRoot>
+
+<script is:inline>
+  StarlightThemeProvider.updatePickers();
+</script>
+
+<script>
+  type Theme = "auto" | "dark" | "light";
+
+  const storageKey = "starlight-theme";
+  const parseTheme = (theme: unknown): Theme =>
+    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
+  const loadTheme = (): Theme =>
+    parseTheme(
+      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+    );
+  const storeTheme = (theme: Theme): void => {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        storageKey,
+        theme === "light" || theme === "dark" ? theme : "",
+      );
+    }
+  };
+  const preferredScheme = (): Theme =>
+    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  const updateTheme = (theme: Theme): void => {
+    StarlightThemeProvider.updatePickers(theme);
+    document.documentElement.dataset.theme =
+      theme === "auto" ? preferredScheme() : theme;
+    storeTheme(theme);
+  };
+
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    if (loadTheme() === "auto") updateTheme("auto");
+  });
+
+  class CookbookThemeSelect extends HTMLElement {
+    constructor() {
+      super();
+      updateTheme(loadTheme());
+      this.querySelector("select")?.addEventListener("change", (event) => {
+        if (event.currentTarget instanceof HTMLSelectElement) {
+          updateTheme(parseTheme(event.currentTarget.value));
+        }
+      });
+    }
+  }
+
+  if (!customElements.get("starlight-theme-select")) {
+    customElements.define("starlight-theme-select", CookbookThemeSelect);
+  }
+</script>
