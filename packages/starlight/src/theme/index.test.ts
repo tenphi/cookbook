@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { glaze, variantToOkhsl } from "@tenphi/glaze";
 import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
@@ -81,6 +82,18 @@ describe("Glaze theme adapter", () => {
     expect(borderStates[darkHighContrast ?? ""]).not.toBe(
       borderStates[dark ?? ""],
     );
+    const brandStates = tokens["#accent-surface"] as Record<string, string>;
+    for (const tokenName of ["#border", "#border-strong"] as const) {
+      const borderRoleStates = tokens[tokenName] as Record<string, string>;
+      for (const [state, border] of Object.entries(borderRoleStates)) {
+        const brandColor = brandStates[state];
+        expect(brandColor).toBeDefined();
+        const saturationRatio =
+          colorSaturation(border) / colorSaturation(brandColor ?? "#315efb");
+        expect(saturationRatio).toBeGreaterThanOrEqual(0.2);
+        expect(saturationRatio).toBeLessThanOrEqual(0.3);
+      }
+    }
     expect(tokens).toHaveProperty("#surface-2-hover");
     expect(tokens).toHaveProperty("#surface-2-pressed");
     expect(tokens).toHaveProperty("#surface-3-hover");
@@ -151,3 +164,9 @@ describe("Glaze theme adapter", () => {
     );
   });
 });
+
+function colorSaturation(color: string): number {
+  return variantToOkhsl(
+    glaze.color({ from: color, mode: "fixed" }).resolve().light,
+  ).s;
+}

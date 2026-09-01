@@ -70,6 +70,10 @@ elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
 steps and `surface-3` advances four from the base surface, with proportionally
 wider steps in high-contrast mode.
 
+Borders stay intentionally quiet: Glaze derives their hue from `brand` but
+uses only one quarter of the brand saturation. Normal and high-contrast modes
+change border tone, not that restrained saturation relationship.
+
 The contrast control in the desktop header and mobile menu can follow the
 system, force the normal palette, or activate the Glaze high-contrast palette.
 System mode responds to `prefers-contrast: more`; an explicit selection is

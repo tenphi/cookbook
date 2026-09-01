@@ -121,8 +121,6 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     "surface-2-pressed": mix("surface-2", "text", [9, 14]),
     "surface-3-hover": mix("surface-3", "text", [3, 6]),
     "surface-3-pressed": mix("surface-3", "text", [9, 14]),
-    border: mix("surface", "text", [18, 30]),
-    "border-strong": mix("surface", "text", [34, 50]),
     "accent-text": {
       from: brand.from,
       base: "surface",
@@ -169,6 +167,41 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     ...statusColors("red", "#dc2626"),
   } satisfies ColorMap);
 
+  const resolvedBrandSeed = glaze
+    .color({ from: brand.from, mode: "fixed" })
+    .resolve();
+  const lightBrand = variantToOkhsl(resolvedBrandSeed.light);
+  const darkBrand = variantToOkhsl(resolvedBrandSeed.dark);
+  const borderTheme = glaze(
+    {
+      hue: lightBrand.h,
+      saturation: lightBrand.s * 100,
+      darkHue: darkBrand.h,
+      darkSaturation: darkBrand.s * 100,
+    },
+    undefined,
+    glazeOptions,
+  );
+  borderTheme.colors({
+    surface: {
+      from: surfaceFrom,
+      mode: "auto",
+      darkSaturation: 0.35,
+    },
+    border: {
+      base: "surface",
+      tone: ["-15", "-30"],
+      saturation: 0.25,
+      mode: "auto",
+    },
+    "border-strong": {
+      base: "surface",
+      tone: ["-30", "-50"],
+      saturation: 0.25,
+      mode: "auto",
+    },
+  } satisfies ColorMap);
+
   const resolvedColors = colorTheme.resolve();
   const resolvedSurface = requiredResolvedColor(resolvedColors, "surface");
   const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
@@ -198,7 +231,17 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     }
   }
   const outputOptions = { modes: { highContrast: true } } as const;
+  const tastyOptions = {
+    ...outputOptions,
+    states: {
+      dark: "theme=dark | (@media(prefers-color-scheme: dark) & :not([data-theme]))",
+      highContrast:
+        "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))",
+    },
+  } as const;
   const resolvedPalette = colorTheme.json(outputOptions);
+  const colorTokens = colorTheme.tasty(tastyOptions);
+  const borderTokens = borderTheme.tasty(tastyOptions);
   const colors = {
     surface: requiredJsonColor(resolvedPalette, "surface"),
     surface2: requiredJsonColor(resolvedPalette, "surface-2"),
@@ -216,14 +259,11 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
   };
   return {
     colors,
-    colorTokens: colorTheme.tasty({
-      ...outputOptions,
-      states: {
-        dark: "theme=dark | (@media(prefers-color-scheme: dark) & :not([data-theme]))",
-        highContrast:
-          "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))",
-      },
-    }),
+    colorTokens: {
+      ...colorTokens,
+      "#border": requiredJsonColor(borderTokens, "#border"),
+      "#border-strong": requiredJsonColor(borderTokens, "#border-strong"),
+    },
     tokens: resolveThemeTokens(theme.tokens),
     presets: resolveTypographyPresets(theme.presets),
     contrast: scores,
