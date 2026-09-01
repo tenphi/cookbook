@@ -74,6 +74,15 @@ if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
   throw new Error("The project logo is missing from the documentation header.");
 }
 if (
+  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--accent-surface-text-color\)/.test(
+    sharedCss,
+  )
+) {
+  throw new Error(
+    "The project logo mark is not styled with its Glaze foreground token.",
+  );
+}
+if (
   !home.includes("data-docs-contrast") ||
   !home.includes('value="more">High contrast</option>')
 ) {

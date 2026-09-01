@@ -7,4 +7,5 @@ generate every semantic and status color token with Glaze, and show the project
 logo beside the title in the top navigation bar. Expose the Glaze high-contrast
 palette through a persisted system, normal, or high-contrast appearance control,
 derive calmer borders at one quarter of the brand saturation, and soften the
-elevated surface ramp.
+elevated surface ramp. Render the open-book logo mark with its Glaze-generated
+foreground token.

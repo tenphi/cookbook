@@ -24,7 +24,7 @@ export const LogoRoot = customizeComponent(
         blockSize: "100%",
       },
       Mark: {
-        $: "> svg .td-logo__mark",
+        $: "> svg > .td-logo__mark",
         color: "#accent-surface-text",
       },
     },
