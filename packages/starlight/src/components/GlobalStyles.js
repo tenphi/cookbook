@@ -151,10 +151,6 @@ export default function GlobalStyles() {
     inlineSize: { "": "$sidebar-width", "@mobile": "100%" },
     overflowY: "auto",
     scrollbarGutter: "stable",
-    borderInlineEnd: {
-      "": "$border-width solid #border",
-      "@mobile": "0",
-    },
     fill: "#surface",
   });
 
@@ -231,10 +227,6 @@ export default function GlobalStyles() {
       "@narrow-layout": "0",
     },
     overflowY: { "": "auto", "@narrow-layout": "visible" },
-    borderInlineStart: {
-      "": "$border-width solid #border",
-      "@narrow-layout": "0",
-    },
     scrollbarWidth: "none",
   });
 
@@ -252,10 +244,6 @@ export default function GlobalStyles() {
 
   useGlobalStyles("main", {
     padding: "0 0 5rem",
-  });
-
-  useGlobalStyles(".content-panel + .content-panel", {
-    borderBlockStart: "$border-width solid #border",
   });
 
   useGlobalStyles(".content-panel > .sl-container > * + *", {
@@ -455,6 +443,8 @@ export default function GlobalStyles() {
 
   useGlobalStyles(".right-sidebar-panel", {
     paddingBlockStart: "($gap * 5)",
+    paddingInlineStart: "$docs-sidebar-pad-x",
+    paddingInlineEnd: "$docs-sidebar-pad-x",
   });
 
   useGlobalStyles(".right-sidebar-panel h2", {
