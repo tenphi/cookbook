@@ -233,6 +233,7 @@ export const StarlightHeaderRoot = customizeComponent(
 
 const appearanceSelectStyles = {
   display: "grid",
+  flexShrink: "0",
   placeItems: "center",
   margin: "0",
   inlineSize: {
