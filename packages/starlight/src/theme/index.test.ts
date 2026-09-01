@@ -154,8 +154,8 @@ describe("Glaze theme adapter", () => {
     });
 
     expect(theme.colors.surface.light).toBe("oklch(0.9919 0.004 286.33)");
-    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0138 286.33)");
-    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0222 286.33)");
+    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0123 286.33)");
+    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0191 286.33)");
     expect(theme.colors.surface2.lightContrast).toBe(
       theme.colors.surface2.light,
     );

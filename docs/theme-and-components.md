@@ -68,7 +68,9 @@ roles used by Starlight content components. No browser color mixes or
 Starlight fallback palette values participate in the rendered theme. Surface
 elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
 steps and `surface-3` advances four from the base surface, with proportionally
-wider steps in high-contrast mode.
+wider steps in high-contrast mode. Their saturation also steps down to 75% and
+65% of the authored surface seed so tinted surfaces remain restrained as they
+move farther from the base tone.
 
 Borders stay intentionally quiet: Glaze derives their hue from `brand` but
 uses only one quarter of the brand saturation. Normal and high-contrast modes
