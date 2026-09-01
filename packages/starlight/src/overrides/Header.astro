@@ -8,14 +8,14 @@ import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
+import ContrastSelect from "../components/ContrastSelect.astro";
 import GlobalStyles from "../components/GlobalStyles.js";
+import Logo from "../components/Logo.astro";
 import PackageVersion from "../components/PackageVersion.astro";
 import {
   StarlightHeaderRoot,
   TopNavigationRoot,
 } from "../components/LayoutComponents.js";
-import "@fontsource-variable/onest/wght.css";
-import "@fontsource-variable/jetbrains-mono/wght.css";
 
 const shouldRenderSearch =
   config.pagefind ||
@@ -36,6 +36,7 @@ function tabHref(link: string): string {
 >
   <div class="td-header__primary">
     <div class="td-header__title">
+      <Logo class="td-header__logo" decorative />
       <SiteTitle />
       <PackageVersion version={content.site.version} />
     </div>
@@ -48,6 +49,7 @@ function tabHref(link: string): string {
     <div class="td-header__tools sl-hidden md:sl-flex print:hidden">
       <div class="td-header__social"><SocialIcons /></div>
       <ThemeSelect />
+      <ContrastSelect />
       <LanguageSelect />
     </div>
   </div>

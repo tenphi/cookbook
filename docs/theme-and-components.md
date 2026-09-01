@@ -62,9 +62,24 @@ Components consume semantic colors consistently: `surface`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
-same resolved values. Surface elevation uses Glaze's contrast-uniform tone
-axis: `surface-2` advances two tone steps and `surface-3` advances four from the
-base surface, with proportionally wider steps in high-contrast mode.
+same resolved values. Glaze also generates hover and pressed states, subtle
+accent fills, overlays, shadows, and the orange, green, blue, purple, and red
+roles used by Starlight content components. No browser color mixes or
+Starlight fallback palette values participate in the rendered theme. Surface
+elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
+steps and `surface-3` advances four from the base surface, with proportionally
+wider steps in high-contrast mode. Their saturation also steps down to 75% and
+65% of the authored surface seed so tinted surfaces remain restrained as they
+move farther from the base tone.
+
+Borders stay intentionally quiet: Glaze derives their hue from `brand` but
+uses only one quarter of the brand saturation. Normal and high-contrast modes
+change border tone, not that restrained saturation relationship.
+
+The contrast control in the desktop header and mobile menu can follow the
+system, force the normal palette, or activate the Glaze high-contrast palette.
+System mode responds to `prefers-contrast: more`; an explicit selection is
+persisted and takes precedence over that media query.
 
 Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
@@ -184,11 +199,14 @@ theme: {
 }
 ```
 
-The configurable component names are `Card`, `Logo`, `MobileMenuFooter`,
-`MobileNavigationTabs`, `PackageVersion`, `Preview`, `Steps`, `Tabs`,
-`ThemeSelect`, `TopNavigation`, and `StarlightHeader`. Editor inference is
-provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
-`ComponentStyleConfig`, and `ComponentStylesConfig` types.
+The configurable component names are `Card`, `ContrastSelect`, `Logo`,
+`MarkdownTable`, `MobileMenuFooter`, `MobileNavigationTabs`, `PackageVersion`,
+`Preview`, `Steps`, `Tabs`, `ThemeSelect`, `TopNavigation`, and
+`StarlightHeader`. `MarkdownTable` exposes the `Table`, `Cell`,
+`LastBodyRowCell`, and `HeaderCell` sub-elements used for generated Markdown
+tables. Editor inference is provided by `defineDocsConfig()` and the exported
+`CookbookComponentName`, `ComponentStyleConfig`, and `ComponentStylesConfig`
+types.
 
 `components.overrides` remains the structural escape hatch for replacing an
 Astro component. Prefer `theme.styles` when the markup and behavior remain the
@@ -201,7 +219,8 @@ names never use that selector bridge.
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
 CSS during the build, while appearance controls add only the small client
-behavior needed to persist a selected scheme.
+behavior needed to persist selected theme and contrast modes. The compact
+Cookbook logo is shown beside the project title in the default top bar.
 
 ## Astro and MDX components
 

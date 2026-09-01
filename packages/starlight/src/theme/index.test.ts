@@ -1,4 +1,11 @@
 import { describe, expect, it } from "vitest";
+import {
+  contrastRatioFromLuminance,
+  glaze,
+  okhslToLinearSrgb,
+  relativeLuminanceFromLinearRgb,
+  variantToOkhsl,
+} from "@tenphi/glaze";
 import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
@@ -33,10 +40,156 @@ describe("Glaze theme adapter", () => {
     expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
     expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0003 0)");
     expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0003 0)");
-    expect(tokens["#surface-2-hover"]).toContain("color-mix");
-    expect(tokens["#surface-2-pressed"]).toContain("color-mix");
-    expect(tokens["#surface-3-hover"]).toContain("color-mix");
-    expect(tokens["#surface-3-pressed"]).toContain("color-mix");
+    for (const [name, states] of Object.entries(tokens).filter(([name]) =>
+      name.startsWith("#"),
+    )) {
+      const colorStates = states as Record<string, string>;
+      expect(name).not.toBe("#current");
+      expect(Object.keys(colorStates)).toHaveLength(4);
+      expect(Object.values(colorStates)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+        ]),
+      );
+      expect(Object.values(colorStates).join(" ")).not.toContain("color-mix");
+      const highContrastStates = Object.keys(colorStates).filter((state) =>
+        state.includes("contrast=more"),
+      );
+      expect(highContrastStates).toHaveLength(2);
+      expect(highContrastStates).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            "@media(prefers-contrast: more) & :not([data-contrast])",
+          ),
+          expect.stringContaining("theme=dark"),
+        ]),
+      );
+    }
+    const borderStates = tokens["#border"] as Record<string, string>;
+    const lightHighContrast = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("contrast=more") && !state.includes("theme=dark"),
+    );
+    const dark = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    );
+    const darkHighContrast = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("theme=dark") && state.includes("contrast=more"),
+    );
+    expect(lightHighContrast).toBeDefined();
+    expect(dark).toBeDefined();
+    expect(darkHighContrast).toBeDefined();
+    expect(borderStates[lightHighContrast ?? ""]).not.toBe(borderStates[""]);
+    expect(borderStates[darkHighContrast ?? ""]).not.toBe(
+      borderStates[dark ?? ""],
+    );
+    const brandStates = tokens["#accent-surface"] as Record<string, string>;
+    for (const tokenName of ["#border", "#border-strong"] as const) {
+      const borderRoleStates = tokens[tokenName] as Record<string, string>;
+      for (const [state, border] of Object.entries(borderRoleStates)) {
+        const brandColor = brandStates[state];
+        expect(brandColor).toBeDefined();
+        const saturationRatio =
+          colorSaturation(border) / colorSaturation(brandColor ?? "#315efb");
+        expect(saturationRatio).toBeGreaterThanOrEqual(0.2);
+        expect(saturationRatio).toBeLessThanOrEqual(0.3);
+      }
+    }
+    expect(tokens).toHaveProperty("#surface-2-hover");
+    expect(tokens).toHaveProperty("#surface-2-pressed");
+    expect(tokens).toHaveProperty("#surface-3-hover");
+    expect(tokens).toHaveProperty("#surface-3-pressed");
+    expect(tokens).toHaveProperty("#accent-surface-subtle");
+    expect(tokens).toHaveProperty("#orange-surface");
+    expect(tokens).toHaveProperty("#green-text");
+    expect(tokens).toHaveProperty("#blue");
+    expect(tokens).toHaveProperty("#purple-surface");
+    expect(tokens).toHaveProperty("#red-text");
+    expect(tokens).toHaveProperty("#syntax-bg");
+    expect(tokens).toHaveProperty("#syntax-text");
+    expect(tokens).toHaveProperty("#syntax-comment");
+    expect(tokens).toHaveProperty("#syntax-keyword");
+    expect(tokens).toHaveProperty("#syntax-string");
+    expect(tokens).toHaveProperty("#syntax-token");
+    expect(tokens).toHaveProperty("#syntax-property");
+    expect(tokens).toHaveProperty("#syntax-number");
+    expect(tokens).toHaveProperty("#syntax-function");
+    expect(tokens).toHaveProperty("#syntax-value");
+    expect(tokens).toHaveProperty("#syntax-operator");
+    const syntaxKeywordStates = tokens["#syntax-keyword"] as Record<
+      string,
+      string
+    >;
+    expect(syntaxKeywordStates[""]).not.toBe(
+      syntaxKeywordStates[
+        "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))"
+      ],
+    );
+    const syntaxDark = Object.keys(syntaxKeywordStates).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    );
+    const syntaxDarkHighContrast = Object.keys(syntaxKeywordStates).find(
+      (state) =>
+        state.includes("theme=dark") && state.includes("contrast=more"),
+    );
+    expect(syntaxDark).toBeDefined();
+    expect(syntaxDarkHighContrast).toBeDefined();
+    expect(syntaxKeywordStates[syntaxDark ?? ""]).not.toBe(
+      syntaxKeywordStates[syntaxDarkHighContrast ?? ""],
+    );
+    const syntaxBackgroundStates = tokens["#syntax-bg"] as Record<
+      string,
+      string
+    >;
+    for (const [state, background] of Object.entries(syntaxBackgroundStates)) {
+      const requiredRatio = state.includes("contrast=more") ? 7 : 4.5;
+      for (const tokenName of [
+        "#syntax-text",
+        "#syntax-comment",
+        "#syntax-punctuation",
+        "#syntax-keyword",
+        "#syntax-string",
+        "#syntax-token",
+        "#syntax-property",
+        "#syntax-number",
+        "#syntax-function",
+        "#syntax-value",
+        "#syntax-operator",
+      ]) {
+        const syntaxStates = tokens[tokenName] as Record<string, string>;
+        const tokenRequiredRatio =
+          tokenName === "#syntax-punctuation" && requiredRatio < 6
+            ? 6
+            : requiredRatio;
+        expect(
+          contrastRatioFromLuminance(
+            colorLuminance(syntaxStates[state] ?? ""),
+            colorLuminance(background),
+          ),
+        ).toBeGreaterThanOrEqual(tokenRequiredRatio - 0.01);
+      }
+    }
+    for (const tokenName of [
+      "#syntax-keyword",
+      "#syntax-string",
+      "#syntax-token",
+      "#syntax-property",
+      "#syntax-number",
+      "#syntax-function",
+      "#syntax-value",
+      "#syntax-operator",
+    ]) {
+      const syntaxStates = tokens[tokenName] as Record<string, string>;
+      for (const color of Object.values(syntaxStates)) {
+        expect(colorSaturation(color)).toBeGreaterThanOrEqual(0.8);
+      }
+    }
     expect(tokens.$radius).toBe("6px");
     expect(tokens["$card-radius"]).toBe("10px");
     expect(tokens["$layout-width"]).toBe("87.5rem");
@@ -87,8 +240,8 @@ describe("Glaze theme adapter", () => {
     });
 
     expect(theme.colors.surface.light).toBe("oklch(0.9919 0.004 286.33)");
-    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0138 286.33)");
-    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0222 286.33)");
+    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0123 286.33)");
+    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0191 286.33)");
     expect(theme.colors.surface2.lightContrast).toBe(
       theme.colors.surface2.light,
     );
@@ -97,3 +250,17 @@ describe("Glaze theme adapter", () => {
     );
   });
 });
+
+function colorSaturation(color: string): number {
+  return variantToOkhsl(
+    glaze.color({ from: color, mode: "fixed" }).resolve().light,
+  ).s;
+}
+
+function colorLuminance(color: string): number {
+  const variant = glaze.color({ from: color, mode: "fixed" }).resolve().light;
+  const { h, s, l } = variantToOkhsl(variant);
+  return relativeLuminanceFromLinearRgb(
+    okhslToLinearSrgb(h, s, l, variant.pastel),
+  );
+}

@@ -62,6 +62,22 @@ describe("component style configuration", () => {
     });
   });
 
+  it("exposes bridged Markdown components through the same style registry", () => {
+    configureComponentStyles({
+      MarkdownTable: { Table: { radius: "0" } },
+    });
+
+    expect(
+      resolveComponentStyles("MarkdownTable", {
+        Table: { border: true, radius: "1cr" },
+        Cell: { padding: "1.5x 2x" },
+      }),
+    ).toEqual({
+      Table: { border: true, radius: "0" },
+      Cell: { padding: "1.5x 2x" },
+    });
+  });
+
   it("keeps custom anatomy styles on the compatibility bridge", () => {
     expect(
       resolveLegacyAnatomyStyles({
