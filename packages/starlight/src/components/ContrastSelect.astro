@@ -1,0 +1,78 @@
+---
+import contrastIcon from "../icons/contrast.svg?raw";
+import { ContrastSelectRoot } from "./LayoutComponents.js";
+---
+
+<ContrastSelectRoot data-tasty-anatomy="ContrastSelect">
+  <label>
+    <span class="sr-only">Contrast</span>
+    <span class="label-icon" aria-hidden="true" set:html={contrastIcon} />
+    <select data-docs-contrast aria-label="Contrast" autocomplete="off">
+      <option value="system" selected>System contrast</option>
+      <option value="normal">Normal contrast</option>
+      <option value="more">High contrast</option>
+    </select>
+  </label>
+</ContrastSelectRoot>
+
+<script>
+  type Contrast = "more" | "normal" | "system";
+
+  const storageKey = "cookbook-appearance";
+  const parseContrast = (value: unknown): Contrast =>
+    value === "more" || value === "normal" || value === "system"
+      ? value
+      : "system";
+  const loadContrast = (): Contrast => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return "system";
+      const appearance = JSON.parse(stored) as { contrast?: unknown };
+      return parseContrast(appearance.contrast);
+    } catch {
+      return "system";
+    }
+  };
+  const storeContrast = (contrast: Contrast): void => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      const parsed = stored ? (JSON.parse(stored) as unknown) : {};
+      const appearance =
+        parsed && typeof parsed === "object"
+          ? (parsed as Record<string, unknown>)
+          : {};
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ ...appearance, contrast }),
+      );
+    } catch {
+      // CSS media queries still provide the system fallback.
+    }
+  };
+  const updateContrast = (contrast: Contrast, persist = false): void => {
+    if (contrast === "system") delete document.documentElement.dataset.contrast;
+    else document.documentElement.dataset.contrast = contrast;
+    document
+      .querySelectorAll<HTMLSelectElement>("[data-docs-contrast]")
+      .forEach((select) => (select.value = contrast));
+    if (persist) storeContrast(contrast);
+  };
+
+  class CookbookContrastSelect extends HTMLElement {
+    connectedCallback(): void {
+      if (this.dataset.ready === "true") return;
+      this.dataset.ready = "true";
+      const select = this.querySelector<HTMLSelectElement>(
+        "[data-docs-contrast]",
+      );
+      select?.addEventListener("change", () => {
+        updateContrast(parseContrast(select.value), true);
+      });
+      updateContrast(loadContrast());
+    }
+  }
+
+  if (!customElements.get("cookbook-contrast-select")) {
+    customElements.define("cookbook-contrast-select", CookbookContrastSelect);
+  }
+</script>

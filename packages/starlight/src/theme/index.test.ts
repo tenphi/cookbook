@@ -36,9 +36,10 @@ describe("Glaze theme adapter", () => {
     for (const [name, states] of Object.entries(tokens).filter(([name]) =>
       name.startsWith("#"),
     )) {
+      const colorStates = states as Record<string, string>;
       expect(name).not.toBe("#current");
-      expect(Object.keys(states as object)).toHaveLength(4);
-      expect(Object.values(states as Record<string, string>)).toEqual(
+      expect(Object.keys(colorStates)).toHaveLength(4);
+      expect(Object.values(colorStates)).toEqual(
         expect.arrayContaining([
           expect.stringMatching(/^oklch\(/),
           expect.stringMatching(/^oklch\(/),
@@ -46,10 +47,40 @@ describe("Glaze theme adapter", () => {
           expect.stringMatching(/^oklch\(/),
         ]),
       );
-      expect(
-        Object.values(states as Record<string, string>).join(" "),
-      ).not.toContain("color-mix");
+      expect(Object.values(colorStates).join(" ")).not.toContain("color-mix");
+      const highContrastStates = Object.keys(colorStates).filter((state) =>
+        state.includes("contrast=more"),
+      );
+      expect(highContrastStates).toHaveLength(2);
+      expect(highContrastStates).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            "@media(prefers-contrast: more) & :not([data-contrast])",
+          ),
+          expect.stringContaining("theme=dark"),
+        ]),
+      );
     }
+    const borderStates = tokens["#border"] as Record<string, string>;
+    const lightHighContrast = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("contrast=more") && !state.includes("theme=dark"),
+    );
+    const dark = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    );
+    const darkHighContrast = Object.keys(borderStates).find(
+      (state) =>
+        state.includes("theme=dark") && state.includes("contrast=more"),
+    );
+    expect(lightHighContrast).toBeDefined();
+    expect(dark).toBeDefined();
+    expect(darkHighContrast).toBeDefined();
+    expect(borderStates[lightHighContrast ?? ""]).not.toBe(borderStates[""]);
+    expect(borderStates[darkHighContrast ?? ""]).not.toBe(
+      borderStates[dark ?? ""],
+    );
     expect(tokens).toHaveProperty("#surface-2-hover");
     expect(tokens).toHaveProperty("#surface-2-pressed");
     expect(tokens).toHaveProperty("#surface-3-hover");

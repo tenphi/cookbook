@@ -30,6 +30,14 @@ if (!/:root:where\([^{}]+\)\s*\{[^}]*--surface-color/.test(sharedCss)) {
     "Theme-state color tokens are missing from shared Tasty CSS.",
   );
 }
+if (
+  !sharedCss.includes('[data-contrast="more"]') ||
+  !/@media\s*\(prefers-contrast:\s*more\)/.test(sharedCss)
+) {
+  throw new Error(
+    "Glaze high-contrast tokens must support both explicit and system modes.",
+  );
+}
 if (sharedCss.includes("color-mix(")) {
   throw new Error(
     "The shared stylesheet contains authored color mixes instead of Glaze output.",
@@ -64,6 +72,12 @@ if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
 }
 if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
   throw new Error("The project logo is missing from the documentation header.");
+}
+if (
+  !home.includes("data-docs-contrast") ||
+  !home.includes('value="more">High contrast</option>')
+) {
+  throw new Error("The documentation shell is missing its contrast control.");
 }
 console.log(
   `Reference budgets: largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,

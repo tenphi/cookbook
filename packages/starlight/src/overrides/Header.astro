@@ -8,6 +8,7 @@ import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
+import ContrastSelect from "../components/ContrastSelect.astro";
 import GlobalStyles from "../components/GlobalStyles.js";
 import Logo from "../components/Logo.astro";
 import PackageVersion from "../components/PackageVersion.astro";
@@ -50,6 +51,7 @@ function tabHref(link: string): string {
     <div class="td-header__tools sl-hidden md:sl-flex print:hidden">
       <div class="td-header__social"><SocialIcons /></div>
       <ThemeSelect />
+      <ContrastSelect />
       <LanguageSelect />
     </div>
   </div>
