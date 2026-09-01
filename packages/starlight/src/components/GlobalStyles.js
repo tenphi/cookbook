@@ -375,7 +375,10 @@ export default function GlobalStyles() {
 
   useGlobalStyles("#starlight__sidebar .sidebar-content", {
     gap: "($gap * 3)",
-    paddingBlockStart: "($gap * 4)",
+    paddingBlockStart: {
+      "": "($gap * 4)",
+      "@medium-layout": "($gap * 1.5)",
+    },
     paddingBlockEnd: "($gap * 6)",
   });
 
