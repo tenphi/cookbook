@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { glaze, variantToOkhsl } from "@tenphi/glaze";
+import {
+  contrastRatioFromLuminance,
+  glaze,
+  okhslToLinearSrgb,
+  relativeLuminanceFromLinearRgb,
+  variantToOkhsl,
+} from "@tenphi/glaze";
 import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
@@ -137,6 +143,49 @@ describe("Glaze theme adapter", () => {
     expect(syntaxKeywordStates[syntaxDark ?? ""]).not.toBe(
       syntaxKeywordStates[syntaxDarkHighContrast ?? ""],
     );
+    const syntaxBackgroundStates = tokens["#syntax-bg"] as Record<
+      string,
+      string
+    >;
+    for (const [state, background] of Object.entries(syntaxBackgroundStates)) {
+      const requiredRatio = state.includes("contrast=more") ? 7 : 4.5;
+      for (const tokenName of [
+        "#syntax-text",
+        "#syntax-comment",
+        "#syntax-punctuation",
+        "#syntax-keyword",
+        "#syntax-string",
+        "#syntax-token",
+        "#syntax-property",
+        "#syntax-number",
+        "#syntax-function",
+        "#syntax-value",
+        "#syntax-operator",
+      ]) {
+        const syntaxStates = tokens[tokenName] as Record<string, string>;
+        expect(
+          contrastRatioFromLuminance(
+            colorLuminance(syntaxStates[state] ?? ""),
+            colorLuminance(background),
+          ),
+        ).toBeGreaterThanOrEqual(requiredRatio - 0.01);
+      }
+    }
+    for (const tokenName of [
+      "#syntax-keyword",
+      "#syntax-string",
+      "#syntax-token",
+      "#syntax-property",
+      "#syntax-number",
+      "#syntax-function",
+      "#syntax-value",
+      "#syntax-operator",
+    ]) {
+      const syntaxStates = tokens[tokenName] as Record<string, string>;
+      for (const color of Object.values(syntaxStates)) {
+        expect(colorSaturation(color)).toBeGreaterThanOrEqual(0.8);
+      }
+    }
     expect(tokens.$radius).toBe("6px");
     expect(tokens["$card-radius"]).toBe("10px");
     expect(tokens["$layout-width"]).toBe("87.5rem");
@@ -202,4 +251,12 @@ function colorSaturation(color: string): number {
   return variantToOkhsl(
     glaze.color({ from: color, mode: "fixed" }).resolve().light,
   ).s;
+}
+
+function colorLuminance(color: string): number {
+  const variant = glaze.color({ from: color, mode: "fixed" }).resolve().light;
+  const { h, s, l } = variantToOkhsl(variant);
+  return relativeLuminanceFromLinearRgb(
+    okhslToLinearSrgb(h, s, l, variant.pastel),
+  );
 }
