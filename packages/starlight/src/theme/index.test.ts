@@ -104,6 +104,39 @@ describe("Glaze theme adapter", () => {
     expect(tokens).toHaveProperty("#blue");
     expect(tokens).toHaveProperty("#purple-surface");
     expect(tokens).toHaveProperty("#red-text");
+    expect(tokens).toHaveProperty("#syntax-bg");
+    expect(tokens).toHaveProperty("#syntax-text");
+    expect(tokens).toHaveProperty("#syntax-comment");
+    expect(tokens).toHaveProperty("#syntax-keyword");
+    expect(tokens).toHaveProperty("#syntax-string");
+    expect(tokens).toHaveProperty("#syntax-token");
+    expect(tokens).toHaveProperty("#syntax-property");
+    expect(tokens).toHaveProperty("#syntax-number");
+    expect(tokens).toHaveProperty("#syntax-function");
+    expect(tokens).toHaveProperty("#syntax-value");
+    expect(tokens).toHaveProperty("#syntax-operator");
+    const syntaxKeywordStates = tokens["#syntax-keyword"] as Record<
+      string,
+      string
+    >;
+    expect(syntaxKeywordStates[""]).not.toBe(
+      syntaxKeywordStates[
+        "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))"
+      ],
+    );
+    const syntaxDark = Object.keys(syntaxKeywordStates).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    );
+    const syntaxDarkHighContrast = Object.keys(syntaxKeywordStates).find(
+      (state) =>
+        state.includes("theme=dark") && state.includes("contrast=more"),
+    );
+    expect(syntaxDark).toBeDefined();
+    expect(syntaxDarkHighContrast).toBeDefined();
+    expect(syntaxKeywordStates[syntaxDark ?? ""]).not.toBe(
+      syntaxKeywordStates[syntaxDarkHighContrast ?? ""],
+    );
     expect(tokens.$radius).toBe("6px");
     expect(tokens["$card-radius"]).toBe("10px");
     expect(tokens["$layout-width"]).toBe("87.5rem");

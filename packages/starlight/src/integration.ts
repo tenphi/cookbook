@@ -30,6 +30,7 @@ import {
   type ResolvedNavigationLayout,
 } from "./navigation.js";
 import { resolveDocsTheme } from "./theme/index.js";
+import { tastyCodeTheme } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
@@ -154,9 +155,11 @@ export default function cookbook(
           image: context.config.image,
           markdown: {
             ...context.config.markdown,
-            // Syntax colors must come from Glaze too. Plain code markup lets the
-            // extracted Tasty globals own every foreground and surface color.
-            syntaxHighlight: false as const,
+            syntaxHighlight: "shiki" as const,
+            shikiConfig: {
+              ...context.config.markdown.shikiConfig,
+              theme: tastyCodeTheme,
+            },
           },
           srcDir: context.config.srcDir,
         };
@@ -166,7 +169,10 @@ export default function cookbook(
         context.updateConfig({
           base,
           output: "static",
-          markdown: { syntaxHighlight: false },
+          markdown: {
+            syntaxHighlight: "shiki",
+            shikiConfig: { theme: tastyCodeTheme },
+          },
           vite: {
             ssr: {
               external: [
@@ -297,7 +303,11 @@ export default function cookbook(
                 image: config.image,
                 markdown: {
                   ...config.markdown,
-                  syntaxHighlight: false as const,
+                  syntaxHighlight: "shiki" as const,
+                  shikiConfig: {
+                    ...config.markdown.shikiConfig,
+                    theme: tastyCodeTheme,
+                  },
                 },
                 srcDir: config.srcDir,
               };

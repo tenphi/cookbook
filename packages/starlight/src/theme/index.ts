@@ -202,6 +202,79 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     },
   } satisfies ColorMap);
 
+  // Syntax colors are intentionally resolved as their own Glaze palette.
+  // This keeps code semantics vivid enough to scan without coupling them to
+  // either the product brand ramp or the deliberately restrained UI chrome.
+  const syntaxTheme = glaze(210, 90, glazeOptions);
+  syntaxTheme.colors({
+    bg: { tone: 100, saturation: 0.1 },
+    text: {
+      base: "bg",
+      tone: 0,
+      contrast: { apca: "body" },
+      saturation: 0,
+    },
+    comment: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.01,
+      hue: 210,
+    },
+    punctuation: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.01,
+      hue: 210,
+    },
+    keyword: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.65,
+    },
+    string: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.55,
+      hue: 15,
+    },
+    token: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.55,
+      hue: 125,
+    },
+    property: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.55,
+      hue: 155,
+    },
+    number: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.6,
+      hue: 70,
+    },
+    function: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.55,
+      hue: 210,
+    },
+    value: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.5,
+      hue: 210,
+    },
+    operator: {
+      base: "bg",
+      contrast: { apca: "content" },
+      saturation: 0.5,
+      hue: 340,
+    },
+  } satisfies ColorMap);
+
   const resolvedColors = colorTheme.resolve();
   const resolvedSurface = requiredResolvedColor(resolvedColors, "surface");
   const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
@@ -242,6 +315,11 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
   const resolvedPalette = colorTheme.json(outputOptions);
   const colorTokens = colorTheme.tasty(tastyOptions);
   const borderTokens = borderTheme.tasty(tastyOptions);
+  const syntaxTokens = glaze.palette({ syntax: syntaxTheme }).tasty({
+    ...tastyOptions,
+    prefix: true,
+    primary: false,
+  });
   const colors = {
     surface: requiredJsonColor(resolvedPalette, "surface"),
     surface2: requiredJsonColor(resolvedPalette, "surface-2"),
@@ -263,6 +341,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       ...colorTokens,
       "#border": requiredJsonColor(borderTokens, "#border"),
       "#border-strong": requiredJsonColor(borderTokens, "#border-strong"),
+      ...syntaxTokens,
     },
     tokens: resolveThemeTokens(theme.tokens),
     presets: resolveTypographyPresets(theme.presets),

@@ -578,9 +578,9 @@ export default function GlobalStyles() {
   useGlobalStyles(".sl-markdown-content pre:not(:where(.not-content *))", {
     padding: "0.875rem 1rem",
     overflowX: "auto",
-    color: "#text-soft",
+    color: "#syntax-text",
     border: true,
-    fill: "#surface-2",
+    fill: "#syntax-bg",
     fontSize: "$code-font-size",
     lineHeight: "$code-line-height",
     radius: "$card-radius",
@@ -1118,6 +1118,7 @@ export default function GlobalStyles() {
 
   useGlobalStyles("site-search .search-container", {
     inlineSize: "100%",
+    paddingBlockStart: { "": "0", "@mobile": "4rem" },
   });
 
   useGlobalStyles("site-search button[data-close-modal]", {
@@ -1127,12 +1128,32 @@ export default function GlobalStyles() {
     insetInlineEnd: "($gap * 2)",
     display: { "": "none", "@mobile": "flex" },
     alignItems: "center",
+    justifyContent: "center",
     gap: "0.375rem",
+    blockSize: "3rem",
+    minBlockSize: "3rem",
     paddingInlineStart: "0.625rem",
     paddingInlineEnd: "0.625rem",
-    color: "#text",
+    color: "#text-soft",
     border: true,
+    borderColor: "#border",
     radius: "$radius",
+    fill: "#surface-3",
+    fontSize: "$small-font-size",
+    fontWeight: "$body-bold-font-weight",
+    boxShadow: "none",
+    cursor: "pointer",
+    transition: "color 120ms ease, background-color 120ms ease",
+  });
+
+  useGlobalStyles("site-search button[data-close-modal]:hover", {
+    color: "#text",
+    fill: "#surface-3-hover",
+  });
+
+  useGlobalStyles("site-search button[data-close-modal]:active", {
+    color: "#text",
+    fill: "#surface-3-pressed",
   });
 
   useGlobalStyles("#starlight__search", {
@@ -1198,14 +1219,42 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("#starlight__search .pagefind-ui__form::before", {
+    content: '""',
+    position: "absolute",
+    zIndex: "1",
+    insetBlockStart: "1rem",
+    insetInlineStart: "1rem",
+    display: "block",
     inlineSize: "1rem",
     blockSize: "1rem",
+    fill: "#text-soft",
     mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
+    pointerEvents: "none",
   });
 
   useGlobalStyles("#starlight__search .pagefind-ui__search-clear::before", {
+    content: '""',
+    display: "block",
+    inlineSize: "1rem",
+    blockSize: "1rem",
+    fill: "#current",
     mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
   });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__search-clear", {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "0",
+    cursor: "pointer",
+  });
+
+  useGlobalStyles(
+    "#starlight__search .pagefind-ui__search-clear.pagefind-ui__suppressed",
+    {
+      display: "none",
+    },
+  );
 
   useGlobalStyles(
     "starlight-menu-button button, mobile-starlight-toc .toggle",
@@ -1219,6 +1268,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles("starlight-menu-button button", {
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     inlineSize: "$docs-menu-button-size",
@@ -1277,6 +1327,9 @@ export default function GlobalStyles() {
   useGlobalStyles(
     "mobile-starlight-toc .toggle, mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
     {
+      display: "inline-flex",
+      alignItems: "center",
+      flexShrink: "0",
       gap: "$gap",
       margin: "0",
       padding: "0",
@@ -1299,8 +1352,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles("mobile-starlight-toc summary .toggle", {
-    gap: "$gap",
-    margin: "0",
+    whiteSpace: "nowrap",
   });
 
   useGlobalStyles("mobile-starlight-toc .dropdown", {
@@ -1349,6 +1401,15 @@ export default function GlobalStyles() {
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile", {
     display: "grid",
     gap: "1px",
+    margin: "0",
+    padding: "0",
+    listStyle: "none",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile > li", {
+    margin: "0",
+    padding: "0",
+    listStyle: "none",
   });
 
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a", {
