@@ -190,13 +190,13 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     },
     border: {
       base: "surface",
-      tone: ["-12", "-26"],
+      tone: ["-9", "-22"],
       saturation: 0.205,
       mode: "auto",
     },
     "border-strong": {
       base: "surface",
-      tone: ["-26", "-44"],
+      tone: ["-20", "-38"],
       saturation: 0.205,
       mode: "auto",
     },

@@ -1508,6 +1508,27 @@ export default function GlobalStyles() {
     fill: "#surface-2",
   });
 
+  useGlobalStyles(
+    ".sl-markdown-content thead:first-child tr:first-child th:first-child:not(:last-child)",
+    {
+      radius: "($card-radius - $border-width) top-left",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content thead:first-child tr:first-child th:last-child:not(:first-child)",
+    {
+      radius: "($card-radius - $border-width) top-right",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content thead:first-child tr:first-child th:only-child",
+    {
+      radius: "($card-radius - $border-width) top",
+    },
+  );
+
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
     "$docs-nav-height": {
       "@mobile": "3.5rem",
