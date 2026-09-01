@@ -8,7 +8,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { extname, join } from "node:path";
 import { promisify } from "node:util";
 
 const run = promisify(execFile);
@@ -69,17 +69,36 @@ try {
       "Packed-package site did not contain the expected generated content.",
     );
   }
-  for (const marker of [
-    "data-has-toc",
-    "td-header",
-    "right-sidebar",
-    "expressive-code",
-  ]) {
+  for (const marker of ["data-has-toc", "td-header", "right-sidebar"]) {
     if (!html.includes(marker)) {
       throw new Error(
         `Packed convention page did not use the default Starlight theme: missing ${marker}.`,
       );
     }
+  }
+  const outputEntries = await readdir(join(site, "dist"), { recursive: true });
+  const cssEntries = outputEntries.filter((name) => extname(name) === ".css");
+  if (
+    cssEntries.length === 0 ||
+    cssEntries.some(
+      (name) => !/^_astro\/tasty\.(?:shared|page)\.[\w-]+\.css$/.test(name),
+    )
+  ) {
+    throw new Error(
+      `Packed convention page must ship only extracted Tasty CSS: ${cssEntries.join(", ")}.`,
+    );
+  }
+  const css = (
+    await Promise.all(
+      cssEntries.map((name) => readFile(join(site, "dist", name), "utf8")),
+    )
+  ).join("\n");
+  if (
+    /--sl-|@layer\s+starlight|expressive-code|--ec-/i.test(`${html}\n${css}`)
+  ) {
+    throw new Error(
+      "Packed convention page contains Starlight or Expressive Code styles.",
+    );
   }
   if (/react-dom|tasty\/client|data-reactroot/i.test(html)) {
     throw new Error(
