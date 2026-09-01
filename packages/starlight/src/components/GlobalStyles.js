@@ -465,6 +465,20 @@ export default function GlobalStyles() {
     lineHeight: "$heading-line-height",
   });
 
+  useGlobalStyles(".right-sidebar-panel ul", {
+    display: "grid",
+    gap: "1px",
+    margin: "0",
+    padding: "0",
+    listStyle: "none",
+  });
+
+  useGlobalStyles(".right-sidebar-panel li", {
+    margin: "0",
+    padding: "0",
+    listStyle: "none",
+  });
+
   useGlobalStyles(".right-sidebar-panel a", {
     display: "block",
     paddingBlockStart: "($gap * 0.5)",
@@ -478,6 +492,10 @@ export default function GlobalStyles() {
 
   useGlobalStyles(".right-sidebar-panel a:hover", {
     color: "#text",
+  });
+
+  useGlobalStyles('.right-sidebar-panel a[aria-current="true"]', {
+    color: "#accent-text",
   });
 
   useGlobalStyles(".content-panel", {
@@ -916,9 +934,13 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles('.pagination-links a[rel="next"]', {
-    flow: "row-reverse",
     justifyContent: "flex-start",
     textAlign: "end",
+  });
+
+  useGlobalStyles('.pagination-links a[rel="next"]::before', {
+    order: "1",
+    marginInlineStart: "auto",
   });
 
   useGlobalStyles(".pagination-links a:hover", {

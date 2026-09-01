@@ -163,12 +163,16 @@ describe("Glaze theme adapter", () => {
         "#syntax-operator",
       ]) {
         const syntaxStates = tokens[tokenName] as Record<string, string>;
+        const tokenRequiredRatio =
+          tokenName === "#syntax-punctuation" && requiredRatio < 6
+            ? 6
+            : requiredRatio;
         expect(
           contrastRatioFromLuminance(
             colorLuminance(syntaxStates[state] ?? ""),
             colorLuminance(background),
           ),
-        ).toBeGreaterThanOrEqual(requiredRatio - 0.01);
+        ).toBeGreaterThanOrEqual(tokenRequiredRatio - 0.01);
       }
     }
     for (const tokenName of [

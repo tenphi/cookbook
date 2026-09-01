@@ -222,7 +222,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     },
     punctuation: {
       base: "bg",
-      contrast: { wcag: ["AA", "AAA"] },
+      contrast: { wcag: [6, "AAA"] },
       saturation: 0.01,
       hue: 210,
     },
