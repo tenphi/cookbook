@@ -930,7 +930,11 @@ export default function GlobalStyles() {
 
   useGlobalStyles('.pagination-links a[rel="next"]::before', {
     order: "1",
+  });
+
+  useGlobalStyles('.pagination-links a[rel="next"] > span', {
     marginInlineStart: "auto",
+    textAlign: "end",
   });
 
   useGlobalStyles(".pagination-links a:hover", {
@@ -1329,7 +1333,7 @@ export default function GlobalStyles() {
     position: "relative",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     gap: "$gap",
     paddingInlineStart: "$docs-content-pad-x",
     paddingInlineEnd: "$docs-content-pad-x",
