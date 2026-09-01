@@ -1,5 +1,12 @@
 import { existsSync } from "node:fs";
-import { cp, mkdir, readFile } from "node:fs/promises";
+import {
+  cp,
+  mkdir,
+  readFile,
+  readdir,
+  unlink,
+  writeFile,
+} from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, extname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -131,6 +138,7 @@ export default function cookbook(
         usingContentCollection = hasContentConfig(context.config.srcDir);
         const starlightIntegration = starlight({
           title: options.config?.site?.title ?? "Documentation",
+          expressiveCode: false,
           ...(options.config?.site?.description
             ? { description: options.config.site.description }
             : {}),
@@ -144,7 +152,12 @@ export default function cookbook(
         inner = [react, tasty, starlightIntegration];
         let markdownRuntime = {
           image: context.config.image,
-          markdown: context.config.markdown,
+          markdown: {
+            ...context.config.markdown,
+            // Syntax colors must come from Glaze too. Plain code markup lets the
+            // extracted Tasty globals own every foreground and surface color.
+            syntaxHighlight: false as const,
+          },
           srcDir: context.config.srcDir,
         };
         let markdownRenderer: ReturnType<
@@ -153,6 +166,7 @@ export default function cookbook(
         context.updateConfig({
           base,
           output: "static",
+          markdown: { syntaxHighlight: false },
           vite: {
             ssr: {
               external: [
@@ -163,6 +177,7 @@ export default function cookbook(
               ],
             },
             plugins: [
+              stripStarlightStylesPlugin(starlightRoot),
               virtualDocsPlugin(async () => {
                 const loaded = await loadGraph();
                 const entries = usingContentCollection
@@ -280,7 +295,10 @@ export default function cookbook(
             "astro:config:setup": ({ config }) => {
               markdownRuntime = {
                 image: config.image,
-                markdown: config.markdown,
+                markdown: {
+                  ...config.markdown,
+                  syntaxHighlight: false as const,
+                },
                 srcDir: config.srcDir,
               };
             },
@@ -334,8 +352,41 @@ export default function cookbook(
       },
       "astro:build:done": async (context) => {
         await callInner(inner, "astro:build:done", context);
-        if (!graph) return;
         const output = fileURLToPath(context.dir);
+        for (const relativePath of await readdir(output, { recursive: true })) {
+          if (extname(relativePath) !== ".html") continue;
+          const path = join(output, relativePath);
+          const html = await readFile(path, "utf8");
+          const sanitized = html
+            .replace(
+              /\s*<link\b(?=[^>]*rel="stylesheet")(?=[^>]*href="data:text\/css,")[^>]*>/g,
+              "",
+            )
+            .replace(/\s*<style>\s*<\/style>/g, "")
+            .replace(
+              /\sstyle="--sl-icon-size:\s*([^;\"]+);?"/g,
+              ' width="$1" height="$1"',
+            )
+            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"')
+            .replace(
+              /(<kbd\b[^>]*)\sstyle="display:\s*none;?"([^>]*>)/g,
+              "$1$2",
+            )
+            .replace(
+              /(<dialog\b[^>]*)\sstyle="padding:\s*0;?"([^>]*>)/g,
+              "$1$2",
+            );
+          if (sanitized !== html) await writeFile(path, sanitized);
+        }
+        const pagefindOutput = join(output, "pagefind");
+        if (existsSync(pagefindOutput)) {
+          for (const name of await readdir(pagefindOutput)) {
+            if (extname(name) === ".css") {
+              await unlink(join(pagefindOutput, name));
+            }
+          }
+        }
+        if (!graph) return;
         for (const asset of graph.assets) {
           if (!asset.sourcePath || !asset.publicPath) continue;
           const target = join(output, asset.publicPath.replace(/^\//, ""));
@@ -343,6 +394,38 @@ export default function cookbook(
           await cp(asset.sourcePath, target);
         }
       },
+    },
+  };
+}
+
+function stripStarlightStylesPlugin(root: string) {
+  const normalizedRoot = root.replaceAll("\\", "/");
+  const emptyPrintId = "\0cookbook:empty-starlight-print";
+  return {
+    name: "cookbook-strip-starlight-css",
+    enforce: "pre" as const,
+    resolveId(source: string, importer: string | undefined) {
+      if (
+        importer?.replaceAll("\\", "/").startsWith(`${normalizedRoot}/`) &&
+        source.endsWith("/style/print.css?url&no-inline")
+      ) {
+        return emptyPrintId;
+      }
+      return undefined;
+    },
+    load(id: string) {
+      if (id === emptyPrintId) return 'export default "data:text/css,";';
+      return undefined;
+    },
+    transform(code: string, id: string) {
+      const normalizedId = id.replaceAll("\\", "/");
+      if (!normalizedId.startsWith(`${normalizedRoot}/`)) return undefined;
+      const [pathname, query = ""] = normalizedId.split("?", 2);
+      const isStylesheet = pathname?.endsWith(".css");
+      const isAstroStyle =
+        pathname?.endsWith(".astro") && query.includes("type=style");
+      if (!isStylesheet && !isAstroStyle) return undefined;
+      return { code: "", map: null };
     },
   };
 }

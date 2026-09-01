@@ -4,6 +4,19 @@ import { extname, join } from "node:path";
 const output = join(process.cwd(), "apps/reference/dist");
 const assets = join(output, "_astro");
 const entries = await readdir(assets);
+const outputEntries = await readdir(output, { recursive: true });
+const cssEntries = outputEntries.filter((name) => extname(name) === ".css");
+const unexpectedCss = cssEntries.filter(
+  (name) => !/^_astro\/tasty\.(?:shared|page)\.[\w-]+\.css$/.test(name),
+);
+if (unexpectedCss.length > 0) {
+  throw new Error(
+    `Only extracted Tasty stylesheets may ship. Found: ${unexpectedCss.join(", ")}.`,
+  );
+}
+if (cssEntries.length === 0) {
+  throw new Error("The reference build did not emit extracted Tasty CSS.");
+}
 let largestCss = 0;
 let javascript = 0;
 let sharedCssPath;
@@ -20,6 +33,20 @@ if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
 const sharedCss = await readFile(sharedCssPath, "utf8");
+const allCss = (
+  await Promise.all(
+    cssEntries.map((name) => readFile(join(output, name), "utf8")),
+  )
+).join("\n");
+for (const [pattern, label] of [
+  [/--sl-/i, "Starlight custom properties"],
+  [/@layer\s+starlight/i, "Starlight cascade layers"],
+  [/expressive-code|--ec-/i, "Expressive Code styles"],
+]) {
+  if (pattern.test(allCss)) {
+    throw new Error(`Extracted Tasty CSS still contains ${label}.`);
+  }
+}
 if (/\)\s+:root\s*\{[^}]*--surface-color/.test(sharedCss)) {
   throw new Error(
     "Theme tokens were extracted beneath :root and cannot match the document root.",
@@ -42,19 +69,6 @@ if (sharedCss.includes("color-mix(")) {
   throw new Error(
     "The shared stylesheet contains authored color mixes instead of Glaze output.",
   );
-}
-for (const mapping of [
-  "--sl-color-gray-3: var(--text-muted-color)",
-  "--sl-color-accent-low: var(--accent-surface-subtle-color)",
-  "--sl-color-orange-low: var(--orange-surface-color)",
-  "--sl-color-green-high: var(--green-text-color)",
-  "--sl-color-blue: var(--blue-color)",
-  "--sl-color-purple-low: var(--purple-surface-color)",
-  "--sl-color-red-high: var(--red-text-color)",
-]) {
-  if (!sharedCss.includes(mapping)) {
-    throw new Error(`The Starlight Glaze bridge is missing: ${mapping}.`);
-  }
 }
 if (!/mask:\s*url\("data:image\/svg\+xml/.test(sharedCss)) {
   throw new Error("Extracted Tasty CSS is missing inline SVG icon masks.");
@@ -88,6 +102,30 @@ if (
 ) {
   throw new Error("The documentation shell is missing its contrast control.");
 }
+for (const name of outputEntries.filter(
+  (entry) => extname(entry) === ".html",
+)) {
+  const html = await readFile(join(output, name), "utf8");
+  if (/--sl-/i.test(html)) {
+    throw new Error(`${name} contains an inline Starlight style token.`);
+  }
+  if (/<style(?:\s|>)/i.test(html)) {
+    throw new Error(`${name} contains an authored style block.`);
+  }
+  const stylesheets = [
+    ...html.matchAll(
+      /<link\b(?=[^>]*rel="stylesheet")[^>]*href="([^"]+)"[^>]*>/gi,
+    ),
+  ].map((match) => match[1]);
+  const unexpectedLinks = stylesheets.filter(
+    (href) => !/^\/_astro\/tasty\.(?:shared|page)\.[\w-]+\.css$/.test(href),
+  );
+  if (unexpectedLinks.length > 0) {
+    throw new Error(
+      `${name} links non-Tasty stylesheets: ${unexpectedLinks.join(", ")}.`,
+    );
+  }
+}
 console.log(
-  `Reference budgets: largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,
+  `Reference budgets: ${cssEntries.length} Tasty stylesheets; largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,
 );

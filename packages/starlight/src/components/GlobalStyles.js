@@ -1,4 +1,6 @@
-import { useGlobalStyles } from "@tenphi/tasty";
+import { useFontFace, useGlobalStyles } from "@tenphi/tasty";
+import jetBrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url";
+import onestLatin from "@fontsource-variable/onest/files/onest-latin-wght-normal.woff2?url";
 import arrowLeftIcon from "../icons/arrow-left.svg?raw";
 import arrowRightIcon from "../icons/arrow-right.svg?raw";
 import chevronRightIcon from "../icons/chevron-right.svg?raw";
@@ -9,85 +11,34 @@ import { configureCookbookStates } from "./tasty-states.js";
 
 configureCookbookStates();
 
-// These global rules bridge Cookbook tokens into markup owned by Astro,
-// Starlight, Expressive Code, and Pagefind. Cookbook-owned components use
-// tasty() wrappers; every style object remains visible to the Tasty linter.
+// Starlight owns the document markup, while Tasty owns every emitted style and
+// Glaze owns every color value. Cookbook-owned components use tasty() wrappers;
+// every global style object remains visible to the Tasty linter.
 export default function GlobalStyles() {
+  useFontFace("Onest Variable", {
+    src: `url("${onestLatin}") format("woff2-variations")`,
+    fontWeight: "100 900",
+    fontDisplay: "swap",
+  });
+  useFontFace("JetBrains Mono Variable", {
+    src: `url("${jetBrainsMonoLatin}") format("woff2-variations")`,
+    fontWeight: "100 800",
+    fontDisplay: "swap",
+  });
+
   useGlobalStyles(":root", {
     colorScheme: "dark",
-    "$sl-font": "$body-font-family",
-    "$sl-font-mono": "$code-font-family",
-    "$sl-line-height": "$body-line-height",
-    "$sl-line-height-headings": "$heading-line-height",
-    "$sl-text-body": "$body-font-size",
-    "$sl-text-body-sm": "$small-font-size",
-    "$sl-text-code": "$code-font-size",
-    "$sl-text-code-sm": "$small-font-size",
-    "$sl-text-h1": "$h1-font-size",
-    "$sl-text-h2": "$h2-font-size",
-    "$sl-text-h3": "$h3-font-size",
-    "$sl-text-h4": "$h4-font-size",
-    "$sl-text-h5": "$h5-font-size",
-    "$sl-content-width": "$content-width",
-    "$sl-sidebar-width": "$sidebar-width",
-    "$sl-color-white": "#text",
-    "$sl-color-gray-1": "#text",
-    "$sl-color-gray-2": "#text-soft",
-    "$sl-color-gray-3": "#text-muted",
-    "$sl-color-gray-4": "#border-strong",
-    "$sl-color-gray-5": "#border",
-    "$sl-color-gray-6": "#surface-2",
-    "$sl-color-gray-7": "#surface-3",
-    "$sl-color-black": "#surface",
-    "$sl-color-text": "#text-soft",
-    "$sl-color-text-accent": "#accent-text",
-    "$sl-color-text-invert": "#accent-surface-text",
-    "$sl-color-bg": "#surface",
-    "$sl-color-bg-nav": "#surface",
-    "$sl-color-bg-sidebar": "#surface",
-    "$sl-color-bg-inline-code": "#surface-2",
-    "$sl-color-bg-accent": "#accent-surface",
-    "$sl-color-bg-badge": "#surface-2",
-    "$sl-color-border-badge": "#border",
-    "$sl-color-text-badge": "#text-soft",
-    "$sl-color-hairline-light": "#border",
-    "$sl-color-hairline": "#border",
-    "$sl-color-hairline-shade": "#border",
-    "$sl-color-backdrop-overlay": "#overlay",
-    "$sl-color-accent-low": "#accent-surface-subtle",
-    "$sl-color-accent": "#accent-text",
-    "$sl-color-accent-high": "#accent-text",
-    "$sl-color-banner-bg": "#accent-surface",
-    "$sl-color-banner-text": "#accent-surface-text",
-    "$sl-color-asides-border": "#border-strong",
-    "$sl-color-asides-text-accent": "#text",
-    "$sl-color-orange-low": "#orange-surface",
-    "$sl-color-orange": "#orange",
-    "$sl-color-orange-high": "#orange-text",
-    "$sl-color-green-low": "#green-surface",
-    "$sl-color-green": "#green",
-    "$sl-color-green-high": "#green-text",
-    "$sl-color-blue-low": "#blue-surface",
-    "$sl-color-blue": "#blue",
-    "$sl-color-blue-high": "#blue-text",
-    "$sl-color-purple-low": "#purple-surface",
-    "$sl-color-purple": "#purple",
-    "$sl-color-purple-high": "#purple-text",
-    "$sl-color-red-low": "#red-surface",
-    "$sl-color-red": "#red",
-    "$sl-color-red-high": "#red-text",
-    "$sl-shadow-sm": "none",
-    "$sl-shadow-md": "0 0.5rem 1.5rem #shadow",
-    "$sl-shadow-lg": "0 1rem 3rem #shadow",
-    "$sl-nav-height": "4.5rem",
-    "$sl-nav-pad-x": "clamp(1.25rem, 2.5vw, 2rem)",
-    "$sl-sidebar-pad-x": "1.5rem",
-    "$sl-content-pad-x": "clamp(1.5rem, 4vw, 4rem)",
-    "$sl-main-pad": "0 0 5rem",
+    "$docs-nav-height": "4.5rem",
+    "$docs-nav-pad-x": "clamp(1.25rem, 2.5vw, 2rem)",
+    "$docs-nav-gap": "0.75rem",
+    "$docs-sidebar-pad-x": "1.5rem",
+    "$docs-content-pad-x": "clamp(1.5rem, 4vw, 4rem)",
+    "$docs-menu-button-size": "2.5rem",
+    "$docs-mobile-toc-height": "0rem",
   });
 
   useGlobalStyles(":root:has(.td-top-tabs)", {
-    "$sl-nav-height": "7rem",
+    "$docs-nav-height": "7rem",
   });
 
   useGlobalStyles(':root[data-theme="light"]', {
@@ -98,6 +49,62 @@ export default function GlobalStyles() {
     colorScheme: {
       "@media(prefers-color-scheme: light)": "light",
     },
+  });
+
+  useGlobalStyles("*, *::before, *::after", {
+    boxSizing: "border-box",
+  });
+
+  useGlobalStyles("html", {
+    minBlockSize: "100%",
+    scrollPaddingBlockStart:
+      "(1.5rem + $docs-nav-height + $docs-mobile-toc-height)",
+  });
+
+  useGlobalStyles("body", {
+    minInlineSize: "0",
+    minBlockSize: "100%",
+    margin: "0",
+  });
+
+  useGlobalStyles(":where(button, input, select, textarea)", {
+    font: "inherit",
+  });
+
+  useGlobalStyles(":where(button, summary, select)", {
+    cursor: "pointer",
+  });
+
+  useGlobalStyles(":where(img, picture, video, canvas, svg, iframe)", {
+    maxInlineSize: "100%",
+  });
+
+  useGlobalStyles(":where(img, picture, video, canvas, svg)", {
+    blockSize: "auto",
+  });
+
+  useGlobalStyles(":where([hidden], .sl-hidden)", {
+    hide: true,
+  });
+
+  useGlobalStyles(".md\\:sl-block", {
+    display: { "": "block", "@mobile": "none" },
+  });
+
+  useGlobalStyles(".md\\:sl-flex", {
+    display: { "": "flex", "@mobile": "none" },
+  });
+
+  useGlobalStyles(".sr-only", {
+    position: "absolute",
+    inlineSize: "1px",
+    blockSize: "1px",
+    padding: "0",
+    margin: "-1px",
+    overflow: "hidden",
+    clip: "rect(0, 0, 0, 0)",
+    whiteSpace: "nowrap",
+    border: "0",
   });
 
   useGlobalStyles("html, body, button, input, select, textarea", {
@@ -113,8 +120,155 @@ export default function GlobalStyles() {
     letterSpacing: "$body-letter-spacing",
   });
 
+  useGlobalStyles("a", {
+    color: "#accent-text",
+  });
+
+  useGlobalStyles(".page", {
+    display: "flex",
+    flow: "column",
+    minBlockSize: "100vh",
+  });
+
+  useGlobalStyles("body > .page > .header", {
+    position: "fixed",
+    zIndex: "10",
+    inset: "0 0 auto",
+    inlineSize: "100%",
+    blockSize: "$docs-nav-height",
+    padding: "0 $docs-nav-pad-x",
+    borderBlockEnd: "$border-width solid #border",
+    fill: "#surface",
+  });
+
+  useGlobalStyles(".sidebar-pane", {
+    visibility: { "": "visible", "@mobile": "hidden" },
+    position: "fixed",
+    zIndex: { "": "8", "@mobile": "12" },
+    insetBlockStart: "$docs-nav-height",
+    insetBlockEnd: "0",
+    insetInlineStart: "0",
+    inlineSize: { "": "$sidebar-width", "@mobile": "100%" },
+    overflowY: "auto",
+    scrollbarGutter: "stable",
+    borderInlineEnd: {
+      "": "$border-width solid #border",
+      "@mobile": "0",
+    },
+    fill: "#surface",
+  });
+
+  useGlobalStyles(
+    'starlight-menu-button[aria-expanded="true"] ~ .sidebar-pane',
+    {
+      visibility: { "@mobile": "visible" },
+    },
+  );
+
+  useGlobalStyles(".sidebar-content", {
+    display: "flex",
+    flow: "column",
+    gap: "($gap * 2)",
+    minBlockSize: "100%",
+    padding: "($gap * 2) $docs-sidebar-pad-x ($gap * 6)",
+  });
+
+  useGlobalStyles("starlight-menu-button", {
+    display: { "": "none", "@mobile": "block" },
+    position: { "@mobile": "fixed" },
+    zIndex: { "@mobile": "11" },
+    insetBlockStart: {
+      "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2)",
+    },
+    insetInlineEnd: { "@mobile": "$docs-nav-pad-x" },
+  });
+
+  useGlobalStyles(".main-frame", {
+    minInlineSize: "0",
+    paddingBlockStart: "($docs-nav-height + $docs-mobile-toc-height)",
+    paddingInlineStart: "0",
+  });
+
+  useGlobalStyles("[data-has-sidebar] .main-frame", {
+    paddingInlineStart: { "": "$sidebar-width", "@mobile": "0" },
+  });
+
+  useGlobalStyles(".main-frame > .lg\\:sl-flex", {
+    display: { "": "flex", "@narrow-layout": "block" },
+    minInlineSize: "0",
+  });
+
+  useGlobalStyles(".main-pane", {
+    isolation: "isolate",
+    inlineSize: "100%",
+    minInlineSize: "0",
+  });
+
+  useGlobalStyles("[data-has-sidebar][data-has-toc] .main-pane", {
+    order: "1",
+    inlineSize: {
+      "": "min(calc(100% - $sidebar-width), calc($content-width + (100% - $content-width - $sidebar-width) / 2))",
+      "@narrow-layout": "100%",
+    },
+  });
+
+  useGlobalStyles(".right-sidebar-container", {
+    order: "2",
+    position: "relative",
+    inlineSize: {
+      "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
+      "@narrow-layout": "100%",
+    },
+  });
+
+  useGlobalStyles(".right-sidebar", {
+    position: { "": "fixed", "@narrow-layout": "static" },
+    insetBlockStart: { "": "0", "@narrow-layout": "auto" },
+    inlineSize: { "": "inherit", "@narrow-layout": "100%" },
+    blockSize: { "": "100vh", "@narrow-layout": "auto" },
+    paddingBlockStart: {
+      "": "$docs-nav-height",
+      "@narrow-layout": "0",
+    },
+    overflowY: { "": "auto", "@narrow-layout": "visible" },
+    borderInlineStart: {
+      "": "$border-width solid #border",
+      "@narrow-layout": "0",
+    },
+    scrollbarWidth: "none",
+  });
+
+  useGlobalStyles(".lg\\:sl-hidden", {
+    display: { "": "none", "@narrow-layout": "block" },
+  });
+
+  useGlobalStyles(".right-sidebar-panel", {
+    display: { "": "block", "@narrow-layout": "none" },
+  });
+
+  useGlobalStyles(".md\\:sl-hidden", {
+    display: { "": "none", "@mobile": "block" },
+  });
+
+  useGlobalStyles("main", {
+    padding: "0 0 5rem",
+  });
+
+  useGlobalStyles(".content-panel + .content-panel", {
+    borderBlockStart: "$border-width solid #border",
+  });
+
+  useGlobalStyles(".content-panel > .sl-container > * + *", {
+    marginBlockStart: "($gap * 3)",
+  });
+
+  useGlobalStyles(".content-panel > .sl-container", {
+    marginInlineStart: { "": "auto", "@narrow-layout": "0" },
+    marginInlineEnd: { "": "auto", "@narrow-layout": "0" },
+  });
+
   useGlobalStyles(".sl-banner", {
-    padding: "($gap * 1.5) $sl-nav-pad-x",
+    padding: "($gap * 1.5) $docs-nav-pad-x",
     color: "#accent-surface-text",
     fill: "#accent-surface",
     fontWeight: "$body-bold-font-weight",
@@ -208,45 +362,10 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(
-    ":where(button, input, select, textarea):not(:where(.expressive-code *))",
-    {
-      minBlockSize: "$control-height",
-      radius: "$radius",
-      boxShadow: "none",
-    },
-  );
-
-  useGlobalStyles(".expressive-code", {
-    "$ec-brdRad": "calc($card-radius - $border-width)",
-    "$ec-brdWd": "$border-width",
-    "$ec-brdCol": "#border",
-  });
-
-  useGlobalStyles(".expressive-code .copy button", {
+  useGlobalStyles(":where(button, input, select, textarea)", {
+    minBlockSize: "$control-height",
     radius: "$radius",
-    fill: "#surface-3",
     boxShadow: "none",
-  });
-
-  useGlobalStyles(".expressive-code .copy button::before", {
-    borderColor: "#border",
-    opacity: "1",
-  });
-
-  useGlobalStyles(".expressive-code .copy button div", {
-    hide: true,
-  });
-
-  useGlobalStyles(
-    ".expressive-code .copy button:hover, .expressive-code .copy button:focus-visible",
-    {
-      fill: "#surface-3-hover",
-    },
-  );
-
-  useGlobalStyles(".expressive-code .copy button:active", {
-    fill: "#surface-3-pressed",
   });
 
   useGlobalStyles(
@@ -259,13 +378,6 @@ export default function GlobalStyles() {
     {
       color: "#accent-text",
       fill: "#accent-surface-subtle",
-    },
-  );
-
-  useGlobalStyles(
-    "body > .page > .header, .sidebar-pane, .right-sidebar, .content-panel + .content-panel, mobile-starlight-toc :where(nav, summary)",
-    {
-      border: "0",
     },
   );
 
@@ -369,7 +481,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".content-panel", {
-    padding: "($gap * 3) $sl-content-pad-x",
+    padding: "($gap * 3) $docs-content-pad-x",
   });
 
   useGlobalStyles(".content-panel > .sl-container", {
@@ -395,11 +507,387 @@ export default function GlobalStyles() {
     fontSize: "1.025rem",
   });
 
+  useGlobalStyles(
+    ".sl-markdown-content :where(p, ul, ol, dl, blockquote, pre, table, hr, details):not(:where(.not-content *))",
+    {
+      marginBlockStart: "0",
+      marginBlockEnd: "0",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content :not(a, strong, em, del, span, input, code, br) + :not(a, strong, em, del, span, input, code, br, :where(.not-content *))",
+    {
+      marginBlockStart: "($gap * 3)",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content :not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper) + :where(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper):not(:where(.not-content *))",
+    {
+      marginBlockStart: "1.5em",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content :where(ul, ol):not(:where(.not-content *))",
+    {
+      paddingInlineStart: "1.5rem",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content :where(li + li, dt + dt, dt + dd, dd + dd):not(:where(.not-content *))",
+    {
+      marginBlockStart: "($gap * 0.5)",
+    },
+  );
+
+  useGlobalStyles(".sl-markdown-content li:not(:where(.not-content *))", {
+    overflowWrap: "anywhere",
+  });
+
+  useGlobalStyles(".sl-markdown-content dt:not(:where(.not-content *))", {
+    fontWeight: "$body-bold-font-weight",
+  });
+
+  useGlobalStyles(".sl-markdown-content dd:not(:where(.not-content *))", {
+    paddingInlineStart: "($gap * 2)",
+  });
+
+  useGlobalStyles(".sl-markdown-content a:not(:where(.not-content *))", {
+    color: "#accent-text",
+    textUnderlineOffset: "0.15em",
+  });
+
+  useGlobalStyles(".sl-markdown-content a:hover:not(:where(.not-content *))", {
+    color: "#text",
+  });
+
+  useGlobalStyles(
+    ".sl-markdown-content code:not(:where(pre *, .not-content *))",
+    {
+      padding: "0.125rem 0.375rem",
+      color: "#text",
+      fill: "#surface-2",
+      fontSize: "$small-font-size",
+      radius: "($radius * 0.65)",
+    },
+  );
+
+  useGlobalStyles(".sl-markdown-content pre:not(:where(.not-content *))", {
+    padding: "0.875rem 1rem",
+    overflowX: "auto",
+    color: "#text-soft",
+    border: true,
+    fill: "#surface-2",
+    fontSize: "$code-font-size",
+    lineHeight: "$code-line-height",
+    radius: "$card-radius",
+    tabSize: "2",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre code", {
+    padding: "0",
+    color: "inherit",
+    fill: "#clear",
+    fontFamily: "$code-font-family",
+    fontSize: "inherit",
+    lineHeight: "inherit",
+  });
+
+  useGlobalStyles(
+    ".sl-markdown-content blockquote:not(:where(.not-content *))",
+    {
+      paddingInlineStart: "($gap * 2)",
+      color: "#text-soft",
+      borderInlineStart: "$border-width solid #border-strong",
+    },
+  );
+
+  useGlobalStyles(".sl-markdown-content hr:not(:where(.not-content *))", {
+    border: "0",
+    borderBlockEnd: "$border-width solid #border",
+  });
+
+  useGlobalStyles(".sl-markdown-content details:not(:where(.not-content *))", {
+    paddingInlineStart: "($gap * 2)",
+    borderInlineStart: "2px solid #border",
+  });
+
+  useGlobalStyles(
+    ".sl-markdown-content details:not([open]):hover:not(:where(.not-content *)), .sl-markdown-content details:has(> summary:hover):not(:where(.not-content *))",
+    {
+      borderColor: "#accent-text",
+    },
+  );
+
+  useGlobalStyles(".sl-markdown-content summary:not(:where(.not-content *))", {
+    display: "block",
+    marginInlineStart: "-0.5rem",
+    paddingInlineStart: "0.5rem",
+    color: "#text",
+    fontWeight: "$body-bold-font-weight",
+  });
+
+  useGlobalStyles(
+    ".sl-markdown-content details[open] > summary:not(:where(.not-content *))",
+    {
+      marginBlockEnd: "($gap * 2)",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content summary:not(:where(.not-content *))::marker, .sl-markdown-content summary:not(:where(.not-content *))::-webkit-details-marker",
+    {
+      hide: true,
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content summary:not(:where(.not-content *))::before",
+    {
+      content: '""',
+      display: "inline-block",
+      inlineSize: "1.25rem",
+      blockSize: "1.25rem",
+      marginInlineEnd: "($gap * 0.5)",
+      verticalAlign: "middle",
+      fill: "#current",
+      mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
+      transition: "rotate 120ms ease",
+    },
+  );
+
+  useGlobalStyles(
+    ".sl-markdown-content details[open] > summary:not(:where(.not-content *))::before",
+    {
+      rotate: "90deg",
+    },
+  );
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper", {
+    lineHeight: "$heading-line-height",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h1", {
+    fontSize: "$h1-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h2", {
+    fontSize: "$h2-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h3", {
+    fontSize: "$h3-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h4", {
+    fontSize: "$h4-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h5", {
+    fontSize: "$h5-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h6", {
+    fontSize: "$h6-font-size",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper > :first-child", {
+    display: "inline",
+    paddingInlineEnd: "1.1em",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-anchor-link", {
+    position: "relative",
+    display: "inline-flex",
+    marginInlineStart: "-0.85em",
+    color: "#text-muted",
+    userSelect: "none",
+    textDecoration: "none",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-anchor-link:hover", {
+    color: "#accent-text",
+  });
+
+  useGlobalStyles(".sl-markdown-content .sl-anchor-icon > svg", {
+    display: "inline",
+    inlineSize: "0.8275em",
+    verticalAlign: "middle",
+  });
+
+  useGlobalStyles(".starlight-aside", {
+    padding: "($gap * 2) ($gap * 2.5)",
+    color: "#text-soft",
+    border: true,
+    radius: "$card-radius",
+    fill: "#surface-2",
+  });
+
+  useGlobalStyles(".starlight-aside__title", {
+    display: "flex",
+    alignItems: "center",
+    gap: "$gap",
+    margin: "0 0 $gap",
+    color: "#text",
+    fontWeight: "$body-bold-font-weight",
+  });
+
+  useGlobalStyles(".starlight-aside__icon", {
+    flexShrink: "0",
+    color: "#accent-text",
+  });
+
+  useGlobalStyles(".starlight-aside__content > :first-child", {
+    marginBlockStart: "0",
+  });
+
+  useGlobalStyles(".card", {
+    display: "flex",
+    flow: "column",
+    gap: "clamp(0.5rem, calc(0.125rem + 1vw), 1rem)",
+    padding: "clamp(1rem, calc(0.125rem + 3vw), 2.5rem)",
+    border: true,
+    radius: "$card-radius",
+    fill: "#surface-2",
+  });
+
+  useGlobalStyles(".card > .title", {
+    display: "flex",
+    alignItems: "center",
+    gap: "($gap * 2)",
+    margin: "0",
+    color: "#text",
+    preset: "h4 / strong",
+  });
+
+  useGlobalStyles(".sl-link-card", {
+    position: "relative",
+    display: "grid",
+    gridColumns: "1fr auto",
+    gap: "$gap",
+    padding: "($gap * 2)",
+    border: true,
+    radius: "$card-radius",
+    fill: "#surface-2",
+  });
+
+  useGlobalStyles(".sl-link-card:hover", {
+    fill: "#surface-2-hover",
+  });
+
+  useGlobalStyles(".sl-link-card .stack", {
+    display: "flex",
+    flow: "column",
+    gap: "$gap",
+  });
+
+  useGlobalStyles(".sl-link-card a", {
+    color: "#text",
+    fontWeight: "$body-bold-font-weight",
+    textDecoration: "none",
+  });
+
+  useGlobalStyles(".sl-link-card a::before", {
+    content: '""',
+    position: "absolute",
+    inset: "0",
+  });
+
+  useGlobalStyles(".sl-link-card .description, .sl-link-card .icon", {
+    color: "#text-muted",
+  });
+
+  useGlobalStyles(".sl-badge", {
+    display: "inline-block",
+    padding: "0.175rem 0.35rem",
+    color: "#text-soft",
+    border: true,
+    radius: "$radius",
+    fill: "#surface-3",
+    fontFamily: "$code-font-family",
+    fontSize: "$small-font-size",
+    lineHeight: "1",
+    overflowWrap: "anywhere",
+  });
+
+  useGlobalStyles(".sl-steps", {
+    listStyle: "none",
+    counterReset: "steps-counter",
+    paddingInlineStart: "0",
+  });
+
+  useGlobalStyles(".sl-steps > li", {
+    counterIncrement: "steps-counter",
+    position: "relative",
+    minBlockSize: "2rem",
+    paddingInlineStart: "3rem",
+    paddingBlockEnd: "1px",
+  });
+
+  useGlobalStyles(".sl-steps > li::before", {
+    content: "counter(steps-counter)",
+    position: "absolute",
+    insetBlockStart: "0",
+    insetInlineStart: "0",
+    display: "grid",
+    placeItems: "center",
+    inlineSize: "2rem",
+    blockSize: "2rem",
+    color: "#text",
+    border: true,
+    radius: "999px",
+    fill: "#surface-3",
+    fontSize: "$small-font-size",
+    fontWeight: "$body-bold-font-weight",
+  });
+
+  useGlobalStyles(".sl-steps > li::after", {
+    content: '""',
+    position: "absolute",
+    insetBlock: "2.5rem $gap",
+    insetInlineStart: "(1rem - ($border-width / 2))",
+    inlineSize: "$border-width",
+    fill: "#border",
+  });
+
   useGlobalStyles("site-search button[data-open-modal]", {
+    display: "flex",
+    alignItems: "center",
+    gap: "$gap",
+    inlineSize: "100%",
+    maxInlineSize: "22rem",
+    blockSize: "$control-height",
+    paddingInlineStart: "($gap * 1.5)",
+    paddingInlineEnd: "$gap",
+    color: "#text-soft",
     border: true,
     fill: "#surface",
+    fontSize: "$small-font-size",
     boxShadow: "none",
+    cursor: "pointer",
     transition: "color 120ms ease, background-color 120ms ease",
+  });
+
+  useGlobalStyles("site-search", {
+    display: "contents",
+  });
+
+  useGlobalStyles("site-search button[data-open-modal] > :last-child", {
+    marginInlineStart: "auto",
+  });
+
+  useGlobalStyles("site-search button[data-open-modal] > kbd", {
+    display: { "": "flex", "@mobile": "none" },
+    gap: "0.25em",
+    paddingInlineStart: "0.375rem",
+    paddingInlineEnd: "0.375rem",
+    fill: "#surface-3",
+    fontFamily: "$body-font-family",
+    fontSize: "0.75rem",
+    radius: "($radius * 0.75)",
   });
 
   useGlobalStyles("site-search button[data-open-modal]:hover", {
@@ -412,12 +900,26 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".pagination-links a", {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: "$gap",
+    inlineSize: "100%",
+    padding: "($gap * 2)",
     borderWidth: "$border-width",
     borderColor: "#border",
     color: "#text-soft",
     fill: "#surface-2",
     boxShadow: "none",
     transition: "color 120ms ease, background-color 120ms ease",
+    textDecoration: "none",
+    overflowWrap: "anywhere",
+  });
+
+  useGlobalStyles('.pagination-links a[rel="next"]', {
+    flow: "row-reverse",
+    justifyContent: "flex-start",
+    textAlign: "end",
   });
 
   useGlobalStyles(".pagination-links a:hover", {
@@ -503,6 +1005,8 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles("main .pagination-links", {
+    display: "grid",
+    gap: "($gap * 2)",
     gridTemplateColumns: {
       "": "repeat(2, minmax(0, 1fr))",
       "@small": "1fr",
@@ -579,10 +1083,50 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles("site-search dialog", {
+    inlineSize: { "": "90%", "@mobile": "100%" },
+    maxInlineSize: { "": "40rem", "@mobile": "100%" },
+    blockSize: { "": "max-content", "@mobile": "100%" },
+    maxBlockSize: { "": "(100% - 8rem)", "@mobile": "100%" },
+    minBlockSize: { "": "15rem", "@mobile": "100%" },
+    margin: { "": "4rem auto auto", "@mobile": "0" },
+    padding: "0",
+    color: "#text",
+    border: true,
+    radius: { "": "$card-radius", "@mobile": "0" },
     fill: "#surface",
+    shadow: "0 1rem 3rem #shadow",
+  });
+
+  useGlobalStyles("site-search dialog[open]", {
+    display: "flex",
+  });
+
+  useGlobalStyles("site-search dialog::backdrop", {
+    fill: "#overlay",
+    backdropFilter: "blur(0.25rem)",
+  });
+
+  useGlobalStyles("site-search .dialog-frame", {
+    position: "relative",
+    display: "flex",
+    flow: "column",
+    flexGrow: "1",
+    gap: "($gap * 2)",
+    padding: { "": "($gap * 3)", "@mobile": "($gap * 2)" },
+    overflow: "auto",
+  });
+
+  useGlobalStyles("site-search .search-container", {
+    inlineSize: "100%",
   });
 
   useGlobalStyles("site-search button[data-close-modal]", {
+    position: "absolute",
+    zIndex: "1",
+    insetBlockStart: "($gap * 2)",
+    insetInlineEnd: "($gap * 2)",
+    display: { "": "none", "@mobile": "flex" },
+    alignItems: "center",
     gap: "0.375rem",
     paddingInlineStart: "0.625rem",
     paddingInlineEnd: "0.625rem",
@@ -592,8 +1136,59 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("#starlight__search", {
+    "$pagefind-ui-primary": "#accent-text",
+    "$pagefind-ui-text": "#text-soft",
+    "$pagefind-ui-font": "$body-font-family",
     "$pagefind-ui-background": "#surface",
     "$pagefind-ui-border": "#border",
+    "$pagefind-ui-border-width": "$border-width",
+    "$pagefind-ui-tag": "#surface-3",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__form", {
+    position: "relative",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__search-input", {
+    inlineSize: "100%",
+    minBlockSize: "3rem",
+    paddingInlineStart: "2.75rem",
+    paddingInlineEnd: "2.75rem",
+    color: "#text",
+    border: true,
+    radius: "$radius",
+    fill: "#surface",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__search-clear", {
+    position: "absolute",
+    insetBlockStart: "0",
+    insetInlineEnd: "0",
+    inlineSize: "3rem",
+    blockSize: "3rem",
+    padding: "0",
+    color: "#text-soft",
+    border: "0",
+    fill: "#clear",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__results-area", {
+    marginBlockStart: "($gap * 3)",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__result", {
+    paddingBlockStart: "($gap * 2)",
+    paddingBlockEnd: "($gap * 2)",
+    borderBlockStart: "$border-width solid #border",
+  });
+
+  useGlobalStyles("#starlight__search .pagefind-ui__result-link", {
+    color: "#text",
+    fontWeight: "$body-bold-font-weight",
+  });
+
+  useGlobalStyles("[data-search-modal-open]", {
+    overflow: "hidden",
   });
 
   useGlobalStyles("#starlight__search .pagefind-ui__search-input", {
@@ -626,8 +1221,8 @@ export default function GlobalStyles() {
   useGlobalStyles("starlight-menu-button button", {
     alignItems: "center",
     justifyContent: "center",
-    inlineSize: "$sl-menu-button-size",
-    blockSize: "$sl-menu-button-size",
+    inlineSize: "$docs-menu-button-size",
+    blockSize: "$docs-menu-button-size",
     minBlockSize: "0",
     padding: "0",
     color: "#text-soft",
@@ -637,6 +1232,17 @@ export default function GlobalStyles() {
   useGlobalStyles("starlight-menu-button button > svg", {
     inlineSize: "1.125rem",
     blockSize: "1.125rem",
+  });
+
+  useGlobalStyles(
+    'starlight-menu-button[aria-expanded="true"] .open-menu, starlight-menu-button:not([aria-expanded="true"]) .close-menu',
+    {
+      hide: true,
+    },
+  );
+
+  useGlobalStyles("[data-mobile-menu-expanded]", {
+    overflow: { "": "auto", "@mobile": "hidden" },
   });
 
   useGlobalStyles(
@@ -660,10 +1266,12 @@ export default function GlobalStyles() {
 
   useGlobalStyles("mobile-starlight-toc summary", {
     position: "relative",
+    display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: "$gap",
-    paddingInlineStart: "$sl-content-pad-x",
-    paddingInlineEnd: "$sl-content-pad-x",
+    paddingInlineStart: "$docs-content-pad-x",
+    paddingInlineEnd: "$docs-content-pad-x",
   });
 
   useGlobalStyles(
@@ -698,11 +1306,12 @@ export default function GlobalStyles() {
   useGlobalStyles("mobile-starlight-toc .dropdown", {
     position: "absolute",
     inset: "100% top",
-    insetInlineStart: "$sl-content-pad-x",
+    insetInlineStart: "$docs-content-pad-x",
     zIndex: "1",
     display: "block",
-    inlineSize: "min(22rem, (100% - ($sl-content-pad-x * 2)))",
-    maxBlockSize: "min(24rem, (100vh - ($sl-mobile-toc-height + ($gap * 4))))",
+    inlineSize: "min(22rem, (100% - ($docs-content-pad-x * 2)))",
+    maxBlockSize:
+      "min(24rem, (100vh - ($docs-mobile-toc-height + ($gap * 4))))",
     margin: "$gap 0 0",
     padding: "4px",
     overflow: "auto",
@@ -711,6 +1320,30 @@ export default function GlobalStyles() {
     radius: "$card-radius",
     fill: "#surface-2",
     shadow: "0 0.75rem 2rem #shadow",
+  });
+
+  useGlobalStyles("mobile-starlight-toc nav", {
+    position: "fixed",
+    zIndex: "9",
+    insetBlockStart: "($docs-nav-height - $border-width)",
+    insetInlineStart: {
+      "": "0",
+      "@medium-layout": "$sidebar-width",
+    },
+    insetInlineEnd: "0",
+    fill: "#surface",
+  });
+
+  useGlobalStyles("mobile-starlight-toc details", {
+    position: "relative",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .display-current", {
+    minInlineSize: "0",
+    overflow: "hidden",
+    color: "#text",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   });
 
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile", {
@@ -797,16 +1430,16 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
-    "$sl-nav-height": {
+    "$docs-nav-height": {
       "@mobile": "3.5rem",
     },
-    "$sl-nav-pad-x": {
+    "$docs-nav-pad-x": {
       "@mobile": "1rem",
     },
-    "$sl-nav-gap": {
+    "$docs-nav-gap": {
       "@mobile": "0.5rem",
     },
-    "$sl-menu-button-size": {
+    "$docs-menu-button-size": {
       "@mobile": "2.25rem",
     },
   });
@@ -818,10 +1451,10 @@ export default function GlobalStyles() {
         "@mobile": "center",
       },
       inlineSize: {
-        "@mobile": "$sl-menu-button-size",
+        "@mobile": "$docs-menu-button-size",
       },
       blockSize: {
-        "@mobile": "$sl-menu-button-size",
+        "@mobile": "$docs-menu-button-size",
       },
       minBlockSize: {
         "@mobile": "0",
@@ -872,7 +1505,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(":root[data-has-toc]", {
-    "$sl-mobile-toc-height": {
+    "$docs-mobile-toc-height": {
       "@narrow-layout": "2.5rem",
     },
   });
@@ -899,7 +1532,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(":root[data-has-toc], :root[data-has-toc]", {
-    "$sl-mobile-toc-height": {
+    "$docs-mobile-toc-height": {
       "@medium-layout": "calc(2.5rem + ($gap * 3))",
     },
   });

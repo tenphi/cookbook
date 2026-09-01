@@ -108,7 +108,7 @@ export const StarlightHeaderRoot = customizeComponent(
       display: "flex",
       flow: "column",
       inlineSize: "100%",
-      maxInlineSize: "($layout-width - ($sl-sidebar-pad-x * 2))",
+      maxInlineSize: "($layout-width - ($docs-sidebar-pad-x * 2))",
       blockSize: "100%",
       minInlineSize: "0",
       marginInlineStart: "auto",
@@ -150,7 +150,7 @@ export const StarlightHeaderRoot = customizeComponent(
         overflow: "hidden",
         maxInlineSize: {
           "": "none",
-          "@mobile": "(100% - (($sl-menu-button-size + $sl-nav-gap) * 3))",
+          "@mobile": "(100% - (($docs-menu-button-size + $docs-nav-gap) * 3))",
         },
       },
       Logo: {
@@ -168,6 +168,8 @@ export const StarlightHeaderRoot = customizeComponent(
         $: ".site-title",
         color: "#text",
         preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
+        textDecoration: "none",
+        whiteSpace: "nowrap",
       },
       Search: {
         $: ".td-header__search",
@@ -175,26 +177,27 @@ export const StarlightHeaderRoot = customizeComponent(
         zIndex: { "": "auto", "@mobile": "10" },
         inset: {
           "": "auto top",
-          "@mobile": "(($sl-nav-height - $sl-menu-button-size) / 2) top",
+          "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2) top",
         },
         insetInlineEnd: {
           "": "auto",
           "@mobile":
-            "($sl-nav-pad-x + (($sl-menu-button-size + $sl-nav-gap) * 2))",
+            "($docs-nav-pad-x + (($docs-menu-button-size + $docs-nav-gap) * 2))",
         },
         placeItems: { "": "normal", "@mobile": "center" },
-        inlineSize: { "": "auto", "@mobile": "$sl-menu-button-size" },
-        blockSize: { "": "auto", "@mobile": "$sl-menu-button-size" },
+        inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
+        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
         marginInlineStart: "0",
       },
       SearchElement: {
         $: ".td-header__search site-search",
         inlineSize: "100%",
-        blockSize: { "": "auto", "@mobile": "$sl-menu-button-size" },
+        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
       },
       Tools: {
         $: ".td-header__tools",
         display: "flex",
+        hide: { "": false, "@mobile": true },
         flow: "row",
         alignItems: "center",
         justifyContent: "flex-end",
@@ -217,15 +220,16 @@ export const StarlightHeaderRoot = customizeComponent(
         zIndex: { "": "auto", "@mobile": "10" },
         inset: {
           "": "auto top",
-          "@mobile": "(($sl-nav-height - $sl-menu-button-size) / 2) top",
+          "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2) top",
         },
         insetInlineEnd: {
           "": "auto",
-          "@mobile": "($sl-nav-pad-x + $sl-menu-button-size + $sl-nav-gap)",
+          "@mobile":
+            "($docs-nav-pad-x + $docs-menu-button-size + $docs-nav-gap)",
         },
         placeItems: { "": "normal", "@mobile": "center" },
-        inlineSize: { "": "auto", "@mobile": "$sl-menu-button-size" },
-        blockSize: { "": "auto", "@mobile": "$sl-menu-button-size" },
+        inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
+        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
       },
     },
   }),
@@ -238,11 +242,11 @@ const appearanceSelectStyles = {
   margin: "0",
   inlineSize: {
     "": "$control-height",
-    "@mobile": "$sl-menu-button-size",
+    "@mobile": "$docs-menu-button-size",
   },
   blockSize: {
     "": "$control-height",
-    "@mobile": "$sl-menu-button-size",
+    "@mobile": "$docs-menu-button-size",
   },
 
   Label: {
