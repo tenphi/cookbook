@@ -23,6 +23,10 @@ export const LogoRoot = customizeComponent(
         inlineSize: "100%",
         blockSize: "100%",
       },
+      Mark: {
+        $: "> svg .td-logo__mark",
+        color: "#accent-surface-text",
+      },
     },
   }),
 );
@@ -147,6 +151,17 @@ export const StarlightHeaderRoot = customizeComponent(
         maxInlineSize: {
           "": "none",
           "@mobile": "(100% - (($sl-menu-button-size + $sl-nav-gap) * 3))",
+        },
+      },
+      Logo: {
+        $: ".td-header__logo",
+        inlineSize: {
+          "": "2rem",
+          "@mobile": "1.75rem",
+        },
+        blockSize: {
+          "": "2rem",
+          "@mobile": "1.75rem",
         },
       },
       SiteTitle: {
@@ -313,7 +328,7 @@ export const ThemeSelectRoot = customizeComponent(
       CheckedOption: {
         $: "option:checked",
         color: "#accent-text",
-        fill: "color-mix(in oklab, #accent-surface 12%, #surface-2)",
+        fill: "#accent-surface-2-subtle",
       },
       Checkmark: {
         $: "option::checkmark",
@@ -371,7 +386,7 @@ export const MobileNavigationTabsRoot = customizeComponent(
       CurrentLink: {
         $: 'a[aria-current="page"]',
         color: "#accent-text",
-        fill: "color-mix(in oklab, #accent-surface 12%, #surface)",
+        fill: "#accent-surface-subtle",
       },
     },
   }),

@@ -4,6 +4,7 @@ import {
   okhslToLinearSrgb,
   relativeLuminanceFromLinearRgb,
   variantToOkhsl,
+  type ColorMap,
   type GlazeColorValue,
   type ResolvedColorVariant,
 } from "@tenphi/glaze";
@@ -29,6 +30,8 @@ export interface ResolvedDocsTheme {
     focus: Record<string, string>;
     shadow: Record<string, string>;
   };
+  /** Glaze-generated Tasty color tokens, including interaction and status roles. */
+  colorTokens: Record<string, Record<string, string>>;
   tokens: ThemeTokens;
   presets: Record<string, TypographyPreset>;
   contrast: {
@@ -56,7 +59,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       : {}),
   } as const;
   const surfaceFrom = theme.palette?.surface ?? "#ffffff";
-  const surface = glaze.color({
+  const surfaceSeed = glaze.color({
     from: surfaceFrom,
     mode: "auto",
     // Near-white brand surfaces can carry a numerically large OKHSL
@@ -64,93 +67,40 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     // saturation along the light ramp and keep dark chrome nearly neutral.
     darkSaturation: 0.35,
   });
-  const surface2 = glaze.color(
+  const resolvedSurfaceSeed = surfaceSeed.resolve();
+  const lightSurface = variantToOkhsl(resolvedSurfaceSeed.light);
+  const darkSurface = variantToOkhsl(resolvedSurfaceSeed.dark);
+  const colorTheme = glaze(
     {
-      from: surfaceFrom,
-      base: surface,
-      tone: "-2",
-      mode: "auto",
-      saturationFactor: 0.9,
-      darkSaturation: 0.325,
-    },
-    glazeOptions,
-  );
-  const surface3 = glaze.color(
-    {
-      from: surfaceFrom,
-      base: surface2,
-      tone: "-2",
-      mode: "auto",
-      saturationFactor: 0.8,
-      darkSaturation: 0.3,
-    },
-    glazeOptions,
-  );
-  const text = glaze.color(
-    {
-      from: theme.palette?.text ?? "#20232a",
-      base: surface,
-      role: "text",
-      contrast: { apca: [75, 90] },
-      mode: "auto",
-    },
-    glazeOptions,
-  );
-  const textSoft = glaze.color(
-    {
-      from: theme.palette?.textSoft ?? "#626875",
-      base: surface,
-      role: "text",
-      contrast: { apca: [60, 75] },
-      mode: "auto",
-    },
-    glazeOptions,
-  );
-  const accentText = glaze.color(
-    {
-      from: brand.from,
-      base: surface,
-      role: "text",
-      contrast: { apca: authoredTarget },
-      mode: "auto",
-    },
-    glazeOptions,
-  );
-  const focus = glaze.color(
-    {
-      from: brand.from,
-      base: surface,
-      role: "border",
-      contrast: { apca: authoredTarget },
-      mode: "auto",
-    },
-    glazeOptions,
-  );
-  const accentSurface = glaze.color({ from: brand.from, mode: "fixed" });
-  const accentSurfaceText = glaze.color({
-    from: "#ffffff",
-    base: accentSurface,
-    role: "text",
-    contrast: { apca: 60 },
-    mode: "auto",
-  });
-  const resolvedSurface = surface.resolve();
-  const resolvedAccent = accentText.resolve();
-  const shadowTheme = glaze(
-    {
-      hue: variantToOkhsl(resolvedSurface.light).h,
-      saturation: variantToOkhsl(resolvedSurface.light).s * 100,
-      darkHue: variantToOkhsl(resolvedSurface.dark).h,
-      darkSaturation: variantToOkhsl(resolvedSurface.dark).s * 100,
+      hue: lightSurface.h,
+      saturation: lightSurface.s * 100,
+      darkHue: darkSurface.h,
+      // The surface definition applies its 0.35 factor again. Normalize the
+      // seed so dependent dark colors retain the authored surface chroma.
+      darkSaturation: Math.min(100, (darkSurface.s * 100) / 0.35),
     },
     undefined,
     glazeOptions,
   );
-  shadowTheme.colors({
+  colorTheme.colors({
     surface: {
       from: surfaceFrom,
       mode: "auto",
       darkSaturation: 0.35,
+    },
+    "surface-2": {
+      base: "surface",
+      tone: "-2",
+      mode: "auto",
+      saturation: 0.9,
+      darkSaturation: 0.325,
+    },
+    "surface-3": {
+      base: "surface-2",
+      tone: "-2",
+      mode: "auto",
+      saturation: 0.8,
+      darkSaturation: 0.3,
     },
     text: {
       from: theme.palette?.text ?? "#20232a",
@@ -159,6 +109,44 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       contrast: { apca: [75, 90] },
       mode: "auto",
     },
+    "text-soft": {
+      from: theme.palette?.textSoft ?? "#626875",
+      base: "surface",
+      role: "text",
+      contrast: { apca: [60, 75] },
+      mode: "auto",
+    },
+    "text-muted": mix("surface", "text", 66),
+    "surface-2-hover": mix("surface-2", "text", [3, 6]),
+    "surface-2-pressed": mix("surface-2", "text", [9, 14]),
+    "surface-3-hover": mix("surface-3", "text", [3, 6]),
+    "surface-3-pressed": mix("surface-3", "text", [9, 14]),
+    border: mix("surface", "text", [18, 30]),
+    "border-strong": mix("surface", "text", [34, 50]),
+    "accent-text": {
+      from: brand.from,
+      base: "surface",
+      role: "text",
+      contrast: { apca: [normalTarget, highTarget] },
+      mode: "auto",
+    },
+    focus: {
+      from: brand.from,
+      base: "surface",
+      role: "border",
+      contrast: { apca: [normalTarget, highTarget] },
+      mode: "auto",
+    },
+    "accent-surface": { from: brand.from, mode: "fixed" },
+    "accent-surface-text": {
+      from: "#ffffff",
+      base: "accent-surface",
+      role: "text",
+      contrast: { apca: [60, 75] },
+      mode: "auto",
+    },
+    "accent-surface-subtle": mix("surface", "accent-surface", [12, 18]),
+    "accent-surface-2-subtle": mix("surface-2", "accent-surface", [12, 18]),
     shadow: {
       type: "shadow",
       bg: "surface",
@@ -166,7 +154,24 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       intensity: [12, 20],
       tuning: { alphaMax: 0.28 },
     },
-  });
+    overlay: {
+      type: "mix",
+      base: "surface",
+      target: "text",
+      value: [58, 68],
+      blend: "transparent",
+    },
+    clear: { from: "#ffffff", mode: "fixed", opacity: 0 },
+    ...statusColors("orange", "#d97706"),
+    ...statusColors("green", "#16a34a"),
+    ...statusColors("blue", "#2563eb"),
+    ...statusColors("purple", "#9333ea"),
+    ...statusColors("red", "#dc2626"),
+  } satisfies ColorMap);
+
+  const resolvedColors = colorTheme.resolve();
+  const resolvedSurface = requiredResolvedColor(resolvedColors, "surface");
+  const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
 
   const scores = {
     light: score(resolvedAccent.light, resolvedSurface.light),
@@ -193,27 +198,84 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     }
   }
   const outputOptions = { modes: { highContrast: true } } as const;
-  const shadow = shadowTheme.json(outputOptions).shadow;
-  if (!shadow) throw new Error("The Glaze shadow token failed to resolve.");
+  const resolvedPalette = colorTheme.json(outputOptions);
   const colors = {
-    surface: surface.json(outputOptions),
-    surface2: surface2.json(outputOptions),
-    surface3: surface3.json(outputOptions),
-    text: text.json(outputOptions),
-    textSoft: textSoft.json(outputOptions),
-    accentText: accentText.json(outputOptions),
-    accentSurface: accentSurface.json(outputOptions),
-    accentSurfaceText: accentSurfaceText.json(outputOptions),
-    focus: focus.json(outputOptions),
-    shadow,
+    surface: requiredJsonColor(resolvedPalette, "surface"),
+    surface2: requiredJsonColor(resolvedPalette, "surface-2"),
+    surface3: requiredJsonColor(resolvedPalette, "surface-3"),
+    text: requiredJsonColor(resolvedPalette, "text"),
+    textSoft: requiredJsonColor(resolvedPalette, "text-soft"),
+    accentText: requiredJsonColor(resolvedPalette, "accent-text"),
+    accentSurface: requiredJsonColor(resolvedPalette, "accent-surface"),
+    accentSurfaceText: requiredJsonColor(
+      resolvedPalette,
+      "accent-surface-text",
+    ),
+    focus: requiredJsonColor(resolvedPalette, "focus"),
+    shadow: requiredJsonColor(resolvedPalette, "shadow"),
   };
   return {
     colors,
+    colorTokens: colorTheme.tasty({
+      ...outputOptions,
+      states: {
+        dark: "theme=dark | (@media(prefers-color-scheme: dark) & :not([data-theme]))",
+        highContrast:
+          "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))",
+      },
+    }),
     tokens: resolveThemeTokens(theme.tokens),
     presets: resolveTypographyPresets(theme.presets),
     contrast: scores,
     diagnostics,
   };
+}
+
+function mix(
+  base: string,
+  target: string,
+  value: number | [number, number],
+  space: "okhsl" | "srgb" = "okhsl",
+): ColorMap[string] {
+  return { type: "mix", base, target, value, space };
+}
+
+function statusColors(name: string, from: GlazeColorValue): ColorMap {
+  return {
+    [name]: {
+      from,
+      base: "surface",
+      role: "border",
+      contrast: { apca: [30, 45] },
+      mode: "auto",
+    },
+    [`${name}-text`]: {
+      from,
+      base: "surface",
+      role: "text",
+      contrast: { apca: [60, 75] },
+      mode: "auto",
+    },
+    [`${name}-surface`]: mix("surface", name, [12, 18], "srgb"),
+  };
+}
+
+function requiredResolvedColor(
+  colors: ReturnType<ReturnType<typeof glaze>["resolve"]>,
+  name: string,
+) {
+  const color = colors.get(name);
+  if (!color) throw new Error(`The Glaze ${name} color failed to resolve.`);
+  return color;
+}
+
+function requiredJsonColor(
+  colors: Record<string, Record<string, string>>,
+  name: string,
+): Record<string, string> {
+  const color = colors[name];
+  if (!color) throw new Error(`The Glaze ${name} token failed to export.`);
+  return color;
 }
 
 function normalizeBrand(

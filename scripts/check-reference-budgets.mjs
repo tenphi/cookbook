@@ -30,6 +30,24 @@ if (!/:root:where\([^{}]+\)\s*\{[^}]*--surface-color/.test(sharedCss)) {
     "Theme-state color tokens are missing from shared Tasty CSS.",
   );
 }
+if (sharedCss.includes("color-mix(")) {
+  throw new Error(
+    "The shared stylesheet contains authored color mixes instead of Glaze output.",
+  );
+}
+for (const mapping of [
+  "--sl-color-gray-3: var(--text-muted-color)",
+  "--sl-color-accent-low: var(--accent-surface-subtle-color)",
+  "--sl-color-orange-low: var(--orange-surface-color)",
+  "--sl-color-green-high: var(--green-text-color)",
+  "--sl-color-blue: var(--blue-color)",
+  "--sl-color-purple-low: var(--purple-surface-color)",
+  "--sl-color-red-high: var(--red-text-color)",
+]) {
+  if (!sharedCss.includes(mapping)) {
+    throw new Error(`The Starlight Glaze bridge is missing: ${mapping}.`);
+  }
+}
 if (!/mask:\s*url\("data:image\/svg\+xml/.test(sharedCss)) {
   throw new Error("Extracted Tasty CSS is missing inline SVG icon masks.");
 }
@@ -43,6 +61,9 @@ if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
   throw new Error(
     "The default page unexpectedly contains a React or Tasty client runtime.",
   );
+}
+if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
+  throw new Error("The project logo is missing from the documentation header.");
 }
 console.log(
   `Reference budgets: largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,

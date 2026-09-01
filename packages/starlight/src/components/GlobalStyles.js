@@ -33,7 +33,7 @@ export default function GlobalStyles() {
     "$sl-color-white": "#text",
     "$sl-color-gray-1": "#text",
     "$sl-color-gray-2": "#text-soft",
-    "$sl-color-gray-3": "color-mix( in oklab, #text 66%, #surface )",
+    "$sl-color-gray-3": "#text-muted",
     "$sl-color-gray-4": "#border-strong",
     "$sl-color-gray-5": "#border",
     "$sl-color-gray-6": "#surface-2",
@@ -47,14 +47,35 @@ export default function GlobalStyles() {
     "$sl-color-bg-sidebar": "#surface",
     "$sl-color-bg-inline-code": "#surface-2",
     "$sl-color-bg-accent": "#accent-surface",
+    "$sl-color-bg-badge": "#surface-2",
+    "$sl-color-border-badge": "#border",
+    "$sl-color-text-badge": "#text-soft",
     "$sl-color-hairline-light": "#border",
     "$sl-color-hairline": "#border",
     "$sl-color-hairline-shade": "#border",
     "$sl-color-backdrop-overlay": "#overlay",
-    "$sl-color-accent-low":
-      "color-mix( in oklab, #accent-surface 12%, #surface )",
+    "$sl-color-accent-low": "#accent-surface-subtle",
     "$sl-color-accent": "#accent-text",
     "$sl-color-accent-high": "#accent-text",
+    "$sl-color-banner-bg": "#accent-surface",
+    "$sl-color-banner-text": "#accent-surface-text",
+    "$sl-color-asides-border": "#border-strong",
+    "$sl-color-asides-text-accent": "#text",
+    "$sl-color-orange-low": "#orange-surface",
+    "$sl-color-orange": "#orange",
+    "$sl-color-orange-high": "#orange-text",
+    "$sl-color-green-low": "#green-surface",
+    "$sl-color-green": "#green",
+    "$sl-color-green-high": "#green-text",
+    "$sl-color-blue-low": "#blue-surface",
+    "$sl-color-blue": "#blue",
+    "$sl-color-blue-high": "#blue-text",
+    "$sl-color-purple-low": "#purple-surface",
+    "$sl-color-purple": "#purple",
+    "$sl-color-purple-high": "#purple-text",
+    "$sl-color-red-low": "#red-surface",
+    "$sl-color-red": "#red",
+    "$sl-color-red-high": "#red-text",
     "$sl-shadow-sm": "none",
     "$sl-shadow-md": "0 0.5rem 1.5rem #shadow",
     "$sl-shadow-lg": "0 1rem 3rem #shadow",
@@ -90,6 +111,45 @@ export default function GlobalStyles() {
     fontWeight: "$body-font-weight",
     lineHeight: "$body-line-height",
     letterSpacing: "$body-letter-spacing",
+  });
+
+  useGlobalStyles(".sl-banner", {
+    padding: "($gap * 1.5) $sl-nav-pad-x",
+    color: "#accent-surface-text",
+    fill: "#accent-surface",
+    fontWeight: "$body-bold-font-weight",
+    lineHeight: "$heading-line-height",
+    textAlign: "center",
+    textWrap: "balance",
+    boxShadow: "none",
+  });
+
+  useGlobalStyles(".sl-banner a", {
+    color: "#accent-surface-text",
+  });
+
+  useGlobalStyles(".sl-skip-link", {
+    position: "fixed",
+    inset: "($gap * 1.5) auto auto ($gap * 1.5)",
+    inlineSize: "1px",
+    blockSize: "1px",
+    padding: "0",
+    overflow: "hidden",
+    clip: "rect(0, 0, 0, 0)",
+  });
+
+  useGlobalStyles(".sl-skip-link:focus", {
+    zIndex: "20",
+    inlineSize: "auto",
+    blockSize: "auto",
+    padding: "$gap ($gap * 2)",
+    overflow: "visible",
+    color: "#accent-surface-text",
+    fill: "#accent-surface",
+    clip: "auto",
+    radius: "$radius",
+    shadow: "0 1rem 3rem #shadow",
+    textDecoration: "none",
   });
 
   useGlobalStyles(":where(h1, h2, h3, h4, h5, h6), .site-title", {
@@ -198,7 +258,7 @@ export default function GlobalStyles() {
     '#starlight__sidebar a[aria-current="page"], #starlight__sidebar a[aria-current="page"]:hover, #starlight__sidebar a[aria-current="page"]:focus',
     {
       color: "#accent-text",
-      fill: "color-mix( in oklab, #accent-surface 12%, #surface )",
+      fill: "#accent-surface-subtle",
     },
   );
 
@@ -219,6 +279,15 @@ export default function GlobalStyles() {
     paddingBlockEnd: "($gap * 6)",
   });
 
+  useGlobalStyles("#starlight__sidebar ul", {
+    padding: "0",
+    listStyle: "none",
+  });
+
+  useGlobalStyles("#starlight__sidebar li", {
+    overflowWrap: "anywhere",
+  });
+
   useGlobalStyles("#starlight__sidebar .top-level > li + li", {
     marginBlockStart: "($gap * 3)",
   });
@@ -231,7 +300,35 @@ export default function GlobalStyles() {
 
   useGlobalStyles("#starlight__sidebar :where(summary, a)", {
     padding: "($gap * 0.8) ($gap * 1.25)",
+    color: "#text-soft",
     lineHeight: "1.45",
+    radius: "$radius",
+    textDecoration: "none",
+  });
+
+  useGlobalStyles("#starlight__sidebar summary", {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    cursor: "pointer",
+    userSelect: "none",
+  });
+
+  useGlobalStyles("#starlight__sidebar a", {
+    display: "block",
+    fill: "#surface",
+  });
+
+  useGlobalStyles(
+    "#starlight__sidebar a:hover, #starlight__sidebar a:focus-visible, #starlight__sidebar summary:hover",
+    {
+      color: "#text",
+      fill: "#surface-2-hover",
+    },
+  );
+
+  useGlobalStyles("#starlight__sidebar summary::marker", {
+    hide: true,
   });
 
   useGlobalStyles("#starlight__sidebar a", {
@@ -241,6 +338,7 @@ export default function GlobalStyles() {
   useGlobalStyles("#starlight__sidebar .large", {
     fontSize: "0.9375rem",
     fontWeight: "$body-bold-font-weight",
+    color: "#text",
   });
 
   useGlobalStyles(".right-sidebar-panel", {
@@ -248,14 +346,40 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".right-sidebar-panel h2", {
+    marginBlockEnd: "$gap",
+    color: "#text",
     fontSize: "0.9375rem",
+    fontWeight: "$body-bold-font-weight",
+    lineHeight: "$heading-line-height",
   });
 
   useGlobalStyles(".right-sidebar-panel a", {
+    display: "block",
     paddingBlockStart: "($gap * 0.5)",
     paddingBlockEnd: "($gap * 0.5)",
+    color: "#text-muted",
     fontSize: "$small-font-size",
     lineHeight: "1.45",
+    textDecoration: "none",
+    overflowWrap: "anywhere",
+  });
+
+  useGlobalStyles(".right-sidebar-panel a:hover", {
+    color: "#text",
+  });
+
+  useGlobalStyles(".content-panel", {
+    padding: "($gap * 3) $sl-content-pad-x",
+  });
+
+  useGlobalStyles(".content-panel > .sl-container", {
+    maxInlineSize: "$content-width",
+  });
+
+  useGlobalStyles("main h1#_top", {
+    marginBlockStart: "($gap * 2)",
+    color: "#text",
+    preset: "h1",
   });
 
   useGlobalStyles("main > .content-panel:first-of-type", {
@@ -290,6 +414,7 @@ export default function GlobalStyles() {
   useGlobalStyles(".pagination-links a", {
     borderWidth: "$border-width",
     borderColor: "#border",
+    color: "#text-soft",
     fill: "#surface-2",
     boxShadow: "none",
     transition: "color 120ms ease, background-color 120ms ease",
@@ -303,6 +428,79 @@ export default function GlobalStyles() {
   useGlobalStyles(".pagination-links a:active", {
     fill: "#surface-2-pressed",
   });
+
+  useGlobalStyles(".pagination-links .link-title", {
+    color: "#text",
+    preset: "h5 / strong",
+  });
+
+  useGlobalStyles("main footer", {
+    display: "flex",
+    flow: "column",
+    gap: "($gap * 3)",
+  });
+
+  useGlobalStyles("main footer .meta", {
+    display: "flex",
+    flow: "row wrap",
+    justifyContent: "space-between",
+    gap: "($gap * 1.5) ($gap * 6)",
+    marginBlockStart: "($gap * 6)",
+    color: "#text-muted",
+    preset: "small",
+  });
+
+  useGlobalStyles("main footer .meta a, main footer .kudos", {
+    display: "flex",
+    alignItems: "center",
+    gap: "$gap",
+    color: "#text-muted",
+    textDecoration: "none",
+  });
+
+  useGlobalStyles("main footer .meta a:hover, main footer .kudos:hover", {
+    color: "#text",
+  });
+
+  useGlobalStyles("main footer .kudos", {
+    margin: "($gap * 3) auto",
+    preset: "small",
+  });
+
+  useGlobalStyles("starlight-lang-select label", {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    gap: "($gap * 0.5)",
+    color: "#text-soft",
+  });
+
+  useGlobalStyles("starlight-lang-select label:hover", {
+    color: "#text",
+  });
+
+  useGlobalStyles("starlight-lang-select select", {
+    color: "#text-soft",
+    border: "0",
+    fill: "#clear",
+    cursor: "pointer",
+  });
+
+  useGlobalStyles("starlight-lang-select option", {
+    color: "#text",
+    fill: "#surface-2",
+  });
+
+  useGlobalStyles(".td-header__social a, .td-mobile-preferences__social a", {
+    color: "#accent-text",
+  });
+
+  useGlobalStyles(
+    ".td-header__social a:hover, .td-mobile-preferences__social a:hover",
+    {
+      color: "#text",
+    },
+  );
 
   useGlobalStyles("main .pagination-links", {
     gridTemplateColumns: {
@@ -540,7 +738,7 @@ export default function GlobalStyles() {
     'mobile-starlight-toc .dropdown .isMobile a[aria-current="true"]',
     {
       color: "#accent-text",
-      fill: "color-mix(in oklab, #accent-surface 12%, #surface-2)",
+      fill: "#accent-surface-2-subtle",
     },
   );
 

@@ -33,10 +33,33 @@ describe("Glaze theme adapter", () => {
     expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
     expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0003 0)");
     expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0003 0)");
-    expect(tokens["#surface-2-hover"]).toContain("color-mix");
-    expect(tokens["#surface-2-pressed"]).toContain("color-mix");
-    expect(tokens["#surface-3-hover"]).toContain("color-mix");
-    expect(tokens["#surface-3-pressed"]).toContain("color-mix");
+    for (const [name, states] of Object.entries(tokens).filter(([name]) =>
+      name.startsWith("#"),
+    )) {
+      expect(name).not.toBe("#current");
+      expect(Object.keys(states as object)).toHaveLength(4);
+      expect(Object.values(states as Record<string, string>)).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+          expect.stringMatching(/^oklch\(/),
+        ]),
+      );
+      expect(
+        Object.values(states as Record<string, string>).join(" "),
+      ).not.toContain("color-mix");
+    }
+    expect(tokens).toHaveProperty("#surface-2-hover");
+    expect(tokens).toHaveProperty("#surface-2-pressed");
+    expect(tokens).toHaveProperty("#surface-3-hover");
+    expect(tokens).toHaveProperty("#surface-3-pressed");
+    expect(tokens).toHaveProperty("#accent-surface-subtle");
+    expect(tokens).toHaveProperty("#orange-surface");
+    expect(tokens).toHaveProperty("#green-text");
+    expect(tokens).toHaveProperty("#blue");
+    expect(tokens).toHaveProperty("#purple-surface");
+    expect(tokens).toHaveProperty("#red-text");
     expect(tokens.$radius).toBe("6px");
     expect(tokens["$card-radius"]).toBe("10px");
     expect(tokens["$layout-width"]).toBe("87.5rem");

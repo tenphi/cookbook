@@ -62,9 +62,13 @@ Components consume semantic colors consistently: `surface`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
-same resolved values. Surface elevation uses Glaze's contrast-uniform tone
-axis: `surface-2` advances two tone steps and `surface-3` advances four from the
-base surface, with proportionally wider steps in high-contrast mode.
+same resolved values. Glaze also generates hover and pressed states, subtle
+accent fills, overlays, shadows, and the orange, green, blue, purple, and red
+roles used by Starlight content components. No browser color mixes or
+Starlight fallback palette values participate in the rendered theme. Surface
+elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
+steps and `surface-3` advances four from the base surface, with proportionally
+wider steps in high-contrast mode.
 
 Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
@@ -201,7 +205,8 @@ names never use that selector bridge.
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
 CSS during the build, while appearance controls add only the small client
-behavior needed to persist a selected scheme.
+behavior needed to persist a selected scheme. The compact Cookbook logo is
+shown beside the project title in the default top bar.
 
 ## Astro and MDX components
 

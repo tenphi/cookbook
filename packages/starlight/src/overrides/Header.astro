@@ -9,6 +9,7 @@ import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import GlobalStyles from "../components/GlobalStyles.js";
+import Logo from "../components/Logo.astro";
 import PackageVersion from "../components/PackageVersion.astro";
 import {
   StarlightHeaderRoot,
@@ -36,6 +37,7 @@ function tabHref(link: string): string {
 >
   <div class="td-header__primary">
     <div class="td-header__title">
+      <Logo class="td-header__logo" decorative />
       <SiteTitle />
       <PackageVersion version={content.site.version} />
     </div>
