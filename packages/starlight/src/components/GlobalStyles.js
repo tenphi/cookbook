@@ -1506,6 +1506,7 @@ export default function GlobalStyles() {
         $: "th",
         color: "#text",
         fill: "#surface-2",
+        textAlign: "start",
         radius: {
           "@own(:is(thead:first-child tr:first-child > th) & :first-child & !:last-child)":
             "($card-radius - $border-width) top-left",
