@@ -1,4 +1,5 @@
 ---
+"@tenphi/docs": minor
 "@tenphi/starlight": minor
 ---
 
@@ -8,4 +9,6 @@ logo beside the title in the top navigation bar. Expose the Glaze high-contrast
 palette through a persisted system, normal, or high-contrast appearance control,
 derive calmer borders at one quarter of the brand saturation, and soften the
 elevated surface ramp. Render the open-book logo mark with its Glaze-generated
-foreground token.
+foreground token. Expose every direct Cookbook Tasty component through
+`theme.styles`, including `ContrastSelect`, and provide a configurable
+`MarkdownTable` style tree for Starlight-generated tables.

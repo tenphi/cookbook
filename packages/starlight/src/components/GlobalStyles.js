@@ -6,6 +6,7 @@ import arrowRightIcon from "../icons/arrow-right.svg?raw";
 import chevronRightIcon from "../icons/chevron-right.svg?raw";
 import closeIcon from "../icons/close.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
+import { resolveComponentStyles } from "./component-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
 import { configureCookbookStates } from "./tasty-states.js";
 
@@ -1468,65 +1469,53 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(".sl-markdown-content :where(table, blockquote, details)", {
+  useGlobalStyles(".sl-markdown-content :where(blockquote, details)", {
     borderColor: "#border",
   });
 
-  useGlobalStyles(".sl-markdown-content table", {
-    inlineSize: "100%",
-    borderCollapse: "separate",
-    borderSpacing: "0",
-    overflow: "auto",
-    color: "#text-soft",
-    fontSize: "$small-font-size",
-    lineHeight: "$small-line-height",
-    border: true,
-    radius: "$card-radius",
-    scrollbarWidth: "thin",
-  });
-
-  useGlobalStyles(".sl-markdown-content :where(th, td)", {
-    padding: "($gap * 1.5) ($gap * 2)",
-    verticalAlign: "top",
-    borderColor: "#border",
-  });
-
-  useGlobalStyles(".sl-markdown-content :where(th, td):first-child", {
-    paddingInlineStart: "($gap * 2)",
-  });
-
-  useGlobalStyles(".sl-markdown-content :where(th, td):last-child", {
-    paddingInlineEnd: "($gap * 2)",
-  });
-
-  useGlobalStyles(".sl-markdown-content tbody tr:last-child td", {
-    borderBlockEnd: "0",
-  });
-
-  useGlobalStyles(".sl-markdown-content th", {
-    color: "#text",
-    fill: "#surface-2",
-  });
-
   useGlobalStyles(
-    ".sl-markdown-content thead:first-child tr:first-child th:first-child:not(:last-child)",
-    {
-      radius: "($card-radius - $border-width) top-left",
-    },
-  );
-
-  useGlobalStyles(
-    ".sl-markdown-content thead:first-child tr:first-child th:last-child:not(:first-child)",
-    {
-      radius: "($card-radius - $border-width) top-right",
-    },
-  );
-
-  useGlobalStyles(
-    ".sl-markdown-content thead:first-child tr:first-child th:only-child",
-    {
-      radius: "($card-radius - $border-width) top",
-    },
+    ".sl-markdown-content",
+    resolveComponentStyles("MarkdownTable", {
+      Table: {
+        $: "table",
+        inlineSize: "100%",
+        borderCollapse: "separate",
+        borderSpacing: "0",
+        overflow: "auto",
+        color: "#text-soft",
+        fontSize: "$small-font-size",
+        lineHeight: "$small-line-height",
+        border: true,
+        borderColor: "#border",
+        radius: "$card-radius",
+        scrollbarWidth: "thin",
+      },
+      Cell: {
+        $: "th, td",
+        padding: "($gap * 1.5) ($gap * 2)",
+        verticalAlign: "top",
+        borderColor: "#border",
+      },
+      LastBodyRowCell: {
+        $: "tbody td",
+        borderBlockEnd: {
+          "@own(:is(tbody tr:last-child > td))": "0",
+        },
+      },
+      HeaderCell: {
+        $: "th",
+        color: "#text",
+        fill: "#surface-2",
+        radius: {
+          "@own(:is(thead:first-child tr:first-child > th) & :first-child & !:last-child)":
+            "($card-radius - $border-width) top-left",
+          "@own(:is(thead:first-child tr:first-child > th) & !:first-child & :last-child)":
+            "($card-radius - $border-width) top-right",
+          "@own(:is(thead:first-child tr:first-child > th) & :first-child & :last-child)":
+            "($card-radius - $border-width) top",
+        },
+      },
+    }),
   );
 
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
