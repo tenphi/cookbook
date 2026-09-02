@@ -189,8 +189,8 @@ markdown: {
 still follow their declared trust level.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
-the static build. Flowcharts, state, sequence, class, entity-relationship, and
-XY charts are supported. Invalid or unsupported diagrams remain visible as
+the static build. Flowcharts, state, sequence, class, and entity-relationship
+diagrams are supported. Invalid or unsupported diagrams remain visible as
 source code.
 
 ````markdown

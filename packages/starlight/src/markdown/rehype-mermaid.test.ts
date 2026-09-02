@@ -63,19 +63,58 @@ describe("Mermaid Markdown rendering", () => {
     expect(code).toContain("planId");
   });
 
-  it("leaves unsupported Mermaid diagram types as highlighted source", async () => {
+  it.each([
+    ["state", "stateDiagram-v2\n  [*] --> Idle"],
+    ["sequence", "sequenceDiagram\n  Alice->>Bob: Inspect"],
+    ["entity-relationship", "erDiagram\n  DREAM ||--o{ PLAN : contains"],
+  ])("renders supported %s diagrams", async (_name, source) => {
     const renderer = await createMarkdownProcessor({
       syntaxHighlight: "shiki",
       rehypePlugins: [rehypeMermaid],
     });
-    const markdown = ["```mermaid", "gantt", "  title Schedule", "```"].join(
-      "\n",
-    );
+    const markdown = ["```mermaid", source, "```"].join("\n");
     const { code } = await renderer.render(markdown, { frontmatter: {} });
 
-    expect(code).toContain('data-mermaid-state="error"');
-    expect(code).not.toContain("<svg");
+    expect(code).toContain('data-mermaid-state="ready"');
+    expect(code).toContain("<svg");
   });
+
+  it("prevents accessibility metadata from creating SVG attributes", async () => {
+    const renderer = await createMarkdownProcessor({
+      syntaxHighlight: "shiki",
+      rehypePlugins: [rehypeMermaid],
+    });
+    const markdown = [
+      "```mermaid",
+      "flowchart TD",
+      '  accTitle: \" onload=\"alert(1)',
+      "  A[Inspect] --> B[Safe]",
+      "```",
+    ].join("\n");
+    const { code } = await renderer.render(markdown, { frontmatter: {} });
+
+    expect(code).toContain('data-mermaid-state="ready"');
+    expect(code).toContain('aria-label="&#x22; onload=&#x22;alert(1)" xmlns=');
+    expect(code).not.toContain('aria-label="" onload="');
+  });
+
+  it.each([
+    ["gantt", "  title Schedule"],
+    ["xychart-beta", "  line [1, 2, 3]"],
+  ])(
+    "leaves unsupported %s diagrams as highlighted source",
+    async (type, declaration) => {
+      const renderer = await createMarkdownProcessor({
+        syntaxHighlight: "shiki",
+        rehypePlugins: [rehypeMermaid],
+      });
+      const markdown = ["```mermaid", type, declaration, "```"].join("\n");
+      const { code } = await renderer.render(markdown, { frontmatter: {} });
+
+      expect(code).toContain('data-mermaid-state="error"');
+      expect(code).not.toContain("<svg");
+    },
+  );
 
   it("provides the equivalent adapter for Astro's Sätteri processor", () => {
     const node = {

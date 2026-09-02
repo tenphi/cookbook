@@ -18,7 +18,7 @@ const sourceStyleDirective = /^\s*(?:classDef|style|linkStyle)\s+.*$/gim;
 const accessibilityDirective = /^\s*acc(?:Title|Descr):\s*.*$/gim;
 const svgStyleBlock = /\s*<style>[\s\S]*?<\/style>\s*/gi;
 const supportedDiagram =
-  /^(?:(?:flowchart|graph)(?:\s+(?:TB|TD|BT|RL|LR))?|stateDiagram(?:-v2)?|sequenceDiagram|classDiagram|erDiagram|xychart-beta)\b/i;
+  /^(?:(?:flowchart|graph)(?:\s+(?:TB|TD|BT|RL|LR))?|stateDiagram(?:-v2)?|sequenceDiagram|classDiagram|erDiagram)\b/i;
 
 /** Render supported Mermaid fences to theme-responsive SVG at build time. */
 export function rehypeMermaid() {

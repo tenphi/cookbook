@@ -65,6 +65,7 @@ describe("component style configuration", () => {
   it("exposes bridged Markdown components through the same style registry", () => {
     configureComponentStyles({
       MarkdownTable: { Table: { radius: "0" } },
+      Mermaid: { Diagram: { maxInlineSize: "90%" } },
     });
 
     expect(
@@ -75,6 +76,13 @@ describe("component style configuration", () => {
     ).toEqual({
       Table: { border: true, radius: "0" },
       Cell: { padding: "1.5x 2x" },
+    });
+    expect(
+      resolveComponentStyles("Mermaid", {
+        Diagram: { display: "block", maxInlineSize: "100%" },
+      }),
+    ).toEqual({
+      Diagram: { display: "block", maxInlineSize: "90%" },
     });
   });
 
