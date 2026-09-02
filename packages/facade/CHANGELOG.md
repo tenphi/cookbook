@@ -1,5 +1,19 @@
 # @tenphi/cookbook
 
+## 0.8.0
+
+### Minor Changes
+
+- [#21](https://github.com/tenphi/cookbook/pull/21) [`49a21e5`](https://github.com/tenphi/cookbook/commit/49a21e5f4b92cc10dfa1905d32bc996dd8e47f83) Thanks [@tenphi](https://github.com/tenphi)! - Render fenced Mermaid diagrams at build time with responsive light and dark themes,
+  and keep hyphenated placeholders such as `<plan-id>` consistently highlighted
+  inside Bash code blocks.
+
+### Patch Changes
+
+- Updated dependencies [[`49a21e5`](https://github.com/tenphi/cookbook/commit/49a21e5f4b92cc10dfa1905d32bc996dd8e47f83)]:
+  - @tenphi/starlight@0.8.0
+  - @tenphi/docs@0.8.0
+
 ## 0.7.0
 
 ### Patch Changes
