@@ -149,7 +149,7 @@ theme: {
   },
   styles: {
     ThemeSelect: {
-      Select: { borderColor: "#border-strong" },
+      Select: { border: "#border-strong" },
       Picker: { shadow: "0 1rem 3rem #shadow" }
     }
   },
