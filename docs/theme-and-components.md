@@ -200,13 +200,13 @@ theme: {
 ```
 
 The configurable component names are `Card`, `ContrastSelect`, `Logo`,
-`MarkdownTable`, `MobileMenuFooter`, `MobileNavigationTabs`, `PackageVersion`,
-`Preview`, `Steps`, `Tabs`, `ThemeSelect`, `TopNavigation`, and
-`StarlightHeader`. `MarkdownTable` exposes the `Table`, `Cell`,
+`MarkdownTable`, `Mermaid`, `MobileMenuFooter`, `MobileNavigationTabs`,
+`PackageVersion`, `Preview`, `Steps`, `Tabs`, `ThemeSelect`, `TopNavigation`,
+and `StarlightHeader`. `MarkdownTable` exposes the `Table`, `Cell`,
 `LastBodyRowCell`, and `HeaderCell` sub-elements used for generated Markdown
-tables. Editor inference is provided by `defineDocsConfig()` and the exported
-`CookbookComponentName`, `ComponentStyleConfig`, and `ComponentStylesConfig`
-types.
+tables. `Mermaid` exposes `Diagram`, `Text`, and `MonoText`. Editor inference
+is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
+`ComponentStyleConfig`, and `ComponentStylesConfig` types.
 
 `components.overrides` remains the structural escape hatch for replacing an
 Astro component. Prefer `theme.styles` when the markup and behavior remain the

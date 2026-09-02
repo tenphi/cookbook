@@ -11,6 +11,48 @@ const operator = "var(--syntax-operator-color)";
 const foreground = "var(--syntax-text-color)";
 const background = "var(--syntax-bg-color)";
 
+type HighlightToken = {
+  content: string;
+  offset: number;
+  color?: string;
+};
+
+const shellLanguages = new Set(["bash", "sh", "shell", "shellscript", "zsh"]);
+const shellPlaceholder = /<[A-Za-z][A-Za-z0-9_-]*>/g;
+
+/**
+ * Shell grammars interpret documentation placeholders such as `<plan-id>` as
+ * redirections and can split the final character into an unscoped token. Keep
+ * the placeholder name visually coherent while retaining the operator color
+ * on the angle brackets.
+ */
+export const bashPlaceholderTransformer = {
+  name: "cookbook:bash-placeholders",
+  enforce: "post" as const,
+  tokens(
+    this: { source: string; options: { lang?: string } },
+    lines: HighlightToken[][],
+  ): HighlightToken[][] | undefined {
+    if (!this.options.lang || !shellLanguages.has(this.options.lang)) return;
+    const ranges = [...this.source.matchAll(shellPlaceholder)].map((match) => ({
+      start: (match.index ?? 0) + 1,
+      end: (match.index ?? 0) + match[0].length - 1,
+    }));
+    if (ranges.length === 0) return;
+
+    for (const line of lines) {
+      for (const highlighted of line) {
+        const start = highlighted.offset;
+        const end = start + highlighted.content.length;
+        if (ranges.some((range) => start < range.end && end > range.start)) {
+          highlighted.color = string;
+        }
+      }
+    }
+    return lines;
+  },
+};
+
 /**
  * Shiki performs the grammatical classification, while every emitted color
  * remains a reference to a Glaze-generated token owned by Tasty.

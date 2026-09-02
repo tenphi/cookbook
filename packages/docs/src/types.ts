@@ -151,6 +151,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "ContrastSelect",
   "Logo",
   "MarkdownTable",
+  "Mermaid",
   "MobileMenuFooter",
   "MobileNavigationTabs",
   "PackageVersion",
