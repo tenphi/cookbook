@@ -26,7 +26,7 @@ const shellPlaceholder = /<[A-Za-z][A-Za-z0-9_-]*>/g;
  * the placeholder name visually coherent while retaining the operator color
  * on the angle brackets.
  */
-export const bashPlaceholderTransformer = {
+const bashPlaceholderTransformer = {
   name: "cookbook:bash-placeholders",
   enforce: "post" as const,
   tokens(
@@ -54,10 +54,42 @@ export const bashPlaceholderTransformer = {
 };
 
 /**
+ * Astro loads fenced-code grammars lazily. MDX embeds TSX, but loading MDX by
+ * itself leaves that embedded grammar unavailable and produces partially
+ * highlighted imports and JSX. Preload TSX while preserving consumer-supplied
+ * languages and transformers.
+ */
+export function cookbookShikiConfig(
+  config: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+  const languages = Array.isArray(config?.langs) ? [...config.langs] : [];
+  const transformers = Array.isArray(config?.transformers)
+    ? config.transformers
+    : [];
+  const hasTsx = languages.some(
+    (language) =>
+      language === "tsx" ||
+      (typeof language === "object" &&
+        language !== null &&
+        "name" in language &&
+        language.name === "tsx"),
+  );
+
+  return {
+    ...config,
+    langs: hasTsx ? languages : [...languages, "tsx"],
+    theme: tastyCodeTheme,
+    transformers: transformers.includes(bashPlaceholderTransformer)
+      ? transformers
+      : [...transformers, bashPlaceholderTransformer],
+  };
+}
+
+/**
  * Shiki performs the grammatical classification, while every emitted color
  * remains a reference to a Glaze-generated token owned by Tasty.
  */
-export const tastyCodeTheme = {
+const tastyCodeTheme = {
   name: "tasty-code",
   type: "light" as const,
   fg: foreground,

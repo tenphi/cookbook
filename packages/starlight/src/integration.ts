@@ -31,10 +31,7 @@ import {
 } from "./navigation.js";
 import { rehypeMermaid, satteriMermaid } from "./markdown/rehype-mermaid.js";
 import { resolveDocsTheme } from "./theme/index.js";
-import {
-  bashPlaceholderTransformer,
-  tastyCodeTheme,
-} from "./theme/shiki-theme.js";
+import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
@@ -408,21 +405,6 @@ export default function cookbook(
         }
       },
     },
-  };
-}
-
-function cookbookShikiConfig(
-  config: Record<string, unknown> | undefined,
-): Record<string, unknown> {
-  const transformers = Array.isArray(config?.transformers)
-    ? config.transformers
-    : [];
-  return {
-    ...config,
-    theme: tastyCodeTheme,
-    transformers: transformers.includes(bashPlaceholderTransformer)
-      ? transformers
-      : [...transformers, bashPlaceholderTransformer],
   };
 }
 

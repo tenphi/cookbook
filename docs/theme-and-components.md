@@ -166,7 +166,7 @@ theme: {
   styles: {
     ThemeSelect: {
       Select: {
-        borderColor: "#border-strong"
+        border: "#border-strong"
       },
       Picker: {
         padding: "1x",
