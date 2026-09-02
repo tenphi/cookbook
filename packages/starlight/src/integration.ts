@@ -29,8 +29,12 @@ import {
   resolveNavigationLayout,
   type ResolvedNavigationLayout,
 } from "./navigation.js";
+import { rehypeMermaid, satteriMermaid } from "./markdown/rehype-mermaid.js";
 import { resolveDocsTheme } from "./theme/index.js";
-import { tastyCodeTheme } from "./theme/shiki-theme.js";
+import {
+  bashPlaceholderTransformer,
+  tastyCodeTheme,
+} from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
@@ -137,6 +141,7 @@ export default function cookbook(
           build: { ...options.config?.build, base },
         };
         usingContentCollection = hasContentConfig(context.config.srcDir);
+        registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
@@ -156,10 +161,9 @@ export default function cookbook(
           markdown: {
             ...context.config.markdown,
             syntaxHighlight: "shiki" as const,
-            shikiConfig: {
-              ...context.config.markdown.shikiConfig,
-              theme: tastyCodeTheme,
-            },
+            shikiConfig: cookbookShikiConfig(
+              context.config.markdown.shikiConfig,
+            ),
           },
           srcDir: context.config.srcDir,
         };
@@ -171,7 +175,9 @@ export default function cookbook(
           output: "static",
           markdown: {
             syntaxHighlight: "shiki",
-            shikiConfig: { theme: tastyCodeTheme },
+            shikiConfig: cookbookShikiConfig(
+              context.config.markdown.shikiConfig,
+            ),
           },
           vite: {
             ssr: {
@@ -304,10 +310,7 @@ export default function cookbook(
                 markdown: {
                   ...config.markdown,
                   syntaxHighlight: "shiki" as const,
-                  shikiConfig: {
-                    ...config.markdown.shikiConfig,
-                    theme: tastyCodeTheme,
-                  },
+                  shikiConfig: cookbookShikiConfig(config.markdown.shikiConfig),
                 },
                 srcDir: config.srcDir,
               };
@@ -406,6 +409,42 @@ export default function cookbook(
       },
     },
   };
+}
+
+function cookbookShikiConfig(
+  config: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+  const transformers = Array.isArray(config?.transformers)
+    ? config.transformers
+    : [];
+  return {
+    ...config,
+    theme: tastyCodeTheme,
+    transformers: transformers.includes(bashPlaceholderTransformer)
+      ? transformers
+      : [...transformers, bashPlaceholderTransformer],
+  };
+}
+
+function registerCookbookMarkdownPlugins(processor: {
+  name: string;
+  options: object;
+}): void {
+  if (processor.name === "unified") {
+    const options = processor.options as { rehypePlugins?: unknown };
+    const plugins = Array.isArray(options.rehypePlugins)
+      ? options.rehypePlugins
+      : [];
+    if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
+    options.rehypePlugins = plugins;
+  } else if (processor.name === "satteri") {
+    const options = processor.options as { hastPlugins?: unknown };
+    const plugins = Array.isArray(options.hastPlugins)
+      ? options.hastPlugins
+      : [];
+    if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
+    options.hastPlugins = plugins;
+  }
 }
 
 function stripStarlightStylesPlugin(root: string) {

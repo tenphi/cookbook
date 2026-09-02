@@ -188,6 +188,31 @@ markdown: {
 `rawHtml` accepts `"sanitize"`, `"allow"`, or `"reject"`. Package sources
 still follow their declared trust level.
 
+Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
+the static build. Flowcharts, state, sequence, class, entity-relationship, and
+XY charts are supported. Invalid or unsupported diagrams remain visible as
+source code.
+
+````markdown
+```mermaid
+flowchart TD
+  accTitle: Proposal workflow
+  accDescr: Evidence is inspected before proposals are decided and applied.
+  inspect[Inspect evidence] --> seal[Seal proposals]
+  seal --> decide[Decide eligible items]
+  decide --> apply[Apply accepted items]
+```
+````
+
+```mermaid
+flowchart TD
+  accTitle: Proposal workflow
+  accDescr: Evidence is inspected before proposals are decided and applied.
+  inspect[Inspect evidence] --> seal[Seal proposals]
+  seal --> decide[Decide eligible items]
+  decide --> apply[Apply accepted items]
+```
+
 ## Search
 
 ```ts
