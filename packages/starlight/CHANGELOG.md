@@ -1,5 +1,14 @@
 # @tenphi/starlight
 
+## 0.9.1
+
+### Patch Changes
+
+- [#27](https://github.com/tenphi/cookbook/pull/27) [`e4bd0b0`](https://github.com/tenphi/cookbook/commit/e4bd0b085fa46e0654e4cc410e37f59d3530cce2) Thanks [@tenphi](https://github.com/tenphi)! - Tighten the spacing between adjacent Markdown list and description-list items.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.9.1
+
 ## 0.9.0
 
 ### Minor Changes
