@@ -1519,6 +1519,7 @@ export default function GlobalStyles() {
     resolveComponentStyles("MarkdownTable", {
       Table: {
         $: "table",
+        display: "block",
         inlineSize: "100%",
         borderCollapse: "separate",
         borderSpacing: "0",
