@@ -10,6 +10,8 @@ const value = "var(--syntax-value-color)";
 const operator = "var(--syntax-operator-color)";
 const foreground = "var(--syntax-text-color)";
 const background = "var(--syntax-bg-color)";
+const inserted = "var(--green-text-color)";
+const deleted = "var(--red-text-color)";
 
 type HighlightToken = {
   content: string;
@@ -53,6 +55,46 @@ const bashPlaceholderTransformer = {
   },
 };
 
+type HastElement = {
+  properties: Record<string, unknown>;
+};
+
+type DiffTransformerContext = {
+  source: string;
+  options: { lang?: string };
+  addClassToHast(element: HastElement, className: string): HastElement;
+};
+
+const diffLanguages = new Set(["diff", "patch"]);
+
+/**
+ * The diff grammar colors individual tokens, but it does not expose a stable
+ * whole-line selector. Add semantic classes so insertions and deletions can
+ * receive subtle, full-width surfaces without hiding their +/- markers.
+ */
+const diffLineTransformer = {
+  name: "cookbook:diff-lines",
+  pre(this: DiffTransformerContext, element: HastElement): void {
+    if (this.options.lang && diffLanguages.has(this.options.lang)) {
+      this.addClassToHast(element, "td-diff");
+    }
+  },
+  line(
+    this: DiffTransformerContext,
+    element: HastElement,
+    lineNumber: number,
+  ): void {
+    if (!this.options.lang || !diffLanguages.has(this.options.lang)) return;
+
+    const line = this.source.split(/\r?\n/)[lineNumber - 1] ?? "";
+    if (line.startsWith("+") && !line.startsWith("+++")) {
+      this.addClassToHast(element, "td-diff-line--inserted");
+    } else if (line.startsWith("-") && !line.startsWith("---")) {
+      this.addClassToHast(element, "td-diff-line--deleted");
+    }
+  },
+};
+
 /**
  * Astro loads fenced-code grammars lazily. MDX embeds TSX, but loading MDX by
  * itself leaves that embedded grammar unavailable and produces partially
@@ -64,7 +106,7 @@ export function cookbookShikiConfig(
 ): Record<string, unknown> {
   const languages = Array.isArray(config?.langs) ? [...config.langs] : [];
   const transformers = Array.isArray(config?.transformers)
-    ? config.transformers
+    ? [...config.transformers]
     : [];
   const hasTsx = languages.some(
     (language) =>
@@ -75,13 +117,18 @@ export function cookbookShikiConfig(
         language.name === "tsx"),
   );
 
+  if (!transformers.includes(bashPlaceholderTransformer)) {
+    transformers.push(bashPlaceholderTransformer);
+  }
+  if (!transformers.includes(diffLineTransformer)) {
+    transformers.push(diffLineTransformer);
+  }
+
   return {
     ...config,
     langs: hasTsx ? languages : [...languages, "tsx"],
     theme: tastyCodeTheme,
-    transformers: transformers.includes(bashPlaceholderTransformer)
-      ? transformers
-      : [...transformers, bashPlaceholderTransformer],
+    transformers,
   };
 }
 
@@ -245,6 +292,14 @@ const tastyCodeTheme = {
     {
       scope: ["support.type.property-name.css", "meta.property-name.css"],
       settings: { foreground: property },
+    },
+    {
+      scope: ["punctuation.definition.inserted.diff"],
+      settings: { foreground: inserted, fontStyle: "bold" },
+    },
+    {
+      scope: ["punctuation.definition.deleted.diff"],
+      settings: { foreground: deleted, fontStyle: "bold" },
     },
   ],
 };

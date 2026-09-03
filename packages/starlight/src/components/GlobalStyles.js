@@ -608,6 +608,29 @@ export default function GlobalStyles() {
     lineHeight: "inherit",
   });
 
+  useGlobalStyles(".sl-markdown-content pre.td-diff", {
+    paddingInline: "0",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre.td-diff code", {
+    display: "block",
+    inlineSize: "max-content",
+    minInlineSize: "100%",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre.td-diff .line", {
+    display: "block",
+    paddingInline: "1rem",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre.td-diff .td-diff-line--inserted", {
+    fill: "#green-surface",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre.td-diff .td-diff-line--deleted", {
+    fill: "#red-surface",
+  });
+
   useGlobalStyles(
     ".sl-markdown-content .td-mermaid",
     resolveComponentStyles("Mermaid", {

@@ -222,6 +222,20 @@ CSS during the build, while appearance controls add only the small client
 behavior needed to persist selected theme and contrast modes. The compact
 Cookbook logo is shown beside the project title in the default top bar.
 
+## Diff snippets
+
+Use a `diff` code fence to highlight changed lines. Insertions and deletions
+receive subtle theme-aware backgrounds while their `+` and `-` markers remain
+visible for readers who do not distinguish the colors.
+
+```diff
+-formatOkhsl(v.h, v.s * 100, l * 100);
++formatOkhsl(v.h, v.s, l);
+
+-formatOkhst(v.h, v.s * 100, v.t * 100);
++formatOkhst(v.h, v.s, v.t);
+```
+
 ## Astro and MDX components
 
 The facade exposes supported components from `@tenphi/cookbook/components`:
