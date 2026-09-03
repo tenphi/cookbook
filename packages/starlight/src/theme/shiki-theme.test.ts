@@ -49,6 +49,28 @@ describe("Cookbook Shiki theme", () => {
     );
   });
 
+  it("marks diff insertions and deletions without treating file headers as changes", async () => {
+    const markdown = [
+      "```diff",
+      "--- a/colors.ts",
+      "+++ b/colors.ts",
+      '-const tone = "old";',
+      '+const tone = "new";',
+      " const stable = true;",
+      "```",
+    ].join("\n");
+    const { code } = await render(markdown);
+
+    expect(code).toContain('class="astro-code tasty-code td-diff"');
+    expect(code).toMatch(/class="line td-diff-line--deleted"[^>]*>.*-.*old/);
+    expect(code).toMatch(/class="line td-diff-line--inserted"[^>]*>.*\+.*new/);
+    expect(code).not.toMatch(
+      /class="line td-diff-line--(?:inserted|deleted)"[^>]*>.*(?:a|b)\/colors\.ts/,
+    );
+    expect(code).toContain("var(--red-text-color)");
+    expect(code).toContain("var(--green-text-color)");
+  });
+
   it("preserves consumer languages and transformers", () => {
     const transformer = { name: "consumer" };
     const config = cookbookShikiConfig({
@@ -60,6 +82,7 @@ describe("Cookbook Shiki theme", () => {
     expect(config.transformers).toEqual([
       transformer,
       expect.objectContaining({ name: "cookbook:bash-placeholders" }),
+      expect.objectContaining({ name: "cookbook:diff-lines" }),
     ]);
   });
 });
