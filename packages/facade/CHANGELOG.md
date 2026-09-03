@@ -1,5 +1,13 @@
 # @tenphi/cookbook
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies [[`0dfb05a`](https://github.com/tenphi/cookbook/commit/0dfb05ad2bfae7d3a434eb2377ce95e06c8e068e), [`bbb8e58`](https://github.com/tenphi/cookbook/commit/bbb8e58c5aa2c084b0cf8c9bcdb4c8ebde5908f8), [`0394323`](https://github.com/tenphi/cookbook/commit/039432304bc066f1bc7edea98b280e894e4ec1ec)]:
+  - @tenphi/starlight@0.9.0
+  - @tenphi/docs@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes

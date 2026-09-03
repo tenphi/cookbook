@@ -1,5 +1,23 @@
 # @tenphi/starlight
 
+## 0.9.0
+
+### Minor Changes
+
+- [#26](https://github.com/tenphi/cookbook/pull/26) [`0394323`](https://github.com/tenphi/cookbook/commit/039432304bc066f1bc7edea98b280e894e4ec1ec) Thanks [@tenphi](https://github.com/tenphi)! - Add theme-aware whole-line highlighting for insertions and deletions in `diff`
+  code fences while preserving their visible markers.
+
+### Patch Changes
+
+- [#23](https://github.com/tenphi/cookbook/pull/23) [`0dfb05a`](https://github.com/tenphi/cookbook/commit/0dfb05ad2bfae7d3a434eb2377ce95e06c8e068e) Thanks [@tenphi](https://github.com/tenphi)! - Preload the embedded TSX grammar so MDX code fences receive complete syntax
+  highlighting, and verify documented component styles against Tasty's preferred
+  property forms.
+
+- [#25](https://github.com/tenphi/cookbook/pull/25) [`bbb8e58`](https://github.com/tenphi/cookbook/commit/bbb8e58c5aa2c084b0cf8c9bcdb4c8ebde5908f8) Thanks [@tenphi](https://github.com/tenphi)! - Keep wide Markdown tables inside the content column and give each overflowing
+  table its own horizontal scroll area.
+- Updated dependencies []:
+  - @tenphi/docs@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes
