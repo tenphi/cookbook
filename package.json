@@ -18,13 +18,15 @@
     "knip": "knip",
     "build:reference": "pnpm --filter reference build",
     "check:boundaries": "node scripts/check-package-boundaries.mjs",
+    "check:changelog": "node scripts/sync-root-changelog.mjs --check",
     "check:packages": "node scripts/smoke-packages.mjs",
     "check:install": "node scripts/smoke-install-paths.mjs",
     "check:publishing": "pnpm --filter './packages/**' exec publint && pnpm --filter './packages/**' exec attw --profile esm-only --pack .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changeset": "changeset",
-    "version:packages": "changeset version",
+    "version:packages": "changeset version && node scripts/sync-root-changelog.mjs",
+    "sync:changelog": "node scripts/sync-root-changelog.mjs",
     "release": "changeset publish"
   },
   "devDependencies": {
