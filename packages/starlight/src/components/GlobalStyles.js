@@ -528,7 +528,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content :not(a, strong, em, del, span, input, code, br) + :not(a, strong, em, del, span, input, code, br, :where(.not-content *))",
+    ".sl-markdown-content :not(a, strong, em, del, span, input, code, br) + :not(a, strong, em, del, span, input, code, br, li, dt, dd, :where(.not-content *))",
     {
       marginBlockStart: "($gap * 3)",
     },
