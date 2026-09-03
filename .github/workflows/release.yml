@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   gate:
     runs-on: ubuntu-latest
@@ -17,6 +20,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check:boundaries
+      - run: pnpm check:changelog
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
@@ -83,3 +87,19 @@ jobs:
       - run: pnpm release
         env:
           NPM_CONFIG_PROVENANCE: true
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(node -p "require('./packages/facade/package.json').version")
+          tag="v${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "GitHub release $tag already exists."
+            exit 0
+          fi
+          notes="$RUNNER_TEMP/cookbook-${version}.md"
+          node scripts/sync-root-changelog.mjs --notes "$version" > "$notes"
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "Cookbook $tag" \
+            --notes-file "$notes"
