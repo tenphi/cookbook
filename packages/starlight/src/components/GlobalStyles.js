@@ -1519,18 +1519,15 @@ export default function GlobalStyles() {
     resolveComponentStyles("MarkdownTable", {
       Table: {
         $: "table",
-        display: "block",
         inlineSize: "100%",
         borderCollapse: "separate",
         borderSpacing: "0",
-        overflow: "auto",
         color: "#text-soft",
         fontSize: "$small-font-size",
         lineHeight: "$small-line-height",
         border: true,
         borderColor: "#border",
         radius: "$card-radius",
-        scrollbarWidth: "thin",
       },
       Cell: {
         $: "th, td",
@@ -1560,6 +1557,13 @@ export default function GlobalStyles() {
       },
     }),
   );
+
+  useGlobalStyles(".sl-markdown-content .td-table-scroll", {
+    inlineSize: "100%",
+    maxInlineSize: "100%",
+    overflow: "auto",
+    scrollbarWidth: "thin",
+  });
 
   useGlobalStyles(":root, :root:has(.td-top-tabs)", {
     "$docs-nav-height": {

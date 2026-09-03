@@ -30,6 +30,10 @@ import {
   type ResolvedNavigationLayout,
 } from "./navigation.js";
 import { rehypeMermaid, satteriMermaid } from "./markdown/rehype-mermaid.js";
+import {
+  rehypeTableScroll,
+  satteriTableScroll,
+} from "./markdown/rehype-table-scroll.js";
 import { resolveDocsTheme } from "./theme/index.js";
 import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
@@ -418,6 +422,7 @@ function registerCookbookMarkdownPlugins(processor: {
       ? options.rehypePlugins
       : [];
     if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
+    if (!plugins.includes(rehypeTableScroll)) plugins.push(rehypeTableScroll);
     options.rehypePlugins = plugins;
   } else if (processor.name === "satteri") {
     const options = processor.options as { hastPlugins?: unknown };
@@ -425,6 +430,7 @@ function registerCookbookMarkdownPlugins(processor: {
       ? options.hastPlugins
       : [];
     if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
+    if (!plugins.includes(satteriTableScroll)) plugins.push(satteriTableScroll);
     options.hastPlugins = plugins;
   }
 }
