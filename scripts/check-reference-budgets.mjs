@@ -92,7 +92,10 @@ if (
 }
 for (const [selector, label] of [
   ["#starlight__sidebar a > span:first-child", "left navigation links"],
-  ["#starlight__sidebar .group-label > .large", "left navigation groups"],
+  [
+    "#starlight__sidebar summary > .group-label > span:first-child",
+    "left navigation groups",
+  ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
   [
     "mobile-starlight-toc .dropdown .isMobile a > span",
