@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.9.3
+
+### Patch Changes
+
+- [#32](https://github.com/tenphi/cookbook/pull/32) [`be10cd5`](https://github.com/tenphi/cookbook/commit/be10cd58ab001a45afd87f5fd67a34f274cd00a5) Thanks [@tenphi](https://github.com/tenphi)! - Add configurable document head elements for analytics scripts and other remote resources.
+- [#34](https://github.com/tenphi/cookbook/pull/34) [`e4ebf0a`](https://github.com/tenphi/cookbook/commit/e4ebf0a059266b1ca94ff86ca21372ce39bb0d31) Thanks [@tenphi](https://github.com/tenphi)! - Use the body text color for the footer credit and the brand color for its Cookbook link.
+
 ## 0.9.2
 
 ### Patch Changes

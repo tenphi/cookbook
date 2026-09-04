@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.9.3
+
+### Patch Changes
+
+- [#32](https://github.com/tenphi/cookbook/pull/32) [`be10cd5`](https://github.com/tenphi/cookbook/commit/be10cd58ab001a45afd87f5fd67a34f274cd00a5) Thanks [@tenphi](https://github.com/tenphi)! - Add configurable document head elements for analytics scripts and other remote resources.
+
 ## 0.9.2
 
 ### Patch Changes
