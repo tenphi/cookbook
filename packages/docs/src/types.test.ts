@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
+  type CookbookComponentStyles,
+  type ComponentStylesConfig,
 } from "./types.js";
 
 describe("component style metadata", () => {
@@ -46,5 +48,24 @@ describe("component style metadata", () => {
       "CurrentLink",
       "CurrentIndicator",
     ]);
+  });
+
+  it("types configuration as partial style overrides without mode wrappers", () => {
+    const styles = {
+      Sidebar: { LinkLabel: { whiteSpace: "normal" } },
+    } satisfies ComponentStylesConfig;
+    const sidebar: CookbookComponentStyles<"Sidebar"> = {
+      GroupLabelText: { fontWeight: 600 },
+      LinkLabel: { whiteSpace: "normal" },
+    };
+
+    // @ts-expect-error Mode wrappers are not part of the public style API.
+    const invalidStyles: ComponentStylesConfig = {
+      Sidebar: { mode: "replace" },
+    };
+
+    expect(styles.Sidebar.LinkLabel).toEqual({ whiteSpace: "normal" });
+    expect(sidebar.GroupLabelText).toEqual({ fontWeight: 600 });
+    expect(invalidStyles).toBeDefined();
   });
 });

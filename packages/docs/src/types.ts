@@ -296,10 +296,14 @@ export type ComponentStyles = Record<string, unknown> & { mode?: never };
 /** Style properties supplied by the user to override Cookbook defaults. */
 export type ComponentStyleConfig = ComponentStyles;
 
-export type ComponentStylesConfig = Partial<
-  Record<CookbookComponentName, ComponentStyleConfig>
-> &
-  Record<string, ComponentStyleConfig | undefined>;
+/** A component override with typed suggestions for its named sub-elements. */
+export type CookbookComponentStyles<Name extends CookbookComponentName> =
+  ComponentStyles &
+    Partial<Record<CookbookComponentSubElementName<Name>, ComponentStyles>>;
+
+export type ComponentStylesConfig = {
+  [Name in CookbookComponentName]?: CookbookComponentStyles<Name>;
+} & Record<string, ComponentStyleConfig | undefined>;
 
 export interface ThemeConfig {
   variant?: string;

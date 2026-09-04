@@ -11,6 +11,7 @@ export type {
   ComponentStyles,
   ComponentStylesConfig,
   CookbookComponentName,
+  CookbookComponentStyles,
   CookbookComponentSubElementName,
   ComponentsConfig,
   ContentConfig,

@@ -232,7 +232,9 @@ sub-elements:
 `COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the complete sub-element lists for
 theme editors and other tooling. The corresponding TypeScript types are
 `CookbookComponentName`, `CookbookComponentSubElementName`,
-`ComponentStyleConfig`, and `ComponentStylesConfig`.
+`CookbookComponentStyles`, `ComponentStyleConfig`, and `ComponentStylesConfig`.
+Known configuration names provide editor suggestions for their named
+sub-elements.
 
 For the three navigation surfaces, root properties customize the navigation
 container; the `MobileTableOfContents` root is the list inside the mobile
