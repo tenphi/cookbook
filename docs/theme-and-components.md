@@ -143,7 +143,7 @@ theme: {
     },
     h1: {
       fontSize: "3rem",
-      letterSpacing: "-0.035em"
+      letterSpacing: "-0.02em"
     },
     code: {
       fontFamily: "Berkeley Mono, ui-monospace, monospace"
@@ -153,8 +153,13 @@ theme: {
 ```
 
 Heading presets reference the `heading` family and weights; body, navigation,
-and controls reference `body`. Additional named presets are passed through to
-Tasty SSR for use in custom MDX components.
+and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
+`strong` modifier, so their weight comes from the active preset's
+`boldFontWeight` instead of a separate element-specific value. `strong` is a
+reserved modifier keyword, not a named preset; the modifier-only form is
+equivalent to `inherit / strong`. Default body tracking is neutral, while
+larger headings use progressively gentle negative tracking. Additional named
+presets are passed through to Tasty SSR for use in custom MDX components.
 
 The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
 are useful when building a theme editor or presenting a reset action.
