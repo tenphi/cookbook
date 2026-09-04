@@ -1,5 +1,14 @@
 # @tenphi/starlight
 
+## 0.10.1
+
+### Patch Changes
+
+- [#46](https://github.com/tenphi/cookbook/pull/46) [`1ca1405`](https://github.com/tenphi/cookbook/commit/1ca14057656a9725e9531697654a8aa64cb4eb81) Thanks [@tenphi](https://github.com/tenphi)! - Loosen the default heading tracking and apply semantic bold text through Tasty's inherited `strong` preset modifier.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.10.1
+
 ## 0.10.0
 
 ### Minor Changes
