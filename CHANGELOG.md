@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.9.4
+
+### Patch Changes
+
+- [#35](https://github.com/tenphi/cookbook/pull/35) [`4b1d043`](https://github.com/tenphi/cookbook/commit/4b1d043776860d77a7d576b30e3f5156f7182995) Thanks [@tenphi](https://github.com/tenphi)! - Remove redundant empty rows between lines in rendered diff code blocks.
+
 ## 0.9.3
 
 ### Patch Changes
