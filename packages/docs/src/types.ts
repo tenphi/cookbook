@@ -21,6 +21,15 @@ export interface SiteConfig {
   description?: string;
   url?: string;
   repository?: string;
+  /** Source artwork used to generate browser, touch, and installable-app icons. */
+  favicon?: string | SiteIconConfig;
+}
+
+export interface SiteIconConfig {
+  /** Local SVG, PNG, JPEG, WebP, AVIF, or GIF path, relative to the project root. */
+  source: string;
+  /** Opaque background for touch and maskable icons. */
+  background?: string;
 }
 
 /** A language exposed by Starlight's locale picker and routing. */

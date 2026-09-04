@@ -283,7 +283,10 @@ The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
 CSS during the build, while appearance controls add only the small client
 behavior needed to persist selected theme and contrast modes. The compact
-Cookbook logo is shown beside the project title in the default top bar.
+Cookbook logo is shown beside the project title in the default top bar and is
+also the default generated favicon. Use
+[`site.favicon`](./configuration.md#site-icons) to generate the complete icon
+set from project artwork.
 
 ## Diff snippets
 

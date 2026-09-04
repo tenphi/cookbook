@@ -6,6 +6,9 @@ const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
 ) as {
   properties: {
+    site: {
+      properties: { favicon: { oneOf?: unknown[] } };
+    };
     navigation: { oneOf?: unknown[] };
     head: { items: { required?: string[] } };
     components: {
@@ -41,10 +44,35 @@ describe("docs configuration", () => {
 
   it("preserves documented package metadata", () => {
     const config = normalizeDocsConfig({
-      site: { title: "Example", version: "1.2.3" },
+      site: {
+        title: "Example",
+        version: "1.2.3",
+        favicon: { source: "./logo.svg", background: "#123456" },
+      },
     });
 
-    expect(config.site).toMatchObject({ title: "Example", version: "1.2.3" });
+    expect(config.site).toMatchObject({
+      title: "Example",
+      version: "1.2.3",
+      favicon: { source: "./logo.svg", background: "#123456" },
+    });
+    expect(schema.properties.site.properties.favicon.oneOf).toHaveLength(2);
+  });
+
+  it("rejects malformed site icon configuration", () => {
+    expect(() => normalizeDocsConfig({ site: { favicon: "" } })).toThrow(
+      /non-empty local path/,
+    );
+    expect(() =>
+      normalizeDocsConfig({
+        site: { favicon: { source: "", typo: true } },
+      } as never),
+    ).toThrow(/site\.favicon/);
+    expect(() =>
+      normalizeDocsConfig({
+        site: { favicon: { source: "./logo.svg", background: 123 } },
+      } as never),
+    ).toThrow(/background must be a non-empty color string/);
   });
 
   it("preserves custom head elements", () => {

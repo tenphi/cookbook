@@ -32,6 +32,7 @@ export type {
   NavigationTab,
   SearchConfig,
   SiteConfig,
+  SiteIconConfig,
   ThemeConfig,
   ThemePaletteConfig,
   ThemeTokens,

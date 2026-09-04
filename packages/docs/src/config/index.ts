@@ -6,6 +6,7 @@ import type {
 
 const DEFAULT_BRAND = "#315efb";
 const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
+const SITE_ICON_KEYS = new Set(["source", "background"]);
 const ROOT_KEYS = new Set([
   "site",
   "head",
@@ -23,7 +24,14 @@ const ROOT_KEYS = new Set([
 ]);
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
-  site: new Set(["title", "version", "description", "url", "repository"]),
+  site: new Set([
+    "title",
+    "version",
+    "description",
+    "url",
+    "repository",
+    "favicon",
+  ]),
   content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
   markdown: new Set([
     "stripLeadingBadges",
@@ -122,6 +130,39 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       }
       if (entry.content !== undefined && typeof entry.content !== "string") {
         invalid(diagnostics, `head[${index}].content must be a string.`);
+      }
+    }
+  }
+
+  const favicon = config.site?.favicon;
+  if (favicon !== undefined) {
+    if (typeof favicon === "string") {
+      if (favicon.trim() === "") {
+        invalid(diagnostics, "site.favicon must be a non-empty local path.");
+      }
+    } else if (!isRecord(favicon)) {
+      invalid(
+        diagnostics,
+        "site.favicon must be a local path or an object with a source path.",
+      );
+    } else {
+      for (const key of Object.keys(favicon)) {
+        if (!SITE_ICON_KEYS.has(key)) {
+          unknown(diagnostics, `site.favicon.${key}`);
+        }
+      }
+      if (typeof favicon.source !== "string" || favicon.source.trim() === "") {
+        invalid(diagnostics, "site.favicon.source must be a non-empty string.");
+      }
+      if (
+        favicon.background !== undefined &&
+        (typeof favicon.background !== "string" ||
+          favicon.background.trim() === "")
+      ) {
+        invalid(
+          diagnostics,
+          "site.favicon.background must be a non-empty color string.",
+        );
       }
     }
   }
@@ -343,6 +384,7 @@ export type {
   NormalizedDocsConfig,
   SearchConfig,
   SiteConfig,
+  SiteIconConfig,
   ThemeConfig,
   ThemePaletteConfig,
   ThemeTokens,
