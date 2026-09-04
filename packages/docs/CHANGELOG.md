@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.9.2
+
+### Patch Changes
+
+- [#30](https://github.com/tenphi/cookbook/pull/30) [`9362386`](https://github.com/tenphi/cookbook/commit/9362386506c472954f51d42f4045b1c5ee6324a6) Thanks [@tenphi](https://github.com/tenphi)! - Hide the native scheme-picker arrows on mobile, center the hamburger icon in its navigation button, and add a default Cookbook credit footer that can be replaced or disabled through component configuration.
+
 ## 0.9.1
 
 ## 0.9.0
