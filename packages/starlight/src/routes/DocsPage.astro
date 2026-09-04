@@ -31,6 +31,15 @@ const frontmatter = {
   ...(entry.frontmatter.editUrl !== undefined
     ? { editUrl: entry.frontmatter.editUrl }
     : {}),
+  ...(entry.frontmatter.template !== undefined
+    ? { template: entry.frontmatter.template }
+    : {}),
+  ...(entry.frontmatter.hero !== undefined
+    ? { hero: entry.frontmatter.hero }
+    : {}),
+  ...(entry.frontmatter.lastUpdated !== undefined
+    ? { lastUpdated: entry.frontmatter.lastUpdated }
+    : {}),
   ...(entry.frontmatter.prev !== undefined
     ? { prev: entry.frontmatter.prev }
     : {}),

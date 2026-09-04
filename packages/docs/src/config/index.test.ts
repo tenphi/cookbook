@@ -13,6 +13,8 @@ const schema = JSON.parse(
         overrides: { properties: { Footer: { oneOf?: unknown[] } } };
       };
     };
+    locales: { additionalProperties?: { $ref?: string } };
+    lastUpdated: { default?: boolean };
     theme: {
       properties: {
         styles: {
@@ -59,6 +61,43 @@ describe("docs configuration", () => {
 
     expect(normalizeDocsConfig({ head }).head).toEqual(head);
     expect(schema.properties.head.items.required).toContain("tag");
+  });
+
+  it("preserves source metadata and multilingual configuration", () => {
+    const config = normalizeDocsConfig({
+      editLink: {
+        baseUrl: "https://github.com/example/project/edit/main/",
+      },
+      lastUpdated: true,
+      locales: {
+        root: { label: "English", lang: "en" },
+        ar: { label: "العربية", dir: "rtl" },
+      },
+      defaultLocale: "root",
+    });
+
+    expect(config.editLink?.baseUrl).toContain("/edit/main/");
+    expect(config.lastUpdated).toBe(true);
+    expect(config.locales?.ar?.dir).toBe("rtl");
+    expect(config.defaultLocale).toBe("root");
+    expect(schema.properties.lastUpdated.default).toBe(false);
+    expect(schema.properties.locales.additionalProperties?.$ref).toBe(
+      "#/$defs/locale",
+    );
+  });
+
+  it("rejects invalid multilingual configuration", () => {
+    expect(() =>
+      normalizeDocsConfig({
+        locales: { en: { label: "English" } },
+        defaultLocale: "fr",
+      }),
+    ).toThrow(/defaultLocale must match/);
+    expect(() =>
+      normalizeDocsConfig({
+        locales: { ar: { label: "العربية", dir: "sideways" } },
+      } as never),
+    ).toThrow(/must be "ltr" or "rtl"/);
   });
 
   it("rejects malformed custom head elements", () => {

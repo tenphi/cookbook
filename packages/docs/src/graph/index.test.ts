@@ -50,6 +50,42 @@ describe("content graph", () => {
     );
   });
 
+  it("resolves edit links from original source paths and preserves page presentation", async () => {
+    const root = await createDocsFixture({
+      "docs/index.md": `---
+title: Fixture
+template: splash
+hero:
+  tagline: A focused landing page.
+  actions:
+    - text: Begin
+      link: /guide/
+lastUpdated: false
+---
+
+Welcome to the fixture documentation.
+`,
+      "docs/guide.md": "# Guide\n",
+    });
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        editLink: {
+          baseUrl: "https://github.com/example/project/edit/main/",
+        },
+        content: { sources: [{ glob: "docs/*.md", base: "docs" }] },
+      },
+    });
+    const home = graph.entryByRoute("/");
+
+    expect(home?.frontmatter.editUrl).toBe(
+      "https://github.com/example/project/edit/main/docs/index.md",
+    );
+    expect(home?.frontmatter.template).toBe("splash");
+    expect(home?.frontmatter.hero?.actions?.[0]?.text).toBe("Begin");
+    expect(home?.frontmatter.lastUpdated).toBe(false);
+  });
+
   it("validates internal primary navigation tabs", async () => {
     const root = await createDocsFixture({ "README.md": "# Fixture\n" });
     const graph = await createDocsGraph({

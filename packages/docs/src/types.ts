@@ -23,6 +23,19 @@ export interface SiteConfig {
   repository?: string;
 }
 
+/** A language exposed by Starlight's locale picker and routing. */
+export interface LocaleConfig {
+  label: string;
+  /** BCP-47 language tag. Defaults to the locale key. */
+  lang?: string;
+  dir?: "ltr" | "rtl";
+}
+
+export interface EditLinkConfig {
+  /** Base URL joined with each page's repository-relative source path. */
+  baseUrl: string;
+}
+
 /** A custom HTML element rendered in the document head. */
 export interface HeadConfig {
   tag: string;
@@ -157,7 +170,11 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Card",
   "ContrastSelect",
   "Footer",
+  "Hero",
+  "LanguageSelect",
   "Logo",
+  "MarkdownCodeBlock",
+  "MarkdownHeading",
   "MarkdownTable",
   "Mermaid",
   "MobileMenuFooter",
@@ -201,7 +218,48 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CreditLink",
     "HoverCreditLink",
   ],
+  Hero: [
+    "Visual",
+    "Stack",
+    "Copy",
+    "Title",
+    "Tagline",
+    "Actions",
+    "Action",
+    "HoverAction",
+    "PrimaryAction",
+    "SecondaryAction",
+    "MinimalAction",
+    "ActionIcon",
+  ],
+  LanguageSelect: [
+    "Label",
+    "HoverLabel",
+    "LabelIcon",
+    "Select",
+    "Caret",
+    "Option",
+  ],
   Logo: ["Svg", "Mark"],
+  MarkdownCodeBlock: [
+    "Pre",
+    "CopyButton",
+    "HoverCopyButton",
+    "CopiedButton",
+    "CopyIcon",
+    "CopiedIcon",
+  ],
+  MarkdownHeading: [
+    "Heading",
+    "Heading1",
+    "Heading2",
+    "Heading3",
+    "Heading4",
+    "Heading5",
+    "Heading6",
+    "Link",
+    "HoverLink",
+  ],
   MarkdownTable: ["Table", "Cell", "LastBodyRowCell", "HeaderCell"],
   Mermaid: ["Diagram", "Text", "MonoText"],
   MobileMenuFooter: ["Social"],
@@ -350,6 +408,14 @@ export interface BuildConfig {
 export interface DocsConfig {
   site?: SiteConfig;
   head?: HeadConfig[];
+  /** Enable source-aware “Edit page” links. */
+  editLink?: EditLinkConfig;
+  /** Show the most recent Git commit date for each local page. */
+  lastUpdated?: boolean;
+  /** Languages keyed by their URL segment, or `root` for `/`. */
+  locales?: Record<string, LocaleConfig>;
+  /** Locale key used for fallback content. */
+  defaultLocale?: string;
   content?: ContentConfig;
   navigation?: NavigationConfig | NavigationItem[];
   theme?: ThemeConfig;
@@ -362,6 +428,10 @@ export interface DocsConfig {
 export interface NormalizedDocsConfig {
   site: SiteConfig;
   head: HeadConfig[];
+  editLink?: EditLinkConfig;
+  lastUpdated: boolean;
+  locales?: Record<string, LocaleConfig>;
+  defaultLocale?: string;
   content: Required<
     Pick<ContentConfig, "allowOutsideRoot" | "localizeRepositoryLinks">
   > &
@@ -391,6 +461,22 @@ export interface DocsFrontmatter {
   sidebar?: false | { label?: string; order?: number; group?: string };
   toc?: false | { minHeadingLevel?: number; maxHeadingLevel?: number };
   editUrl?: false | string;
+  /** Starlight page layout. */
+  template?: "doc" | "splash";
+  hero?: {
+    title?: string;
+    tagline?: string;
+    image?:
+      | { html: string }
+      | { file: string; alt?: string }
+      | { dark: string; light: string; alt?: string };
+    actions?: Array<{
+      text: string;
+      link: string;
+      variant?: "primary" | "secondary" | "minimal";
+    }>;
+  };
+  lastUpdated?: boolean | Date;
   prev?: false | string;
   next?: false | string;
   search?: boolean;

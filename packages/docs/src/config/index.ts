@@ -9,6 +9,10 @@ const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
 const ROOT_KEYS = new Set([
   "site",
   "head",
+  "editLink",
+  "lastUpdated",
+  "locales",
+  "defaultLocale",
   "content",
   "navigation",
   "theme",
@@ -122,6 +126,67 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  if (
+    config.editLink !== undefined &&
+    (!isRecord(config.editLink) || typeof config.editLink.baseUrl !== "string")
+  ) {
+    invalid(diagnostics, "editLink must contain a string baseUrl.");
+  } else if (config.editLink !== undefined) {
+    for (const key of Object.keys(config.editLink)) {
+      if (key !== "baseUrl") unknown(diagnostics, `editLink.${key}`);
+    }
+    try {
+      new URL(config.editLink.baseUrl);
+    } catch {
+      invalid(diagnostics, "editLink.baseUrl must be an absolute URL.");
+    }
+  }
+  if (
+    config.lastUpdated !== undefined &&
+    typeof config.lastUpdated !== "boolean"
+  ) {
+    invalid(diagnostics, "lastUpdated must be a boolean.");
+  }
+  if (config.locales !== undefined && !isRecord(config.locales)) {
+    invalid(diagnostics, "locales must be an object.");
+  } else {
+    for (const [key, locale] of Object.entries(config.locales ?? {})) {
+      if (!isRecord(locale) || typeof locale.label !== "string") {
+        invalid(diagnostics, `locales.${key} must contain a string label.`);
+        continue;
+      }
+      for (const property of Object.keys(locale)) {
+        if (!["label", "lang", "dir"].includes(property)) {
+          unknown(diagnostics, `locales.${key}.${property}`);
+        }
+      }
+      if (locale.lang !== undefined && typeof locale.lang !== "string") {
+        invalid(diagnostics, `locales.${key}.lang must be a string.`);
+      }
+      if (
+        locale.dir !== undefined &&
+        locale.dir !== "ltr" &&
+        locale.dir !== "rtl"
+      ) {
+        invalid(diagnostics, `locales.${key}.dir must be "ltr" or "rtl".`);
+      }
+    }
+  }
+  if (
+    config.defaultLocale !== undefined &&
+    typeof config.defaultLocale !== "string"
+  ) {
+    invalid(diagnostics, "defaultLocale must be a string.");
+  } else if (
+    config.defaultLocale !== undefined &&
+    (config.locales === undefined || !(config.defaultLocale in config.locales))
+  ) {
+    invalid(
+      diagnostics,
+      `defaultLocale must match a key in locales; received "${config.defaultLocale}".`,
+    );
+  }
+
   const sources = config.content?.sources ?? [];
   for (const [index, source] of sources.entries()) {
     const variants = ["file", "glob", "package"].filter((key) => key in source);
@@ -216,6 +281,10 @@ export function normalizeDocsConfig(
   return {
     site: { ...config.site },
     head: [...(config.head ?? [])],
+    ...(config.editLink ? { editLink: { ...config.editLink } } : {}),
+    lastUpdated: config.lastUpdated ?? false,
+    ...(config.locales ? { locales: { ...config.locales } } : {}),
+    ...(config.defaultLocale ? { defaultLocale: config.defaultLocale } : {}),
     content: {
       allowOutsideRoot: false,
       localizeRepositoryLinks: false,
@@ -264,7 +333,9 @@ export type {
   ContentConfig,
   DocsConfig,
   DocsSource,
+  EditLinkConfig,
   HeadConfig,
+  LocaleConfig,
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,

@@ -10,6 +10,7 @@
       "additionalProperties": false,
       "properties": {
         "title": { "type": "string" },
+        "version": { "type": "string" },
         "description": { "type": "string" },
         "url": { "type": "string", "format": "uri" },
         "repository": { "type": "string", "format": "uri" }
@@ -31,6 +32,18 @@
         }
       }
     },
+    "editLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseUrl"],
+      "properties": { "baseUrl": { "type": "string", "format": "uri" } }
+    },
+    "lastUpdated": { "type": "boolean", "default": false },
+    "locales": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/locale" }
+    },
+    "defaultLocale": { "type": "string" },
     "content": {
       "type": "object",
       "additionalProperties": false,
@@ -125,6 +138,16 @@
     "build": { "type": "object" }
   },
   "$defs": {
+    "locale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": { "type": "string" },
+        "lang": { "type": "string" },
+        "dir": { "enum": ["ltr", "rtl"] }
+      }
+    },
     "navigationItem": {
       "oneOf": [
         { "type": "string" },

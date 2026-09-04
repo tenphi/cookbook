@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { execFile } from "node:child_process";
 import { readFile, stat } from "node:fs/promises";
 import {
   basename,
@@ -10,6 +11,7 @@ import {
   sep,
 } from "node:path";
 import matter from "gray-matter";
+import { promisify } from "node:util";
 import type { Image, Link, Root } from "mdast";
 import { glob } from "tinyglobby";
 import { visit } from "unist-util-visit";
@@ -53,6 +55,7 @@ interface CollectedSource {
 }
 
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
+const execFileAsync = promisify(execFile);
 const FRONTMATTER_KEYS = new Set([
   "title",
   "description",
@@ -61,6 +64,9 @@ const FRONTMATTER_KEYS = new Set([
   "sidebar",
   "toc",
   "editUrl",
+  "template",
+  "hero",
+  "lastUpdated",
   "prev",
   "next",
   "search",
@@ -324,6 +330,7 @@ async function readEntry(
     titleFromFile(source.sourcePath);
   const description =
     frontmatter.description ?? source.description ?? parsed.description;
+  await resolvePageMetadata(frontmatter, source, config);
   const duplicateTitles = new Map<string, number>();
   for (const heading of parsed.headings) {
     const count = (duplicateTitles.get(heading.text) ?? 0) + 1;
@@ -364,6 +371,39 @@ async function readEntry(
         }
       : {}),
   };
+}
+
+async function resolvePageMetadata(
+  frontmatter: DocsFrontmatter,
+  source: CollectedSource,
+  config: NormalizedDocsConfig,
+): Promise<void> {
+  if (frontmatter.editUrl === undefined && config.editLink) {
+    const baseUrl = config.editLink.baseUrl.endsWith("/")
+      ? config.editLink.baseUrl
+      : `${config.editLink.baseUrl}/`;
+    frontmatter.editUrl = `${baseUrl}${source.sourcePath.replace(/^\/+/, "")}`;
+  }
+
+  if (frontmatter.lastUpdated === false) return;
+  if (frontmatter.lastUpdated === undefined && config.lastUpdated === false) {
+    return;
+  }
+  if (frontmatter.lastUpdated instanceof Date) return;
+
+  try {
+    const { stdout } = await execFileAsync(
+      "git",
+      ["log", "-1", "--format=%ct", "--", source.absolutePath],
+      { cwd: source.sourceRoot },
+    );
+    const timestamp = Number(stdout.trim());
+    if (Number.isFinite(timestamp) && timestamp > 0) {
+      frontmatter.lastUpdated = new Date(timestamp * 1000);
+    }
+  } catch {
+    // Sources can come from npm caches or directories without Git history.
+  }
 }
 
 async function transformEntry(

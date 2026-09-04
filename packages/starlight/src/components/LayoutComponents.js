@@ -36,6 +36,7 @@ export const PackageVersionRoot = customizeComponent(
     as: "span",
     styles: {
       display: "inline-flex",
+      hide: { "": false, "@compact": true },
       alignItems: "center",
       flexShrink: "0",
       minBlockSize: "1.5rem",
@@ -162,10 +163,13 @@ export const StarlightHeaderRoot = customizeComponent(
       },
       SiteTitle: {
         $: ".site-title",
+        minInlineSize: "0",
+        overflow: "hidden",
         color: "#text",
         preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
         textDecoration: "none",
         whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
       },
       Search: {
         $: ".td-header__search",

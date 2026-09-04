@@ -1,0 +1,7 @@
+---
+import { addHeadingPermalinks } from "../markdown/rendered-content.js";
+
+const content = addHeadingPermalinks(await Astro.slots.render("default"));
+---
+
+<div class="sl-markdown-content" set:html={content} />

@@ -62,6 +62,49 @@ string `content`. Cookbook renders these entries directly as HTML elements;
 they do not pass through Astro's script or style processing. Use a `Head`
 component override when a local asset needs Astro processing.
 
+## Page metadata
+
+Enable source-aware edit links and Git timestamps for the page footer:
+
+```ts
+editLink: {
+  baseUrl: "https://github.com/example/project/edit/main/"
+},
+lastUpdated: true,
+```
+
+Cookbook joins `editLink.baseUrl` with each original repository-relative source
+path, not a generated content-collection path. Set `editUrl: false` or
+`lastUpdated: false` in a page's frontmatter to opt that page out; a string
+`editUrl` or date-valued `lastUpdated` overrides the generated value. Package
+sources show a timestamp only when their materialized file has Git history or
+the page supplies one explicitly.
+
+These settings intentionally mirror Starlight's
+[`editLink`](https://starlight.astro.build/reference/configuration/#editlink)
+and
+[`lastUpdated`](https://starlight.astro.build/reference/configuration/#lastupdated)
+configuration while preserving Cookbook's original source paths.
+
+## Languages
+
+Expose Starlight's multilingual routing and language picker directly:
+
+```ts
+locales: {
+  root: { label: "English", lang: "en" },
+  fr: { label: "Français", lang: "fr" },
+  ar: { label: "العربية", lang: "ar", dir: "rtl" }
+},
+defaultLocale: "root",
+```
+
+Locale keys other than `root` are URL prefixes. A source routed to `/fr/guide`
+is the French counterpart of `/guide`; `defaultLocale` provides fallback
+content when a translated route is missing. See Starlight's
+[internationalization guide](https://starlight.astro.build/guides/i18n/) for
+the shared routing and fallback behavior.
+
 ## Content
 
 ```ts

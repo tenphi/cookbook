@@ -34,6 +34,10 @@ import {
   rehypeTableScroll,
   satteriTableScroll,
 } from "./markdown/rehype-table-scroll.js";
+import {
+  rehypePageAffordances,
+  satteriPageAffordances,
+} from "./markdown/rehype-page-affordances.js";
 import { resolveDocsTheme } from "./theme/index.js";
 import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
@@ -95,6 +99,9 @@ export default function cookbook(
   const mobileMenuTogglePath = fileURLToPath(
     new URL("./overrides/MobileMenuToggle.astro", import.meta.url),
   );
+  const markdownContentPath = fileURLToPath(
+    new URL("./overrides/MarkdownContent.astro", import.meta.url),
+  );
   const themeSelectPath = fileURLToPath(
     new URL("./overrides/ThemeSelect.astro", import.meta.url),
   );
@@ -102,6 +109,7 @@ export default function cookbook(
     {
       Footer: footerPath,
       Header: headerPath,
+      MarkdownContent: markdownContentPath,
       Sidebar: sidebarPath,
       MobileMenuFooter: mobileMenuFooterPath,
       MobileMenuToggle: mobileMenuTogglePath,
@@ -162,6 +170,18 @@ export default function cookbook(
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
           ...(options.config?.head ? { head: options.config.head } : {}),
+          ...(options.config?.editLink
+            ? { editLink: options.config.editLink }
+            : {}),
+          ...(options.config?.lastUpdated !== undefined
+            ? { lastUpdated: options.config.lastUpdated }
+            : {}),
+          ...(options.config?.locales
+            ? { locales: options.config.locales }
+            : {}),
+          ...(options.config?.defaultLocale
+            ? { defaultLocale: options.config.defaultLocale }
+            : {}),
           ...(options.config?.site?.description
             ? { description: options.config.site.description }
             : {}),
@@ -439,6 +459,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
     if (!plugins.includes(rehypeTableScroll)) plugins.push(rehypeTableScroll);
+    if (!plugins.includes(rehypePageAffordances))
+      plugins.push(rehypePageAffordances);
     options.rehypePlugins = plugins;
   } else if (processor.name === "satteri") {
     const options = processor.options as { hastPlugins?: unknown };
@@ -447,6 +469,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
     if (!plugins.includes(satteriTableScroll)) plugins.push(satteriTableScroll);
+    if (!plugins.includes(satteriPageAffordances))
+      plugins.push(satteriPageAffordances);
     options.hastPlugins = plugins;
   }
 }

@@ -3,8 +3,10 @@ import jetBrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbra
 import onestLatin from "@fontsource-variable/onest/files/onest-latin-wght-normal.woff2?url";
 import arrowLeftIcon from "../icons/arrow-left.svg?raw";
 import arrowRightIcon from "../icons/arrow-right.svg?raw";
+import checkIcon from "../icons/check.svg?raw";
 import chevronRightIcon from "../icons/chevron-right.svg?raw";
 import closeIcon from "../icons/close.svg?raw";
+import copyIcon from "../icons/copy.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
 import { resolveComponentStyles } from "./component-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
@@ -530,6 +532,116 @@ export default function GlobalStyles() {
     preset: "h1",
   });
 
+  useGlobalStyles(
+    ".hero",
+    resolveComponentStyles("Hero", {
+      display: "grid",
+      gridTemplateColumns: {
+        "": "minmax(0, 7fr) minmax(12rem, 4fr)",
+        "@mobile": "minmax(0, 1fr)",
+      },
+      alignItems: "center",
+      gap: "clamp(2rem, 5vw, 5rem)",
+      paddingBlockStart: {
+        "": "clamp(3rem, 8vw, 7rem)",
+        "@mobile": "($gap * 4)",
+      },
+      paddingBlockEnd: "clamp(2rem, 6vw, 5rem)",
+      Visual: {
+        $: "> img, > .hero-html",
+        order: { "": "2", "@mobile": "0" },
+        display: "grid",
+        placeItems: "center",
+        inlineSize: "min(100%, 22rem)",
+        marginInlineStart: "auto",
+        marginInlineEnd: "auto",
+        color: "#accent-surface",
+      },
+      Stack: {
+        $: "> .stack",
+        display: "flex",
+        flow: "column",
+        alignItems: { "": "flex-start", "@mobile": "center" },
+        gap: "clamp(1.5rem, 3vw, 2rem)",
+        textAlign: { "": "start", "@mobile": "center" },
+      },
+      Copy: {
+        $: "> .stack > .copy",
+        display: "flex",
+        flow: "column",
+        alignItems: "inherit",
+        gap: "($gap * 2)",
+      },
+      Title: {
+        $: "h1",
+        maxInlineSize: "16ch",
+        margin: "0",
+        color: "#text",
+        preset: "h1",
+        fontSize: "clamp(2.75rem, 7vw, 4.75rem)",
+        textWrap: "balance",
+      },
+      Tagline: {
+        $: ".tagline",
+        maxInlineSize: "48ch",
+        color: "#text-soft",
+        fontSize: "clamp(1.05rem, 2.5vw, 1.35rem)",
+        lineHeight: "1.55",
+        textWrap: "balance",
+      },
+      Actions: {
+        $: ".actions",
+        display: "flex",
+        flow: "row wrap",
+        justifyContent: { "": "flex-start", "@mobile": "center" },
+        gap: "($gap * 1.5)",
+      },
+      Action: {
+        $: ".sl-link-button",
+        display: "inline-flex",
+        alignItems: "center",
+        minBlockSize: "$control-height",
+        padding: "($gap * 1.25) ($gap * 2.5)",
+        gap: "$gap",
+        color: "#text",
+        border: true,
+        radius: "999px",
+        fill: "#surface-2",
+        preset: "navigation / strong",
+        textDecoration: "none",
+        transition: "fill 120ms ease, translate 120ms ease",
+      },
+      HoverAction: {
+        $: ".sl-link-button:hover",
+        fill: "#surface-2-hover",
+        translate: "0 -1px",
+      },
+      PrimaryAction: {
+        $: ".sl-link-button.primary",
+        color: "#accent-surface-text",
+        borderColor: "#accent-surface",
+        fill: "#accent-surface",
+      },
+      SecondaryAction: {
+        $: ".sl-link-button.secondary",
+        color: "#accent-text",
+        borderColor: "#border-strong",
+      },
+      MinimalAction: {
+        $: ".sl-link-button.minimal",
+        paddingInlineStart: "0",
+        paddingInlineEnd: "0",
+        color: "#accent-text",
+        border: "0",
+        fill: "#clear",
+      },
+      ActionIcon: {
+        $: ".sl-link-button svg",
+        flexShrink: "0",
+      },
+    }),
+  );
+
   useGlobalStyles("main > .content-panel:first-of-type", {
     paddingBlockStart: "($gap * 3)",
     paddingBlockEnd: "($gap * 2)",
@@ -611,15 +723,80 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(".sl-markdown-content pre:not(:where(.not-content *))", {
-    padding: "0.875rem 1rem",
-    overflowX: "auto",
-    color: "#syntax-text",
-    border: true,
-    fill: "#syntax-bg",
-    radius: "$card-radius",
-    tabSize: "2",
-  });
+  useGlobalStyles(
+    ".sl-markdown-content .td-code-block",
+    resolveComponentStyles("MarkdownCodeBlock", {
+      position: "relative",
+      minInlineSize: "0",
+      Pre: {
+        $: "> pre",
+        margin: "0",
+        padding: "0.875rem 3.75rem 0.875rem 1rem",
+        overflowX: "auto",
+        color: "#syntax-text",
+        border: true,
+        fill: "#syntax-bg",
+        radius: "$card-radius",
+        tabSize: "2",
+      },
+      CopyButton: {
+        $: "> [data-copy-code]",
+        position: "absolute",
+        zIndex: "1",
+        insetBlockStart: "$gap",
+        insetInlineEnd: "$gap",
+        display: "grid",
+        placeItems: "center",
+        inlineSize: "2rem",
+        minInlineSize: "2rem",
+        blockSize: "2rem",
+        minBlockSize: "2rem",
+        padding: "0",
+        color: "#text-soft",
+        border: true,
+        fill: "#surface-2",
+        radius: "$radius",
+        preset: "small / strong",
+        cursor: "pointer",
+        transition: "color 120ms ease, fill 120ms ease",
+      },
+      HoverCopyButton: {
+        $: "> [data-copy-code]:hover",
+        color: "#text",
+        fill: "#surface-2-hover",
+      },
+      CopiedButton: {
+        $: '> [data-copy-code][data-copy-state="copied"]',
+        color: "#green-text",
+        borderColor: "#green",
+      },
+      CopyIcon: {
+        $: "> [data-copy-code] > [data-copy-icon]",
+        display: "block",
+        inlineSize: "1rem",
+        blockSize: "1rem",
+        fill: "#current",
+        mask: `url("${svgIconUrl(copyIcon)}") center / contain no-repeat`,
+      },
+      CopiedIcon: {
+        $: '> [data-copy-code][data-copy-state="copied"] > [data-copy-icon]',
+        mask: `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
+      },
+    }),
+  );
+
+  useGlobalStyles(
+    '.sl-markdown-content pre[data-language="mermaid"]:not(:where(.not-content *))',
+    {
+      padding: "0.875rem 1rem",
+      overflowX: "auto",
+      color: "#syntax-text",
+      border: true,
+      fill: "#syntax-bg",
+      radius: "$card-radius",
+      tabSize: "2",
+    },
+  );
 
   useGlobalStyles(".sl-markdown-content pre code", {
     padding: "0",
@@ -767,57 +944,34 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper", {
-    preset: "heading",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h1", {
-    preset: "h1",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h2", {
-    preset: "h2",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h3", {
-    preset: "h3",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h4", {
-    preset: "h4",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h5", {
-    preset: "h5",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h6", {
-    preset: "h6",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-heading-wrapper > :first-child", {
-    display: "inline",
-    paddingInlineEnd: "1.1em",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-anchor-link", {
-    position: "relative",
-    display: "inline-flex",
-    marginInlineStart: "-0.85em",
-    color: "#text-muted",
-    userSelect: "none",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-anchor-link:hover", {
-    color: "#accent-text",
-  });
-
-  useGlobalStyles(".sl-markdown-content .sl-anchor-icon > svg", {
-    display: "inline",
-    inlineSize: "0.8275em",
-    verticalAlign: "middle",
-  });
+  useGlobalStyles(
+    ".sl-markdown-content .sl-heading-wrapper",
+    resolveComponentStyles("MarkdownHeading", {
+      preset: "heading",
+      Heading: {
+        $: "> :first-child",
+        display: "inline",
+        paddingInlineEnd: "0.35em",
+      },
+      Heading1: { $: "&.level-h1", preset: "h1" },
+      Heading2: { $: "&.level-h2", preset: "h2" },
+      Heading3: { $: "&.level-h3", preset: "h3" },
+      Heading4: { $: "&.level-h4", preset: "h4" },
+      Heading5: { $: "&.level-h5", preset: "h5" },
+      Heading6: { $: "&.level-h6", preset: "h6" },
+      Link: {
+        $: "> .sl-anchor-link",
+        display: "inline-flex",
+        color: "#text-muted",
+        userSelect: "none",
+        textDecoration: "none",
+      },
+      HoverLink: {
+        $: "> .sl-anchor-link:hover",
+        color: "#accent-text",
+      },
+    }),
+  );
 
   useGlobalStyles(".starlight-aside", {
     padding: "($gap * 2) ($gap * 2.5)",
@@ -1043,29 +1197,52 @@ export default function GlobalStyles() {
     preset: "h5 / strong",
   });
 
-  useGlobalStyles("starlight-lang-select label", {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    gap: "($gap * 0.5)",
-    color: "#text-soft",
-  });
-
-  useGlobalStyles("starlight-lang-select label:hover", {
-    color: "#text",
-  });
-
-  useGlobalStyles("starlight-lang-select select", {
-    color: "#text-soft",
-    border: "0",
-    fill: "#clear",
-    cursor: "pointer",
-  });
-
-  useGlobalStyles("starlight-lang-select option", {
-    color: "#text",
-    fill: "#surface-2",
-  });
+  useGlobalStyles(
+    "starlight-lang-select",
+    resolveComponentStyles("LanguageSelect", {
+      display: "block",
+      Label: {
+        $: "label",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        color: "#text-soft",
+      },
+      HoverLabel: { $: "label:hover", color: "#text" },
+      LabelIcon: {
+        $: ".label-icon",
+        position: "absolute",
+        zIndex: "1",
+        insetInlineStart: "$gap",
+        pointerEvents: "none",
+      },
+      Select: {
+        $: "select",
+        appearance: "none",
+        inlineSize: "8rem",
+        minBlockSize: "$control-height",
+        paddingInlineStart: "($gap * 3.5)",
+        paddingInlineEnd: "($gap * 3.5)",
+        color: "#text-soft",
+        border: "0",
+        fill: "#clear",
+        preset: "small",
+        cursor: "pointer",
+        textOverflow: "ellipsis",
+      },
+      Caret: {
+        $: ".caret",
+        position: "absolute",
+        insetInlineEnd: "$gap",
+        pointerEvents: "none",
+      },
+      Option: {
+        $: "option",
+        color: "#text",
+        fill: "#surface-2",
+      },
+    }),
+  );
 
   useGlobalStyles(".td-header__social a, .td-mobile-preferences__social a", {
     color: "#accent-text",
