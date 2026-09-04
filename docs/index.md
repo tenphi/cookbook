@@ -6,10 +6,10 @@ sidebar:
 ---
 
 Cookbook turns repository Markdown or the documentation shipped in an npm
-package into a complete static website. It combines Astro and Starlight with a
-theme powered by [Tasty](https://tasty.style) and
-[Glaze](https://glaze.tenphi.me), strict content validation, and local Pagefind
-search.
+package into a complete static website. It combines [Astro](https://astro.build)
+and [Starlight](https://starlight.astro.build) with a theme powered by
+[Tasty](https://tasty.style) and [Glaze](https://glaze.tenphi.me), strict
+content validation, and local Pagefind search.
 
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="cookbook-logo-title cookbook-logo-description" style="color: var(--accent-surface-color)">
   <title id="cookbook-logo-title">Cookbook</title>
