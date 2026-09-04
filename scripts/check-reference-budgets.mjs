@@ -28,10 +28,11 @@ for (const name of entries) {
     sharedCssPath = join(assets, name);
   }
 }
-// Semantic typography is emitted through complete Tasty presets so every
-// configured preset field reaches its element, rather than being manually
-// cherry-picked in GlobalStyles.
-const cssBudget = 124 * 1024;
+// Semantic typography and the owned Starlight affordances are emitted through
+// complete Tasty style trees so every configured field and sub-element reaches
+// its target, rather than being manually cherry-picked in GlobalStyles. Tasty
+// 3.8 also emits typed custom-property registrations for configured tokens.
+const cssBudget = 140 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -115,6 +116,40 @@ for (const [selector, label] of [
   }
 }
 const home = await readFile(join(output, "index.html"), "utf8");
+for (const [pattern, label] of [
+  [
+    /<link\b(?=[^>]*rel="icon")(?=[^>]*sizes="32x32")(?=[^>]*href="\/_cookbook\/icons\/favicon-32x32\.png")[^>]*>/,
+    "32×32 favicon",
+  ],
+  [
+    /<link\b(?=[^>]*rel="apple-touch-icon")(?=[^>]*sizes="180x180")(?=[^>]*href="\/_cookbook\/icons\/apple-touch-icon\.png")[^>]*>/,
+    "Apple touch icon",
+  ],
+  [
+    /<link\b(?=[^>]*rel="manifest")(?=[^>]*href="\/_cookbook\/icons\/site\.webmanifest")[^>]*>/,
+    "web app manifest",
+  ],
+  [
+    /<meta\b(?=[^>]*name="theme-color")(?=[^>]*media="\(prefers-color-scheme: dark\)")[^>]*>/,
+    "dark-scheme theme color",
+  ],
+]) {
+  if (!pattern.test(home)) {
+    throw new Error(`The generated ${label} metadata is missing.`);
+  }
+}
+for (const icon of [
+  "favicon-32x32.png",
+  "apple-touch-icon.png",
+  "icon-192x192.png",
+  "icon-512x512.png",
+  "icon-192x192-maskable.png",
+  "icon-512x512-maskable.png",
+  "favicon.svg",
+  "site.webmanifest",
+]) {
+  await stat(join(output, "_cookbook", "icons", icon));
+}
 if (
   !/<script\b(?=[^>]*\bdefer(?:\s|>))(?=[^>]*\bsrc="https:\/\/umami\.tenphi\.me\/script\.js")(?=[^>]*\bdata-website-id="084ca820-b3e3-440d-bf91-c246cf60da48")[^>]*><\/script>/.test(
     home,

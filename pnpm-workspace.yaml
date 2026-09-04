@@ -10,7 +10,7 @@ minimumReleaseAgeExclude:
   - astro@7.2.9
   - "@astrojs/starlight@0.41.10"
   - "@astrojs/language-server@2.16.15"
-  - "@tenphi/tasty@3.6.0"
+  - "@tenphi/tasty@3.8.0"
   - "@tenphi/glaze@2.0.0"
   - typescript@7.0.2
   - sharp@0.35.4
@@ -38,7 +38,7 @@ minimumReleaseAgeExclude:
 catalog:
   astro: ^7.2.9
   "@astrojs/starlight": ^0.41.10
-  "@tenphi/tasty": 3.6.0
+  "@tenphi/tasty": 3.8.0
   "@tenphi/glaze": 2.0.0
   typescript: ^7.0.2
   vitest: ^4.1.11

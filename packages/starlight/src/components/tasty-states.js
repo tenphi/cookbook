@@ -4,6 +4,7 @@ export const cookbookStates = {
   "@mobile": "@media(w < 50rem)",
   "@desktop": "@media(w >= 50rem)",
   "@small": "@media(w <= 40rem)",
+  "@compact": "@media(w <= 23rem)",
   "@shell-mobile": "@media(w <= 48rem)",
   "@shell-desktop": "@media(w > 48rem)",
   "@narrow-layout": "@media(w < 72rem)",

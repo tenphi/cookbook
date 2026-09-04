@@ -28,7 +28,8 @@ site: {
   version: "1.2.3",
   description: "Documentation for Example Project",
   url: "https://docs.example.com",
-  repository: "https://github.com/example/project"
+  repository: "https://github.com/example/project",
+  favicon: "./assets/brand.svg"
 }
 ```
 
@@ -38,6 +39,42 @@ field for local or multi-package documentation. Read it from the package
 manifest when possible so it remains current. `url` is the canonical deployed
 origin. Set Astro's `site` value too when the host needs absolute canonical URLs
 or sitemap metadata.
+
+### Site icons
+
+Cookbook ships its book mark as the default favicon. Set `site.favicon` to a
+local SVG, PNG, JPEG, WebP, AVIF, or GIF when the documentation should use the
+project's own artwork:
+
+```ts
+site: {
+  title: "Example Project",
+  favicon: {
+    source: "./assets/brand.svg",
+    background: "#315efb"
+  }
+}
+```
+
+Paths are resolved from the project root. The string shorthand sets only the
+source, as in `favicon: "./assets/brand.svg"`. `background` controls the opaque
+canvas used for the Apple touch icon and maskable application icons; it defaults
+to Cookbook blue.
+
+At development and build time, Cookbook creates a scalable favicon when the
+source is SVG, a 32×32 PNG fallback, a 180×180 Apple touch icon, 192×192 and
+512×512 application icons, safe-zone maskable variants, and a web app manifest.
+It also emits modern `rel="icon"`, `rel="apple-touch-icon"`, and
+`rel="manifest"` links plus light and dark `theme-color` metadata. Generated
+files live under `/_cookbook/icons/`, respect `build.base`, and do not modify the
+project's `public/` directory. The maskable variants render the source artwork
+at 80% of the canvas on the configured opaque background.
+
+These outputs follow current browser guidance for
+[multiple icon formats and sizes](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Define_app_icons),
+[manifest icon purposes](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons),
+and the
+[180×180 Apple touch icon](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html).
 
 ## Head
 
@@ -61,6 +98,49 @@ Each entry accepts a `tag`, optional string or boolean `attrs`, and optional
 string `content`. Cookbook renders these entries directly as HTML elements;
 they do not pass through Astro's script or style processing. Use a `Head`
 component override when a local asset needs Astro processing.
+
+## Page metadata
+
+Enable source-aware edit links and Git timestamps for the page footer:
+
+```ts
+editLink: {
+  baseUrl: "https://github.com/example/project/edit/main/"
+},
+lastUpdated: true,
+```
+
+Cookbook joins `editLink.baseUrl` with each original repository-relative source
+path, not a generated content-collection path. Set `editUrl: false` or
+`lastUpdated: false` in a page's frontmatter to opt that page out; a string
+`editUrl` or date-valued `lastUpdated` overrides the generated value. Package
+sources show a timestamp only when their materialized file has Git history or
+the page supplies one explicitly.
+
+These settings intentionally mirror Starlight's
+[`editLink`](https://starlight.astro.build/reference/configuration/#editlink)
+and
+[`lastUpdated`](https://starlight.astro.build/reference/configuration/#lastupdated)
+configuration while preserving Cookbook's original source paths.
+
+## Languages
+
+Expose Starlight's multilingual routing and language picker directly:
+
+```ts
+locales: {
+  root: { label: "English", lang: "en" },
+  fr: { label: "Français", lang: "fr" },
+  ar: { label: "العربية", lang: "ar", dir: "rtl" }
+},
+defaultLocale: "root",
+```
+
+Locale keys other than `root` are URL prefixes. A source routed to `/fr/guide`
+is the French counterpart of `/guide`; `defaultLocale` provides fallback
+content when a translated route is missing. See Starlight's
+[internationalization guide](https://starlight.astro.build/guides/i18n/) for
+the shared routing and fallback behavior.
 
 ## Content
 

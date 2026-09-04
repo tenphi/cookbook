@@ -72,6 +72,7 @@ export default {
     "@mobile",
     "@desktop",
     "@small",
+    "@compact",
     "@shell-mobile",
     "@shell-desktop",
     "@narrow-layout",

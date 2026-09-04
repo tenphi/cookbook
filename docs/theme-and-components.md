@@ -10,9 +10,19 @@ brand input, then exposes the result through Tasty tokens and component
 anatomy.
 
 Use the [Glaze documentation](https://glaze.tenphi.me) to learn how palette
-inputs, color modes, and contrast targets are resolved. Use the
-[Tasty documentation](https://tasty.style) for the style properties, tokens,
-units, presets, and state maps accepted by `theme.styles`.
+inputs, color modes, and contrast targets are resolved. These Tasty references
+cover the configuration language accepted by `theme.styles`:
+
+- [Style DSL](https://tasty.style/docs/dsl) for state maps, tokens, units,
+  conditional selectors, and merge behavior.
+- [Style properties](https://tasty.style/docs/styles) for every enhanced CSS
+  property and its accepted syntax.
+- [Configuration](https://tasty.style/docs/configuration) for shared states,
+  tokens, units, recipes, and typography presets.
+- [Sub-element styling](https://tasty.style/docs/react-api#sub-element-styling)
+  for the component anatomy model used by Cookbook's named style trees.
+- [Tasty methodology](https://tasty.style/docs/methodology) for the design-system
+  patterns behind roots, sub-elements, and controlled overrides.
 
 ## Brand color
 
@@ -97,8 +107,10 @@ adaptive link color in dark mode.
 
 ## Design tokens
 
-Token names follow Tasty conventions: `$name` becomes the CSS custom property
-`--name`. Existing `--name` keys are still accepted for compatibility.
+Token names follow Tasty's
+[token and unit syntax](https://tasty.style/docs/dsl#built-in-units): `$name`
+becomes the CSS custom property `--name`. Existing `--name` keys are still
+accepted for compatibility.
 
 ```ts
 theme: {
@@ -125,11 +137,11 @@ without one-off component overrides.
 
 ## Typography presets
 
-The built-in presets are `body`, `heading`, `h1` through `h6`, `navigation`,
-`small`, and `code`. Onest is self-hosted and used for body and heading text by
-default; JetBrains Mono is self-hosted for code. Presets merge
-property-by-property, so changing a font does not require copying its size,
-weight, or line height:
+The built-in [typography presets](https://tasty.style/docs/styles#preset) are
+`body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`. Onest
+is self-hosted and used for body and heading text by default; JetBrains Mono is
+self-hosted for code. Presets merge property-by-property, so changing a font
+does not require copying its size, weight, or line height:
 
 ```ts
 theme: {
@@ -177,9 +189,11 @@ bridge. Customize either kind by name under `theme.styles`; the configuration
 is resolved before CSS generation, so this is not a selector-based CSS
 override.
 
-Provide only the root and named sub-element properties you want to override.
-Cookbook deep-merges that partial style object into the complete base style
-object inside the renderer:
+Provide only the root and named
+[sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
+override. Cookbook deep-merges that partial style object into the complete
+base style object inside the renderer, following Tasty's
+[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps):
 
 ```ts
 theme: {
@@ -222,7 +236,11 @@ sub-elements:
 | `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                         |
 | `ContrastSelect`        | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                           |
 | `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                              |
+| `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                        |
+| `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                             |
 | `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                               |
+| `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`                                                                                                                            |
+| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `HoverLink`                                                                                                      |
 | `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                            |
 | `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                               |
 | `MobileMenuFooter`      | `Social`                                                                                                                                                                                                    |
@@ -265,7 +283,10 @@ The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
 CSS during the build, while appearance controls add only the small client
 behavior needed to persist selected theme and contrast modes. The compact
-Cookbook logo is shown beside the project title in the default top bar.
+Cookbook logo is shown beside the project title in the default top bar and is
+also the default generated favicon. Use
+[`site.favicon`](./configuration.md#site-icons) to generate the complete icon
+set from project artwork.
 
 ## Diff snippets
 

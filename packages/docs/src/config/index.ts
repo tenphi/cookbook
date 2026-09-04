@@ -6,9 +6,14 @@ import type {
 
 const DEFAULT_BRAND = "#315efb";
 const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
+const SITE_ICON_KEYS = new Set(["source", "background"]);
 const ROOT_KEYS = new Set([
   "site",
   "head",
+  "editLink",
+  "lastUpdated",
+  "locales",
+  "defaultLocale",
   "content",
   "navigation",
   "theme",
@@ -19,7 +24,14 @@ const ROOT_KEYS = new Set([
 ]);
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
-  site: new Set(["title", "version", "description", "url", "repository"]),
+  site: new Set([
+    "title",
+    "version",
+    "description",
+    "url",
+    "repository",
+    "favicon",
+  ]),
   content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
   markdown: new Set([
     "stripLeadingBadges",
@@ -122,6 +134,100 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  const favicon = config.site?.favicon;
+  if (favicon !== undefined) {
+    if (typeof favicon === "string") {
+      if (favicon.trim() === "") {
+        invalid(diagnostics, "site.favicon must be a non-empty local path.");
+      }
+    } else if (!isRecord(favicon)) {
+      invalid(
+        diagnostics,
+        "site.favicon must be a local path or an object with a source path.",
+      );
+    } else {
+      for (const key of Object.keys(favicon)) {
+        if (!SITE_ICON_KEYS.has(key)) {
+          unknown(diagnostics, `site.favicon.${key}`);
+        }
+      }
+      if (typeof favicon.source !== "string" || favicon.source.trim() === "") {
+        invalid(diagnostics, "site.favicon.source must be a non-empty string.");
+      }
+      if (
+        favicon.background !== undefined &&
+        (typeof favicon.background !== "string" ||
+          favicon.background.trim() === "")
+      ) {
+        invalid(
+          diagnostics,
+          "site.favicon.background must be a non-empty color string.",
+        );
+      }
+    }
+  }
+
+  if (
+    config.editLink !== undefined &&
+    (!isRecord(config.editLink) || typeof config.editLink.baseUrl !== "string")
+  ) {
+    invalid(diagnostics, "editLink must contain a string baseUrl.");
+  } else if (config.editLink !== undefined) {
+    for (const key of Object.keys(config.editLink)) {
+      if (key !== "baseUrl") unknown(diagnostics, `editLink.${key}`);
+    }
+    try {
+      new URL(config.editLink.baseUrl);
+    } catch {
+      invalid(diagnostics, "editLink.baseUrl must be an absolute URL.");
+    }
+  }
+  if (
+    config.lastUpdated !== undefined &&
+    typeof config.lastUpdated !== "boolean"
+  ) {
+    invalid(diagnostics, "lastUpdated must be a boolean.");
+  }
+  if (config.locales !== undefined && !isRecord(config.locales)) {
+    invalid(diagnostics, "locales must be an object.");
+  } else {
+    for (const [key, locale] of Object.entries(config.locales ?? {})) {
+      if (!isRecord(locale) || typeof locale.label !== "string") {
+        invalid(diagnostics, `locales.${key} must contain a string label.`);
+        continue;
+      }
+      for (const property of Object.keys(locale)) {
+        if (!["label", "lang", "dir"].includes(property)) {
+          unknown(diagnostics, `locales.${key}.${property}`);
+        }
+      }
+      if (locale.lang !== undefined && typeof locale.lang !== "string") {
+        invalid(diagnostics, `locales.${key}.lang must be a string.`);
+      }
+      if (
+        locale.dir !== undefined &&
+        locale.dir !== "ltr" &&
+        locale.dir !== "rtl"
+      ) {
+        invalid(diagnostics, `locales.${key}.dir must be "ltr" or "rtl".`);
+      }
+    }
+  }
+  if (
+    config.defaultLocale !== undefined &&
+    typeof config.defaultLocale !== "string"
+  ) {
+    invalid(diagnostics, "defaultLocale must be a string.");
+  } else if (
+    config.defaultLocale !== undefined &&
+    (config.locales === undefined || !(config.defaultLocale in config.locales))
+  ) {
+    invalid(
+      diagnostics,
+      `defaultLocale must match a key in locales; received "${config.defaultLocale}".`,
+    );
+  }
+
   const sources = config.content?.sources ?? [];
   for (const [index, source] of sources.entries()) {
     const variants = ["file", "glob", "package"].filter((key) => key in source);
@@ -216,6 +322,10 @@ export function normalizeDocsConfig(
   return {
     site: { ...config.site },
     head: [...(config.head ?? [])],
+    ...(config.editLink ? { editLink: { ...config.editLink } } : {}),
+    lastUpdated: config.lastUpdated ?? false,
+    ...(config.locales ? { locales: { ...config.locales } } : {}),
+    ...(config.defaultLocale ? { defaultLocale: config.defaultLocale } : {}),
     content: {
       allowOutsideRoot: false,
       localizeRepositoryLinks: false,
@@ -264,7 +374,9 @@ export type {
   ContentConfig,
   DocsConfig,
   DocsSource,
+  EditLinkConfig,
   HeadConfig,
+  LocaleConfig,
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,
@@ -272,6 +384,7 @@ export type {
   NormalizedDocsConfig,
   SearchConfig,
   SiteConfig,
+  SiteIconConfig,
   ThemeConfig,
   ThemePaletteConfig,
   ThemeTokens,

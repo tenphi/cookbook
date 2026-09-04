@@ -6,6 +6,9 @@ const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
 ) as {
   properties: {
+    site: {
+      properties: { favicon: { oneOf?: unknown[] } };
+    };
     navigation: { oneOf?: unknown[] };
     head: { items: { required?: string[] } };
     components: {
@@ -13,6 +16,8 @@ const schema = JSON.parse(
         overrides: { properties: { Footer: { oneOf?: unknown[] } } };
       };
     };
+    locales: { additionalProperties?: { $ref?: string } };
+    lastUpdated: { default?: boolean };
     theme: {
       properties: {
         styles: {
@@ -39,10 +44,35 @@ describe("docs configuration", () => {
 
   it("preserves documented package metadata", () => {
     const config = normalizeDocsConfig({
-      site: { title: "Example", version: "1.2.3" },
+      site: {
+        title: "Example",
+        version: "1.2.3",
+        favicon: { source: "./logo.svg", background: "#123456" },
+      },
     });
 
-    expect(config.site).toMatchObject({ title: "Example", version: "1.2.3" });
+    expect(config.site).toMatchObject({
+      title: "Example",
+      version: "1.2.3",
+      favicon: { source: "./logo.svg", background: "#123456" },
+    });
+    expect(schema.properties.site.properties.favicon.oneOf).toHaveLength(2);
+  });
+
+  it("rejects malformed site icon configuration", () => {
+    expect(() => normalizeDocsConfig({ site: { favicon: "" } })).toThrow(
+      /non-empty local path/,
+    );
+    expect(() =>
+      normalizeDocsConfig({
+        site: { favicon: { source: "", typo: true } },
+      } as never),
+    ).toThrow(/site\.favicon/);
+    expect(() =>
+      normalizeDocsConfig({
+        site: { favicon: { source: "./logo.svg", background: 123 } },
+      } as never),
+    ).toThrow(/background must be a non-empty color string/);
   });
 
   it("preserves custom head elements", () => {
@@ -59,6 +89,43 @@ describe("docs configuration", () => {
 
     expect(normalizeDocsConfig({ head }).head).toEqual(head);
     expect(schema.properties.head.items.required).toContain("tag");
+  });
+
+  it("preserves source metadata and multilingual configuration", () => {
+    const config = normalizeDocsConfig({
+      editLink: {
+        baseUrl: "https://github.com/example/project/edit/main/",
+      },
+      lastUpdated: true,
+      locales: {
+        root: { label: "English", lang: "en" },
+        ar: { label: "العربية", dir: "rtl" },
+      },
+      defaultLocale: "root",
+    });
+
+    expect(config.editLink?.baseUrl).toContain("/edit/main/");
+    expect(config.lastUpdated).toBe(true);
+    expect(config.locales?.ar?.dir).toBe("rtl");
+    expect(config.defaultLocale).toBe("root");
+    expect(schema.properties.lastUpdated.default).toBe(false);
+    expect(schema.properties.locales.additionalProperties?.$ref).toBe(
+      "#/$defs/locale",
+    );
+  });
+
+  it("rejects invalid multilingual configuration", () => {
+    expect(() =>
+      normalizeDocsConfig({
+        locales: { en: { label: "English" } },
+        defaultLocale: "fr",
+      }),
+    ).toThrow(/defaultLocale must match/);
+    expect(() =>
+      normalizeDocsConfig({
+        locales: { ar: { label: "العربية", dir: "sideways" } },
+      } as never),
+    ).toThrow(/must be "ltr" or "rtl"/);
   });
 
   it("rejects malformed custom head elements", () => {

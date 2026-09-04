@@ -19,6 +19,10 @@ export default defineDocsConfig({
       },
     },
   ],
+  editLink: {
+    baseUrl: "https://github.com/tenphi/cookbook/edit/main/",
+  },
+  lastUpdated: true,
   content: {
     sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }],
   },
@@ -38,6 +42,7 @@ export default defineDocsConfig({
                 label: "Customize",
                 items: [
                   "/configuration",
+                  "/starlight-comparison",
                   {
                     label: "Presentation",
                     items: ["/theme-and-components"],

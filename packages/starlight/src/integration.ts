@@ -34,6 +34,10 @@ import {
   rehypeTableScroll,
   satteriTableScroll,
 } from "./markdown/rehype-table-scroll.js";
+import {
+  rehypePageAffordances,
+  satteriPageAffordances,
+} from "./markdown/rehype-page-affordances.js";
 import { resolveDocsTheme } from "./theme/index.js";
 import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
@@ -43,6 +47,7 @@ import {
 } from "./components/component-styles.js";
 import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
+import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = dirname(packageRequire.resolve("@astrojs/starlight"));
@@ -95,6 +100,9 @@ export default function cookbook(
   const mobileMenuTogglePath = fileURLToPath(
     new URL("./overrides/MobileMenuToggle.astro", import.meta.url),
   );
+  const markdownContentPath = fileURLToPath(
+    new URL("./overrides/MarkdownContent.astro", import.meta.url),
+  );
   const themeSelectPath = fileURLToPath(
     new URL("./overrides/ThemeSelect.astro", import.meta.url),
   );
@@ -102,6 +110,7 @@ export default function cookbook(
     {
       Footer: footerPath,
       Header: headerPath,
+      MarkdownContent: markdownContentPath,
       Sidebar: sidebarPath,
       MobileMenuFooter: mobileMenuFooterPath,
       MobileMenuToggle: mobileMenuTogglePath,
@@ -111,7 +120,7 @@ export default function cookbook(
     emptyFooterPath,
   );
   const navigation = resolveNavigationLayout(options.config?.navigation);
-  // Tasty 3.6's integration shape is structurally compatible with Astro 7;
+  // Tasty 3.8's integration shape is structurally compatible with Astro 7;
   // its published helper type still models `site` as URL-only.
   const tasty = tastyIntegration({
     islands: false,
@@ -122,6 +131,8 @@ export default function cookbook(
   let graphConfig = options.config;
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let usingContentCollection = false;
+  let siteIconBase = options.config?.build?.base ?? "/";
+  let siteIcons: SiteIconSet | undefined;
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
@@ -132,6 +143,23 @@ export default function cookbook(
       assertValidDocs(graph);
     }
     return graph;
+  }
+
+  async function loadSiteIcons(): Promise<SiteIconSet> {
+    if (!projectRoot) {
+      throw new Error(
+        "Cookbook cannot generate site icons without a project root.",
+      );
+    }
+    return createSiteIcons({
+      base: siteIconBase,
+      root: projectRoot,
+      ...(options.config?.site ? { site: options.config.site } : {}),
+      themeColors: {
+        light: docsTheme.colors.surface.light ?? "#ffffff",
+        dark: docsTheme.colors.surface.dark ?? "#20232a",
+      },
+    });
   }
 
   return {
@@ -152,6 +180,8 @@ export default function cookbook(
         }
         projectRoot ??= fileURLToPath(context.config.root);
         const base = options.config?.build?.base ?? context.config.base;
+        siteIconBase = base;
+        siteIcons = await loadSiteIcons();
         graphConfig = {
           ...options.config,
           build: { ...options.config?.build, base },
@@ -161,7 +191,20 @@ export default function cookbook(
         const starlightIntegration = starlight({
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
-          ...(options.config?.head ? { head: options.config.head } : {}),
+          favicon: siteIcons.faviconPath,
+          head: [...siteIcons.head, ...(options.config?.head ?? [])],
+          ...(options.config?.editLink
+            ? { editLink: options.config.editLink }
+            : {}),
+          ...(options.config?.lastUpdated !== undefined
+            ? { lastUpdated: options.config.lastUpdated }
+            : {}),
+          ...(options.config?.locales
+            ? { locales: options.config.locales }
+            : {}),
+          ...(options.config?.defaultLocale
+            ? { defaultLocale: options.config.defaultLocale }
+            : {}),
           ...(options.config?.site?.description
             ? { description: options.config.site.description }
             : {}),
@@ -338,14 +381,37 @@ export default function cookbook(
       "astro:config:done": async (context) => {
         await callInner(inner, "astro:config:done", context);
       },
-      "astro:server:setup": async ({ server }) => {
+      "astro:server:setup": async ({ server, logger }) => {
         let assets = docsAssetMap(await loadGraph());
+        if (options.config?.site?.favicon && siteIcons) {
+          server.watcher.add(siteIcons.sourcePath);
+          server.watcher.on("change", async (changedPath) => {
+            if (changedPath !== siteIcons?.sourcePath) return;
+            try {
+              siteIcons = await loadSiteIcons();
+              server.ws.send({ type: "full-reload" });
+            } catch (error) {
+              logger.error(errorMessage(error));
+            }
+          });
+        }
         server.middlewares.use(async (request, response, next) => {
           if (request.method !== "GET" && request.method !== "HEAD") {
             next();
             return;
           }
           const pathname = requestPath(request.url);
+          const siteIcon = siteIcons?.assets.find(
+            (asset) => asset.publicPath === pathname,
+          );
+          if (siteIcon) {
+            response.statusCode = 200;
+            response.setHeader("Content-Type", siteIcon.contentType);
+            response.setHeader("Content-Length", siteIcon.body.byteLength);
+            response.setHeader("Cache-Control", "no-cache");
+            response.end(request.method === "HEAD" ? undefined : siteIcon.body);
+            return;
+          }
           if (!pathname.includes("/_tasty-assets/")) {
             next();
             return;
@@ -377,6 +443,7 @@ export default function cookbook(
         });
       },
       "astro:build:start": async (context) => {
+        siteIcons = await loadSiteIcons();
         await loadGraph();
         await callInner(inner, "astro:build:start", context);
       },
@@ -416,6 +483,11 @@ export default function cookbook(
             }
           }
         }
+        for (const asset of siteIcons?.assets ?? []) {
+          const target = join(output, asset.outputPath);
+          await mkdir(dirname(target), { recursive: true });
+          await writeFile(target, asset.body);
+        }
         if (!graph) return;
         for (const asset of graph.assets) {
           if (!asset.sourcePath || !asset.publicPath) continue;
@@ -439,6 +511,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
     if (!plugins.includes(rehypeTableScroll)) plugins.push(rehypeTableScroll);
+    if (!plugins.includes(rehypePageAffordances))
+      plugins.push(rehypePageAffordances);
     options.rehypePlugins = plugins;
   } else if (processor.name === "satteri") {
     const options = processor.options as { hastPlugins?: unknown };
@@ -447,6 +521,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
     if (!plugins.includes(satteriTableScroll)) plugins.push(satteriTableScroll);
+    if (!plugins.includes(satteriPageAffordances))
+      plugins.push(satteriPageAffordances);
     options.hastPlugins = plugins;
   }
 }
@@ -542,6 +618,10 @@ function assetContentType(pathname: string): string {
     default:
       return "application/octet-stream";
   }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function configureTastyTheme(
