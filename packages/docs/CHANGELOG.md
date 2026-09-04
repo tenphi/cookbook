@@ -1,5 +1,16 @@
 # @tenphi/docs
 
+## 0.11.0
+
+### Minor Changes
+
+- [#50](https://github.com/tenphi/cookbook/pull/50) [`66ab10c`](https://github.com/tenphi/cookbook/commit/66ab10cafc33d846a3f1fc46d04f0034223209af) Thanks [@tenphi](https://github.com/tenphi)! - Add Starlight-compatible edit links, Git last-updated metadata, multilingual
+  configuration, splash and hero frontmatter, visible heading permalinks, and
+  Tabler copy controls for ordinary code blocks. Improve the compact mobile
+  header and expose all new themed surfaces through `theme.styles`. Generate a
+  modern favicon, touch-icon, and web-app icon set by default, with custom source
+  artwork available through `site.favicon`. Upgrade the renderer to Tasty 3.8.0.
+
 ## 0.10.2
 
 ## 0.10.1
