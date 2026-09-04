@@ -135,11 +135,13 @@ weight, or line height:
 theme: {
   presets: {
     body: {
-      fontFamily: "Inter, system-ui, sans-serif"
+      fontFamily: "Inter, system-ui, sans-serif",
+      boldFontWeight: 680
     },
     heading: {
       fontFamily: "Newsreader, Georgia, serif",
-      fontWeight: 650
+      fontWeight: 650,
+      boldFontWeight: 740
     },
     h1: {
       fontSize: "3rem",
@@ -160,6 +162,9 @@ reserved modifier keyword, not a named preset; the modifier-only form is
 equivalent to `inherit / strong`. Default body tracking is neutral, while
 larger headings use progressively gentle negative tracking. Additional named
 presets are passed through to Tasty SSR for use in custom MDX components.
+Cookbook applies each semantic typography role through its complete Tasty
+`preset`, so configured fields such as `fontStyle` and `textTransform` are not
+silently omitted.
 
 The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
 are useful when building a theme editor or presenting a reset action.

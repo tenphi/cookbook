@@ -57,20 +57,23 @@ describe("typography global style architecture", () => {
     ["h4", "h4"],
     ["h5", "h5"],
     ["h6", "h6"],
-  ])(
-    "inherits the %s bold weight from its typography preset",
-    (selector, preset) => {
-      expect(source).toMatch(
-        new RegExp(
-          `useGlobalStyles\\("${escapeRegExp(selector)}", \\{[^}]*"\\$bold-font-weight": "\\$${preset}-bold-font-weight"`,
-        ),
-      );
-    },
-  );
+    [":where(code, kbd, samp, pre)", "code"],
+  ])("applies the %s typography through its preset", (selector, preset) => {
+    expect(source).toMatch(
+      new RegExp(
+        `useGlobalStyles\\("${escapeRegExp(selector)}", \\{[^}]*preset: "${preset}"`,
+      ),
+    );
+  });
 
   it("uses the inherited strong modifier for semantic bold text", () => {
     expect(source).toMatch(
       /useGlobalStyles\(":where\(strong, b\)", \{\s+preset: "strong",\s+\}\);/,
     );
+  });
+
+  it("does not wire preset internals through custom properties", () => {
+    expect(source).not.toContain('"$bold-font-weight"');
+    expect(source).not.toContain('fontWeight: "$body-bold-font-weight"');
   });
 });
