@@ -28,10 +28,10 @@ for (const name of entries) {
     sharedCssPath = join(assets, name);
   }
 }
-// Semantic typography is emitted through complete Tasty presets so every
-// configured preset field reaches its element, rather than being manually
-// cherry-picked in GlobalStyles.
-const cssBudget = 124 * 1024;
+// Semantic typography and the owned Starlight affordances are emitted through
+// complete Tasty style trees so every configured field and sub-element reaches
+// its target, rather than being manually cherry-picked in GlobalStyles.
+const cssBudget = 132 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
