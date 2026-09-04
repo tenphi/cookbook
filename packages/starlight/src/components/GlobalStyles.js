@@ -119,6 +119,11 @@ export default function GlobalStyles() {
     fontWeight: "$body-font-weight",
     lineHeight: "$body-line-height",
     letterSpacing: "$body-letter-spacing",
+    "$bold-font-weight": "$body-bold-font-weight",
+  });
+
+  useGlobalStyles(":where(strong, b)", {
+    preset: "strong",
   });
 
   useGlobalStyles("a", {
@@ -300,6 +305,7 @@ export default function GlobalStyles() {
     fontFamily: "$heading-font-family",
     fontWeight: "$heading-font-weight",
     letterSpacing: "$heading-letter-spacing",
+    "$bold-font-weight": "$heading-bold-font-weight",
     textWrap: "balance",
   });
 
@@ -307,36 +313,42 @@ export default function GlobalStyles() {
     fontSize: "$h1-font-size",
     lineHeight: "$h1-line-height",
     letterSpacing: "$h1-letter-spacing",
+    "$bold-font-weight": "$h1-bold-font-weight",
   });
 
   useGlobalStyles("h2", {
     fontSize: "$h2-font-size",
     lineHeight: "$h2-line-height",
     letterSpacing: "$h2-letter-spacing",
+    "$bold-font-weight": "$h2-bold-font-weight",
   });
 
   useGlobalStyles("h3", {
     fontSize: "$h3-font-size",
     lineHeight: "$h3-line-height",
     letterSpacing: "$h3-letter-spacing",
+    "$bold-font-weight": "$h3-bold-font-weight",
   });
 
   useGlobalStyles("h4", {
     fontSize: "$h4-font-size",
     lineHeight: "$h4-line-height",
     letterSpacing: "$h4-letter-spacing",
+    "$bold-font-weight": "$h4-bold-font-weight",
   });
 
   useGlobalStyles("h5", {
     fontSize: "$h5-font-size",
     lineHeight: "$h5-line-height",
     letterSpacing: "$h5-letter-spacing",
+    "$bold-font-weight": "$h5-bold-font-weight",
   });
 
   useGlobalStyles("h6", {
     fontSize: "$h6-font-size",
     lineHeight: "$h6-line-height",
     letterSpacing: "$h6-letter-spacing",
+    "$bold-font-weight": "$h6-bold-font-weight",
   });
 
   useGlobalStyles(":where(code, kbd, samp, pre)", {
