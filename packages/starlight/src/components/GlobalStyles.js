@@ -616,11 +616,17 @@ export default function GlobalStyles() {
     display: "block",
     inlineSize: "max-content",
     minInlineSize: "100%",
+    lineHeight: "0",
   });
 
   useGlobalStyles(".sl-markdown-content pre.td-diff .line", {
     display: "block",
     paddingInline: "1rem",
+    lineHeight: "$code-line-height",
+  });
+
+  useGlobalStyles(".sl-markdown-content pre.td-diff .line:empty::before", {
+    content: '"\\200b"',
   });
 
   useGlobalStyles(".sl-markdown-content pre.td-diff .td-diff-line--inserted", {
