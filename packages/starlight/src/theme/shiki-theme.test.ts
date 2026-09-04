@@ -28,26 +28,38 @@ describe("Cookbook Shiki theme", () => {
     );
   });
 
-  it("loads the embedded TSX grammar used by MDX", async () => {
-    const markdown = [
-      "```mdx",
-      'import { Card } from "@tenphi/cookbook/components";',
-      "",
-      '<Card title="Package-first">Text</Card>',
-      "```",
-    ].join("\n");
-    const { code } = await render(markdown);
+  it.each(["tsx", "mdx"])(
+    "maps TSX markup in %s fences to distinct semantic colors",
+    async (language) => {
+      const markdown = [
+        `\`\`\`${language}`,
+        'import { Card } from "@tenphi/cookbook/components";',
+        "",
+        '<Card title="Package-first">Text</Card>',
+        "```",
+      ].join("\n");
+      const { code } = await render(markdown);
 
-    expect(code).toContain(
-      '<span style="color:var(--syntax-keyword-color)">import</span>',
-    );
-    expect(code).toContain(
-      '<span style="color:var(--syntax-string-color)">@tenphi/cookbook/components</span>',
-    );
-    expect(code).toContain(
-      '<span style="color:var(--syntax-value-color)">title</span>',
-    );
-  });
+      expect(code).toContain(
+        '<span style="color:var(--syntax-keyword-color)">import</span>',
+      );
+      expect(code).toContain(
+        '<span style="color:var(--syntax-string-color)">@tenphi/cookbook/components</span>',
+      );
+      expect(code).toContain(
+        '<span style="color:var(--syntax-function-color)">Card</span>',
+      );
+      expect(code).toContain(
+        '<span style="color:var(--syntax-property-color)"> title</span>',
+      );
+      expect(code).toContain(
+        '<span style="color:var(--syntax-string-color)">Package-first</span>',
+      );
+      expect(code).toContain(
+        '<span style="color:var(--syntax-punctuation-color)">&#x3C;</span>',
+      );
+    },
+  );
 
   it("marks diff insertions and deletions without treating file headers as changes", async () => {
     const markdown = [

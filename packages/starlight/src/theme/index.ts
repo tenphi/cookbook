@@ -235,7 +235,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       base: "bg",
       contrast: { wcag: ["AA", "AAA"] },
       saturation: 80,
-      hue: 15,
+      hue: 40,
     },
     token: {
       base: "bg",
