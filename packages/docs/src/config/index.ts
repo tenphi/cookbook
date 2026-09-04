@@ -5,8 +5,10 @@ import type {
 } from "../types.js";
 
 const DEFAULT_BRAND = "#315efb";
+const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
 const ROOT_KEYS = new Set([
   "site",
+  "head",
   "content",
   "navigation",
   "theme",
@@ -78,6 +80,45 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
     for (const key of Object.keys(value)) {
       if (!keys.has(key)) unknown(diagnostics, `${section}.${key}`);
+    }
+  }
+
+  const head = config.head;
+  if (head !== undefined && !Array.isArray(head)) {
+    invalid(diagnostics, "head must be an array.");
+  } else {
+    for (const [index, entry] of (head ?? []).entries()) {
+      if (!isRecord(entry)) {
+        invalid(diagnostics, `head[${index}] must be an object.`);
+        continue;
+      }
+      for (const key of Object.keys(entry)) {
+        if (!HEAD_KEYS.has(key)) {
+          unknown(diagnostics, `head[${index}].${key}`);
+        }
+      }
+      if (typeof entry.tag !== "string") {
+        invalid(diagnostics, `head[${index}].tag must be a string.`);
+      }
+      if (entry.attrs !== undefined && !isRecord(entry.attrs)) {
+        invalid(diagnostics, `head[${index}].attrs must be an object.`);
+      } else {
+        for (const [name, value] of Object.entries(entry.attrs ?? {})) {
+          if (
+            value !== undefined &&
+            typeof value !== "string" &&
+            typeof value !== "boolean"
+          ) {
+            invalid(
+              diagnostics,
+              `head[${index}].attrs.${name} must be a string or boolean.`,
+            );
+          }
+        }
+      }
+      if (entry.content !== undefined && typeof entry.content !== "string") {
+        invalid(diagnostics, `head[${index}].content must be a string.`);
+      }
     }
   }
 
@@ -186,6 +227,7 @@ export function normalizeDocsConfig(
 
   return {
     site: { ...config.site },
+    head: [...(config.head ?? [])],
     content: {
       allowOutsideRoot: false,
       localizeRepositoryLinks: false,
@@ -234,6 +276,7 @@ export type {
   ContentConfig,
   DocsConfig,
   DocsSource,
+  HeadConfig,
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,

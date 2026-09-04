@@ -7,6 +7,7 @@ const schema = JSON.parse(
 ) as {
   properties: {
     navigation: { oneOf?: unknown[] };
+    head: { items: { required?: string[] } };
     components: {
       properties: {
         overrides: { properties: { Footer: { oneOf?: unknown[] } } };
@@ -20,6 +21,7 @@ describe("docs configuration", () => {
   it("keeps defaults and rejects unknown keys", () => {
     const config = normalizeDocsConfig();
     expect(config.build).toMatchObject({ strict: true, base: "/" });
+    expect(config.head).toEqual([]);
     expect(config.markdown.rawHtml).toBe("sanitize");
     expect(() => normalizeDocsConfig({ typo: true } as never)).toThrow(
       DocsConfigError,
@@ -32,6 +34,36 @@ describe("docs configuration", () => {
     });
 
     expect(config.site).toMatchObject({ title: "Example", version: "1.2.3" });
+  });
+
+  it("preserves custom head elements", () => {
+    const head = [
+      {
+        tag: "script",
+        attrs: {
+          defer: true,
+          src: "https://analytics.example.com/script.js",
+          "data-website-id": "website-id",
+        },
+      },
+    ];
+
+    expect(normalizeDocsConfig({ head }).head).toEqual(head);
+    expect(schema.properties.head.items.required).toContain("tag");
+  });
+
+  it("rejects malformed custom head elements", () => {
+    expect(() => normalizeDocsConfig({ head: {} } as never)).toThrow(
+      /head must be an array/,
+    );
+    expect(() =>
+      normalizeDocsConfig({ head: [{ tag: "script", typo: true }] } as never),
+    ).toThrow(/head\[0\]\.typo/);
+    expect(() =>
+      normalizeDocsConfig({
+        head: [{ tag: "script", attrs: { defer: 1 } }],
+      } as never),
+    ).toThrow(/head\[0\]\.attrs\.defer/);
   });
 
   it("guards the normal-mode accessibility floor", () => {

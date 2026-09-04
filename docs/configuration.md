@@ -39,6 +39,29 @@ manifest when possible so it remains current. `url` is the canonical deployed
 origin. Set Astro's `site` value too when the host needs absolute canonical URLs
 or sitemap metadata.
 
+## Head
+
+Add custom elements to every page's `<head>` with the `head` array. This is the
+preferred configuration for analytics scripts and other remote resources:
+
+```ts
+head: [
+  {
+    tag: "script",
+    attrs: {
+      defer: true,
+      src: "https://analytics.example.com/script.js",
+      "data-website-id": "YOUR-WEBSITE-ID",
+    },
+  },
+];
+```
+
+Each entry accepts a `tag`, optional string or boolean `attrs`, and optional
+string `content`. Cookbook renders these entries directly as HTML elements;
+they do not pass through Astro's script or style processing. Use a `Head`
+component override when a local asset needs Astro processing.
+
 ## Content
 
 ```ts

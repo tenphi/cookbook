@@ -23,6 +23,13 @@ export interface SiteConfig {
   repository?: string;
 }
 
+/** A custom HTML element rendered in the document head. */
+export interface HeadConfig {
+  tag: string;
+  attrs?: Record<string, string | boolean | undefined>;
+  content?: string;
+}
+
 export interface NavigationPlacement {
   label?: string;
   order?: number;
@@ -229,6 +236,7 @@ export interface BuildConfig {
 
 export interface DocsConfig {
   site?: SiteConfig;
+  head?: HeadConfig[];
   content?: ContentConfig;
   navigation?: NavigationConfig | NavigationItem[];
   theme?: ThemeConfig;
@@ -240,6 +248,7 @@ export interface DocsConfig {
 
 export interface NormalizedDocsConfig {
   site: SiteConfig;
+  head: HeadConfig[];
   content: Required<
     Pick<ContentConfig, "allowOutsideRoot" | "localizeRepositoryLinks">
   > &

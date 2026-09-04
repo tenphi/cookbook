@@ -15,6 +15,22 @@
         "repository": { "type": "string", "format": "uri" }
       }
     },
+    "head": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tag"],
+        "properties": {
+          "tag": { "type": "string" },
+          "attrs": {
+            "type": "object",
+            "additionalProperties": { "type": ["string", "boolean"] }
+          },
+          "content": { "type": "string" }
+        }
+      }
+    },
     "content": {
       "type": "object",
       "additionalProperties": false,
