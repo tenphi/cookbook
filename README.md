@@ -1,7 +1,7 @@
 # Cookbook
 
-Static, repository-native documentation built with Astro, Starlight, Tasty,
-and Glaze.
+Static, repository-native documentation built with Astro, Starlight,
+[Tasty](https://tasty.style), and [Glaze](https://glaze.tenphi.me).
 
 [Read the documentation](https://cookbook.tenphi.me) or browse the
 [repository-native source](docs/index.md).

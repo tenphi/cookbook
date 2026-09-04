@@ -5,8 +5,14 @@ sidebar:
   order: 5
 ---
 
-Cookbook derives light, dark, and high-contrast values from one Glaze brand
-input, then exposes the result through Tasty tokens and component anatomy.
+Cookbook uses Glaze to derive light, dark, and high-contrast values from one
+brand input, then exposes the result through Tasty tokens and component
+anatomy.
+
+Use the [Glaze documentation](https://glaze.tenphi.me) to learn how palette
+inputs, color modes, and contrast targets are resolved. Use the
+[Tasty documentation](https://tasty.style) for the style properties, tokens,
+units, presets, and state maps accepted by `theme.styles`.
 
 ## Brand color
 
