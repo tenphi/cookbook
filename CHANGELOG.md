@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.9.5
+
+### Patch Changes
+
+- [#38](https://github.com/tenphi/cookbook/pull/38) [`e515933`](https://github.com/tenphi/cookbook/commit/e51593387f09f66c0bb959a619226adf227ee5b2) Thanks [@tenphi](https://github.com/tenphi)! - Improve TSX and MDX syntax highlighting with distinct component, attribute,
+  delimiter, and string colors.
+
 ## 0.9.4
 
 ### Patch Changes
