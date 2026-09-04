@@ -161,6 +161,7 @@ export default function cookbook(
         const starlightIntegration = starlight({
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
+          ...(options.config?.head ? { head: options.config.head } : {}),
           ...(options.config?.site?.description
             ? { description: options.config.site.description }
             : {}),

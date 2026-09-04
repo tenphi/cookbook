@@ -9,6 +9,16 @@ export default defineDocsConfig({
     url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",
   },
+  head: [
+    {
+      tag: "script",
+      attrs: {
+        defer: true,
+        src: "https://umami.tenphi.me/script.js",
+        "data-website-id": "084ca820-b3e3-440d-bf91-c246cf60da48",
+      },
+    },
+  ],
   content: {
     sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }],
   },

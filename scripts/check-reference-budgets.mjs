@@ -79,6 +79,13 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 const home = await readFile(join(output, "index.html"), "utf8");
+if (
+  !/<script\b(?=[^>]*\bdefer(?:\s|>))(?=[^>]*\bsrc="https:\/\/umami\.tenphi\.me\/script\.js")(?=[^>]*\bdata-website-id="084ca820-b3e3-440d-bf91-c246cf60da48")[^>]*><\/script>/.test(
+    home,
+  )
+) {
+  throw new Error("The Cookbook Umami analytics script is missing.");
+}
 if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
   throw new Error(
     "The default page unexpectedly contains a React or Tasty client runtime.",

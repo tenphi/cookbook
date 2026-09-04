@@ -17,6 +17,7 @@ export type {
   DocsGraph,
   DocsRoute,
   DocsSource,
+  HeadConfig,
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,
