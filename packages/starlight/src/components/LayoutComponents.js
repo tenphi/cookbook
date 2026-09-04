@@ -439,3 +439,59 @@ export const MobileMenuFooterRoot = customizeComponent(
     },
   }),
 );
+
+export const FooterRoot = customizeComponent(
+  "Footer",
+  { as: "footer" },
+  tasty({
+    as: "footer",
+    styles: {
+      display: "flex",
+      flow: "column",
+      gap: "($gap * 3)",
+      Meta: {
+        $: ".td-footer__meta",
+        display: "flex",
+        flow: "row wrap",
+        justifyContent: "space-between",
+        gap: "($gap * 1.5) ($gap * 6)",
+        marginBlockStart: "($gap * 6)",
+        color: "#text-muted",
+        preset: "small",
+      },
+      LoneMetaItem: {
+        $: ".td-footer__meta > :only-child",
+        marginInlineStart: "auto",
+      },
+      MetaLink: {
+        $: ".td-footer__meta a",
+        display: "flex",
+        alignItems: "center",
+        gap: "$gap",
+        color: "#text-muted",
+        textDecoration: "none",
+      },
+      HoverMetaLink: {
+        $: ".td-footer__meta a:hover",
+        color: "#text",
+      },
+      Credit: {
+        $: ".td-footer__credit",
+        margin: "($gap * 3) auto",
+        color: "#text-muted",
+        preset: "small",
+        textAlign: "center",
+      },
+      CreditLink: {
+        $: ".td-footer__credit a",
+        color: "#text-soft",
+        preset: "small / strong",
+        textDecoration: "none",
+      },
+      HoverCreditLink: {
+        $: ".td-footer__credit a:hover",
+        color: "#text",
+      },
+    },
+  }),
+);

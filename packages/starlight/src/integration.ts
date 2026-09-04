@@ -79,6 +79,9 @@ export default function cookbook(
   const headerPath = fileURLToPath(
     new URL("./overrides/Header.astro", import.meta.url),
   );
+  const footerPath = fileURLToPath(
+    new URL("./overrides/Footer.astro", import.meta.url),
+  );
   const sidebarPath = fileURLToPath(
     new URL("./overrides/Sidebar.astro", import.meta.url),
   );
@@ -92,6 +95,7 @@ export default function cookbook(
     new URL("./overrides/ThemeSelect.astro", import.meta.url),
   );
   const components = {
+    Footer: footerPath,
     Header: headerPath,
     Sidebar: sidebarPath,
     MobileMenuFooter: mobileMenuFooterPath,

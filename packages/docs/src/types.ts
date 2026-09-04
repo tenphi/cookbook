@@ -149,6 +149,7 @@ export interface ThemePaletteConfig {
 export const COOKBOOK_COMPONENT_NAMES = [
   "Card",
   "ContrastSelect",
+  "Footer",
   "Logo",
   "MarkdownTable",
   "Mermaid",

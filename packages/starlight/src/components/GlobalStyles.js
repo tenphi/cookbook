@@ -1019,39 +1019,6 @@ export default function GlobalStyles() {
     preset: "h5 / strong",
   });
 
-  useGlobalStyles("main footer", {
-    display: "flex",
-    flow: "column",
-    gap: "($gap * 3)",
-  });
-
-  useGlobalStyles("main footer .meta", {
-    display: "flex",
-    flow: "row wrap",
-    justifyContent: "space-between",
-    gap: "($gap * 1.5) ($gap * 6)",
-    marginBlockStart: "($gap * 6)",
-    color: "#text-muted",
-    preset: "small",
-  });
-
-  useGlobalStyles("main footer .meta a, main footer .kudos", {
-    display: "flex",
-    alignItems: "center",
-    gap: "$gap",
-    color: "#text-muted",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles("main footer .meta a:hover, main footer .kudos:hover", {
-    color: "#text",
-  });
-
-  useGlobalStyles("main footer .kudos", {
-    margin: "($gap * 3) auto",
-    preset: "small",
-  });
-
   useGlobalStyles("starlight-lang-select label", {
     position: "relative",
     display: "flex",
