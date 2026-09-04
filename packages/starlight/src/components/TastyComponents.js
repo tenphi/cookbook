@@ -6,7 +6,6 @@ configureCookbookStates();
 
 export const CardRoot = customizeComponent(
   "Card",
-  { as: "article" },
   tasty({
     as: "article",
     styles: {
@@ -68,7 +67,6 @@ const previewElements = {
 
 export const PreviewRoot = customizeComponent(
   "Preview",
-  { as: "figure", elements: previewElements },
   tasty({
     as: "figure",
     styles: {
@@ -116,7 +114,6 @@ export const PreviewRoot = customizeComponent(
 
 export const StepsRoot = customizeComponent(
   "Steps",
-  { as: "ol" },
   tasty({
     as: "ol",
     styles: {
@@ -140,7 +137,6 @@ export const StepsRoot = customizeComponent(
 
 export const TabsRoot = customizeComponent(
   "Tabs",
-  { as: "div" },
   tasty({
     as: "div",
     styles: {

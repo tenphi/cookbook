@@ -6,7 +6,6 @@ configureCookbookStates();
 
 export const LogoRoot = customizeComponent(
   "Logo",
-  { as: "span" },
   tasty({
     as: "span",
     styles: {
@@ -33,7 +32,6 @@ export const LogoRoot = customizeComponent(
 
 export const PackageVersionRoot = customizeComponent(
   "PackageVersion",
-  { as: "span" },
   tasty({
     as: "span",
     styles: {
@@ -55,7 +53,6 @@ export const PackageVersionRoot = customizeComponent(
 
 export const TopNavigationRoot = customizeComponent(
   "TopNavigation",
-  { as: "nav" },
   tasty({
     as: "nav",
     styles: {
@@ -101,7 +98,6 @@ export const TopNavigationRoot = customizeComponent(
 
 export const StarlightHeaderRoot = customizeComponent(
   "StarlightHeader",
-  { as: "div" },
   tasty({
     as: "div",
     styles: {
@@ -345,7 +341,6 @@ const appearanceSelectStyles = {
 
 export const ThemeSelectRoot = customizeComponent(
   "ThemeSelect",
-  { as: "starlight-theme-select" },
   tasty({
     as: "starlight-theme-select",
     styles: appearanceSelectStyles,
@@ -354,7 +349,6 @@ export const ThemeSelectRoot = customizeComponent(
 
 export const ContrastSelectRoot = customizeComponent(
   "ContrastSelect",
-  { as: "cookbook-contrast-select" },
   tasty({
     as: "cookbook-contrast-select",
     styles: appearanceSelectStyles,
@@ -363,7 +357,6 @@ export const ContrastSelectRoot = customizeComponent(
 
 export const MobileNavigationTabsRoot = customizeComponent(
   "MobileNavigationTabs",
-  { as: "nav" },
   tasty({
     as: "nav",
     styles: {
@@ -416,7 +409,6 @@ export const MobileNavigationTabsRoot = customizeComponent(
 
 export const MobileMenuFooterRoot = customizeComponent(
   "MobileMenuFooter",
-  { as: "div" },
   tasty({
     as: "div",
     styles: {
@@ -442,7 +434,6 @@ export const MobileMenuFooterRoot = customizeComponent(
 
 export const FooterRoot = customizeComponent(
   "Footer",
-  { as: "footer" },
   tasty({
     as: "footer",
     styles: {

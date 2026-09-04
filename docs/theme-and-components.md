@@ -159,15 +159,17 @@ Tasty SSR for use in custom MDX components.
 The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
 are useful when building a theme editor or presenting a reset action.
 
-## Component styles
+## Style customization
 
 Cookbook-owned interface elements are direct `tasty()` components. Supported
 Starlight-rendered surfaces use the same Tasty style trees through the global
-bridge. Configure either kind by name under `theme.styles`; the configuration
+bridge. Customize either kind by name under `theme.styles`; the configuration
 is resolved before CSS generation, so this is not a selector-based CSS
 override.
 
-A plain style object extends the defaults using Tasty's deep style merge:
+Provide only the root and named sub-element properties you want to override.
+Cookbook deep-merges that partial style object into the complete base style
+object inside the renderer:
 
 ```ts
 theme: {
@@ -198,50 +200,46 @@ theme: {
 }
 ```
 
-Use explicit replacement when a component must not inherit any built-in
-styles. The replacement is the complete Tasty style object, including any
-named descendant styles the component needs:
+No merge helper or base style object is required in user configuration. Style
+customization has one behavior: every supplied object is a partial override and
+is merged into the base inside Cookbook.
 
-```ts
-theme: {
-  styles: {
-    PackageVersion: {
-      mode: "replace",
-      styles: {
-        color: "#text-soft",
-        preset: "small"
-      }
-    }
-  }
-}
-```
+Every configurable surface accepts styles at the root plus these named Tasty
+sub-elements:
 
-The configurable component names are `Card`, `ContrastSelect`, `Footer`, `Logo`,
-`MarkdownTable`, `Mermaid`, `MobileMenuFooter`, `MobileNavigationTabs`,
-`MobileTableOfContents`, `PackageVersion`, `Preview`, `Sidebar`, `Steps`, `Tabs`,
-`TableOfContents`, `ThemeSelect`, `TopNavigation`, and `StarlightHeader`.
-`MarkdownTable` exposes the `Table`, `Cell`,
-`LastBodyRowCell`, and `HeaderCell` sub-elements used for generated Markdown
-tables. `Mermaid` exposes `Diagram`, `Text`, and `MonoText`. Editor inference
-is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
-`ComponentStyleConfig`, and `ComponentStylesConfig` types. `Footer` exposes
-`Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, and
-`HoverCreditLink`. By default, the footer credit uses the primary body text
-color, while its Cookbook link uses the semantic brand link color.
-
-Navigation styles expose their complete Tasty trees through these names:
-
-| Style name              | Supported anatomy keys                                                                                                                                                                                      |
+| Configuration name      | Named sub-elements                                                                                                                                                                                          |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Sidebar`               | `CurrentLink`, `Content`, `List`, `Item`, `TopLevelSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
-| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                  |
+| `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                         |
+| `ContrastSelect`        | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                           |
+| `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                              |
+| `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                               |
+| `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                            |
+| `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                               |
+| `MobileMenuFooter`      | `Social`                                                                                                                                                                                                    |
+| `MobileNavigationTabs`  | `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`                                                                                                                                                 |
 | `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                 |
+| `PackageVersion`        | None                                                                                                                                                                                                        |
+| `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                       |
+| `Sidebar`               | `CurrentLink`, `Content`, `List`, `Item`, `TopLevelSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
+| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                          |
+| `Steps`                 | `Item`, `Marker`                                                                                                                                                                                            |
+| `Tabs`                  | None                                                                                                                                                                                                        |
+| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                  |
+| `ThemeSelect`           | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                           |
+| `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                          |
 
-Properties at the root of each style object customize the corresponding
-navigation container; the `MobileTableOfContents` root is the list inside the
-mobile dropdown. Plain objects extend the defaults, so overriding
-`LinkLabel.whiteSpace` keeps the remaining ellipsis styles unless replacement
-mode is selected.
+`COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and
+`COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the complete sub-element lists for
+theme editors and other tooling. The corresponding TypeScript types are
+`CookbookComponentName`, `CookbookComponentSubElementName`,
+`ComponentStyleConfig`, and `ComponentStylesConfig`.
+
+For the three navigation surfaces, root properties customize the navigation
+container; the `MobileTableOfContents` root is the list inside the mobile
+dropdown. For example, overriding `LinkLabel.whiteSpace` keeps the other base
+`LinkLabel` properties because the configured object is merged by default.
+By default, the footer credit uses the primary body text color, while its
+Cookbook link uses the semantic brand link color.
 
 `components.overrides` remains the structural escape hatch for replacing an
 Astro component. Prefer `theme.styles` when the markup and behavior remain the

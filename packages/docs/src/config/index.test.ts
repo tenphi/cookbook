@@ -13,8 +13,17 @@ const schema = JSON.parse(
         overrides: { properties: { Footer: { oneOf?: unknown[] } } };
       };
     };
+    theme: {
+      properties: {
+        styles: {
+          additionalProperties: {
+            type?: string;
+            propertyNames?: { not?: { const?: string } };
+          };
+        };
+      };
+    };
   };
-  $defs: { componentStyleConfig: { anyOf?: unknown[] } };
 };
 
 describe("docs configuration", () => {
@@ -91,7 +100,7 @@ describe("docs configuration", () => {
     ).not.toThrow();
   });
 
-  it("preserves component style extension and replacement configuration", () => {
+  it("preserves component style overrides", () => {
     const config = normalizeDocsConfig({
       theme: {
         styles: {
@@ -99,10 +108,7 @@ describe("docs configuration", () => {
           Sidebar: { Link: { padding: "1x" } },
           StarlightHeader: { padding: "2x" },
           TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
-          ThemeSelect: {
-            mode: "replace",
-            styles: { display: "grid" },
-          },
+          ThemeSelect: { display: "grid" },
         },
       },
     });
@@ -112,19 +118,19 @@ describe("docs configuration", () => {
       Sidebar: { Link: { padding: "1x" } },
       StarlightHeader: { padding: "2x" },
       TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
-      ThemeSelect: {
-        mode: "replace",
-        styles: { display: "grid" },
-      },
+      ThemeSelect: { display: "grid" },
     });
   });
 
-  it("publishes component style replacement in the JSON schema", () => {
+  it("publishes plain component style overrides in the JSON schema", () => {
     expect(schema.properties.navigation.oneOf).toHaveLength(2);
-    expect(schema.$defs.componentStyleConfig.anyOf).toHaveLength(2);
+    const componentStyle =
+      schema.properties.theme.properties.styles.additionalProperties;
+    expect(componentStyle.type).toBe("object");
+    expect(componentStyle.propertyNames?.not?.const).toBe("mode");
   });
 
-  it("preserves replacement and disabled footer overrides", () => {
+  it("preserves custom and disabled footer component overrides", () => {
     expect(
       normalizeDocsConfig({
         components: { overrides: { Footer: false } },
@@ -158,7 +164,7 @@ describe("docs configuration", () => {
     ).toHaveLength(2);
   });
 
-  it("rejects malformed component style replacement configuration", () => {
+  it("rejects the removed component style mode wrapper", () => {
     expect(() =>
       normalizeDocsConfig({
         theme: {
@@ -167,7 +173,7 @@ describe("docs configuration", () => {
           },
         },
       } as never),
-    ).toThrow(/ThemeSelect\.styles/);
+    ).toThrow(/without a mode wrapper/);
   });
 
   it("preserves optional primary navigation tabs", () => {

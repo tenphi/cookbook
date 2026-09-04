@@ -13,7 +13,7 @@ describe("navigation global style architecture", () => {
     ["#starlight__sidebar", "Sidebar"],
     [".right-sidebar-panel", "TableOfContents"],
     ["mobile-starlight-toc .dropdown .isMobile", "MobileTableOfContents"],
-  ])("exposes %s as theme.styles.%s", (selector, componentName) => {
+  ])("customizes %s through theme.styles.%s", (selector, componentName) => {
     expect(source).toMatch(
       new RegExp(
         `useGlobalStyles\\(\\s*["']${escapeRegExp(selector)}["'],\\s*resolveComponentStyles\\(\\s*["']${componentName}["']`,

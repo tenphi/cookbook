@@ -27,5 +27,8 @@ export {
   formatDiagnostics,
   validateDocs,
 } from "./validation/index.js";
-export { COOKBOOK_COMPONENT_NAMES } from "./types.js";
+export {
+  COOKBOOK_COMPONENT_NAMES,
+  COOKBOOK_COMPONENT_SUB_ELEMENTS,
+} from "./types.js";
 export type * from "./types.js";

@@ -92,7 +92,10 @@
         },
         "styles": {
           "type": "object",
-          "additionalProperties": { "$ref": "#/$defs/componentStyleConfig" }
+          "additionalProperties": {
+            "type": "object",
+            "propertyNames": { "not": { "const": "mode" } }
+          }
         },
         "contrastLevel": {
           "oneOf": [
@@ -189,20 +192,6 @@
         "textTransform": { "type": ["string", "number"] },
         "fontStyle": { "type": ["string", "number"] }
       }
-    },
-    "componentStyleConfig": {
-      "anyOf": [
-        { "type": "object" },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["mode", "styles"],
-          "properties": {
-            "mode": { "enum": ["extend", "replace"] },
-            "styles": { "type": "object" }
-          }
-        }
-      ]
     },
     "source": {
       "type": "object",

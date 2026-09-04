@@ -3,5 +3,8 @@
 "@tenphi/starlight": minor
 ---
 
-Expose the sidebar, desktop table of contents, and mobile table of contents as
-complete configurable Tasty style trees under `theme.styles`.
+Add configuration-based Tasty style customization for the sidebar, desktop
+table of contents, and mobile table of contents. Users provide only partial
+style overrides, which Cookbook merges into each complete base style tree. All
+`theme.styles` entries now use this single object shape; mode wrappers are no
+longer accepted.
