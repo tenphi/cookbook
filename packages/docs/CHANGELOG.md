@@ -1,5 +1,16 @@
 # @tenphi/docs
 
+## 0.10.0
+
+### Minor Changes
+
+- [#44](https://github.com/tenphi/cookbook/pull/44) [`0df2ffb`](https://github.com/tenphi/cookbook/commit/0df2ffb0df205f5e6ca190b7d8105fdf912272ea) Thanks [@tenphi](https://github.com/tenphi)! - Add configuration-based Tasty style customization for the sidebar, desktop
+  table of contents, and mobile table of contents. Users provide only partial
+  style overrides, which Cookbook merges into each complete base style tree. All
+  `theme.styles` entries now use this single object shape; mode wrappers are no
+  longer accepted. Complete sub-element metadata and typed suggestions are
+  published for every configurable surface.
+
 ## 0.9.6
 
 ## 0.9.5
