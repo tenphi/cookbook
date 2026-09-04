@@ -1,5 +1,14 @@
 # @tenphi/starlight
 
+## 0.9.6
+
+### Patch Changes
+
+- [#41](https://github.com/tenphi/cookbook/pull/41) [`49b6155`](https://github.com/tenphi/cookbook/commit/49b615507a60f7f9422ed17a10ea70fe5d23b0f9) Thanks [@tenphi](https://github.com/tenphi)! - Truncate long sidebar and table-of-contents labels with an ellipsis instead of
+  letting them overflow their navigation columns.
+- Updated dependencies []:
+  - @tenphi/docs@0.9.6
+
 ## 0.9.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/docs",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Repository-native content and configuration engine for Cookbook",
   "type": "module",
   "sideEffects": false,
