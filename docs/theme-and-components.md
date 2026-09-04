@@ -14,7 +14,7 @@ The short form accepts any color value supported by Glaze:
 
 ```ts
 theme: {
-  brand: "#2f5bff";
+  brand: "#2f5bff",
 }
 ```
 
@@ -119,10 +119,11 @@ without one-off component overrides.
 
 ## Typography presets
 
-The built-in presets are `body`, `heading`, `h1` through `h6`, `small`, and
-`code`. Onest is self-hosted and used for body and heading text by default;
-JetBrains Mono is self-hosted for code. Presets merge property-by-property, so
-changing a font does not require copying its size, weight, or line height:
+The built-in presets are `body`, `heading`, `h1` through `h6`, `navigation`,
+`small`, and `code`. Onest is self-hosted and used for body and heading text by
+default; JetBrains Mono is self-hosted for code. Presets merge
+property-by-property, so changing a font does not require copying its size,
+weight, or line height:
 
 ```ts
 theme: {
@@ -208,7 +209,8 @@ tables. `Mermaid` exposes `Diagram`, `Text`, and `MonoText`. Editor inference
 is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
 `ComponentStyleConfig`, and `ComponentStylesConfig` types. `Footer` exposes
 `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, and
-`HoverCreditLink`.
+`HoverCreditLink`. By default, the footer credit uses the primary body text
+color, while its Cookbook link uses the semantic brand link color.
 
 `components.overrides` remains the structural escape hatch for replacing an
 Astro component. Prefer `theme.styles` when the markup and behavior remain the

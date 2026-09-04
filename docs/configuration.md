@@ -1,6 +1,6 @@
 ---
 title: Configuration reference
-description: Configure site metadata, content, navigation, Markdown, search, theme, and build validation.
+description: Configure site metadata, head elements, content, navigation, Markdown, search, theme, and build validation.
 sidebar:
   order: 4
 ---
@@ -17,8 +17,8 @@ export default defineDocsConfig({
 });
 ```
 
-All built-in options are JSON-serializable. Unknown top-level and section keys
-are errors.
+Cookbook validates the configuration when it loads. Unknown top-level and
+section keys are errors.
 
 ## Site
 
@@ -54,7 +54,7 @@ head: [
       "data-website-id": "YOUR-WEBSITE-ID",
     },
   },
-];
+],
 ```
 
 Each entry accepts a `tag`, optional string or boolean `attrs`, and optional
@@ -70,8 +70,7 @@ content: {
     { file: "README.md", route: "/" },
     { glob: "docs/**/*.{md,mdx}", base: "docs" }
   ],
-  allowOutsideRoot: false,
-  localizeRepositoryLinks: false
+  allowOutsideRoot: false
 }
 ```
 
@@ -147,7 +146,6 @@ fallback. Every internal route named anywhere in navigation must exist.
 
 ```ts
 theme: {
-  variant: "default",
   brand: {
     from: "#2f5bff",
     contrast: { apca: 45 }
@@ -193,23 +191,24 @@ so the whole interface continues to adapt in dark and high-contrast modes. A req
 extends that component's defaults. Use `{ mode: "replace", styles: {...} }`
 when you intentionally want to discard the complete default style object.
 Structural Astro overrides under `components.overrides` remain available when
-styling alone is insufficient.
+styling alone is insufficient. `theme.states` registers additional Tasty state
+shorthands, and `contrastLevel` is forwarded to Glaze's palette resolution.
 
 ## Markdown
 
 ```ts
 markdown: {
   stripLeadingBadges: true,
-  rawHtml: "sanitize",
-  strictLanguages: false,
-  executablePreviews: true,
-  remarkPlugins: [],
-  rehypePlugins: []
 }
 ```
 
-`rawHtml` accepts `"sanitize"`, `"allow"`, or `"reject"`. Package sources
-still follow their declared trust level.
+`stripLeadingBadges` removes badge-only paragraphs at the start of a page and
+defaults to `true`. Package Markdown still rejects script-capable HTML, and
+package MDX requires an explicit `trust: "mdx"` source declaration.
+
+Configure renderer-level Markdown options such as custom remark or rehype
+plugins and Shiki languages through Astro's top-level `markdown` configuration.
+Cookbook preserves those settings while adding its own build-time transforms.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
 the static build. Flowcharts, state, sequence, class, and entity-relationship
@@ -240,8 +239,8 @@ flowchart TD
 
 ```ts
 search: {
-  enabled: true;
-}
+  enabled: true,
+},
 ```
 
 Search is generated locally with Pagefind during a static build. Disable it
@@ -268,9 +267,9 @@ shown above, or remove it with:
 ```ts
 components: {
   overrides: {
-    Footer: false;
-  }
-}
+    Footer: false,
+  },
+},
 ```
 
 Disabling the complete footer also removes its edit link, last-updated metadata,
@@ -292,6 +291,10 @@ build: {
 }
 ```
 
-`base` must match Astro's base path for project sites such as
-`https://owner.github.io/repository/`. Package limits protect builds from
-unexpected registry artifacts; raise them deliberately for a reviewed package.
+`strict` makes missing internal links errors instead of warnings. `ci` makes
+missing heading fragments errors and defaults to `true` when `CI=true`. `base`
+must match Astro's base path for project sites such as
+`https://owner.github.io/repository/`. An empty `cacheDir` uses
+`~/.cache/cookbook`; set an explicit path to relocate downloaded package
+artifacts. Package limits protect builds from unexpected registry artifacts;
+raise them deliberately for a reviewed package.
