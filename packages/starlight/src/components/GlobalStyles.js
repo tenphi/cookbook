@@ -1350,7 +1350,7 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles("starlight-menu-button button", {
+  useGlobalStyles("starlight-menu-button button[class]", {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

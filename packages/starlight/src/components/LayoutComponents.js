@@ -280,7 +280,7 @@ const appearanceSelectStyles = {
   },
   Select: {
     $: "select",
-    appearance: "base-select",
+    appearance: { "": "base-select", "@mobile": "none" },
     position: "static",
     inlineSize: "100%",
     minInlineSize: "0",
