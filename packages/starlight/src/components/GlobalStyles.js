@@ -418,9 +418,33 @@ export default function GlobalStyles() {
     userSelect: "none",
   });
 
+  useGlobalStyles("#starlight__sidebar summary > .group-label", {
+    display: "flex",
+    alignItems: "center",
+    minInlineSize: "0",
+    gap: "0.25em",
+  });
+
   useGlobalStyles("#starlight__sidebar a", {
-    display: "block",
+    display: "flex",
+    alignItems: "center",
+    minInlineSize: "0",
+    gap: "0.25em",
     fill: "#surface",
+  });
+
+  useGlobalStyles("#starlight__sidebar a > span:first-child", {
+    minInlineSize: "0",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  });
+
+  useGlobalStyles("#starlight__sidebar .group-label > .large", {
+    minInlineSize: "0",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   });
 
   useGlobalStyles(
@@ -461,6 +485,8 @@ export default function GlobalStyles() {
 
   useGlobalStyles(".right-sidebar-panel ul", {
     display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr)",
+    minInlineSize: "0",
     gap: "1px",
     margin: "0",
     padding: "0",
@@ -468,6 +494,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".right-sidebar-panel li", {
+    minInlineSize: "0",
     margin: "0",
     padding: "0",
     listStyle: "none",
@@ -475,6 +502,8 @@ export default function GlobalStyles() {
 
   useGlobalStyles(".right-sidebar-panel a", {
     display: "block",
+    minInlineSize: "0",
+    maxInlineSize: "100%",
     paddingBlockStart: "($gap * 0.5)",
     paddingBlockEnd: "($gap * 0.5)",
     color: "#text-muted",
@@ -482,6 +511,14 @@ export default function GlobalStyles() {
     lineHeight: "1.45",
     textDecoration: "none",
     overflowWrap: "anywhere",
+  });
+
+  useGlobalStyles(".right-sidebar-panel a > span", {
+    display: "block",
+    minInlineSize: "0",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   });
 
   useGlobalStyles(".right-sidebar-panel a:hover", {
@@ -1457,6 +1494,8 @@ export default function GlobalStyles() {
 
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile", {
     display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr)",
+    minInlineSize: "0",
     gap: "1px",
     margin: "0",
     padding: "0",
@@ -1464,6 +1503,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile > li", {
+    minInlineSize: "0",
     margin: "0",
     padding: "0",
     listStyle: "none",
@@ -1472,12 +1512,20 @@ export default function GlobalStyles() {
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a", {
     display: "flex",
     alignItems: "center",
+    minInlineSize: "0",
     minBlockSize: "2.5rem",
     padding: "0.625rem 0.75rem",
     color: "#text-soft",
     radius: "$radius",
     fill: "#surface-2",
     textDecoration: "none",
+  });
+
+  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a > span", {
+    minInlineSize: "0",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   });
 
   useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a:hover", {

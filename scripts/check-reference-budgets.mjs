@@ -90,6 +90,24 @@ if (
     "The footer credit must use body text with a brand-colored link.",
   );
 }
+for (const [selector, label] of [
+  ["#starlight__sidebar a > span:first-child", "left navigation links"],
+  ["#starlight__sidebar .group-label > .large", "left navigation groups"],
+  [".right-sidebar-panel a > span", "desktop table of contents"],
+  [
+    "mobile-starlight-toc .dropdown .isMobile a > span",
+    "mobile table of contents",
+  ],
+]) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (
+    !new RegExp(
+      `${escapedSelector}\\s*\\{[^}]*overflow:\\s*hidden;[^}]*text-overflow:\\s*ellipsis;[^}]*white-space:\\s*nowrap`,
+    ).test(sharedCss)
+  ) {
+    throw new Error(`Long ${label} must truncate with an ellipsis.`);
+  }
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 if (
   !/<script\b(?=[^>]*\bdefer(?:\s|>))(?=[^>]*\bsrc="https:\/\/umami\.tenphi\.me\/script\.js")(?=[^>]*\bdata-website-id="084ca820-b3e3-440d-bf91-c246cf60da48")[^>]*><\/script>/.test(
