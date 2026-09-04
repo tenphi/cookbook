@@ -1,5 +1,13 @@
 # @tenphi/cookbook
 
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies [[`8801739`](https://github.com/tenphi/cookbook/commit/8801739540b0c080d916c81b02120622da434573)]:
+  - @tenphi/starlight@0.10.2
+  - @tenphi/docs@0.10.2
+
 ## 0.10.1
 
 ### Patch Changes
