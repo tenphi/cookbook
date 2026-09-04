@@ -89,6 +89,7 @@ describe("component style configuration", () => {
   it("keeps custom anatomy styles on the compatibility bridge", () => {
     expect(
       resolveLegacyAnatomyStyles({
+        Footer: { color: "#text-muted" },
         ThemeSelect: { padding: "1x" },
         ProductBadge: { color: "#accent-text" },
       }),

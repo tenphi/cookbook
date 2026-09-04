@@ -229,13 +229,29 @@ for hosts or fixtures that do not need an index.
 ```ts
 components: {
   overrides: {
-    Header: "./src/components/Header.astro";
+    Header: "./src/components/Header.astro",
+    Footer: "./src/components/Footer.astro"
   }
 }
 ```
 
 Component replacement is the advanced escape hatch. Prefer theme tokens and
 named styles for visual changes that do not need new structure.
+
+Cookbook uses its built-in footer by default, including the “Generated with
+Cookbook” credit. Replace the complete footer with the `Footer` component path
+shown above, or remove it with:
+
+```ts
+components: {
+  overrides: {
+    Footer: false;
+  }
+}
+```
+
+Disabling the complete footer also removes its edit link, last-updated metadata,
+and previous/next-page navigation.
 
 ## Build
 
