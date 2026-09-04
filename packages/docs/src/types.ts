@@ -152,7 +152,7 @@ export interface ThemePaletteConfig {
   textSoft?: GlazeColorValue;
 }
 
-/** Cookbook components whose default Tasty styles can be customized. */
+/** Cookbook UI surfaces whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
   "Card",
   "ContrastSelect",
@@ -162,10 +162,13 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Mermaid",
   "MobileMenuFooter",
   "MobileNavigationTabs",
+  "MobileTableOfContents",
   "PackageVersion",
   "Preview",
+  "Sidebar",
   "Steps",
   "Tabs",
+  "TableOfContents",
   "ThemeSelect",
   "TopNavigation",
   "StarlightHeader",
@@ -173,24 +176,134 @@ export const COOKBOOK_COMPONENT_NAMES = [
 
 export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
-/** A serializable Tasty style object. */
-export type ComponentStyles = Record<string, unknown>;
+/** Named Tasty sub-elements available on each configurable Cookbook surface. */
+export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  Card: ["Heading2", "Heading3", "Paragraph"],
+  ContrastSelect: [
+    "Label",
+    "Icon",
+    "IconSvg",
+    "Select",
+    "PickerIcon",
+    "Picker",
+    "OpenPicker",
+    "Option",
+    "HoverOption",
+    "CheckedOption",
+    "Checkmark",
+  ],
+  Footer: [
+    "Meta",
+    "LoneMetaItem",
+    "MetaLink",
+    "HoverMetaLink",
+    "Credit",
+    "CreditLink",
+    "HoverCreditLink",
+  ],
+  Logo: ["Svg", "Mark"],
+  MarkdownTable: ["Table", "Cell", "LastBodyRowCell", "HeaderCell"],
+  Mermaid: ["Diagram", "Text", "MonoText"],
+  MobileMenuFooter: ["Social"],
+  MobileNavigationTabs: [
+    "Label",
+    "List",
+    "Item",
+    "Link",
+    "HoverLink",
+    "CurrentLink",
+  ],
+  MobileTableOfContents: [
+    "Item",
+    "Link",
+    "LinkLabel",
+    "HoverLink",
+    "CurrentLink",
+    "CurrentIndicator",
+  ],
+  PackageVersion: [],
+  Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
+  Sidebar: [
+    "CurrentLink",
+    "Content",
+    "List",
+    "Item",
+    "TopLevelSpacing",
+    "NestedItem",
+    "Control",
+    "Summary",
+    "GroupLabel",
+    "GroupLabelText",
+    "Link",
+    "LinkLabel",
+    "InteractiveControl",
+    "SummaryMarker",
+    "TopLevelLink",
+  ],
+  Steps: ["Item", "Marker"],
+  Tabs: [],
+  TableOfContents: [
+    "Heading",
+    "List",
+    "Item",
+    "Link",
+    "LinkLabel",
+    "HoverLink",
+    "CurrentLink",
+  ],
+  ThemeSelect: [
+    "Label",
+    "Icon",
+    "IconSvg",
+    "Select",
+    "PickerIcon",
+    "Picker",
+    "OpenPicker",
+    "Option",
+    "HoverOption",
+    "CheckedOption",
+    "Checkmark",
+  ],
+  TopNavigation: [
+    "Scrollbar",
+    "Link",
+    "HoverLink",
+    "CurrentLink",
+    "ActiveIndicator",
+  ],
+  StarlightHeader: [
+    "Primary",
+    "TitleAndSearch",
+    "Title",
+    "Logo",
+    "SiteTitle",
+    "Search",
+    "SearchElement",
+    "Tools",
+    "ToolItem",
+    "Social",
+    "MobileTheme",
+  ],
+} as const satisfies Record<CookbookComponentName, readonly string[]>;
 
-/**
- * Plain style objects extend Cookbook defaults. Use `mode: "replace"` to
- * discard a component's defaults and supply the complete style object.
- */
-export type ComponentStyleConfig =
-  | ComponentStyles
-  | {
-      mode: "extend" | "replace";
-      styles: ComponentStyles;
-    };
+export type CookbookComponentSubElementName<
+  Name extends CookbookComponentName,
+> = (typeof COOKBOOK_COMPONENT_SUB_ELEMENTS)[Name][number];
 
-export type ComponentStylesConfig = Partial<
-  Record<CookbookComponentName, ComponentStyleConfig>
-> &
-  Record<string, ComponentStyleConfig | undefined>;
+/** A serializable partial Tasty style object, merged into the base internally. */
+export type ComponentStyles = Record<string, unknown> & { mode?: never };
+
+/** Style properties supplied by the user to override Cookbook defaults. */
+export type ComponentStyleConfig = ComponentStyles;
+
+/** A component override with typed suggestions for its named sub-elements. */
+export type CookbookComponentStyles<Name extends CookbookComponentName> =
+  ComponentStyles &
+    Partial<Record<CookbookComponentSubElementName<Name>, ComponentStyles>>;
+
+export type ComponentStylesConfig = {
+  [Name in CookbookComponentName]?: CookbookComponentStyles<Name>;
+} & Record<string, ComponentStyleConfig | undefined>;
 
 export interface ThemeConfig {
   variant?: string;
@@ -199,7 +312,7 @@ export interface ThemeConfig {
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;
-  /** Direct Tasty component styles, keyed by Cookbook component name. */
+  /** Tasty UI styles, keyed by Cookbook component or bridge name. */
   styles?: ComponentStylesConfig;
   contrastLevel?: number | "auto";
 }

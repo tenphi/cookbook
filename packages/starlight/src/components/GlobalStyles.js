@@ -366,170 +366,176 @@ export default function GlobalStyles() {
     fill: "#surface",
   });
 
-  useGlobalStyles("#starlight__sidebar", {
-    CurrentLink: {
-      $: [
-        'a[aria-current="page"]',
-        'a[aria-current="page"]:hover',
-        'a[aria-current="page"]:focus',
-      ],
-      color: "#accent-text",
-      fill: "#accent-surface-subtle",
-    },
-    Content: {
-      $: ".sidebar-content",
-      gap: "($gap * 3)",
-      paddingBlockStart: {
-        "": "($gap * 4)",
-        "@medium-layout": "($gap * 1.5)",
+  useGlobalStyles(
+    "#starlight__sidebar",
+    resolveComponentStyles("Sidebar", {
+      CurrentLink: {
+        $: [
+          'a[aria-current="page"]',
+          'a[aria-current="page"]:hover',
+          'a[aria-current="page"]:focus',
+        ],
+        color: "#accent-text",
+        fill: "#accent-surface-subtle",
       },
-      paddingBlockEnd: "($gap * 6)",
-    },
-    List: {
-      $: "ul",
-      padding: "0",
-      listStyle: "none",
-    },
-    Item: {
-      $: "li",
-      overflowWrap: "anywhere",
-    },
-    TopLevelSpacing: {
-      $: ".top-level > li + li",
-      marginBlockStart: "($gap * 3)",
-    },
-    NestedItem: {
-      $: "ul ul li",
-      marginInlineStart: "($gap * 0.75)",
-      paddingInlineStart: "($gap * 0.75)",
-      borderInlineStart: "0",
-    },
-    Control: {
-      $: ["summary", "a"],
-      padding: "($gap * 0.8) ($gap * 1.25)",
-      color: "#text-soft",
-      lineHeight: "1.45",
-      radius: "$radius",
-      textDecoration: "none",
-    },
-    Summary: {
-      $: "summary",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      cursor: "pointer",
-      userSelect: "none",
-    },
-    GroupLabel: {
-      $: "summary > .group-label",
-      display: "flex",
-      alignItems: "center",
-      minInlineSize: "0",
-      gap: "0.25em",
-    },
-    GroupLabelText: {
-      $: "summary > .group-label > span:first-child",
-      minInlineSize: "0",
-      overflow: "hidden",
-      color: "#text",
-      fontSize: "0.9375rem",
-      fontWeight: "$body-bold-font-weight",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    Link: {
-      $: "a",
-      display: "flex",
-      alignItems: "center",
-      minInlineSize: "0",
-      gap: "0.25em",
-      fill: "#surface",
-      fontSize: "0.9375rem",
-    },
-    LinkLabel: {
-      $: "a > span:first-child",
-      minInlineSize: "0",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    InteractiveControl: {
-      $: ["a:hover", "a:focus-visible", "summary:hover"],
-      color: "#text",
-      fill: "#surface-2-hover",
-    },
-    SummaryMarker: {
-      $: "summary::marker",
-      hide: true,
-    },
-    TopLevelLink: {
-      $: "a.large",
-      fontSize: "0.9375rem",
-      fontWeight: "$body-bold-font-weight",
-      color: "#text",
-    },
-  });
+      Content: {
+        $: ".sidebar-content",
+        gap: "($gap * 3)",
+        paddingBlockStart: {
+          "": "($gap * 4)",
+          "@medium-layout": "($gap * 1.5)",
+        },
+        paddingBlockEnd: "($gap * 6)",
+      },
+      List: {
+        $: "ul",
+        padding: "0",
+        listStyle: "none",
+      },
+      Item: {
+        $: "li",
+        overflowWrap: "anywhere",
+      },
+      TopLevelSpacing: {
+        $: ".top-level > li + li",
+        marginBlockStart: "($gap * 3)",
+      },
+      NestedItem: {
+        $: "ul ul li",
+        marginInlineStart: "($gap * 0.75)",
+        paddingInlineStart: "($gap * 0.75)",
+        borderInlineStart: "0",
+      },
+      Control: {
+        $: ["summary", "a"],
+        padding: "($gap * 0.8) ($gap * 1.25)",
+        color: "#text-soft",
+        lineHeight: "1.45",
+        radius: "$radius",
+        textDecoration: "none",
+      },
+      Summary: {
+        $: "summary",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        cursor: "pointer",
+        userSelect: "none",
+      },
+      GroupLabel: {
+        $: "summary > .group-label",
+        display: "flex",
+        alignItems: "center",
+        minInlineSize: "0",
+        gap: "0.25em",
+      },
+      GroupLabelText: {
+        $: "summary > .group-label > span:first-child",
+        minInlineSize: "0",
+        overflow: "hidden",
+        color: "#text",
+        fontSize: "0.9375rem",
+        fontWeight: "$body-bold-font-weight",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+      Link: {
+        $: "a",
+        display: "flex",
+        alignItems: "center",
+        minInlineSize: "0",
+        gap: "0.25em",
+        fill: "#surface",
+        fontSize: "0.9375rem",
+      },
+      LinkLabel: {
+        $: "a > span:first-child",
+        minInlineSize: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+      InteractiveControl: {
+        $: ["a:hover", "a:focus-visible", "summary:hover"],
+        color: "#text",
+        fill: "#surface-2-hover",
+      },
+      SummaryMarker: {
+        $: "summary::marker",
+        hide: true,
+      },
+      TopLevelLink: {
+        $: "a.large",
+        fontSize: "0.9375rem",
+        fontWeight: "$body-bold-font-weight",
+        color: "#text",
+      },
+    }),
+  );
 
-  useGlobalStyles(".right-sidebar-panel", {
-    paddingBlockStart: "($gap * 5)",
-    paddingInlineStart: "$docs-sidebar-pad-x",
-    paddingInlineEnd: "$docs-sidebar-pad-x",
+  useGlobalStyles(
+    ".right-sidebar-panel",
+    resolveComponentStyles("TableOfContents", {
+      paddingBlockStart: "($gap * 5)",
+      paddingInlineStart: "$docs-sidebar-pad-x",
+      paddingInlineEnd: "$docs-sidebar-pad-x",
 
-    Heading: {
-      $: "h2",
-      marginBlockEnd: "$gap",
-      color: "#text",
-      fontSize: "0.9375rem",
-      fontWeight: "$body-bold-font-weight",
-      lineHeight: "$heading-line-height",
-    },
-    List: {
-      $: "ul",
-      display: "grid",
-      gridTemplateColumns: "minmax(0, 1fr)",
-      minInlineSize: "0",
-      gap: "1px",
-      margin: "0",
-      padding: "0",
-      listStyle: "none",
-    },
-    Item: {
-      $: "li",
-      minInlineSize: "0",
-      margin: "0",
-      padding: "0",
-      listStyle: "none",
-    },
-    Link: {
-      $: "a",
-      display: "block",
-      minInlineSize: "0",
-      maxInlineSize: "100%",
-      paddingBlockStart: "($gap * 0.5)",
-      paddingBlockEnd: "($gap * 0.5)",
-      color: "#text-muted",
-      fontSize: "$small-font-size",
-      lineHeight: "1.45",
-      textDecoration: "none",
-      overflowWrap: "anywhere",
-    },
-    LinkLabel: {
-      $: "a > span",
-      display: "block",
-      minInlineSize: "0",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    HoverLink: {
-      $: "a:hover",
-      color: "#text",
-    },
-    CurrentLink: {
-      $: 'a[aria-current="true"]',
-      color: "#accent-text",
-    },
-  });
+      Heading: {
+        $: "h2",
+        marginBlockEnd: "$gap",
+        color: "#text",
+        fontSize: "0.9375rem",
+        fontWeight: "$body-bold-font-weight",
+        lineHeight: "$heading-line-height",
+      },
+      List: {
+        $: "ul",
+        display: "grid",
+        gridTemplateColumns: "minmax(0, 1fr)",
+        minInlineSize: "0",
+        gap: "1px",
+        margin: "0",
+        padding: "0",
+        listStyle: "none",
+      },
+      Item: {
+        $: "li",
+        minInlineSize: "0",
+        margin: "0",
+        padding: "0",
+        listStyle: "none",
+      },
+      Link: {
+        $: "a",
+        display: "block",
+        minInlineSize: "0",
+        maxInlineSize: "100%",
+        paddingBlockStart: "($gap * 0.5)",
+        paddingBlockEnd: "($gap * 0.5)",
+        color: "#text-muted",
+        fontSize: "$small-font-size",
+        lineHeight: "1.45",
+        textDecoration: "none",
+        overflowWrap: "anywhere",
+      },
+      LinkLabel: {
+        $: "a > span",
+        display: "block",
+        minInlineSize: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+      HoverLink: {
+        $: "a:hover",
+        color: "#text",
+      },
+      CurrentLink: {
+        $: 'a[aria-current="true"]',
+        color: "#accent-text",
+      },
+    }),
+  );
 
   useGlobalStyles(".content-panel", {
     padding: "($gap * 3) $docs-content-pad-x",
@@ -1494,56 +1500,59 @@ export default function GlobalStyles() {
     whiteSpace: "nowrap",
   });
 
-  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile", {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr)",
-    minInlineSize: "0",
-    gap: "1px",
-    margin: "0",
-    padding: "0",
-    listStyle: "none",
-
-    Item: {
-      $: "> li",
+  useGlobalStyles(
+    "mobile-starlight-toc .dropdown .isMobile",
+    resolveComponentStyles("MobileTableOfContents", {
+      display: "grid",
+      gridTemplateColumns: "minmax(0, 1fr)",
       minInlineSize: "0",
+      gap: "1px",
       margin: "0",
       padding: "0",
       listStyle: "none",
-    },
-    Link: {
-      $: "a",
-      display: "flex",
-      alignItems: "center",
-      minInlineSize: "0",
-      minBlockSize: "2.5rem",
-      padding: "0.625rem 0.75rem",
-      color: "#text-soft",
-      radius: "$radius",
-      fill: "#surface-2",
-      textDecoration: "none",
-    },
-    LinkLabel: {
-      $: "a > span",
-      minInlineSize: "0",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    HoverLink: {
-      $: "a:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
-    },
-    CurrentLink: {
-      $: 'a[aria-current="true"]',
-      color: "#accent-text",
-      fill: "#accent-surface-2-subtle",
-    },
-    CurrentIndicator: {
-      $: 'a[aria-current="true"]::after',
-      blockSize: "1rem",
-    },
-  });
+
+      Item: {
+        $: "> li",
+        minInlineSize: "0",
+        margin: "0",
+        padding: "0",
+        listStyle: "none",
+      },
+      Link: {
+        $: "a",
+        display: "flex",
+        alignItems: "center",
+        minInlineSize: "0",
+        minBlockSize: "2.5rem",
+        padding: "0.625rem 0.75rem",
+        color: "#text-soft",
+        radius: "$radius",
+        fill: "#surface-2",
+        textDecoration: "none",
+      },
+      LinkLabel: {
+        $: "a > span",
+        minInlineSize: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+      HoverLink: {
+        $: "a:hover",
+        color: "#text",
+        fill: "#surface-2-hover",
+      },
+      CurrentLink: {
+        $: 'a[aria-current="true"]',
+        color: "#accent-text",
+        fill: "#accent-surface-2-subtle",
+      },
+      CurrentIndicator: {
+        $: 'a[aria-current="true"]::after',
+        blockSize: "1rem",
+      },
+    }),
+  );
 
   useGlobalStyles(
     ".sl-markdown-content :where(code):not(:where(.not-content *))",

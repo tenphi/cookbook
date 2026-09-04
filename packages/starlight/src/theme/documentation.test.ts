@@ -1,5 +1,9 @@
 import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import {
+  COOKBOOK_COMPONENT_NAMES,
+  COOKBOOK_COMPONENT_SUB_ELEMENTS,
+} from "@tenphi/docs";
 import tasty from "@tenphi/eslint-plugin-tasty";
 import { Linter } from "eslint";
 import { describe, expect, it } from "vitest";
@@ -42,6 +46,28 @@ function firstStylesObject(source: string): string | undefined {
 }
 
 describe("Tasty documentation examples", () => {
+  it("documents every configurable surface and named sub-element", async () => {
+    const markdown = await readFile(
+      `${docsDirectory}/theme-and-components.md`,
+      "utf8",
+    );
+    const tableRows = markdown
+      .split("\n")
+      .filter((line) => line.startsWith("| `"));
+
+    for (const name of COOKBOOK_COMPONENT_NAMES) {
+      const row = tableRows.find((line) => line.startsWith(`| \`${name}\``));
+      expect(row, `Missing documentation row for ${name}`).toBeDefined();
+      const subElements = COOKBOOK_COMPONENT_SUB_ELEMENTS[name];
+      if (subElements.length === 0) {
+        expect(row).toContain("None");
+      }
+      for (const subElement of subElements) {
+        expect(row).toContain(`\`${subElement}\``);
+      }
+    }
+  });
+
   it("uses the recommended Tasty property forms in component styles", async () => {
     const linter = new Linter();
     const problems: string[] = [];

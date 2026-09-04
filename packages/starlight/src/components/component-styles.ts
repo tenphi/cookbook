@@ -21,32 +21,21 @@ export function configureComponentStyles(
 
 export function resolveComponentStyles(
   name: CookbookComponentName,
-  defaults: Styles,
+  baseStyles: Styles,
 ): Styles {
-  const configured = sharedConfiguration.__tenphiCookbookComponentStyles?.[
-    name
-  ] as ComponentStyleConfig | undefined;
-  if (!configured) return defaults;
-  if (isModeConfig(configured)) {
-    const styles = configured.styles as Styles;
-    return configured.mode === "replace"
-      ? styles
-      : mergeStyles(defaults, styles);
-  }
-  return mergeStyles(defaults, configured as Styles);
+  const configuredStyles = sharedConfiguration
+    .__tenphiCookbookComponentStyles?.[name] as
+    ComponentStyleConfig | undefined;
+  return configuredStyles
+    ? mergeStyles(baseStyles, configuredStyles as Styles)
+    : baseStyles;
 }
 
 export function resolveComponentStyleOverride(
   name: CookbookComponentName,
-): { mode: "extend" | "replace"; styles: Styles } | undefined {
-  const configured = sharedConfiguration.__tenphiCookbookComponentStyles?.[
-    name
-  ] as ComponentStyleConfig | undefined;
-  if (!configured) return undefined;
-  if (isModeConfig(configured)) {
-    return { mode: configured.mode, styles: configured.styles as Styles };
-  }
-  return { mode: "extend", styles: configured as Styles };
+): Styles | undefined {
+  return sharedConfiguration.__tenphiCookbookComponentStyles?.[name] as
+    Styles | undefined;
 }
 
 /** Preserve custom anatomy names from the pre-component style API. */
@@ -59,21 +48,8 @@ export function resolveLegacyAnatomyStyles(
       (entry): entry is [string, ComponentStyleConfig] =>
         !cookbookComponentNames.has(entry[0]) && entry[1] !== undefined,
     )
-    .map(([name, value]) => [
-      `[data-tasty-anatomy="${name}"]`,
-      isModeConfig(value) ? value.styles : value,
-    ]);
+    .map(([name, value]) => [`[data-tasty-anatomy="${name}"]`, value]);
   return entries.length
     ? (Object.fromEntries(entries) as Record<string, Styles>)
     : undefined;
-}
-
-function isModeConfig(
-  value: ComponentStyleConfig,
-): value is Extract<ComponentStyleConfig, { mode: string }> {
-  return (
-    "mode" in value &&
-    (value.mode === "extend" || value.mode === "replace") &&
-    "styles" in value
-  );
 }

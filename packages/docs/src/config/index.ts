@@ -160,22 +160,10 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
         diagnostics,
         `theme.styles.${name} must be a Tasty style object.`,
       );
-      continue;
-    }
-    if (
-      "mode" in entry &&
-      entry.mode !== "extend" &&
-      entry.mode !== "replace"
-    ) {
+    } else if ("mode" in entry) {
       invalid(
         diagnostics,
-        `theme.styles.${name}.mode must be "extend" or "replace".`,
-      );
-    }
-    if ("mode" in entry && !isRecord(entry.styles)) {
-      invalid(
-        diagnostics,
-        `theme.styles.${name}.styles must be a Tasty style object.`,
+        `theme.styles.${name} must contain only the Tasty style properties to override, without a mode wrapper.`,
       );
     }
   }
