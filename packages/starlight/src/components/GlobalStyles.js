@@ -362,171 +362,173 @@ export default function GlobalStyles() {
     { radius: "$radius" },
   );
 
-  useGlobalStyles(
-    '#starlight__sidebar a[aria-current="page"], #starlight__sidebar a[aria-current="page"]:hover, #starlight__sidebar a[aria-current="page"]:focus',
-    {
-      color: "#accent-text",
-      fill: "#accent-surface-subtle",
-    },
-  );
-
   useGlobalStyles("body > .page > .header, .sidebar-pane", {
     fill: "#surface",
   });
 
-  useGlobalStyles("#starlight__sidebar .sidebar-content", {
-    gap: "($gap * 3)",
-    paddingBlockStart: {
-      "": "($gap * 4)",
-      "@medium-layout": "($gap * 1.5)",
+  useGlobalStyles("#starlight__sidebar", {
+    CurrentLink: {
+      $: [
+        'a[aria-current="page"]',
+        'a[aria-current="page"]:hover',
+        'a[aria-current="page"]:focus',
+      ],
+      color: "#accent-text",
+      fill: "#accent-surface-subtle",
     },
-    paddingBlockEnd: "($gap * 6)",
-  });
-
-  useGlobalStyles("#starlight__sidebar ul", {
-    padding: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles("#starlight__sidebar li", {
-    overflowWrap: "anywhere",
-  });
-
-  useGlobalStyles("#starlight__sidebar .top-level > li + li", {
-    marginBlockStart: "($gap * 3)",
-  });
-
-  useGlobalStyles("#starlight__sidebar ul ul li", {
-    marginInlineStart: "($gap * 0.75)",
-    paddingInlineStart: "($gap * 0.75)",
-    borderInlineStart: "0",
-  });
-
-  useGlobalStyles("#starlight__sidebar :where(summary, a)", {
-    padding: "($gap * 0.8) ($gap * 1.25)",
-    color: "#text-soft",
-    lineHeight: "1.45",
-    radius: "$radius",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles("#starlight__sidebar summary", {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    cursor: "pointer",
-    userSelect: "none",
-  });
-
-  useGlobalStyles("#starlight__sidebar summary > .group-label", {
-    display: "flex",
-    alignItems: "center",
-    minInlineSize: "0",
-    gap: "0.25em",
-  });
-
-  useGlobalStyles("#starlight__sidebar a", {
-    display: "flex",
-    alignItems: "center",
-    minInlineSize: "0",
-    gap: "0.25em",
-    fill: "#surface",
-  });
-
-  useGlobalStyles("#starlight__sidebar a > span:first-child", {
-    minInlineSize: "0",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles("#starlight__sidebar .group-label > .large", {
-    minInlineSize: "0",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles(
-    "#starlight__sidebar a:hover, #starlight__sidebar a:focus-visible, #starlight__sidebar summary:hover",
-    {
+    Content: {
+      $: ".sidebar-content",
+      gap: "($gap * 3)",
+      paddingBlockStart: {
+        "": "($gap * 4)",
+        "@medium-layout": "($gap * 1.5)",
+      },
+      paddingBlockEnd: "($gap * 6)",
+    },
+    List: {
+      $: "ul",
+      padding: "0",
+      listStyle: "none",
+    },
+    Item: {
+      $: "li",
+      overflowWrap: "anywhere",
+    },
+    TopLevelSpacing: {
+      $: ".top-level > li + li",
+      marginBlockStart: "($gap * 3)",
+    },
+    NestedItem: {
+      $: "ul ul li",
+      marginInlineStart: "($gap * 0.75)",
+      paddingInlineStart: "($gap * 0.75)",
+      borderInlineStart: "0",
+    },
+    Control: {
+      $: ["summary", "a"],
+      padding: "($gap * 0.8) ($gap * 1.25)",
+      color: "#text-soft",
+      lineHeight: "1.45",
+      radius: "$radius",
+      textDecoration: "none",
+    },
+    Summary: {
+      $: "summary",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      cursor: "pointer",
+      userSelect: "none",
+    },
+    GroupLabel: {
+      $: "summary > .group-label",
+      display: "flex",
+      alignItems: "center",
+      minInlineSize: "0",
+      gap: "0.25em",
+    },
+    GroupLabelText: {
+      $: "summary > .group-label > span:first-child",
+      minInlineSize: "0",
+      overflow: "hidden",
+      color: "#text",
+      fontSize: "0.9375rem",
+      fontWeight: "$body-bold-font-weight",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+    Link: {
+      $: "a",
+      display: "flex",
+      alignItems: "center",
+      minInlineSize: "0",
+      gap: "0.25em",
+      fill: "#surface",
+      fontSize: "0.9375rem",
+    },
+    LinkLabel: {
+      $: "a > span:first-child",
+      minInlineSize: "0",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+    InteractiveControl: {
+      $: ["a:hover", "a:focus-visible", "summary:hover"],
       color: "#text",
       fill: "#surface-2-hover",
     },
-  );
-
-  useGlobalStyles("#starlight__sidebar summary::marker", {
-    hide: true,
-  });
-
-  useGlobalStyles("#starlight__sidebar a", {
-    fontSize: "0.9375rem",
-  });
-
-  useGlobalStyles("#starlight__sidebar .large", {
-    fontSize: "0.9375rem",
-    fontWeight: "$body-bold-font-weight",
-    color: "#text",
+    SummaryMarker: {
+      $: "summary::marker",
+      hide: true,
+    },
+    TopLevelLink: {
+      $: "a.large",
+      fontSize: "0.9375rem",
+      fontWeight: "$body-bold-font-weight",
+      color: "#text",
+    },
   });
 
   useGlobalStyles(".right-sidebar-panel", {
     paddingBlockStart: "($gap * 5)",
     paddingInlineStart: "$docs-sidebar-pad-x",
     paddingInlineEnd: "$docs-sidebar-pad-x",
-  });
 
-  useGlobalStyles(".right-sidebar-panel h2", {
-    marginBlockEnd: "$gap",
-    color: "#text",
-    fontSize: "0.9375rem",
-    fontWeight: "$body-bold-font-weight",
-    lineHeight: "$heading-line-height",
-  });
-
-  useGlobalStyles(".right-sidebar-panel ul", {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr)",
-    minInlineSize: "0",
-    gap: "1px",
-    margin: "0",
-    padding: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles(".right-sidebar-panel li", {
-    minInlineSize: "0",
-    margin: "0",
-    padding: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles(".right-sidebar-panel a", {
-    display: "block",
-    minInlineSize: "0",
-    maxInlineSize: "100%",
-    paddingBlockStart: "($gap * 0.5)",
-    paddingBlockEnd: "($gap * 0.5)",
-    color: "#text-muted",
-    fontSize: "$small-font-size",
-    lineHeight: "1.45",
-    textDecoration: "none",
-    overflowWrap: "anywhere",
-  });
-
-  useGlobalStyles(".right-sidebar-panel a > span", {
-    display: "block",
-    minInlineSize: "0",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles(".right-sidebar-panel a:hover", {
-    color: "#text",
-  });
-
-  useGlobalStyles('.right-sidebar-panel a[aria-current="true"]', {
-    color: "#accent-text",
+    Heading: {
+      $: "h2",
+      marginBlockEnd: "$gap",
+      color: "#text",
+      fontSize: "0.9375rem",
+      fontWeight: "$body-bold-font-weight",
+      lineHeight: "$heading-line-height",
+    },
+    List: {
+      $: "ul",
+      display: "grid",
+      gridTemplateColumns: "minmax(0, 1fr)",
+      minInlineSize: "0",
+      gap: "1px",
+      margin: "0",
+      padding: "0",
+      listStyle: "none",
+    },
+    Item: {
+      $: "li",
+      minInlineSize: "0",
+      margin: "0",
+      padding: "0",
+      listStyle: "none",
+    },
+    Link: {
+      $: "a",
+      display: "block",
+      minInlineSize: "0",
+      maxInlineSize: "100%",
+      paddingBlockStart: "($gap * 0.5)",
+      paddingBlockEnd: "($gap * 0.5)",
+      color: "#text-muted",
+      fontSize: "$small-font-size",
+      lineHeight: "1.45",
+      textDecoration: "none",
+      overflowWrap: "anywhere",
+    },
+    LinkLabel: {
+      $: "a > span",
+      display: "block",
+      minInlineSize: "0",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+    HoverLink: {
+      $: "a:hover",
+      color: "#text",
+    },
+    CurrentLink: {
+      $: 'a[aria-current="true"]',
+      color: "#accent-text",
+    },
   });
 
   useGlobalStyles(".content-panel", {
@@ -1500,53 +1502,48 @@ export default function GlobalStyles() {
     margin: "0",
     padding: "0",
     listStyle: "none",
-  });
 
-  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile > li", {
-    minInlineSize: "0",
-    margin: "0",
-    padding: "0",
-    listStyle: "none",
-  });
-
-  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a", {
-    display: "flex",
-    alignItems: "center",
-    minInlineSize: "0",
-    minBlockSize: "2.5rem",
-    padding: "0.625rem 0.75rem",
-    color: "#text-soft",
-    radius: "$radius",
-    fill: "#surface-2",
-    textDecoration: "none",
-  });
-
-  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a > span", {
-    minInlineSize: "0",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles("mobile-starlight-toc .dropdown .isMobile a:hover", {
-    color: "#text",
-    fill: "#surface-2-hover",
-  });
-
-  useGlobalStyles(
-    'mobile-starlight-toc .dropdown .isMobile a[aria-current="true"]',
-    {
+    Item: {
+      $: "> li",
+      minInlineSize: "0",
+      margin: "0",
+      padding: "0",
+      listStyle: "none",
+    },
+    Link: {
+      $: "a",
+      display: "flex",
+      alignItems: "center",
+      minInlineSize: "0",
+      minBlockSize: "2.5rem",
+      padding: "0.625rem 0.75rem",
+      color: "#text-soft",
+      radius: "$radius",
+      fill: "#surface-2",
+      textDecoration: "none",
+    },
+    LinkLabel: {
+      $: "a > span",
+      minInlineSize: "0",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+    HoverLink: {
+      $: "a:hover",
+      color: "#text",
+      fill: "#surface-2-hover",
+    },
+    CurrentLink: {
+      $: 'a[aria-current="true"]',
       color: "#accent-text",
       fill: "#accent-surface-2-subtle",
     },
-  );
-
-  useGlobalStyles(
-    'mobile-starlight-toc .dropdown .isMobile a[aria-current="true"]::after',
-    {
+    CurrentIndicator: {
+      $: 'a[aria-current="true"]::after',
       blockSize: "1rem",
     },
-  );
+  });
 
   useGlobalStyles(
     ".sl-markdown-content :where(code):not(:where(.not-content *))",
