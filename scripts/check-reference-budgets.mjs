@@ -78,6 +78,18 @@ if (!sharedCss.includes("view%42ox")) {
     "Inline SVG masks lost their case-sensitive viewBox attribute.",
   );
 }
+if (
+  !/\.td-footer__credit\s*\{[^}]*color:\s*var\(--text-color\)/.test(
+    sharedCss,
+  ) ||
+  !/\.td-footer__credit a\s*\{[^}]*color:\s*var\(--accent-text-color\)/.test(
+    sharedCss,
+  )
+) {
+  throw new Error(
+    "The footer credit must use body text with a brand-colored link.",
+  );
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 if (
   !/<script\b(?=[^>]*\bdefer(?:\s|>))(?=[^>]*\bsrc="https:\/\/umami\.tenphi\.me\/script\.js")(?=[^>]*\bdata-website-id="084ca820-b3e3-440d-bf91-c246cf60da48")[^>]*><\/script>/.test(

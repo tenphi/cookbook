@@ -478,13 +478,13 @@ export const FooterRoot = customizeComponent(
       Credit: {
         $: ".td-footer__credit",
         margin: "($gap * 3) auto",
-        color: "#text-muted",
+        color: "#text",
         preset: "small",
         textAlign: "center",
       },
       CreditLink: {
         $: ".td-footer__credit a",
-        color: "#text-soft",
+        color: "#accent-text",
         preset: "small / strong",
         textDecoration: "none",
       },

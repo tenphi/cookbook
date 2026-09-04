@@ -91,8 +91,7 @@ content, or jump to the [Configuration reference](./configuration.md).
 ## Monorepo roots
 
 An Astro app nested inside a monorepo can read documentation from the
-repository root. Pass the same absolute root to both the integration and the
-advanced Starlight collection adapter:
+repository root. Pass its absolute path to the integration:
 
 ```ts
 import { fileURLToPath } from "node:url";
@@ -106,4 +105,25 @@ export default defineConfig({
 });
 ```
 
-This documentation site uses that exact arrangement.
+If the app also defines an Astro content collection, pass the same root and
+configuration to the Starlight collection adapter:
+
+```ts
+import { fileURLToPath } from "node:url";
+import { defineCollection } from "astro:content";
+import { createStarlightCollection } from "@tenphi/starlight/content";
+import docs from "../docs.config.js";
+
+const repositoryRoot = fileURLToPath(new URL("../../..", import.meta.url));
+
+export const collections = {
+  docs: defineCollection(createStarlightCollection(docs, repositoryRoot)),
+};
+```
+
+Add `@tenphi/starlight` as a direct dependency when using this advanced
+renderer API, and adjust the relative URL for the content configuration file's
+location.
+
+This documentation site uses both calls so the integration and collection
+loader resolve the same repository-owned source files.
