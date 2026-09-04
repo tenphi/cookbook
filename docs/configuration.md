@@ -165,8 +165,12 @@ theme: {
   },
   states: {},
   presets: {
-    body: { fontFamily: "Inter, sans-serif" },
-    heading: { fontFamily: "Newsreader, serif", fontWeight: 650 }
+    body: { fontFamily: "Inter, sans-serif", boldFontWeight: 680 },
+    heading: {
+      fontFamily: "Newsreader, serif",
+      fontWeight: 650,
+      boldFontWeight: 740
+    }
   },
   styles: {
     ThemeSelect: {

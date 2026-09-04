@@ -129,7 +129,7 @@ export const StepsRoot = customizeComponent(
       Marker: {
         $: "> li::marker",
         color: "#accent-text",
-        preset: "bold",
+        preset: "strong",
       },
     },
   }),

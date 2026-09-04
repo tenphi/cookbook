@@ -108,18 +108,10 @@ export default function GlobalStyles() {
     border: "0",
   });
 
-  useGlobalStyles("html, body, button, input, select, textarea", {
-    fontFamily: "$body-font-family",
-  });
-
   useGlobalStyles("body", {
     color: "#text",
     fill: "#surface",
-    fontSize: "$body-font-size",
-    fontWeight: "$body-font-weight",
-    lineHeight: "$body-line-height",
-    letterSpacing: "$body-letter-spacing",
-    "$bold-font-weight": "$body-bold-font-weight",
+    preset: "body",
   });
 
   useGlobalStyles(":where(strong, b)", {
@@ -265,7 +257,7 @@ export default function GlobalStyles() {
     padding: "($gap * 1.5) $docs-nav-pad-x",
     color: "#accent-surface-text",
     fill: "#accent-surface",
-    fontWeight: "$body-bold-font-weight",
+    preset: "body / strong",
     lineHeight: "$heading-line-height",
     textAlign: "center",
     textWrap: "balance",
@@ -302,57 +294,36 @@ export default function GlobalStyles() {
 
   useGlobalStyles(":where(h1, h2, h3, h4, h5, h6), .site-title", {
     color: "#text",
-    fontFamily: "$heading-font-family",
-    fontWeight: "$heading-font-weight",
-    letterSpacing: "$heading-letter-spacing",
-    "$bold-font-weight": "$heading-bold-font-weight",
+    preset: "heading",
     textWrap: "balance",
   });
 
   useGlobalStyles("h1", {
-    fontSize: "$h1-font-size",
-    lineHeight: "$h1-line-height",
-    letterSpacing: "$h1-letter-spacing",
-    "$bold-font-weight": "$h1-bold-font-weight",
+    preset: "h1",
   });
 
   useGlobalStyles("h2", {
-    fontSize: "$h2-font-size",
-    lineHeight: "$h2-line-height",
-    letterSpacing: "$h2-letter-spacing",
-    "$bold-font-weight": "$h2-bold-font-weight",
+    preset: "h2",
   });
 
   useGlobalStyles("h3", {
-    fontSize: "$h3-font-size",
-    lineHeight: "$h3-line-height",
-    letterSpacing: "$h3-letter-spacing",
-    "$bold-font-weight": "$h3-bold-font-weight",
+    preset: "h3",
   });
 
   useGlobalStyles("h4", {
-    fontSize: "$h4-font-size",
-    lineHeight: "$h4-line-height",
-    letterSpacing: "$h4-letter-spacing",
-    "$bold-font-weight": "$h4-bold-font-weight",
+    preset: "h4",
   });
 
   useGlobalStyles("h5", {
-    fontSize: "$h5-font-size",
-    lineHeight: "$h5-line-height",
-    letterSpacing: "$h5-letter-spacing",
-    "$bold-font-weight": "$h5-bold-font-weight",
+    preset: "h5",
   });
 
   useGlobalStyles("h6", {
-    fontSize: "$h6-font-size",
-    lineHeight: "$h6-line-height",
-    letterSpacing: "$h6-letter-spacing",
-    "$bold-font-weight": "$h6-bold-font-weight",
+    preset: "h6",
   });
 
   useGlobalStyles(":where(code, kbd, samp, pre)", {
-    fontFamily: "$code-font-family",
+    preset: "code",
   });
 
   useGlobalStyles(
@@ -446,8 +417,7 @@ export default function GlobalStyles() {
         minInlineSize: "0",
         overflow: "hidden",
         color: "#text",
-        fontSize: "0.9375rem",
-        fontWeight: "$body-bold-font-weight",
+        preset: "navigation / strong",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
       },
@@ -458,7 +428,7 @@ export default function GlobalStyles() {
         minInlineSize: "0",
         gap: "0.25em",
         fill: "#surface",
-        fontSize: "0.9375rem",
+        preset: "navigation",
       },
       LinkLabel: {
         $: "a > span:first-child",
@@ -478,9 +448,8 @@ export default function GlobalStyles() {
       },
       TopLevelLink: {
         $: "a.large",
-        fontSize: "0.9375rem",
-        fontWeight: "$body-bold-font-weight",
         color: "#text",
+        preset: "navigation / strong",
       },
     }),
   );
@@ -496,8 +465,7 @@ export default function GlobalStyles() {
         $: "h2",
         marginBlockEnd: "$gap",
         color: "#text",
-        fontSize: "0.9375rem",
-        fontWeight: "$body-bold-font-weight",
+        preset: "navigation / strong",
         lineHeight: "$heading-line-height",
       },
       List: {
@@ -525,8 +493,7 @@ export default function GlobalStyles() {
         paddingBlockStart: "($gap * 0.5)",
         paddingBlockEnd: "($gap * 0.5)",
         color: "#text-muted",
-        fontSize: "$small-font-size",
-        lineHeight: "1.45",
+        preset: "small",
         textDecoration: "none",
         overflowWrap: "anywhere",
       },
@@ -617,7 +584,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(".sl-markdown-content dt:not(:where(.not-content *))", {
-    fontWeight: "$body-bold-font-weight",
+    preset: "strong",
   });
 
   useGlobalStyles(".sl-markdown-content dd:not(:where(.not-content *))", {
@@ -650,8 +617,6 @@ export default function GlobalStyles() {
     color: "#syntax-text",
     border: true,
     fill: "#syntax-bg",
-    fontSize: "$code-font-size",
-    lineHeight: "$code-line-height",
     radius: "$card-radius",
     tabSize: "2",
   });
@@ -660,9 +625,6 @@ export default function GlobalStyles() {
     padding: "0",
     color: "inherit",
     fill: "#clear",
-    fontFamily: "$code-font-family",
-    fontSize: "inherit",
-    lineHeight: "inherit",
   });
 
   useGlobalStyles(".sl-markdown-content pre.td-diff", {
@@ -766,7 +728,7 @@ export default function GlobalStyles() {
     marginInlineStart: "-0.5rem",
     paddingInlineStart: "0.5rem",
     color: "#text",
-    fontWeight: "$body-bold-font-weight",
+    preset: "strong",
   });
 
   useGlobalStyles(
@@ -806,31 +768,31 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper", {
-    lineHeight: "$heading-line-height",
+    preset: "heading",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h1", {
-    fontSize: "$h1-font-size",
+    preset: "h1",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h2", {
-    fontSize: "$h2-font-size",
+    preset: "h2",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h3", {
-    fontSize: "$h3-font-size",
+    preset: "h3",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h4", {
-    fontSize: "$h4-font-size",
+    preset: "h4",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h5", {
-    fontSize: "$h5-font-size",
+    preset: "h5",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper.level-h6", {
-    fontSize: "$h6-font-size",
+    preset: "h6",
   });
 
   useGlobalStyles(".sl-markdown-content .sl-heading-wrapper > :first-child", {
@@ -871,7 +833,7 @@ export default function GlobalStyles() {
     gap: "$gap",
     margin: "0 0 $gap",
     color: "#text",
-    fontWeight: "$body-bold-font-weight",
+    preset: "strong",
   });
 
   useGlobalStyles(".starlight-aside__icon", {
@@ -925,7 +887,7 @@ export default function GlobalStyles() {
 
   useGlobalStyles(".sl-link-card a", {
     color: "#text",
-    fontWeight: "$body-bold-font-weight",
+    preset: "strong",
     textDecoration: "none",
   });
 
@@ -946,7 +908,7 @@ export default function GlobalStyles() {
     border: true,
     radius: "$radius",
     fill: "#surface-3",
-    fontFamily: "$code-font-family",
+    preset: "code",
     fontSize: "$small-font-size",
     lineHeight: "1",
     overflowWrap: "anywhere",
@@ -979,8 +941,7 @@ export default function GlobalStyles() {
     border: true,
     radius: "999px",
     fill: "#surface-3",
-    fontSize: "$small-font-size",
-    fontWeight: "$body-bold-font-weight",
+    preset: "small / strong",
   });
 
   useGlobalStyles(".sl-steps > li::after", {
@@ -1004,7 +965,7 @@ export default function GlobalStyles() {
     color: "#text-soft",
     border: true,
     fill: "#surface",
-    fontSize: "$small-font-size",
+    preset: "small",
     boxShadow: "none",
     cursor: "pointer",
     transition: "color 120ms ease, background-color 120ms ease",
@@ -1024,7 +985,7 @@ export default function GlobalStyles() {
     paddingInlineStart: "0.375rem",
     paddingInlineEnd: "0.375rem",
     fill: "#surface-3",
-    fontFamily: "$body-font-family",
+    preset: "body",
     fontSize: "0.75rem",
     radius: "($radius * 0.75)",
   });
@@ -1252,8 +1213,7 @@ export default function GlobalStyles() {
     borderColor: "#border",
     radius: "$radius",
     fill: "#surface-3",
-    fontSize: "$small-font-size",
-    fontWeight: "$body-bold-font-weight",
+    preset: "small / strong",
     boxShadow: "none",
     cursor: "pointer",
     transition: "color 120ms ease, background-color 120ms ease",
@@ -1318,7 +1278,7 @@ export default function GlobalStyles() {
 
   useGlobalStyles("#starlight__search .pagefind-ui__result-link", {
     color: "#text",
-    fontWeight: "$body-bold-font-weight",
+    preset: "strong",
   });
 
   useGlobalStyles("[data-search-modal-open]", {
@@ -1448,9 +1408,7 @@ export default function GlobalStyles() {
       margin: "0",
       padding: "0",
       color: "#text-soft",
-      fontSize: "$small-font-size",
-      fontWeight: "$body-bold-font-weight",
-      lineHeight: "$small-line-height",
+      preset: "small / strong",
       border: "0",
       radius: "0",
       fill: "#clear",
@@ -1586,8 +1544,7 @@ export default function GlobalStyles() {
         borderCollapse: "separate",
         borderSpacing: "0",
         color: "#text-soft",
-        fontSize: "$small-font-size",
-        lineHeight: "$small-line-height",
+        preset: "small",
         border: true,
         borderColor: "#border",
         radius: "$card-radius",
