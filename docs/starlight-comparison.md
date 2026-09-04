@@ -10,17 +10,74 @@ documentation shell. It keeps familiar page-authoring conventions while adding
 repository and npm content sources, stricter validation, and a Tasty/Glaze
 theme model.
 
-## Feature comparison
+## Cookbook or Starlight?
 
-| Reader or author capability | Starlight                                                                                                                                                              | Cookbook                                                                                                                                                                              |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Heading permalinks          | [Adds linked heading anchors](https://starlight.astro.build/guides/authoring-content/#automatic-heading-anchor-links)                                                  | Adds an always-visible `#` permalink to every rendered Markdown heading.                                                                                                              |
-| Code copying                | Its default Expressive Code renderer includes copy controls.                                                                                                           | Keeps the lightweight Shiki renderer and adds a top-right Tabler copy button to ordinary fenced blocks. It becomes a green check after a successful copy.                             |
-| Edit links                  | [`editLink.baseUrl`](https://starlight.astro.build/reference/configuration/#editlink) is joined with a content path.                                                   | Uses the same setting, but joins it with Cookbook's original repository-relative source path, including sources outside the Astro app. Per-page `editUrl` can override or disable it. |
-| Last updated                | [`lastUpdated`](https://starlight.astro.build/reference/configuration/#lastupdated) reads Git history.                                                                 | Uses the same setting and reads the original local source file's Git history. Per-page `lastUpdated` can override or disable it.                                                      |
-| Multiple languages          | [`locales` and `defaultLocale`](https://starlight.astro.build/guides/i18n/) configure routes, fallback content, document language, direction, and the language picker. | Forwards the same configuration to Starlight. Put translated sources under the matching route prefix, such as `docs/fr/guide.md` for `/fr/guide/`.                                    |
-| Landing pages               | [`template: splash` and `hero`](https://starlight.astro.build/reference/frontmatter/#template) provide a wide, sidebar-free presentation.                              | Supports the same frontmatter and applies the active Tasty/Glaze theme to the hero and actions. This documentation homepage is a live example.                                        |
-| Visual customization        | Starlight exposes CSS variables, custom CSS, and component overrides.                                                                                                  | Cookbook exposes tokens, presets, states, and named component style objects through `theme`; Glaze derives accessible semantic colors. Structural Astro overrides remain available.   |
+Start with the place where the documentation must live. Starlight is a strong
+choice when an Astro site owns its content. Cookbook is designed for projects
+where the repository Markdown—or the documentation actually published in an
+npm package—must remain the source of truth.
+
+| Concern                 | Starlight                                                                          | Cookbook                                                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Starting point          | Add Starlight to an Astro project and author its documentation content collection. | Add one integration to an Astro project, or generate a complete site directly from a published npm package.                                                                           |
+| Content ownership       | The documentation site conventionally owns its Markdown under `src/content/docs/`. | Reads `README.md`, repository `docs/` trees, files outside the Astro app, and selected files from npm artifacts without copying or rewriting them.                                    |
+| Reproducible releases   | Follows the dependencies and content committed with the site.                      | Can lock an npm package to its exact resolved version and integrity, then rebuild from the files users actually receive.                                                              |
+| Build guarantees        | Provides Starlight's content schema and Astro build pipeline.                      | Adds strict checks for duplicate routes, broken links, missing assets, unsafe paths, and invalid navigation with source-aware diagnostics.                                            |
+| Design system           | Supports CSS variables, custom CSS, and component overrides.                       | Exposes the full [Tasty styling DSL](https://tasty.style/docs/dsl) through configuration, with Glaze-generated semantic colors and named style trees for Cookbook and shell surfaces. |
+| Familiar authoring      | Defines the Starlight page, navigation, i18n, and frontmatter conventions.         | Preserves those conventions—including splash pages, locales, edit links, and last-updated metadata—while resolving them against each original source.                                 |
+| Structural escape hatch | Replaces Starlight components when markup or behavior must change.                 | Supports Astro component overrides for structural changes; visual changes normally stay in typed `theme` configuration.                                                               |
+
+Choose Starlight when the documentation site is the natural home for the
+content and its CSS-oriented customization model fits the project. Choose
+Cookbook when documentation must stay beside the code, match a published
+package, fail strictly when references drift, or expose a reusable design
+system entirely through configuration.
+
+## Customize with Tasty's DSL
+
+Cookbook customization is not limited to replacing token values. Every entry
+under `theme.styles` is a partial Tasty style object that Cookbook merges into
+the component's base style tree. That gives configuration access to the same
+responsive values, state maps, calculations, semantic tokens, typography
+presets, and named sub-elements used by Cookbook itself:
+
+```ts
+export default defineDocsConfig({
+  theme: {
+    states: {
+      "@touch": "@media(pointer: coarse)",
+    },
+    styles: {
+      MarkdownCodeBlock: {
+        Pre: {
+          padding: {
+            "": "2x 4x",
+            "@mobile": "1.5x 3x",
+          },
+          radius: "$card-radius",
+        },
+        CopyButton: {
+          inlineSize: {
+            "": "2rem",
+            "@touch": "2.5rem",
+          },
+          scale: {
+            "": "1",
+            ":active": "0.94",
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+The user supplies only overrides; the merge happens inside Cookbook. See
+[Theme and components](./theme-and-components.md#style-customization) for the
+complete component and sub-element inventory, and the
+[Tasty documentation](https://tasty.style/docs) for the DSL's properties and
+conditional syntax. Structural Astro overrides remain available when a change
+requires different markup or behavior rather than styling.
 
 ## Configure the shared capabilities
 

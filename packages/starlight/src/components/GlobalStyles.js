@@ -726,6 +726,7 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".sl-markdown-content .td-code-block",
     resolveComponentStyles("MarkdownCodeBlock", {
+      display: "block",
       position: "relative",
       minInlineSize: "0",
       Pre: {
@@ -745,6 +746,7 @@ export default function GlobalStyles() {
         zIndex: "1",
         insetBlockStart: "$gap",
         insetInlineEnd: "$gap",
+        margin: "0",
         display: "grid",
         placeItems: "center",
         inlineSize: "2rem",
@@ -1767,6 +1769,9 @@ export default function GlobalStyles() {
       "@mobile": "3.5rem",
     },
     "$docs-nav-pad-x": {
+      "@mobile": "1rem",
+    },
+    "$docs-content-pad-x": {
       "@mobile": "1rem",
     },
     "$docs-nav-gap": {
