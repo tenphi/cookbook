@@ -235,7 +235,7 @@ export const StarlightHeaderRoot = customizeComponent(
   }),
 );
 
-const appearanceSelectStyles = {
+export const appearanceSelectStyles = {
   display: "grid",
   flexShrink: "0",
   placeItems: "center",
@@ -280,7 +280,7 @@ const appearanceSelectStyles = {
   },
   Select: {
     $: "select",
-    appearance: { "": "base-select", "@mobile": "none" },
+    appearance: "base-select",
     position: "static",
     inlineSize: "100%",
     minInlineSize: "0",
