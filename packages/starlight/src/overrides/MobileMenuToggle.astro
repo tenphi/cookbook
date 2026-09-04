@@ -1,0 +1,58 @@
+---
+import Icon from "@astrojs/starlight/user-components/Icon.astro";
+---
+
+<starlight-menu-button class="print:hidden">
+  <button
+    aria-expanded="false"
+    aria-label={Astro.locals.t("menuButton.accessibleLabel")}
+    aria-controls="starlight__sidebar"
+    class="td-menu-button sl-flex md:sl-hidden"
+  >
+    <Icon name="bars" class="open-menu" />
+    <Icon name="close" class="close-menu" />
+  </button>
+</starlight-menu-button>
+
+<script>
+  class StarlightMenuButton extends HTMLElement {
+    btn = this.querySelector("button")!;
+
+    constructor() {
+      super();
+      this.btn.addEventListener("click", () => this.toggleExpanded());
+
+      const parentNav = this.closest("nav");
+      if (parentNav) {
+        parentNav.addEventListener("keyup", (event) =>
+          this.closeOnEscape(event),
+        );
+      }
+
+      matchMedia("(min-width: 50em)").addEventListener("change", () =>
+        this.setExpanded(false),
+      );
+    }
+
+    setExpanded(expanded: boolean) {
+      this.setAttribute("aria-expanded", String(expanded));
+      document.body.toggleAttribute("data-mobile-menu-expanded", expanded);
+      document
+        .querySelectorAll<HTMLElement>(".main-frame, .sl-skip-link")
+        .forEach((element) => element.toggleAttribute("inert", expanded));
+    }
+
+    toggleExpanded() {
+      this.setExpanded(this.getAttribute("aria-expanded") !== "true");
+    }
+
+    closeOnEscape(event: KeyboardEvent) {
+      if (event.code === "Escape") {
+        this.setExpanded(false);
+        this.btn.focus();
+      }
+    }
+  }
+
+  customElements.define("starlight-menu-button", StarlightMenuButton);
+</script>

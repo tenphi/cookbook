@@ -85,6 +85,9 @@ export default function cookbook(
   const mobileMenuFooterPath = fileURLToPath(
     new URL("./overrides/MobileMenuFooter.astro", import.meta.url),
   );
+  const mobileMenuTogglePath = fileURLToPath(
+    new URL("./overrides/MobileMenuToggle.astro", import.meta.url),
+  );
   const themeSelectPath = fileURLToPath(
     new URL("./overrides/ThemeSelect.astro", import.meta.url),
   );
@@ -92,6 +95,7 @@ export default function cookbook(
     Header: headerPath,
     Sidebar: sidebarPath,
     MobileMenuFooter: mobileMenuFooterPath,
+    MobileMenuToggle: mobileMenuTogglePath,
     ThemeSelect: themeSelectPath,
     ...options.config?.components?.overrides,
   };

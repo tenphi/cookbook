@@ -1350,7 +1350,7 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles("starlight-menu-button button[class]", {
+  useGlobalStyles("starlight-menu-button .td-menu-button", {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1360,6 +1360,7 @@ export default function GlobalStyles() {
     padding: "0",
     color: "#text-soft",
     boxShadow: "none",
+    cursor: "pointer",
   });
 
   useGlobalStyles("starlight-menu-button button > svg", {
