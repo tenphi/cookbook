@@ -187,12 +187,16 @@ so the whole interface continues to adapt in dark and high-contrast modes. A req
 `unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).
 
-`theme.styles` is keyed by Cookbook component name. A plain Tasty style object
-extends that component's defaults. Use `{ mode: "replace", styles: {...} }`
+`theme.styles` is keyed by Cookbook UI surface name. A plain Tasty style object
+extends that surface's defaults. Use `{ mode: "replace", styles: {...} }`
 when you intentionally want to discard the complete default style object.
 Structural Astro overrides under `components.overrides` remain available when
 styling alone is insufficient. `theme.states` registers additional Tasty state
 shorthands, and `contrastLevel` is forwarded to Glaze's palette resolution.
+The built-in documentation navigation surfaces are available as `Sidebar`,
+`TableOfContents`, and `MobileTableOfContents`; see
+[Theme and components](./theme-and-components.md#component-styles) for their
+supported anatomy keys.
 
 ## Markdown
 

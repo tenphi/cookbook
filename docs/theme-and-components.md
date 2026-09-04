@@ -161,10 +161,11 @@ are useful when building a theme editor or presenting a reset action.
 
 ## Component styles
 
-Cookbook-owned interface elements are direct `tasty()` components. Configure
-their style objects by component name under `theme.styles`; the configuration
-is resolved before the component is created, so this is not a selector-based
-CSS override.
+Cookbook-owned interface elements are direct `tasty()` components. Supported
+Starlight-rendered surfaces use the same Tasty style trees through the global
+bridge. Configure either kind by name under `theme.styles`; the configuration
+is resolved before CSS generation, so this is not a selector-based CSS
+override.
 
 A plain style object extends the defaults using Tasty's deep style merge:
 
@@ -183,6 +184,15 @@ theme: {
     TopNavigation: {
       Link: { preset: "body" },
       CurrentLink: { color: "#accent-text" }
+    },
+    Sidebar: {
+      LinkLabel: { whiteSpace: "normal" }
+    },
+    TableOfContents: {
+      LinkLabel: { whiteSpace: "normal" }
+    },
+    MobileTableOfContents: {
+      LinkLabel: { whiteSpace: "normal" }
     }
   }
 }
@@ -208,8 +218,9 @@ theme: {
 
 The configurable component names are `Card`, `ContrastSelect`, `Footer`, `Logo`,
 `MarkdownTable`, `Mermaid`, `MobileMenuFooter`, `MobileNavigationTabs`,
-`PackageVersion`, `Preview`, `Steps`, `Tabs`, `ThemeSelect`, `TopNavigation`,
-and `StarlightHeader`. `MarkdownTable` exposes the `Table`, `Cell`,
+`MobileTableOfContents`, `PackageVersion`, `Preview`, `Sidebar`, `Steps`, `Tabs`,
+`TableOfContents`, `ThemeSelect`, `TopNavigation`, and `StarlightHeader`.
+`MarkdownTable` exposes the `Table`, `Cell`,
 `LastBodyRowCell`, and `HeaderCell` sub-elements used for generated Markdown
 tables. `Mermaid` exposes `Diagram`, `Text`, and `MonoText`. Editor inference
 is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
@@ -217,6 +228,20 @@ is provided by `defineDocsConfig()` and the exported `CookbookComponentName`,
 `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, and
 `HoverCreditLink`. By default, the footer credit uses the primary body text
 color, while its Cookbook link uses the semantic brand link color.
+
+Navigation styles expose their complete Tasty trees through these names:
+
+| Style name              | Supported anatomy keys                                                                                                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Sidebar`               | `CurrentLink`, `Content`, `List`, `Item`, `TopLevelSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
+| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                  |
+| `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                 |
+
+Properties at the root of each style object customize the corresponding
+navigation container; the `MobileTableOfContents` root is the list inside the
+mobile dropdown. Plain objects extend the defaults, so overriding
+`LinkLabel.whiteSpace` keeps the remaining ellipsis styles unless replacement
+mode is selected.
 
 `components.overrides` remains the structural escape hatch for replacing an
 Astro component. Prefer `theme.styles` when the markup and behavior remain the

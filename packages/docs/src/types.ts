@@ -152,7 +152,7 @@ export interface ThemePaletteConfig {
   textSoft?: GlazeColorValue;
 }
 
-/** Cookbook components whose default Tasty styles can be customized. */
+/** Cookbook UI surfaces whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
   "Card",
   "ContrastSelect",
@@ -162,10 +162,13 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Mermaid",
   "MobileMenuFooter",
   "MobileNavigationTabs",
+  "MobileTableOfContents",
   "PackageVersion",
   "Preview",
+  "Sidebar",
   "Steps",
   "Tabs",
+  "TableOfContents",
   "ThemeSelect",
   "TopNavigation",
   "StarlightHeader",
@@ -178,7 +181,7 @@ export type ComponentStyles = Record<string, unknown>;
 
 /**
  * Plain style objects extend Cookbook defaults. Use `mode: "replace"` to
- * discard a component's defaults and supply the complete style object.
+ * discard a UI surface's defaults and supply the complete style object.
  */
 export type ComponentStyleConfig =
   | ComponentStyles
@@ -199,7 +202,7 @@ export interface ThemeConfig {
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;
-  /** Direct Tasty component styles, keyed by Cookbook component name. */
+  /** Tasty UI styles, keyed by Cookbook component or bridge name. */
   styles?: ComponentStylesConfig;
   contrastLevel?: number | "auto";
 }

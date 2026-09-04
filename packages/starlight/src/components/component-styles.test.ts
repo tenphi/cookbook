@@ -62,10 +62,13 @@ describe("component style configuration", () => {
     });
   });
 
-  it("exposes bridged Markdown components through the same style registry", () => {
+  it("exposes bridged component trees through the same style registry", () => {
     configureComponentStyles({
       MarkdownTable: { Table: { radius: "0" } },
       Mermaid: { Diagram: { maxInlineSize: "90%" } },
+      MobileTableOfContents: { LinkLabel: { whiteSpace: "normal" } },
+      Sidebar: { Link: { padding: "1x" } },
+      TableOfContents: { Link: { color: "#text" } },
     });
 
     expect(
@@ -83,6 +86,23 @@ describe("component style configuration", () => {
       }),
     ).toEqual({
       Diagram: { display: "block", maxInlineSize: "90%" },
+    });
+    expect(
+      resolveComponentStyles("Sidebar", {
+        Link: { color: "#text-soft", padding: "2x" },
+      }),
+    ).toEqual({ Link: { color: "#text-soft", padding: "1x" } });
+    expect(
+      resolveComponentStyles("TableOfContents", {
+        Link: { color: "#text-muted", preset: "small" },
+      }),
+    ).toEqual({ Link: { color: "#text", preset: "small" } });
+    expect(
+      resolveComponentStyles("MobileTableOfContents", {
+        LinkLabel: { overflow: "hidden", whiteSpace: "nowrap" },
+      }),
+    ).toEqual({
+      LinkLabel: { overflow: "hidden", whiteSpace: "normal" },
     });
   });
 

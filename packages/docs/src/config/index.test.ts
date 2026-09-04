@@ -95,7 +95,10 @@ describe("docs configuration", () => {
     const config = normalizeDocsConfig({
       theme: {
         styles: {
+          MobileTableOfContents: { Link: { padding: "1x" } },
+          Sidebar: { Link: { padding: "1x" } },
           StarlightHeader: { padding: "2x" },
+          TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
           ThemeSelect: {
             mode: "replace",
             styles: { display: "grid" },
@@ -105,7 +108,10 @@ describe("docs configuration", () => {
     });
 
     expect(config.theme.styles).toEqual({
+      MobileTableOfContents: { Link: { padding: "1x" } },
+      Sidebar: { Link: { padding: "1x" } },
       StarlightHeader: { padding: "2x" },
+      TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
       ThemeSelect: {
         mode: "replace",
         styles: { display: "grid" },
