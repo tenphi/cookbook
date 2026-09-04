@@ -26,6 +26,9 @@ export default defineConfig({
             },
           ],
         },
+        components: {
+          overrides: { Footer: false },
+        },
       },
     }),
   ],

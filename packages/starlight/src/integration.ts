@@ -41,6 +41,7 @@ import {
   configureComponentStyles,
   resolveLegacyAnatomyStyles,
 } from "./components/component-styles.js";
+import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 
 const packageRequire = createRequire(import.meta.url);
@@ -82,6 +83,9 @@ export default function cookbook(
   const footerPath = fileURLToPath(
     new URL("./overrides/Footer.astro", import.meta.url),
   );
+  const emptyFooterPath = fileURLToPath(
+    new URL("./overrides/EmptyFooter.astro", import.meta.url),
+  );
   const sidebarPath = fileURLToPath(
     new URL("./overrides/Sidebar.astro", import.meta.url),
   );
@@ -94,15 +98,18 @@ export default function cookbook(
   const themeSelectPath = fileURLToPath(
     new URL("./overrides/ThemeSelect.astro", import.meta.url),
   );
-  const components = {
-    Footer: footerPath,
-    Header: headerPath,
-    Sidebar: sidebarPath,
-    MobileMenuFooter: mobileMenuFooterPath,
-    MobileMenuToggle: mobileMenuTogglePath,
-    ThemeSelect: themeSelectPath,
-    ...options.config?.components?.overrides,
-  };
+  const components = resolveComponentOverrides(
+    {
+      Footer: footerPath,
+      Header: headerPath,
+      Sidebar: sidebarPath,
+      MobileMenuFooter: mobileMenuFooterPath,
+      MobileMenuToggle: mobileMenuTogglePath,
+      ThemeSelect: themeSelectPath,
+    },
+    options.config?.components?.overrides,
+    emptyFooterPath,
+  );
   const navigation = resolveNavigationLayout(options.config?.navigation);
   // Tasty 3.6's integration shape is structurally compatible with Astro 7;
   // its published helper type still models `site` as URL-only.

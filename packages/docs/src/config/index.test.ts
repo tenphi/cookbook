@@ -5,7 +5,14 @@ import { DocsConfigError, normalizeDocsConfig } from "./index.js";
 const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
 ) as {
-  properties: { navigation: { oneOf?: unknown[] } };
+  properties: {
+    navigation: { oneOf?: unknown[] };
+    components: {
+      properties: {
+        overrides: { properties: { Footer: { oneOf?: unknown[] } } };
+      };
+    };
+  };
   $defs: { componentStyleConfig: { anyOf?: unknown[] } };
 };
 
@@ -77,6 +84,40 @@ describe("docs configuration", () => {
   it("publishes component style replacement in the JSON schema", () => {
     expect(schema.properties.navigation.oneOf).toHaveLength(2);
     expect(schema.$defs.componentStyleConfig.anyOf).toHaveLength(2);
+  });
+
+  it("preserves replacement and disabled footer overrides", () => {
+    expect(
+      normalizeDocsConfig({
+        components: { overrides: { Footer: false } },
+      }).components.overrides,
+    ).toEqual({ Footer: false });
+    expect(
+      normalizeDocsConfig({
+        components: {
+          overrides: { Footer: "./src/components/Footer.astro" },
+        },
+      }).components.overrides,
+    ).toEqual({ Footer: "./src/components/Footer.astro" });
+  });
+
+  it("only accepts false as an override for the footer", () => {
+    expect(() =>
+      normalizeDocsConfig({
+        components: { overrides: { Header: false } },
+      }),
+    ).toThrow(/components\.overrides\.Header/);
+    expect(() =>
+      normalizeDocsConfig({
+        components: { overrides: { Footer: 1 } },
+      } as never),
+    ).toThrow(/component path or false/);
+  });
+
+  it("publishes the disabled footer option in the JSON schema", () => {
+    expect(
+      schema.properties.components.properties.overrides.properties.Footer.oneOf,
+    ).toHaveLength(2);
   });
 
   it("rejects malformed component style replacement configuration", () => {

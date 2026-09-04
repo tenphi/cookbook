@@ -88,7 +88,21 @@
     },
     "markdown": { "type": "object" },
     "search": { "type": "object" },
-    "components": { "type": "object" },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overrides": {
+          "type": "object",
+          "properties": {
+            "Footer": {
+              "oneOf": [{ "type": "string" }, { "const": false }]
+            }
+          },
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
     "build": { "type": "object" }
   },
   "$defs": {

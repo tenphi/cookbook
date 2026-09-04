@@ -138,6 +138,20 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       );
     }
   }
+
+  const componentOverrides = config.components?.overrides;
+  if (componentOverrides !== undefined && !isRecord(componentOverrides)) {
+    invalid(diagnostics, "components.overrides must be an object.");
+  } else {
+    for (const [name, override] of Object.entries(componentOverrides ?? {})) {
+      if (typeof override === "string") continue;
+      if (name === "Footer" && override === false) continue;
+      invalid(
+        diagnostics,
+        `components.overrides.${name} must be an Astro component path${name === "Footer" ? " or false" : ""}.`,
+      );
+    }
+  }
   return diagnostics;
 }
 

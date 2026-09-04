@@ -211,7 +211,8 @@ export interface SearchConfig {
 }
 
 export interface ComponentsConfig {
-  overrides?: Record<string, string>;
+  /** Astro component paths keyed by Starlight component name. `Footer` also accepts `false`. */
+  overrides?: Record<string, string | false>;
 }
 
 export interface BuildConfig {
