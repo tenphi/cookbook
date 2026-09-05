@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.11.3
+
+### Patch Changes
+
+- [#56](https://github.com/tenphi/cookbook/pull/56) [`d937549`](https://github.com/tenphi/cookbook/commit/d937549b46ab27b02fa171fbbf06faeca66c21fa) Thanks [@tenphi](https://github.com/tenphi)! - Preserve explicit media `width` and `height` attributes while keeping unsized
+  media responsive.
+
 ## 0.11.2
 
 ### Patch Changes

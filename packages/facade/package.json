@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/cookbook",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "Repository-native static documentation for Astro",
   "type": "module",
   "keywords": [
