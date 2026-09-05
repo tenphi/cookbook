@@ -1,5 +1,14 @@
 # @tenphi/starlight
 
+## 0.11.1
+
+### Patch Changes
+
+- [#52](https://github.com/tenphi/cookbook/pull/52) [`c6ca1bd`](https://github.com/tenphi/cookbook/commit/c6ca1bd566b1a9167b13cafb8165899662d1e279) Thanks [@tenphi](https://github.com/tenphi)! - Reduce the default documentation heading weight and relax negative tracking for
+  a calmer typography hierarchy while preserving body and branded bold weights.
+- Updated dependencies []:
+  - @tenphi/docs@0.11.1
+
 ## 0.11.0
 
 ### Minor Changes
