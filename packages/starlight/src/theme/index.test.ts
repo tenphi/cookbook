@@ -201,9 +201,14 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.body?.lineHeight).toBe(1.65);
     expect(theme.presets.body?.letterSpacing).toBe("0");
     expect(theme.presets.body?.boldFontWeight).toBe(640);
-    expect(theme.presets.heading?.letterSpacing).toBe("-0.01em");
+    expect(theme.presets.heading?.fontWeight).toBe(610);
+    expect(theme.presets.heading?.letterSpacing).toBe("-0.006em");
     expect(theme.presets.heading?.boldFontWeight).toBe(720);
-    expect(theme.presets.h1?.letterSpacing).toBe("-0.025em");
+    expect(theme.presets.h1?.letterSpacing).toBe("-0.015em");
+    expect(theme.presets.h2?.letterSpacing).toBe("-0.01em");
+    expect(theme.presets.h3?.letterSpacing).toBe("-0.006em");
+    expect(theme.presets.h4?.letterSpacing).toBe("-0.003em");
+    expect(theme.presets.h5?.letterSpacing).toBe("0");
     expect(theme.presets.h6?.letterSpacing).toBe("0");
     expect(theme.presets).not.toHaveProperty("strong");
     expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
