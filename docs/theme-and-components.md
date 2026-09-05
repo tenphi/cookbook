@@ -172,8 +172,10 @@ and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
 `boldFontWeight` instead of a separate element-specific value. `strong` is a
 reserved modifier keyword, not a named preset; the modifier-only form is
 equivalent to `inherit / strong`. Default body tracking is neutral, while
-larger headings use progressively gentle negative tracking. Additional named
-presets are passed through to Tasty SSR for use in custom MDX components.
+headings use a medium `610` weight and progressively gentle negative tracking.
+The separate `720` heading bold weight keeps emphasized heading text and the
+branded site title visually distinct. Additional named presets are passed
+through to Tasty SSR for use in custom MDX components.
 Cookbook applies each semantic typography role through its complete Tasty
 `preset`, so configured fields such as `fontStyle` and `textTransform` are not
 silently omitted.
