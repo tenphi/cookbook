@@ -204,6 +204,32 @@ for (const name of outputEntries.filter(
     );
   }
 }
+
+const conventionOutput = join(process.cwd(), "apps/convention/dist");
+const conventionEntries = await readdir(conventionOutput, { recursive: true });
+let conventionHeadingWrappers = 0;
+for (const name of conventionEntries.filter(
+  (entry) => extname(entry) === ".html",
+)) {
+  const html = await readFile(join(conventionOutput, name), "utf8");
+  for (const match of html.matchAll(
+    /<div\b[^>]*\bclass="[^"]*\bsl-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
+  )) {
+    conventionHeadingWrappers += 1;
+    const content = match[1] ?? "";
+    if (/\bclass="[^"]*\bsl-heading-wrapper\b/.test(content)) {
+      throw new Error(`${name} contains nested heading permalink wrappers.`);
+    }
+    if (
+      (content.match(/\bclass="[^"]*\bsl-anchor-link\b/g) ?? []).length !== 1
+    ) {
+      throw new Error(`${name} must render exactly one permalink per heading.`);
+    }
+  }
+}
+if (conventionHeadingWrappers === 0) {
+  throw new Error("The convention build did not render heading permalinks.");
+}
 console.log(
   `Reference budgets: ${cssEntries.length} Tasty stylesheets; largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,
 );

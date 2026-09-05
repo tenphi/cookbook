@@ -1,4 +1,5 @@
-const headingPattern = /<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1>/gi;
+const headingPattern =
+  /<div\b[^>]*\bclass=["'][^"']*\bsl-heading-wrapper\b[^"']*["'][^>]*>[\s\S]*?<\/div>|<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1>/gi;
 const idPattern = /\sid=(['"])(.*?)\1/i;
 const tags = /<[^>]*>/g;
 
@@ -6,7 +7,18 @@ const tags = /<[^>]*>/g;
 export function addHeadingPermalinks(html: string): string {
   return html.replace(
     headingPattern,
-    (heading, level: string, attributes: string, content: string) => {
+    (
+      heading,
+      level: string | undefined,
+      attributes: string | undefined,
+      content: string | undefined,
+    ) => {
+      // Starlight adds its own icon permalink before this rendered HTML reaches
+      // the MarkdownContent override. Consume that complete wrapper unchanged
+      // so the inner heading is not matched and wrapped a second time.
+      if (!level || attributes === undefined || content === undefined) {
+        return heading;
+      }
       const id = idPattern.exec(attributes)?.[2];
       if (!id) return heading;
       const title = escapeAttribute(
