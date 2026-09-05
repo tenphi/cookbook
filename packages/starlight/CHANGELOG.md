@@ -1,5 +1,14 @@
 # @tenphi/starlight
 
+## 0.11.2
+
+### Patch Changes
+
+- [#54](https://github.com/tenphi/cookbook/pull/54) [`485eb46`](https://github.com/tenphi/cookbook/commit/485eb4612f4293cfad6b83e0971904c5c828c4b6) Thanks [@tenphi](https://github.com/tenphi)! - Keep Starlight-owned heading permalinks intact instead of wrapping their
+  already-rendered headings with a second Cookbook permalink.
+- Updated dependencies []:
+  - @tenphi/docs@0.11.2
+
 ## 0.11.1
 
 ### Patch Changes
