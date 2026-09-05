@@ -77,3 +77,20 @@ describe("typography global style architecture", () => {
     expect(source).not.toContain('fontWeight: "$body-bold-font-weight"');
   });
 });
+
+describe("media global style architecture", () => {
+  it("preserves explicit width attributes when constraining responsive media", () => {
+    expect(source).toContain(
+      '":where(img:not([width]), picture, video:not([width]), canvas:not([width]), svg:not([width]), iframe:not([width]))"',
+    );
+    expect(source).toContain(
+      '":where(img:not([height]), picture, video:not([height]), canvas:not([height]), svg:not([height]))"',
+    );
+    expect(source).not.toContain(
+      'useGlobalStyles(":where(img, picture, video, canvas, svg, iframe)"',
+    );
+    expect(source).not.toContain(
+      'useGlobalStyles(":where(img, picture, video, canvas, svg)"',
+    );
+  });
+});

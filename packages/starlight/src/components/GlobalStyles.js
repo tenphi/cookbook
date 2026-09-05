@@ -78,13 +78,19 @@ export default function GlobalStyles() {
     cursor: "pointer",
   });
 
-  useGlobalStyles(":where(img, picture, video, canvas, svg, iframe)", {
-    maxInlineSize: "100%",
-  });
+  useGlobalStyles(
+    ":where(img:not([width]), picture, video:not([width]), canvas:not([width]), svg:not([width]), iframe:not([width]))",
+    {
+      maxInlineSize: "100%",
+    },
+  );
 
-  useGlobalStyles(":where(img, picture, video, canvas, svg)", {
-    blockSize: "auto",
-  });
+  useGlobalStyles(
+    ":where(img:not([height]), picture, video:not([height]), canvas:not([height]), svg:not([height]))",
+    {
+      blockSize: "auto",
+    },
+  );
 
   useGlobalStyles(":where([hidden], .sl-hidden)", {
     hide: true,
