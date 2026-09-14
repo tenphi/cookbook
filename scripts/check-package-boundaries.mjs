@@ -10,6 +10,7 @@ const allowedImports = new Set([
   "@tenphi/docs",
   "@tenphi/starlight",
   "@tenphi/starlight/components",
+  "@tenphi/starlight/styling",
 ]);
 
 for (const file of files) {
