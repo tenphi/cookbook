@@ -1,5 +1,21 @@
 # @tenphi/starlight
 
+## 0.12.0
+
+### Minor Changes
+
+- [#58](https://github.com/tenphi/cookbook/pull/58) [`e1df4df`](https://github.com/tenphi/cookbook/commit/e1df4df0ff1a9f0a6cbfa7da52ec8e2c2a876e58) Thanks [@tenphi](https://github.com/tenphi)! - Expose Tasty component and global styling tools through `/styling`, including
+  typed style objects and `defineComponent(name, options)` for creating
+  consumer-owned components with `theme.styles` merged into their defaults.
+  Preserve Tasty's generated subcomponents and inferred prop types. Document a
+  custom site title with an aligned, linked logo and verify CSS extraction from
+  a clean package installation.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tenphi/docs@0.12.0
+
 ## 0.11.3
 
 ### Patch Changes
