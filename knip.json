@@ -1,11 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["packages/starlight/src/tasty.config.js"],
+  "ignore": ["packages/starlight/src/tasty.config.js", "scripts/fixtures/**"],
   "ignoreDependencies": [
     "@arethetypeswrong/cli",
     "@astrojs/react",
     "publint",
-    "react-dom",
     "unrun"
   ]
 }

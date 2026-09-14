@@ -3,7 +3,6 @@ import {
   COOKBOOK_COMPONENT_NAMES,
   type ComponentStyleConfig,
   type ComponentStylesConfig,
-  type CookbookComponentName,
 } from "@tenphi/docs";
 
 // Astro can load the integration and renderer through separate module graphs.
@@ -19,8 +18,9 @@ export function configureComponentStyles(
   sharedConfiguration.__tenphiCookbookComponentStyles = styles ?? {};
 }
 
+/** Merge a partial theme override into a built-in or consumer style tree. */
 export function resolveComponentStyles(
-  name: CookbookComponentName,
+  name: string,
   baseStyles: Styles,
 ): Styles {
   const configuredStyles = sharedConfiguration
@@ -32,7 +32,7 @@ export function resolveComponentStyles(
 }
 
 export function resolveComponentStyleOverride(
-  name: CookbookComponentName,
+  name: string,
 ): Styles | undefined {
   return sharedConfiguration.__tenphiCookbookComponentStyles?.[name] as
     Styles | undefined;

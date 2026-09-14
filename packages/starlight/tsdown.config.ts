@@ -5,6 +5,7 @@ export default defineConfig({
     index: "src/index.ts",
     content: "src/content.ts",
     components: "src/components.ts",
+    styling: "src/styling.ts",
     navigation: "src/navigation.ts",
     "client/appearance": "src/client/appearance.ts",
     "client/code-copy": "src/client/code-copy.ts",

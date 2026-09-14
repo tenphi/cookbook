@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     components: "src/components.ts",
+    styling: "src/styling.ts",
     cli: "src/cli.ts",
   },
   format: "esm",

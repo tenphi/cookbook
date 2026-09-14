@@ -21,6 +21,10 @@
     "./components": {
       "types": "./dist/components.d.ts",
       "import": "./dist/components.js"
+    },
+    "./styling": {
+      "types": "./dist/styling.d.ts",
+      "import": "./dist/styling.js"
     }
   },
   "files": [

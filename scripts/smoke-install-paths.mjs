@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import {
+  cp,
   mkdir,
   mkdtemp,
   readFile,
@@ -40,6 +41,7 @@ try {
       astro: "7.2.9",
       "@tenphi/cookbook": `file:${byPrefix("tenphi-cookbook-")}`,
     },
+    devDependencies: { "@types/react": "^19.0.0" },
   };
   await writeFile(
     join(site, "package.json"),
@@ -51,7 +53,30 @@ try {
   );
   await writeFile(
     join(site, "astro.config.mjs"),
-    "import { defineConfig } from 'astro/config';\nimport cookbook from '@tenphi/cookbook';\nexport default defineConfig({ integrations: [cookbook()] });\n",
+    `import { defineConfig } from 'astro/config';
+import cookbook, { defineDocsConfig } from '@tenphi/cookbook';
+const config = defineDocsConfig({
+  theme: {
+    states: {
+      '@mobile': '@media(w < 43rem)',
+      '@consumer-narrow': '@media(w < 37rem)',
+    },
+    presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
+    styles: {
+      StarlightHeader: { Logo: { hide: true } },
+      ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
+      ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
+    },
+  },
+  components: { overrides: { SiteTitle: './docs/components/SiteTitle.astro' } },
+});
+export default defineConfig({ integrations: [cookbook({ config })] });
+`,
+  );
+  await cp(
+    join(root, "scripts/fixtures/styling"),
+    join(site, "docs/components"),
+    { recursive: true },
   );
   await mkdir(join(site, "docs"), { recursive: true });
   await writeFile(
@@ -60,6 +85,25 @@ try {
   );
   await run("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund"], {
     cwd: site,
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  await writeFile(
+    join(site, "tsconfig.json"),
+    JSON.stringify({
+      compilerOptions: {
+        strict: true,
+        noEmit: true,
+        skipLibCheck: true,
+        target: "ES2023",
+        module: "NodeNext",
+        moduleResolution: "NodeNext",
+        types: ["react"],
+      },
+      include: ["docs/components/*.ts"],
+    }),
+  );
+  await run("pnpm", ["exec", "tsc", "-p", join(site, "tsconfig.json")], {
+    cwd: root,
     maxBuffer: 8 * 1024 * 1024,
   });
   await run("npm", ["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
@@ -105,8 +149,52 @@ try {
       "Packed convention page unexpectedly includes a hydration runtime.",
     );
   }
+  const title = html.match(
+    /<a\b[^>]*class="[^"]*consumer-title[^"]*"[^>]*>[\s\S]*?<\/a>/,
+  )?.[0];
+  if (
+    !title?.includes('href="/"') ||
+    !title.includes("<svg") ||
+    !title.includes('translate="no"')
+  ) {
+    throw new Error(
+      "Consumer SiteTitle must include its logo and label in the home link.",
+    );
+  }
+  if (/<style\b|<astro-island\b/.test(html) || /\sstyle=/.test(title)) {
+    throw new Error(
+      "Consumer styling must extract CSS without inline styles or hydration.",
+    );
+  }
+  for (const value of [
+    "1.625rem",
+    "1.75rem",
+    "1.3125rem",
+    "2.25rem",
+    "1.125rem",
+    "37rem",
+    "43rem",
+    "var(--gap)",
+    "var(--accent-text-color)",
+    ".consumer-global",
+  ]) {
+    if (!css.includes(value)) {
+      throw new Error(
+        `Consumer styling is missing extracted CSS for ${value}.`,
+      );
+    }
+  }
+  if (
+    !/@media\s*\(width\s*<\s*43rem\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(
+      css,
+    )
+  ) {
+    throw new Error(
+      "The consumer's @mobile override was not applied to its logo.",
+    );
+  }
   console.log(
-    "Clean npm installation and Astro build passed using only packed workspace artifacts.",
+    "Clean npm installation, custom styling, and Astro build passed using only packed workspace artifacts.",
   );
 } finally {
   await rm(temporary, { recursive: true, force: true });

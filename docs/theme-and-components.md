@@ -327,6 +327,139 @@ Use MDX only for repository content you control. Locked package content remains
 Markdown-only unless the consumer explicitly sets `trust: "mdx"` for that
 source.
 
+## Authoring custom components
+
+Import styling tools from `@tenphi/cookbook/styling`. They use the same Tasty
+runtime as Cookbook, with its semantic colors, typography presets, units, and
+responsive states. The renderer package also exposes them from
+`@tenphi/starlight/styling`.
+
+| Export                   | Purpose                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `tasty`                  | Create or extend a styled component for Astro or MDX.                        |
+| `customizeComponent`     | Apply the partial `theme.styles[name]` override to a Tasty component.        |
+| `useGlobalStyles`        | Collect a global Tasty style tree while rendering a page.                    |
+| `resolveComponentStyles` | Merge `theme.styles[name]` into a complete base style tree for global rules. |
+| `mergeStyles`            | Compose your own base styles with Tasty's deep-merge semantics.              |
+| `Styles`                 | TypeScript type for a Tasty style object.                                    |
+
+Cookbook supplies the React renderer and extracts these styles into its static
+CSS. No additional Tasty dependency, Astro integration, or `client:*` directive
+is needed for static components. Set shared tokens, presets, and states in
+`docs.config.ts` before rendering. Import the styling entry point in component
+modules; configuration files should use the main `@tenphi/cookbook` entry point.
+
+### A custom logo and site title
+
+To put your own logo and title in one home link, create
+`docs/components/site-title.ts`:
+
+```ts
+import { customizeComponent, tasty } from "@tenphi/cookbook/styling";
+
+export const SiteTitleRoot = customizeComponent(
+  "ProjectSiteTitle",
+  tasty({
+    as: "a",
+    styles: {
+      display: "flex",
+      alignItems: "center",
+      gap: "1x",
+      minInlineSize: "0",
+      color: "#text",
+      preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
+      textDecoration: "none",
+      Logo: {
+        $: "> svg",
+        display: "block",
+        flexShrink: "0",
+        inlineSize: { "": "2rem", "@mobile": "1.75rem" },
+        blockSize: { "": "2rem", "@mobile": "1.75rem" },
+        color: "#accent-text",
+      },
+      Label: {
+        $: "> span",
+        minInlineSize: "0",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+    },
+  }),
+);
+```
+
+Then create `docs/components/SiteTitle.astro`, using an SVG whose paths use
+`currentColor` to follow the semantic accent color:
+
+```astro
+---
+import ProjectLogo from "../../public/logo.svg";
+import { SiteTitleRoot } from "./site-title.js";
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<SiteTitleRoot href={siteTitleHref}>
+  <ProjectLogo aria-hidden="true" focusable="false" />
+  <span translate="no">{siteTitle}</span>
+</SiteTitleRoot>
+```
+
+Register the replacement in `docs.config.ts` and hide the default header mark.
+The custom component supports root styles plus its complete list of named
+sub-elements: `Logo` and `Label`.
+
+```ts
+components: {
+  overrides: {
+    SiteTitle: "./docs/components/SiteTitle.astro"
+  }
+},
+theme: {
+  styles: {
+    StarlightHeader: { Logo: { hide: true } },
+    ProjectSiteTitle: { Logo: { color: "#text" } }
+  }
+}
+```
+
+`customizeComponent(name, base)` accepts built-in or project-specific names.
+It uses Tasty component composition to merge the configured partial styles
+into the base, retaining other sub-element properties and responsive states.
+Use `className` when passing a class to a Tasty component from Astro.
+
+### Global style trees
+
+For markup you do not render through a Tasty component, call
+`useGlobalStyles()` during rendering. For example, this Astro component
+supports root styles and a `Label` sub-element through `theme.styles.ProjectNote`:
+
+```astro
+---
+import {
+  resolveComponentStyles,
+  useGlobalStyles,
+} from "@tenphi/cookbook/styling";
+
+useGlobalStyles(
+  ".project-note",
+  resolveComponentStyles("ProjectNote", {
+    padding: "2x",
+    fill: "#surface-2",
+    Label: { $: "> strong", color: "#text", preset: "strong" },
+  }),
+);
+---
+
+<aside class="project-note"><strong>Note</strong><slot /></aside>
+```
+
+Both customization helpers read the same `theme.styles` configuration; user
+configuration contains only the properties to change. They do not require a
+`data-tasty-anatomy` attribute. That attribute remains available for older
+components using the compatibility bridge described above.
+
 ## Static behavior
 
 Documentation content, navigation, headings, code, and images remain readable

@@ -1,4 +1,4 @@
-import { configure } from "@tenphi/tasty";
+import { configure, getGlobalPredefinedStates } from "@tenphi/tasty";
 
 export const cookbookStates = {
   "@mobile": "@media(w < 50rem)",
@@ -17,6 +17,14 @@ let configured = false;
 /** Configure aliases in the renderer's Tasty module before styles are parsed. */
 export function configureCookbookStates() {
   if (configured) return;
-  configure({ states: cookbookStates });
+  // The integration may have configured this runtime already, including
+  // consumer overrides of built-in breakpoints. Only supply missing aliases.
+  const existingStates = getGlobalPredefinedStates();
+  const missingStates = Object.fromEntries(
+    Object.entries(cookbookStates).filter(
+      ([name]) => existingStates[name] === undefined,
+    ),
+  );
+  if (Object.keys(missingStates).length) configure({ states: missingStates });
   configured = true;
 }
