@@ -1,8 +1,7 @@
 import {
-  customizeComponent,
+  defineComponent,
   mergeStyles,
   resolveComponentStyles,
-  tasty,
   useGlobalStyles,
   type Styles,
 } from "@tenphi/cookbook/styling";
@@ -31,10 +30,11 @@ const titleStyles = {
   },
 } satisfies Styles;
 
-export const SiteTitleRoot = customizeComponent(
-  "ConsumerSiteTitle",
-  tasty({ as: "a", styles: titleStyles }),
-);
+export const SiteTitleRoot = defineComponent("ConsumerSiteTitle", {
+  as: "a",
+  elements: { Label: "span" },
+  styles: titleStyles,
+});
 
 export function ConsumerGlobalStyles() {
   useGlobalStyles(

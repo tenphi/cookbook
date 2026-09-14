@@ -74,6 +74,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.2",
+    "@types/react": "^19.2.18",
     "astro": "catalog:",
     "tsdown": "^0.22.14",
     "typescript": "catalog:",

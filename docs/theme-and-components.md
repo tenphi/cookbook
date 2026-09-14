@@ -336,8 +336,8 @@ responsive states. The renderer package also exposes them from
 
 | Export                   | Purpose                                                                      |
 | ------------------------ | ---------------------------------------------------------------------------- |
-| `tasty`                  | Create or extend a styled component for Astro or MDX.                        |
-| `customizeComponent`     | Apply the partial `theme.styles[name]` override to a Tasty component.        |
+| `defineComponent`        | Create a named Tasty component with its `theme.styles[name]` overrides.      |
+| `tasty`                  | Use Tasty directly without binding a component to `theme.styles`.            |
 | `useGlobalStyles`        | Collect a global Tasty style tree while rendering a page.                    |
 | `resolveComponentStyles` | Merge `theme.styles[name]` into a complete base style tree for global rules. |
 | `mergeStyles`            | Compose your own base styles with Tasty's deep-merge semantics.              |
@@ -355,38 +355,35 @@ To put your own logo and title in one home link, create
 `docs/components/site-title.ts`:
 
 ```ts
-import { customizeComponent, tasty } from "@tenphi/cookbook/styling";
+import { defineComponent } from "@tenphi/cookbook/styling";
 
-export const SiteTitleRoot = customizeComponent(
-  "ProjectSiteTitle",
-  tasty({
-    as: "a",
-    styles: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1x",
-      minInlineSize: "0",
-      color: "#text",
-      preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
-      textDecoration: "none",
-      Logo: {
-        $: "> svg",
-        display: "block",
-        flexShrink: "0",
-        inlineSize: { "": "2rem", "@mobile": "1.75rem" },
-        blockSize: { "": "2rem", "@mobile": "1.75rem" },
-        color: "#accent-text",
-      },
-      Label: {
-        $: "> span",
-        minInlineSize: "0",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-      },
+export const SiteTitleRoot = defineComponent("ProjectSiteTitle", {
+  as: "a",
+  styles: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1x",
+    minInlineSize: "0",
+    color: "#text",
+    preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
+    textDecoration: "none",
+    Logo: {
+      $: "> svg",
+      display: "block",
+      flexShrink: "0",
+      inlineSize: { "": "2rem", "@mobile": "1.75rem" },
+      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      color: "#accent-text",
     },
-  }),
-);
+    Label: {
+      $: "> span",
+      minInlineSize: "0",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    },
+  },
+});
 ```
 
 Then create `docs/components/SiteTitle.astro`, using an SVG whose paths use
@@ -424,10 +421,20 @@ theme: {
 }
 ```
 
-`customizeComponent(name, base)` accepts built-in or project-specific names.
-It uses Tasty component composition to merge the configured partial styles
-into the base, retaining other sub-element properties and responsive states.
-Use `className` when passing a class to a Tasty component from Astro.
+`defineComponent(name, options)` accepts Tasty factory options and a name for
+`theme.styles[name]`. It merges the configured partial style object before
+creating the component, retaining the other base properties and responsive
+states. Tasty options such as `elements`, `variants`, `styleProps`, `modProps`,
+and `tokenProps` keep their behavior and inferred types, including generated
+subcomponents such as `Component.Label`.
+Configured styles become the component's defaults; variants and styles passed
+at render time follow Tasty's usual precedence.
+
+Use `defineComponent` when authoring a component that should support
+`theme.styles`. Use `tasty` directly for ordinary Tasty creation or composition
+that does not need a configuration name. To define a named component around
+an existing React component that forwards `className`, pass it as `as` in the options. Use `className`
+when passing a class to a Tasty component from Astro.
 
 ### Global style trees
 
@@ -455,8 +462,8 @@ useGlobalStyles(
 <aside class="project-note"><strong>Note</strong><slot /></aside>
 ```
 
-Both customization helpers read the same `theme.styles` configuration; user
-configuration contains only the properties to change. They do not require a
+`defineComponent` and `resolveComponentStyles` read the same `theme.styles`
+configuration; user configuration contains only the properties to change. They do not require a
 `data-tasty-anatomy` attribute. That attribute remains available for older
 components using the compatibility bridge described above.
 
