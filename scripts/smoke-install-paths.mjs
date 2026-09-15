@@ -39,7 +39,7 @@ try {
     dependencies: {
       "@tenphi/docs": `file:${byPrefix("tenphi-docs-")}`,
       "@tenphi/starlight": `file:${byPrefix("tenphi-starlight-")}`,
-      astro: "7.2.9",
+      astro: "7.3.2",
       "@tenphi/cookbook": `file:${byPrefix("tenphi-cookbook-")}`,
     },
     devDependencies: {

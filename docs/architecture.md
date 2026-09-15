@@ -32,8 +32,8 @@ not compose Starlight or renderer internals themselves.
 8. Copy content-hashed assets and build the local Pagefind index.
 
 Source documents are read-only throughout this process. The transformed body
-exists in the in-memory graph and Astro content store; a build never rewrites
-the repository Markdown.
+exists in the in-memory graph and the renderer's virtual module; a build never
+rewrites the repository Markdown.
 
 ## Theme pipeline
 
@@ -83,9 +83,9 @@ diagnostics without importing Starlight.
 ## Reference app
 
 The monorepo's `apps/reference` project is both the deployed documentation site
-and an end-to-end fixture. Its integration and Starlight content loader receive
-the repository root explicitly, then load this `docs/` tree. CI builds the same
-app before GitHub Pages publishes it.
+and an end-to-end fixture. Its Cookbook integration receives the repository root
+explicitly, then loads this `docs/` tree through the same route pipeline used by
+convention-mode sites. CI builds the same app before GitHub Pages publishes it.
 
 Return to [Cookbook](./index.md) or inspect the
 [repository](https://github.com/tenphi/cookbook).

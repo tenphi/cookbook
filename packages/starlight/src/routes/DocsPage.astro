@@ -1,6 +1,6 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
-import { content } from "virtual:cookbook/config";
+import { content, mdxLoaders } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
 import { starlightPageSidebar } from "../navigation.js";
 
@@ -19,14 +19,25 @@ export function getStaticPaths() {
 }
 
 const { entry, routes } = Astro.props;
-if (!entry.rendered) {
+const loadMdx = mdxLoaders[entry.route];
+if (!entry.rendered && !loadMdx) {
   throw new Error(`Cookbook did not render ${entry.sourcePath}.`);
 }
+const mdx = loadMdx ? await loadMdx() : undefined;
+const MdxContent = mdx?.default;
+const headings = mdx?.getHeadings
+  ? await mdx.getHeadings()
+  : (entry.rendered?.headings ?? []);
+const lastUpdated =
+  typeof entry.frontmatter.lastUpdated === "string"
+    ? new Date(entry.frontmatter.lastUpdated)
+    : entry.frontmatter.lastUpdated;
+const hero = starlightHero(entry.frontmatter.hero);
 const frontmatter = {
   title: entry.title,
   ...(entry.description ? { description: entry.description } : {}),
-  ...(entry.frontmatter.toc !== undefined
-    ? { tableOfContents: entry.frontmatter.toc }
+  ...(entry.frontmatter.tableOfContents !== undefined
+    ? { tableOfContents: entry.frontmatter.tableOfContents }
     : {}),
   ...(entry.frontmatter.editUrl !== undefined
     ? { editUrl: entry.frontmatter.editUrl }
@@ -34,30 +45,55 @@ const frontmatter = {
   ...(entry.frontmatter.template !== undefined
     ? { template: entry.frontmatter.template }
     : {}),
-  ...(entry.frontmatter.hero !== undefined
-    ? { hero: entry.frontmatter.hero }
-    : {}),
-  ...(entry.frontmatter.lastUpdated !== undefined
-    ? { lastUpdated: entry.frontmatter.lastUpdated }
-    : {}),
+  ...(hero !== undefined ? { hero } : {}),
+  ...(lastUpdated !== undefined ? { lastUpdated } : {}),
   ...(entry.frontmatter.prev !== undefined
     ? { prev: entry.frontmatter.prev }
     : {}),
   ...(entry.frontmatter.next !== undefined
     ? { next: entry.frontmatter.next }
     : {}),
-  ...(entry.frontmatter.search !== undefined
-    ? { pagefind: entry.frontmatter.search }
+  ...(entry.frontmatter.banner !== undefined
+    ? { banner: entry.frontmatter.banner }
+    : {}),
+  ...(entry.frontmatter.pagefind !== undefined
+    ? { pagefind: entry.frontmatter.pagefind }
     : {}),
   ...(entry.frontmatter.head ? { head: entry.frontmatter.head } : {}),
   ...(entry.frontmatter.draft ? { draft: true } : {}),
 };
+
+function starlightHero(value: typeof entry.frontmatter.hero) {
+  const image = value?.image;
+  if (!value || !image || "html" in image) return value;
+  if ("file" in image) {
+    return {
+      ...value,
+      image: { ...image, file: imageMetadata(image.file) },
+    };
+  }
+  return {
+    ...value,
+    image: {
+      ...image,
+      dark: imageMetadata(image.dark),
+      light: imageMetadata(image.light),
+    },
+  };
+}
+
+function imageMetadata(src: string) {
+  const pathname = src.split(/[?#]/, 1)[0] ?? src;
+  const extension = /\.(avif|gif|jpe?g|png|svg|webp)$/i.exec(pathname)?.[1];
+  const format = extension?.toLowerCase().replace("jpg", "jpeg") ?? "png";
+  return { src, width: 400, height: 400, format };
+}
 ---
 
 <StarlightPage
   frontmatter={frontmatter}
-  headings={entry.rendered.headings}
+  headings={headings}
   sidebar={starlightPageSidebar(layout, routes)}
 >
-  <div set:html={entry.rendered.html} />
+  {MdxContent ? <MdxContent /> : <div set:html={entry.rendered?.html ?? ""} />}
 </StarlightPage>

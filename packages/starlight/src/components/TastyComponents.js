@@ -18,7 +18,7 @@ export const CardRoot = customizeComponent(
       radius: "1cr",
       fill: "#surface-2",
       shadow: "0 1px 2px #shadow",
-      transition: "fill 120ms ease, shadow 120ms ease, translate 120ms ease",
+      transition: "fill $transition, shadow $transition, translate $transition",
 
       Heading2: {
         $: "h2",

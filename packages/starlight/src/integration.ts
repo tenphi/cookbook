@@ -8,14 +8,13 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { dirname, extname, join } from "node:path";
+import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import starlight from "./starlight-runtime.js";
 import {
   createDocsGraph,
   assertValidDocs,
   type DocsConfig,
-  type NavigationItem,
 } from "@tenphi/docs";
 import {
   configure,
@@ -50,7 +49,10 @@ import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 
 const packageRequire = createRequire(import.meta.url);
-const starlightRoot = dirname(packageRequire.resolve("@astrojs/starlight"));
+const starlightRoot = resolve(
+  dirname(fileURLToPath(import.meta.resolve("@astrojs/starlight"))),
+  "..",
+);
 const tastyStaticMiddleware = packageRequire.resolve(
   "@tenphi/tasty/ssr/astro-middleware-static",
 );
@@ -60,6 +62,8 @@ const tastyExtractStaticMiddleware = packageRequire.resolve(
 const astroReactServer = packageRequire.resolve("@astrojs/react/server.js");
 const astroReactClient = packageRequire.resolve("@astrojs/react/client.js");
 const astroReactIntegration = packageRequire.resolve("@astrojs/react");
+const reactRoot = dirname(packageRequire.resolve("react/package.json"));
+const reactDomRoot = dirname(packageRequire.resolve("react-dom/package.json"));
 const importNative = new Function("specifier", "return import(specifier)") as (
   specifier: string,
 ) => Promise<{ default: () => AstroIntegration }>;
@@ -88,6 +92,9 @@ export default function cookbook(
   const footerPath = fileURLToPath(
     new URL("./overrides/Footer.astro", import.meta.url),
   );
+  const heroPath = fileURLToPath(
+    new URL("./overrides/Hero.astro", import.meta.url),
+  );
   const emptyFooterPath = fileURLToPath(
     new URL("./overrides/EmptyFooter.astro", import.meta.url),
   );
@@ -110,6 +117,7 @@ export default function cookbook(
     {
       Footer: footerPath,
       Header: headerPath,
+      Hero: heroPath,
       MarkdownContent: markdownContentPath,
       Sidebar: sidebarPath,
       MobileMenuFooter: mobileMenuFooterPath,
@@ -128,10 +136,10 @@ export default function cookbook(
   }) as unknown as AstroIntegration;
   let inner: AstroIntegration[] = [tasty];
   let projectRoot = options.root;
-  let graphConfig = options.config;
+  const graphConfig = options.config;
+  let graphBase = "/";
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
-  let usingContentCollection = false;
-  let siteIconBase = options.config?.build?.base ?? "/";
+  let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
 
   async function loadGraph(refresh = false) {
@@ -139,6 +147,7 @@ export default function cookbook(
       graph = await createDocsGraph({
         ...(projectRoot ? { root: projectRoot } : {}),
         ...(graphConfig ? { config: graphConfig } : {}),
+        base: graphBase,
       });
       assertValidDocs(graph);
     }
@@ -179,14 +188,23 @@ export default function cookbook(
           );
         }
         projectRoot ??= fileURLToPath(context.config.root);
-        const base = options.config?.build?.base ?? context.config.base;
+        const base = context.config.base;
+        const configuredSite = options.config?.site?.url;
+        const astroSite = context.config.site
+          ? new URL(context.config.site).href
+          : undefined;
+        if (
+          configuredSite &&
+          astroSite &&
+          astroSite !== new URL(configuredSite).href
+        ) {
+          throw new Error(
+            `Cookbook site.url (${configuredSite}) conflicts with Astro site (${astroSite}).`,
+          );
+        }
         siteIconBase = base;
+        graphBase = base;
         siteIcons = await loadSiteIcons();
-        graphConfig = {
-          ...options.config,
-          build: { ...options.config?.build, base },
-        };
-        usingContentCollection = hasContentConfig(context.config.srcDir);
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
           title: options.config?.site?.title ?? "Documentation",
@@ -208,12 +226,23 @@ export default function cookbook(
           ...(options.config?.site?.description
             ? { description: options.config.site.description }
             : {}),
+          ...(options.config?.site?.repository
+            ? {
+                social: [
+                  {
+                    icon: repositoryIcon(options.config.site.repository),
+                    label: "Source repository",
+                    href: options.config.site.repository,
+                  },
+                ],
+              }
+            : {}),
           ...(options.config?.search?.enabled === false
             ? { pagefind: false }
             : {}),
-          ...(!usingContentCollection ? { disable404Route: true } : {}),
+          disable404Route: true,
           components,
-          sidebar: usingContentCollection ? starlightSidebar(navigation) : [],
+          sidebar: [],
         });
         inner = [react, tasty, starlightIntegration];
         let markdownRuntime = {
@@ -231,6 +260,9 @@ export default function cookbook(
           typeof markdownRuntime.markdown.processor.createRenderer
         >;
         context.updateConfig({
+          ...(configuredSite && !context.config.site
+            ? { site: configuredSite }
+            : {}),
           base,
           output: "static",
           markdown: {
@@ -251,38 +283,42 @@ export default function cookbook(
             plugins: [
               stripStarlightStylesPlugin(starlightRoot),
               virtualDocsPlugin(async () => {
-                const loaded = await loadGraph();
-                const entries = usingContentCollection
-                  ? loaded.entries
-                  : await Promise.all(
-                      loaded.entries.map(async (entry) => {
-                        const { image, markdown, srcDir } = markdownRuntime;
-                        markdownRenderer ??= markdown.processor.createRenderer({
-                          image,
-                          syntaxHighlight: markdown.syntaxHighlight,
-                          shikiConfig: markdown.shikiConfig,
-                          gfm: markdown.gfm,
-                          smartypants: markdown.smartypants,
-                        } as unknown as Parameters<
-                          typeof markdown.processor.createRenderer
-                        >[0]);
-                        const renderer = await markdownRenderer;
-                        const rendered = await renderer.render(
-                          entry.transformedBody,
-                          {
-                            frontmatter: entry.frontmatter,
-                            fileURL: starlightContentUrl(entry.route, srcDir),
-                          },
-                        );
-                        return {
-                          ...entry,
-                          rendered: {
-                            html: rendered.code,
-                            headings: rendered.metadata.headings,
-                          },
-                        };
-                      }),
+                const loaded = await loadGraph(true);
+                const entries = await Promise.all(
+                  loaded.entries.map(async (entry) => {
+                    if (
+                      entry.trust === "mdx" &&
+                      entry.sourcePath.toLowerCase().endsWith(".mdx")
+                    ) {
+                      return { ...entry, mdx: true };
+                    }
+                    const { image, markdown, srcDir } = markdownRuntime;
+                    markdownRenderer ??= markdown.processor.createRenderer({
+                      image,
+                      syntaxHighlight: markdown.syntaxHighlight,
+                      shikiConfig: markdown.shikiConfig,
+                      gfm: markdown.gfm,
+                      smartypants: markdown.smartypants,
+                    } as unknown as Parameters<
+                      typeof markdown.processor.createRenderer
+                    >[0]);
+                    const renderer = await markdownRenderer;
+                    const rendered = await renderer.render(
+                      entry.transformedBody,
+                      {
+                        frontmatter: entry.frontmatter,
+                        fileURL: starlightContentUrl(entry.route, srcDir),
+                      },
                     );
+                    return {
+                      ...entry,
+                      rendered: {
+                        html: rendered.code,
+                        headings: rendered.metadata.headings,
+                      },
+                    };
+                  }),
+                );
                 return {
                   entries,
                   routes: loaded.routes,
@@ -295,8 +331,16 @@ export default function cookbook(
             resolve: {
               alias: [
                 {
+                  find: "react-dom",
+                  replacement: reactDomRoot,
+                },
+                {
+                  find: "react",
+                  replacement: reactRoot,
+                },
+                {
                   find: "@astrojs/starlight",
-                  replacement: starlightRoot,
+                  replacement: join(starlightRoot, "dist"),
                 },
                 {
                   find: "@tenphi/tasty/ssr/astro-middleware-static",
@@ -320,15 +364,21 @@ export default function cookbook(
         });
         await callInner(inner.slice(0, 2), "astro:config:setup", context);
 
-        if (!usingContentCollection) {
-          graph = await createDocsGraph({
-            root: projectRoot,
-            config: graphConfig,
-          });
-          assertValidDocs(graph);
+        graph = await createDocsGraph({
+          root: projectRoot,
+          ...(graphConfig ? { config: graphConfig } : {}),
+          base: graphBase,
+        });
+        assertValidDocs(graph);
+        context.injectRoute({
+          pattern: "[...route]",
+          entrypoint: new URL("./routes/DocsPage.astro", import.meta.url),
+          prerender: true,
+        });
+        if (!graph.entryByRoute("/404")) {
           context.injectRoute({
-            pattern: "[...route]",
-            entrypoint: new URL("./routes/DocsPage.astro", import.meta.url),
+            pattern: "404",
+            entrypoint: new URL("./routes/NotFound.astro", import.meta.url),
             prerender: true,
           });
         }
@@ -350,9 +400,7 @@ export default function cookbook(
             await callInner(
               [starlightWithPlugins],
               "astro:config:setup",
-              usingContentCollection
-                ? context
-                : withoutStarlightDocsRoute(context),
+              withoutStarlightDocsRoute(context),
             );
           } finally {
             const placeholderIndex =
@@ -645,57 +693,6 @@ function configureTastyTheme(
   });
 }
 
-function starlightSidebar(layout: ResolvedNavigationLayout): unknown[] {
-  const fallback = layout.items?.length
-    ? layout.items.map(starlightSidebarItem)
-    : [{ autogenerate: { directory: "" } }];
-  if (!layout.sectioned) return fallback;
-
-  return [
-    ...(layout.fallbackSidebarGroup !== undefined
-      ? [
-          {
-            label: "Documentation",
-            items: (layout.items ?? []).map(starlightSidebarItem),
-          },
-        ]
-      : []),
-    ...layout.tabs.flatMap((tab) =>
-      tab.items !== undefined
-        ? [{ label: tab.label, items: tab.items.map(starlightSidebarItem) }]
-        : [],
-    ),
-  ];
-}
-
-function starlightSidebarItem(item: NavigationItem): unknown {
-  if (typeof item === "string") return { slug: routeToSlug(item) };
-  if ("items" in item) {
-    return {
-      label: item.label,
-      items: item.items.map(starlightSidebarItem),
-    };
-  }
-  if ("autogenerate" in item) {
-    return {
-      label: item.label,
-      items: [
-        {
-          autogenerate: {
-            directory: routeToSlug(item.autogenerate.directory, false),
-          },
-        },
-      ],
-    };
-  }
-  return { label: item.label, link: item.link };
-}
-
-function routeToSlug(route: string, rootAsIndex = true): string {
-  const slug = route.replace(/^\/+|\/+$/g, "");
-  return slug || (rootAsIndex ? "index" : "");
-}
-
 export function tastyStarlight(
   config: Parameters<typeof starlight>[0],
 ): AstroIntegration {
@@ -738,32 +735,97 @@ function virtualDocsPlugin(
 ) {
   const configId = "\0virtual:cookbook/config";
   const layoutId = "\0virtual:cookbook/layout";
+  const mdxPrefix = "virtual:cookbook/mdx/";
+  type VirtualContent = {
+    entries: Array<{
+      absolutePath: string;
+      assets?: Array<{ sourcePath?: string }>;
+      mdx?: boolean;
+      route: string;
+      transformedBody: string;
+    }>;
+  };
+  type MdxRecord = {
+    entry: VirtualContent["entries"][number];
+    sourceId: string;
+    virtualId: string;
+  };
+  let contentPromise: Promise<VirtualContent> | undefined;
+  let mdxRecords: MdxRecord[] = [];
+  const watchedPaths = new Set<string>();
+
+  async function loadContent(): Promise<VirtualContent> {
+    contentPromise ??= Promise.resolve(getContent()) as Promise<VirtualContent>;
+    const content = await contentPromise;
+    mdxRecords = content.entries.flatMap((entry, index) =>
+      entry.mdx
+        ? [
+            {
+              entry,
+              sourceId: entry.absolutePath.replace(/\.mdx$/i, ".cookbook.mdx"),
+              virtualId: `${mdxPrefix}${index}`,
+            },
+          ]
+        : [],
+    );
+    return content;
+  }
+
   return {
     name: "cookbook-data",
-    resolveId(id: string) {
+    enforce: "pre" as const,
+    async resolveId(id: string) {
       if (id === "virtual:cookbook/config") return configId;
       if (id === "virtual:cookbook/layout") return layoutId;
+      if (id.startsWith(mdxPrefix)) {
+        await loadContent();
+        return mdxRecords.find((record) => record.virtualId === id)?.sourceId;
+      }
       return undefined;
     },
-    async load(id: string) {
+    async load(this: { addWatchFile(path: string): void }, id: string) {
       if (id === configId) {
-        return `export const content = ${JSON.stringify(await getContent())};`;
+        const content = await loadContent();
+        watchedPaths.clear();
+        for (const entry of content.entries) {
+          watchedPaths.add(entry.absolutePath);
+          this.addWatchFile(entry.absolutePath);
+          for (const asset of entry.assets ?? []) {
+            if (!asset.sourcePath) continue;
+            watchedPaths.add(asset.sourcePath);
+            this.addWatchFile(asset.sourcePath);
+          }
+        }
+        const loaders = mdxRecords
+          .map(
+            ({ entry, virtualId }) =>
+              `${JSON.stringify(entry.route)}: () => import(${JSON.stringify(virtualId)})`,
+          )
+          .join(",\n");
+        return `export const content = ${JSON.stringify(content)};\nexport const mdxLoaders = {${loaders}};`;
       }
       if (id === layoutId) {
         return `export const layout = ${JSON.stringify(layout)};`;
       }
+      const mdx = mdxRecords.find((record) => record.sourceId === id);
+      if (mdx) return mdx.entry.transformedBody;
       return undefined;
+    },
+    watchChange(id: string) {
+      if (!watchedPaths.has(id)) return;
+      contentPromise = undefined;
+      mdxRecords = [];
     },
   };
 }
 
-function hasContentConfig(srcDir: URL): boolean {
-  const source = fileURLToPath(srcDir);
-  return [
-    "content.config.ts",
-    "content.config.mts",
-    "content.config.js",
-    "content.config.mjs",
-    "content/config.ts",
-  ].some((path) => existsSync(join(source, path)));
+function repositoryIcon(repository: string): "github" | "gitlab" | "link" {
+  try {
+    const host = new URL(repository).hostname;
+    if (host === "github.com" || host.endsWith(".github.com")) return "github";
+    if (host === "gitlab.com" || host.endsWith(".gitlab.com")) return "gitlab";
+  } catch {
+    // Configuration validation reports invalid repository URLs.
+  }
+  return "link";
 }

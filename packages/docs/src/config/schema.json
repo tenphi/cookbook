@@ -63,7 +63,6 @@
       "additionalProperties": false,
       "properties": {
         "allowOutsideRoot": { "type": "boolean", "default": false },
-        "localizeRepositoryLinks": { "type": "boolean", "default": false },
         "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } }
       }
     },
@@ -93,7 +92,6 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "variant": { "type": "string" },
         "brand": {},
         "palette": {
           "type": "object",
@@ -132,8 +130,20 @@
         }
       }
     },
-    "markdown": { "type": "object" },
-    "search": { "type": "object" },
+    "markdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stripLeadingBadges": { "type": "boolean", "default": true }
+      }
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true }
+      }
+    },
     "components": {
       "type": "object",
       "additionalProperties": false,
@@ -149,7 +159,20 @@
         }
       }
     },
-    "build": { "type": "object" }
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strict": { "type": "boolean", "default": true },
+        "ci": { "type": "boolean" },
+        "cacheDir": { "type": "string" },
+        "maxArtifactBytes": { "type": "integer", "minimum": 1 },
+        "maxUnpackedBytes": { "type": "integer", "minimum": 1 },
+        "maxFiles": { "type": "integer", "minimum": 1 },
+        "maxPathDepth": { "type": "integer", "minimum": 1 },
+        "maxAssetBytes": { "type": "integer", "minimum": 1 }
+      }
+    }
   },
   "$defs": {
     "locale": {
@@ -231,12 +254,73 @@
       }
     },
     "source": {
-      "type": "object",
       "oneOf": [
-        { "required": ["file"] },
-        { "required": ["glob"] },
-        { "required": ["package"] }
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["file"],
+          "properties": {
+            "file": { "type": "string", "minLength": 1 },
+            "route": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "navigation": {
+              "oneOf": [
+                { "const": false },
+                { "$ref": "#/$defs/navigationPlacement" }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["glob"],
+          "properties": {
+            "glob": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            },
+            "base": { "type": "string" },
+            "routeBase": { "type": "string" },
+            "exclude": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "navigation": { "enum": ["auto", false] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["package"],
+          "properties": {
+            "package": { "type": "string", "minLength": 1 },
+            "include": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "exclude": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "index": { "type": "string" },
+            "routeBase": { "type": "string" },
+            "trust": { "enum": ["markdown", "mdx"] }
+          }
+        }
       ]
+    },
+    "navigationPlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "order": { "type": "number" },
+        "group": { "type": "string" }
+      }
     }
   }
 }

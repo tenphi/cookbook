@@ -36,10 +36,32 @@ describe("docs configuration", () => {
     const config = normalizeDocsConfig();
     expect(config.build).toMatchObject({ strict: true, base: "/" });
     expect(config.head).toEqual([]);
-    expect(config.markdown.rawHtml).toBe("sanitize");
     expect(() => normalizeDocsConfig({ typo: true } as never)).toThrow(
       DocsConfigError,
     );
+  });
+
+  it("rejects removed no-op options and malformed limits", () => {
+    expect(() =>
+      normalizeDocsConfig({ markdown: { rawHtml: "allow" } } as never),
+    ).toThrow(/markdown\.rawHtml/);
+    expect(() =>
+      normalizeDocsConfig({
+        content: { localizeRepositoryLinks: true },
+      } as never),
+    ).toThrow(/content\.localizeRepositoryLinks/);
+    expect(() => normalizeDocsConfig({ build: { maxFiles: 0 } })).toThrow(
+      /build\.maxFiles must be a positive integer/,
+    );
+  });
+
+  it("requires web URLs for public site metadata", () => {
+    expect(() =>
+      normalizeDocsConfig({ site: { url: "docs.example.com" } }),
+    ).toThrow(/site\.url must be an absolute HTTP/);
+    expect(() =>
+      normalizeDocsConfig({ site: { repository: "javascript:alert(1)" } }),
+    ).toThrow(/site\.repository must be an absolute HTTP/);
   });
 
   it("preserves documented package metadata", () => {

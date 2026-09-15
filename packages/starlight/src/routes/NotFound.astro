@@ -1,0 +1,16 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { content } from "virtual:cookbook/config";
+import { layout } from "virtual:cookbook/layout";
+import { starlightPageSidebar } from "../navigation.js";
+
+export const prerender = true;
+---
+
+<StarlightPage
+  frontmatter={{ title: "Page not found", pagefind: false }}
+  headings={[]}
+  sidebar={starlightPageSidebar(layout, content.routes)}
+>
+  <p>The page you requested could not be found.</p>
+</StarlightPage>

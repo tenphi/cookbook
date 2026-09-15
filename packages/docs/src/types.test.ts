@@ -16,6 +16,7 @@ describe("component style metadata", () => {
   it("publishes the complete navigation sub-element lists", () => {
     expect(COOKBOOK_COMPONENT_SUB_ELEMENTS.Sidebar).toEqual([
       "CurrentLink",
+      "OpenPane",
       "Content",
       "List",
       "Item",

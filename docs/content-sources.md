@@ -83,10 +83,14 @@ A production build uses the exact version and integrity stored in
 Artifacts are integrity-checked, extracted with file-count and size limits,
 and cached by integrity.
 
-Package Markdown is untrusted by default. Script-capable HTML and unsafe URL
-protocols are rejected, and MDX cannot execute. Set `trust: "mdx"` only after
-reviewing the exact locked artifact; doing so allows its build-time code to
-run.
+Package Markdown is untrusted by default. Raw HTML in Markdown and
+HTML-capable frontmatter is removed, custom `head` entries are discarded,
+unsafe URL protocols are rejected, and MDX cannot execute. Set `trust: "mdx"`
+only after reviewing the exact locked artifact; doing so allows its build-time
+code to run. Trusted MDX is compiled by Starlight, including relative component
+imports from the source file's directory. Package-provided indexes, include
+patterns, exclude patterns, and every discovered file are confined to the
+extracted artifact root.
 
 ## Links and assets
 
@@ -99,8 +103,9 @@ Write ordinary repository-relative Markdown:
 
 Known document links are rewritten to public routes. Query strings and heading
 fragments are preserved, and fragments are checked against the target page's
-GitHub-style heading IDs. Local images are validated, content-hashed, and
-copied into the static build.
+GitHub-style heading IDs. Inline and reference-style links and images are
+supported. Local images and downloadable files are validated, content-hashed,
+and copied into the static build.
 
 Absolute web links, `mailto:`, `tel:`, and hash-only links remain unchanged.
 Missing links are errors in strict mode; missing assets and paths escaping an

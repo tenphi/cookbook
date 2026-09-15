@@ -8,6 +8,6 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   platform: "node",
-  external: [/^@tenphi\//],
+  deps: { neverBundle: [/^@tenphi\//] },
   banner: { js: "#!/usr/bin/env node" },
 });

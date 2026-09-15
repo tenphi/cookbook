@@ -36,17 +36,18 @@ deploy it with the official Pages deploy action. Use GitHub's `github-pages`
 environment so the deployment URL and protection rules remain visible in the
 repository.
 
-For an organization or user site, keep `base: "/"`. For a project site served
-at `https://owner.github.io/repository/`, configure both Astro and Cookbook
-with `base: "/repository/"`.
+For an organization or user site, keep Astro's `base: "/"`. For a project site
+served at `https://owner.github.io/repository/`, set Astro's
+`base: "/repository/"`; Cookbook derives the same base for its graph and
+assets.
 
 ## Custom domains
 
-Set Astro's canonical site and Cookbook metadata to the same HTTPS origin:
+Set Cookbook's canonical site metadata to the HTTPS origin. The integration
+forwards it to Astro:
 
 ```ts
 export default defineConfig({
-  site: "https://docs.example.com",
   integrations: [
     cookbook({
       config: {
@@ -73,5 +74,5 @@ Use the host's ordinary static-site settings:
 - publish directory: `dist`
 - Node.js: 22.14 or newer
 
-If the host serves the site below a path rather than at an origin root, set the
-same `base` in Astro and the [build configuration](./configuration.md#build).
+If the host serves the site below a path rather than at an origin root, set
+Astro's `base`; Cookbook derives it automatically.
