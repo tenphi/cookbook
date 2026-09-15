@@ -41,6 +41,12 @@ try {
       );
     }
     const manifest = JSON.parse(manifestText);
+    if (
+      ["@tenphi/cookbook", "@tenphi/starlight"].includes(manifest.name) &&
+      !files.has("package/tasty.config.mjs")
+    ) {
+      throw new Error(`${tarball} is missing its inheritable Tasty config.`);
+    }
     for (const target of exportTargets(manifest.exports)) {
       const packedPath = `package/${target.replace(/^\.\//, "")}`;
       const present = target.includes("*")

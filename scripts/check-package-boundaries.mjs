@@ -11,6 +11,7 @@ const allowedImports = new Set([
   "@tenphi/starlight",
   "@tenphi/starlight/components",
   "@tenphi/starlight/styling",
+  "@tenphi/starlight/eslint-plugin",
 ]);
 
 for (const file of files) {

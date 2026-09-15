@@ -24,10 +24,15 @@
       "types": "./dist/styling.d.ts",
       "import": "./dist/styling.js"
     },
+    "./eslint-plugin": {
+      "types": "./dist/eslint-plugin.d.ts",
+      "import": "./dist/eslint-plugin.js"
+    },
     "./client/*": "./dist/client/*.js"
   },
   "files": [
     "dist",
+    "tasty.config.mjs",
     "README.md",
     "LICENSE"
   ],
@@ -61,6 +66,7 @@
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/onest": "^5.3.0",
     "@tenphi/docs": "workspace:*",
+    "@tenphi/eslint-plugin-tasty": "1.1.0",
     "@tenphi/glaze": "catalog:",
     "@tenphi/tasty": "catalog:",
     "beautiful-mermaid": "^1.1.3",

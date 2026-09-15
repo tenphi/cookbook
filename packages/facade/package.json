@@ -25,10 +25,15 @@
     "./styling": {
       "types": "./dist/styling.d.ts",
       "import": "./dist/styling.js"
+    },
+    "./eslint-plugin": {
+      "types": "./dist/eslint-plugin.d.ts",
+      "import": "./dist/eslint-plugin.js"
     }
   },
   "files": [
     "dist",
+    "tasty.config.mjs",
     "README.md",
     "LICENSE"
   ],

@@ -6,6 +6,7 @@ export default defineConfig({
     content: "src/content.ts",
     components: "src/components.ts",
     styling: "src/styling.ts",
+    "eslint-plugin": "src/eslint-plugin.ts",
     navigation: "src/navigation.ts",
     "client/appearance": "src/client/appearance.ts",
     "client/code-copy": "src/client/code-copy.ts",
