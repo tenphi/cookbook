@@ -85,6 +85,8 @@ export type DocsSource =
 export interface ContentConfig {
   sources?: DocsSource[];
   allowOutsideRoot?: boolean;
+  /** Rewrite absolute links into the current repository to matching Cookbook routes. */
+  localizeRepositoryLinks?: boolean;
 }
 
 export type NavigationItem =
@@ -387,6 +389,8 @@ export interface ThemeConfig {
 
 export interface MarkdownConfig {
   stripLeadingBadges?: boolean;
+  /** Raw HTML policy for trusted Markdown. Untrusted package Markdown is always sanitized. */
+  rawHtml?: "allow" | "sanitize" | "reject";
 }
 
 export interface SearchConfig {
@@ -436,10 +440,13 @@ export interface NormalizedDocsConfig {
   lastUpdated: boolean;
   locales?: Record<string, LocaleConfig>;
   defaultLocale?: string;
-  content: Required<Pick<ContentConfig, "allowOutsideRoot">> & ContentConfig;
+  content: Required<
+    Pick<ContentConfig, "allowOutsideRoot" | "localizeRepositoryLinks">
+  > &
+    ContentConfig;
   navigation: NavigationConfig;
   theme: ThemeConfig & { brand: BrandConfig };
-  markdown: Required<Pick<MarkdownConfig, "stripLeadingBadges">> &
+  markdown: Required<Pick<MarkdownConfig, "stripLeadingBadges" | "rawHtml">> &
     MarkdownConfig;
   search: Required<SearchConfig>;
   components: ComponentsConfig;
@@ -517,6 +524,7 @@ export interface DocsEntry {
   assets: DocsAsset[];
   trust: "markdown" | "mdx";
   package?: { requested: string; resolved: string };
+  repository?: { url: string; directory?: string };
 }
 
 export interface DocsRoute {

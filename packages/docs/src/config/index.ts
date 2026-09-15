@@ -32,8 +32,8 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "repository",
     "favicon",
   ]),
-  content: new Set(["sources", "allowOutsideRoot"]),
-  markdown: new Set(["stripLeadingBadges"]),
+  content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
+  markdown: new Set(["stripLeadingBadges", "rawHtml"]),
   search: new Set(["enabled"]),
   components: new Set(["overrides"]),
   theme: new Set([
@@ -254,6 +254,12 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
   ) {
     invalid(diagnostics, "content.allowOutsideRoot must be a boolean.");
   }
+  if (
+    config.content?.localizeRepositoryLinks !== undefined &&
+    typeof config.content.localizeRepositoryLinks !== "boolean"
+  ) {
+    invalid(diagnostics, "content.localizeRepositoryLinks must be a boolean.");
+  }
   const configuredSources = config.content?.sources;
   if (configuredSources !== undefined && !Array.isArray(configuredSources)) {
     invalid(diagnostics, "content.sources must be an array.");
@@ -324,6 +330,15 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     typeof config.markdown.stripLeadingBadges !== "boolean"
   ) {
     invalid(diagnostics, "markdown.stripLeadingBadges must be a boolean.");
+  }
+  if (
+    config.markdown?.rawHtml !== undefined &&
+    !["allow", "sanitize", "reject"].includes(config.markdown.rawHtml)
+  ) {
+    invalid(
+      diagnostics,
+      'markdown.rawHtml must be "allow", "sanitize", or "reject".',
+    );
   }
   if (
     config.search?.enabled !== undefined &&
@@ -446,12 +461,14 @@ export function normalizeDocsConfig(
     ...(config.defaultLocale ? { defaultLocale: config.defaultLocale } : {}),
     content: {
       allowOutsideRoot: false,
+      localizeRepositoryLinks: false,
       ...config.content,
     },
     navigation,
     theme: { ...config.theme, brand: config.theme?.brand ?? DEFAULT_BRAND },
     markdown: {
       stripLeadingBadges: true,
+      rawHtml: "allow",
       ...config.markdown,
     },
     search: { enabled: true, ...config.search },

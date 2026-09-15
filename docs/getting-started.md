@@ -117,8 +117,11 @@ Cookbook-only `docs` collection created with `createStarlightCollection()`;
 the integration owns one graph and rendering path.
 
 Page frontmatter now uses Starlight's names directly: replace `toc` with
-`tableOfContents` and `search` with `pagefind`. The previously accepted but
-inactive options `content.localizeRepositoryLinks`, `theme.variant`, and the
-renderer-like keys under `markdown` were removed. Configure remark, rehype,
-Shiki, and other rendering options through Astro's top-level `markdown`
-configuration.
+`tableOfContents` and `search` with `pagefind`.
+
+`content.localizeRepositoryLinks` and `markdown.rawHtml` now have enforced,
+documented behavior. The previously accepted but inactive `theme.variant`,
+`markdown.strictLanguages`, and `markdown.executablePreviews` options were
+removed. Configure remark, rehype, Shiki languages, and other renderer options
+through Astro's top-level `markdown` configuration. Configure the hosting path
+only through Astro's top-level `base` setting.

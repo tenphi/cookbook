@@ -18,8 +18,9 @@ links and images plus local downloadable files as hashed static assets.
 
 Align page frontmatter with Starlight (`tableOfContents`, `pagefind`, and
 `banner`), apply sidebar metadata to generated navigation, connect site URL and
-repository metadata to Astro/Starlight, remove inactive configuration keys, and
-strengthen runtime and JSON Schema validation.
+repository metadata to Astro/Starlight, implement repository-link localization
+and explicit raw HTML policies, remove the remaining inactive configuration
+keys, and strengthen runtime and JSON Schema validation.
 
 Generate projects with the creator's matching Cookbook release, typed
 configuration, and package-manager-aware GitHub Pages workflows. Standardize

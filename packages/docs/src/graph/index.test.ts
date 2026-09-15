@@ -15,21 +15,39 @@ describe("content graph", () => {
   });
 
   it("discovers conventions and rewrites links and assets under a base path", async () => {
-    const home = "# Fixture\n\nSee [the guide](docs/guide.md#same-heading).\n";
+    const home =
+      "# Fixture\n\nSee [the guide](docs/guide.md#same-heading) or [open it in the repository](https://github.com/example/fixture/blob/main/docs/guide.md#same-heading).\n";
     const root = await createDocsFixture({
       "README.md": home,
       "docs/guide.md":
         "# Guide\n\n![mark](assets/mark.svg)\n\n## Same heading\n\n## Same heading\n",
       "docs/assets/mark.svg": '<svg xmlns="http://www.w3.org/2000/svg"/>',
     });
+    const external = await createDocsGraph({
+      root,
+      config: {
+        site: { repository: "https://github.com/example/fixture" },
+      },
+    });
+    expect(external.entryByRoute("/")?.transformedBody).toContain(
+      "https://github.com/example/fixture/blob/main/docs/guide.md",
+    );
+
     const graph = await createDocsGraph({
       root,
       base: "/manual",
+      config: {
+        site: { repository: "https://github.com/example/fixture" },
+        content: { localizeRepositoryLinks: true },
+      },
     });
 
     expect(graph.routes.map(({ route }) => route)).toEqual(["/", "/guide"]);
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
       "/manual/guide#same-heading",
+    );
+    expect(graph.entryByRoute("/")?.transformedBody).not.toContain(
+      "github.com/example/fixture",
     );
     expect(graph.entryByRoute("/guide")?.transformedBody).toMatch(
       /\/manual\/_tasty-assets\/[a-f0-9]{12}-mark\.svg/,
@@ -117,6 +135,38 @@ head:
       expect.objectContaining({
         code: "DOCS_UNTRUSTED_HTML",
         severity: "warning",
+      }),
+    );
+  });
+
+  it("applies the configured raw HTML policy to trusted Markdown", async () => {
+    const root = await createDocsFixture({
+      "README.md": "# Fixture\n\n<mark>Trusted HTML</mark>\n",
+    });
+
+    const allowed = await createDocsGraph({ root });
+    expect(allowed.entryByRoute("/")?.transformedBody).toContain(
+      "<mark>Trusted HTML</mark>",
+    );
+
+    const sanitized = await createDocsGraph({
+      root,
+      config: { markdown: { rawHtml: "sanitize" } },
+    });
+    expect(sanitized.entryByRoute("/")?.transformedBody).not.toContain(
+      "<mark>",
+    );
+    expect(sanitized.diagnostics).toEqual([]);
+
+    const rejected = await createDocsGraph({
+      root,
+      config: { markdown: { rawHtml: "reject" } },
+    });
+    expect(rejected.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_RAW_HTML_REJECTED",
+        severity: "error",
+        file: "README.md",
       }),
     );
   });
@@ -361,5 +411,55 @@ banner: {}
     });
     expect(graph.diagnostics).toEqual([]);
     expect(graph.routes.map(({ route }) => route)).toEqual(["/", "/api"]);
+  });
+
+  it("localizes absolute repository links to packaged documentation", async () => {
+    const integrity = "sha512-repository-links";
+    const root = await createDocsFixture({
+      ".cookbook/vendor/package/.cookbook-integrity": `${integrity}\n`,
+      ".cookbook/vendor/package/package.json": JSON.stringify({
+        name: "fixture-package",
+        version: "1.2.3",
+        repository: {
+          type: "git",
+          url: "git+ssh://git@github.com/example/monorepo.git",
+          directory: "packages/fixture",
+        },
+      }),
+      ".cookbook/vendor/package/README.md":
+        "# Package\n\nRead the [API](https://github.com/example/monorepo/blob/main/packages/fixture/docs/api.md?plain=1#usage) and [guide](https://github.com/example/monorepo/tree/main/packages/fixture/docs/guide).\n",
+      ".cookbook/vendor/package/docs/api.md": "# API\n\n## Usage\n",
+      ".cookbook/vendor/package/docs/guide/index.md": "# Guide\n",
+    });
+    const graph = await createDocsGraph({
+      root,
+      base: "/manual",
+      config: {
+        content: {
+          localizeRepositoryLinks: true,
+          sources: [{ package: "fixture-package" }],
+        },
+      },
+      lock: {
+        schemaVersion: 1,
+        sources: [
+          {
+            requested: "fixture-package",
+            resolved: "fixture-package@1.2.3",
+            registry: "https://registry.npmjs.org/",
+            integrity,
+            vendored: ".cookbook/vendor/package",
+          },
+        ],
+      },
+    });
+
+    expect(graph.entryByRoute("/")?.transformedBody).toContain(
+      "[API](/manual/api?plain=1#usage)",
+    );
+    expect(graph.entryByRoute("/")?.transformedBody).toContain(
+      "[guide](/manual/guide)",
+    );
+    expect(graph.diagnostics).toEqual([]);
   });
 });

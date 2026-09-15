@@ -107,9 +107,15 @@ GitHub-style heading IDs. Inline and reference-style links and images are
 supported. Local images and downloadable files are validated, content-hashed,
 and copied into the static build.
 
-Absolute web links, `mailto:`, `tel:`, and hash-only links remain unchanged.
-Missing links are errors in strict mode; missing assets and paths escaping an
-allowed source root are always errors.
+Absolute web links, `mailto:`, `tel:`, and hash-only links remain unchanged by
+default. Set `content.localizeRepositoryLinks: true` to rewrite absolute links
+back into the collected documentation when they match `site.repository` or the
+current package's `repository` manifest field. GitHub/GitLab `blob`, `tree`, and
+`raw` URLs plus Bitbucket `src` URLs are recognized; query strings and fragments
+are preserved. Links without a matching collected page remain external.
+
+Missing relative links are errors in strict mode; missing assets and paths
+escaping an allowed source root are always errors.
 
 Run the [doctor command](./cli.md#validate-with-doctor) before committing a
 large content move.

@@ -10,6 +10,10 @@ const schema = JSON.parse(
       properties: { favicon: { oneOf?: unknown[] } };
     };
     navigation: { oneOf?: unknown[] };
+    content: {
+      properties: { localizeRepositoryLinks: { default?: boolean } };
+    };
+    markdown: { properties: { rawHtml: { enum?: string[] } } };
     head: { items: { required?: string[] } };
     components: {
       properties: {
@@ -41,15 +45,24 @@ describe("docs configuration", () => {
     );
   });
 
-  it("rejects removed no-op options and malformed limits", () => {
+  it("normalizes implemented content policies and rejects malformed limits", () => {
+    const config = normalizeDocsConfig({
+      content: { localizeRepositoryLinks: true },
+      markdown: { rawHtml: "sanitize" },
+    });
+    expect(config.content.localizeRepositoryLinks).toBe(true);
+    expect(config.markdown.rawHtml).toBe("sanitize");
+    expect(
+      schema.properties.content.properties.localizeRepositoryLinks.default,
+    ).toBe(false);
+    expect(schema.properties.markdown.properties.rawHtml.enum).toEqual([
+      "allow",
+      "sanitize",
+      "reject",
+    ]);
     expect(() =>
-      normalizeDocsConfig({ markdown: { rawHtml: "allow" } } as never),
+      normalizeDocsConfig({ markdown: { rawHtml: "escape" } } as never),
     ).toThrow(/markdown\.rawHtml/);
-    expect(() =>
-      normalizeDocsConfig({
-        content: { localizeRepositoryLinks: true },
-      } as never),
-    ).toThrow(/content\.localizeRepositoryLinks/);
     expect(() => normalizeDocsConfig({ build: { maxFiles: 0 } })).toThrow(
       /build\.maxFiles must be a positive integer/,
     );

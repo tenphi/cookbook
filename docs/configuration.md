@@ -174,12 +174,16 @@ content: {
     { file: "README.md", route: "/" },
     { glob: "docs/**/*.{md,mdx}", base: "docs" }
   ],
-  allowOutsideRoot: false
+  allowOutsideRoot: false,
+  localizeRepositoryLinks: false
 }
 ```
 
 See [Content sources](./content-sources.md) for every declaration and its route
-rules.
+rules. Enable `localizeRepositoryLinks` to turn absolute repository `blob`,
+`tree`, `raw`, or Bitbucket `src` links back into local Cookbook routes when a
+matching page was collected. Cookbook uses `site.repository` for local sources
+and each package manifest's `repository` metadata for package sources.
 
 ## Navigation
 
@@ -311,12 +315,16 @@ complete sub-element lists.
 ```ts
 markdown: {
   stripLeadingBadges: true,
+  rawHtml: "allow",
 }
 ```
 
 `stripLeadingBadges` removes badge-only paragraphs at the start of a page and
-defaults to `true`. Raw HTML is removed from package Markdown in safe mode, and
-package MDX requires an explicit `trust: "mdx"` source declaration.
+defaults to `true`. `rawHtml` accepts `"allow"`, `"sanitize"`, or `"reject"`.
+The default preserves raw HTML in trusted local Markdown; `sanitize` removes it
+and `reject` reports a graph error. Package Markdown in safe mode is always
+sanitized even when the global policy is `"allow"`, and package MDX requires an
+explicit `trust: "mdx"` source declaration.
 
 Configure renderer-level Markdown options such as custom remark or rehype
 plugins and Shiki languages through Astro's top-level `markdown` configuration.
@@ -403,9 +411,9 @@ build: {
 ```
 
 `strict` makes missing internal links errors instead of warnings. `ci` makes
-missing heading fragments errors and defaults to `true` when `CI=true`. `base`
-must match Astro's base path for project sites such as
-`https://owner.github.io/repository/`. An empty `cacheDir` uses
-`~/.cache/cookbook`; set an explicit path to relocate downloaded package
+missing heading fragments errors and defaults to `true` when `CI=true`.
+Cookbook derives its public base path from Astro's top-level `base` setting so
+routes and assets cannot drift between two configurations. An empty `cacheDir`
+uses `~/.cache/cookbook`; set an explicit path to relocate downloaded package
 artifacts. Package limits protect builds from unexpected registry artifacts;
 raise them deliberately for a reviewed package.

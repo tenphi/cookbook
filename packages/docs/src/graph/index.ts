@@ -55,6 +55,7 @@ interface CollectedSource {
   navigation?: false | NavigationPlacement;
   trust: "markdown" | "mdx";
   packageLock?: PackageLockSource;
+  repository?: { url: string; directory?: string };
 }
 
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
@@ -239,6 +240,9 @@ async function collectDeclaration(
       root,
     );
     const discovery = await discoverPackage(sourceRoot);
+    const repository = config.content.localizeRepositoryLinks
+      ? repositoryMetadata(discovery.manifest.repository)
+      : undefined;
     const patterns = declaration.include?.length
       ? declaration.include
       : discovery.pages;
@@ -275,9 +279,14 @@ async function collectDeclaration(
               : routeForPath(path, "docs", declaration.routeBase),
           trust: declaration.trust ?? "markdown",
           packageLock,
+          ...(repository ? { repository } : {}),
         };
       });
   }
+
+  const repository = config.content.localizeRepositoryLinks
+    ? repositoryMetadata(config.site.repository)
+    : undefined;
 
   if ("file" in declaration) {
     const absolutePath = resolveSourcePath(
@@ -300,6 +309,7 @@ async function collectDeclaration(
           ? { navigation: declaration.navigation }
           : {}),
         trust: "mdx",
+        ...(repository ? { repository } : {}),
       },
     ];
   }
@@ -326,6 +336,7 @@ async function collectDeclaration(
       route: routeForPath(path, declaration.base, declaration.routeBase),
       ...(declaration.navigation === false ? { navigation: false } : {}),
       trust: "mdx",
+      ...(repository ? { repository } : {}),
     };
   });
 }
@@ -430,6 +441,7 @@ async function readEntry(
           },
         }
       : {}),
+    ...(source.repository ? { repository: source.repository } : {}),
   };
 }
 
@@ -473,13 +485,26 @@ async function transformEntry(
   config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): Promise<void> {
-  sanitizeUntrustedFrontmatter(entry, diagnostics);
+  sanitizeUntrustedFrontmatter(entry, config, diagnostics);
   const ast = cloneAst(entry.ast);
   if (config.markdown.stripLeadingBadges) stripLeadingBadgeBlock(ast);
   removeRenderedTitle(ast, entry.title);
 
   visit(ast, (node) => {
-    if (node.type === "html" && entry.trust === "markdown") {
+    if (node.type !== "html") return;
+    const policy = rawHtmlPolicy(entry, config);
+    if (policy === "allow") return;
+    if (policy === "reject") {
+      diagnostics.push({
+        code: "DOCS_RAW_HTML_REJECTED",
+        severity: "error",
+        message: `Raw HTML is not allowed by markdown.rawHtml: ${entry.sourcePath}.`,
+        file: entry.sourcePath,
+        ...(node.position?.start.line
+          ? { line: node.position.start.line }
+          : {}),
+      });
+    } else if (entry.trust === "markdown") {
       diagnostics.push({
         code: "DOCS_UNTRUSTED_HTML",
         severity: "warning",
@@ -490,8 +515,8 @@ async function transformEntry(
           ? { line: node.position.start.line }
           : {}),
       });
-      node.value = "";
     }
+    node.value = "";
   });
 
   const referenceKinds = new Map<string, "link" | "image" | "mixed">();
@@ -551,6 +576,7 @@ async function transformEntry(
 
 function sanitizeUntrustedFrontmatter(
   entry: DocsEntry,
+  config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): void {
   if (entry.trust !== "markdown") return;
@@ -584,13 +610,26 @@ function sanitizeUntrustedFrontmatter(
 
   if (removed) {
     diagnostics.push({
-      code: "DOCS_UNTRUSTED_HTML",
-      severity: "warning",
+      code:
+        config.markdown.rawHtml === "reject"
+          ? "DOCS_RAW_HTML_REJECTED"
+          : "DOCS_UNTRUSTED_HTML",
+      severity: config.markdown.rawHtml === "reject" ? "error" : "warning",
       message:
-        "HTML-capable frontmatter was sanitized in package Markdown. Use trust: 'mdx' only for packages you trust.",
+        config.markdown.rawHtml === "reject"
+          ? `HTML-capable frontmatter is not allowed by markdown.rawHtml: ${entry.sourcePath}.`
+          : "HTML-capable frontmatter was sanitized in package Markdown. Use trust: 'mdx' only for packages you trust.",
       file: entry.sourcePath,
     });
   }
+}
+
+function rawHtmlPolicy(
+  entry: DocsEntry,
+  config: NormalizedDocsConfig,
+): NormalizedDocsConfig["markdown"]["rawHtml"] {
+  if (config.markdown.rawHtml === "reject") return "reject";
+  return entry.trust === "markdown" ? "sanitize" : config.markdown.rawHtml;
 }
 
 async function rewriteFrontmatterReferences(
@@ -659,7 +698,20 @@ async function rewriteLink(
     );
     return;
   }
-  if (isExternal(node.url) || node.url.startsWith("#")) return;
+  if (isExternal(node.url)) {
+    const target = config.content.localizeRepositoryLinks
+      ? localizedRepositoryTarget(node.url, entry, absoluteMap)
+      : undefined;
+    if (!target) return;
+    const { query, fragment } = splitReference(node.url);
+    node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+    reference.resolved = node.url;
+    reference.targetSource = target.sourcePath;
+    if (fragment) reference.fragment = fragment;
+    validateFragment(fragment, target, entry, node, diagnostics, config);
+    return;
+  }
+  if (node.url.startsWith("#")) return;
   const { pathname, query, fragment } = splitReference(node.url);
   if (pathname.startsWith("/")) {
     const target = routeMap.get(normalizeRoute(pathname));
@@ -971,6 +1023,94 @@ function splitReference(url: string): {
 
 function isExternal(url: string): boolean {
   return /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url);
+}
+
+function localizedRepositoryTarget(
+  value: string,
+  entry: DocsEntry,
+  entries: Map<string, DocsEntry>,
+): DocsEntry | undefined {
+  if (!entry.repository) return undefined;
+  let link: URL;
+  let repository: URL;
+  try {
+    link = new URL(value);
+    repository = new URL(entry.repository.url);
+  } catch {
+    return undefined;
+  }
+  const repositoryPath = repository.pathname.replace(/\/+$/, "");
+  if (
+    link.origin !== repository.origin ||
+    !link.pathname.startsWith(`${repositoryPath}/`)
+  ) {
+    return undefined;
+  }
+  const repositoryRelative = safeDecode(
+    link.pathname.slice(repositoryPath.length + 1),
+  );
+  if (
+    !/^(?:-\/(?:blob|tree|raw)|blob|tree|raw|src)\//.test(repositoryRelative)
+  ) {
+    return undefined;
+  }
+
+  const directory = entry.repository.directory?.replace(/^\/+|\/+$/g, "");
+  const matches = [...entries.values()]
+    .filter((candidate) => candidate.sourceRoot === entry.sourceRoot)
+    .flatMap((candidate) => {
+      const sourcePath = candidate.sourcePath.replace(/^\/+/, "");
+      const paths = [sourcePath];
+      if (/(?:^|\/)(?:README|index)\.mdx?$/i.test(sourcePath)) {
+        paths.push(sourcePath.replace(/(?:^|\/)(?:README|index)\.mdx?$/i, ""));
+      }
+      const repositoryPaths = paths
+        .flatMap((path) => [
+          path,
+          ...(directory ? [`${directory}/${path}`] : []),
+        ])
+        .map((path) => path.replace(/\/+$/, ""))
+        .filter(Boolean);
+      const matched = repositoryPaths.find(
+        (path) =>
+          repositoryRelative === path ||
+          repositoryRelative.endsWith(`/${path}`),
+      );
+      return matched ? [{ candidate, length: matched.length }] : [];
+    })
+    .sort((left, right) => right.length - left.length);
+  return matches[0]?.candidate;
+}
+
+function repositoryMetadata(
+  repository:
+    string | { type?: string; url?: string; directory?: string } | undefined,
+): { url: string; directory?: string } | undefined {
+  let raw = typeof repository === "string" ? repository : repository?.url;
+  if (!raw) return undefined;
+  raw = raw.replace(/^git\+/, "");
+  const scp = /^git@([^:]+):(.+)$/.exec(raw);
+  if (scp) raw = `https://${scp[1]}/${scp[2]}`;
+  try {
+    let url = new URL(raw);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      if (!url.hostname) return undefined;
+      url = new URL(`https://${url.hostname}${url.pathname}`);
+    }
+    url.search = "";
+    url.hash = "";
+    url.pathname = url.pathname.replace(/\.git\/?$/, "").replace(/\/+$/, "");
+    const directory =
+      typeof repository === "object"
+        ? repository.directory?.replaceAll("\\", "/").replace(/^\/+|\/+$/g, "")
+        : undefined;
+    return {
+      url: url.href.replace(/\/$/, ""),
+      ...(directory ? { directory } : {}),
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 function unsafeProtocol(url: string): boolean {
