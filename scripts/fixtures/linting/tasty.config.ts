@@ -1,11 +1,8 @@
-import {
-  validationConfig,
-  type TastyValidationConfig,
-} from "@tenphi/cookbook/eslint-plugin";
+import type { TastyValidationConfig } from "@tenphi/cookbook/eslint-plugin";
 
 export default {
-  ...validationConfig,
-  tokens: [...validationConfig.tokens, "#project", "$project-gap"],
-  states: [...validationConfig.states, "@project-wide"],
-  presets: [...validationConfig.presets, "project-title"],
+  extends: "@tenphi/cookbook",
+  tokens: ["#project", "$project-gap"],
+  states: ["@project-wide"],
+  presets: ["project-title"],
 } satisfies TastyValidationConfig;

@@ -478,11 +478,12 @@ oxlint.
 Create `tasty.config.ts` at your project root:
 
 ```ts
-import { validationConfig } from "@tenphi/cookbook/eslint-plugin";
-
-export default validationConfig;
+export default {
+  extends: "@tenphi/cookbook",
+};
 ```
 
+Renderer-only consumers can use `extends: "@tenphi/starlight"` instead.
 The preset registers both Cookbook styling import paths, its built-in tokens,
 units, responsive states, and typography presets. It also describes
 `defineComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
@@ -545,24 +546,24 @@ Both presets are tested with oxlint 1.83.0; JavaScript plugin support is experim
 ### Custom theme names
 
 Add names introduced by your `docs.config.ts` theme to the validation config.
-For example, after defining `theme.tokens.$project-gap`, `theme.states["@project-wide"]`,
+For example, after defining `theme.tokens["$project-gap"]`, `theme.states["@project-wide"]`,
 and `theme.presets["project-title"]`:
 
 ```ts
-import {
-  validationConfig,
-  type TastyValidationConfig,
-} from "@tenphi/cookbook/eslint-plugin";
+import type { TastyValidationConfig } from "@tenphi/cookbook/eslint-plugin";
 
 export default {
-  ...validationConfig,
-  tokens: [...validationConfig.tokens, "$project-gap"],
-  states: [...validationConfig.states, "@project-wide"],
-  presets: [...validationConfig.presets, "project-title"],
+  extends: "@tenphi/cookbook",
+  tokens: ["$project-gap"],
+  states: ["@project-wide"],
+  presets: ["project-title"],
 } satisfies TastyValidationConfig;
 ```
 
-Keep the existing arrays when adding names so built-in styles remain valid.
+`extends` merges and deduplicates these arrays with the inherited configuration,
+so list only your additions. It also inherits the styling helper signatures;
+entries you add to `styleFunctions` override inherited signatures by function name.
+The exported `validationConfig` object remains available for programmatic use.
 The entry point also exports the upstream `StyleFunctionConfig` and
 `ResolvedConfig` types for shared lint configurations. Additional imported
 helpers can be registered in `styleFunctions`; use `partial: true` for helpers

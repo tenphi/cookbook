@@ -32,6 +32,7 @@
   },
   "files": [
     "dist",
+    "tasty.config.mjs",
     "README.md",
     "LICENSE"
   ],

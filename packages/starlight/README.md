@@ -11,6 +11,8 @@ the same API through `@tenphi/cookbook/styling`.
 `@tenphi/starlight/eslint-plugin` exports the default Tasty ESLint plugin,
 `recommended` and `strict` rule maps, its configuration types, and a
 `validationConfig` preset covering Cookbook's theme names and styling helpers.
+Use `extends: "@tenphi/starlight"` in `tasty.config.ts` to inherit this preset
+and list only your additional tokens, states, or presets.
 It matches `@tenphi/cookbook/eslint-plugin`; see
 [Linting custom styles](https://cookbook.tenphi.me/theme-and-components/#linting-custom-styles)
 for ESLint and oxlint setup.

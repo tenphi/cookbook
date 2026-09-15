@@ -31,13 +31,15 @@ Lint these styles with the plugin and Cookbook validation preset from
 
 ```ts
 // tasty.config.ts
-import { validationConfig } from "@tenphi/cookbook/eslint-plugin";
-
-export default validationConfig;
+export default {
+  extends: "@tenphi/cookbook",
+  tokens: ["$project-gap"], // Optional additions to the built-in theme names.
+};
 ```
 
 The entry point exports the default Tasty ESLint plugin, `recommended` and `strict`
 rule maps, and the upstream configuration types. The preset recognizes Cookbook's
-theme names and custom styling helpers, including `defineComponent`.
+theme names and custom styling helpers, including `defineComponent`. `extends`
+merges your additional tokens, states, and presets with these built-ins.
 See [Linting custom styles](https://cookbook.tenphi.me/theme-and-components/#linting-custom-styles)
 for ESLint and oxlint configuration examples.
