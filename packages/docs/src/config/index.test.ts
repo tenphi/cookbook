@@ -13,7 +13,9 @@ const schema = JSON.parse(
     content: {
       properties: { localizeRepositoryLinks: { default?: boolean } };
     };
-    markdown: { properties: { rawHtml: { enum?: string[] } } };
+    markdown: {
+      properties: { rawHtml: { enum?: string[]; default?: string } };
+    };
     head: { items: { required?: string[] } };
     components: {
       properties: {
@@ -40,6 +42,7 @@ describe("docs configuration", () => {
     const config = normalizeDocsConfig();
     expect(config.build).toMatchObject({ strict: true, base: "/" });
     expect(config.head).toEqual([]);
+    expect(config.markdown.rawHtml).toBe("sanitize");
     expect(() => normalizeDocsConfig({ typo: true } as never)).toThrow(
       DocsConfigError,
     );
@@ -60,6 +63,9 @@ describe("docs configuration", () => {
       "sanitize",
       "reject",
     ]);
+    expect(schema.properties.markdown.properties.rawHtml.default).toBe(
+      "sanitize",
+    );
     expect(() =>
       normalizeDocsConfig({ markdown: { rawHtml: "escape" } } as never),
     ).toThrow(/markdown\.rawHtml/);

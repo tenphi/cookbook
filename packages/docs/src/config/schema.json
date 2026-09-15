@@ -138,7 +138,7 @@
         "stripLeadingBadges": { "type": "boolean", "default": true },
         "rawHtml": {
           "enum": ["allow", "sanitize", "reject"],
-          "default": "allow"
+          "default": "sanitize"
         }
       }
     },

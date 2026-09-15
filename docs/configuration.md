@@ -315,16 +315,16 @@ complete sub-element lists.
 ```ts
 markdown: {
   stripLeadingBadges: true,
-  rawHtml: "allow",
+  rawHtml: "sanitize",
 }
 ```
 
 `stripLeadingBadges` removes badge-only paragraphs at the start of a page and
 defaults to `true`. `rawHtml` accepts `"allow"`, `"sanitize"`, or `"reject"`.
-The default preserves raw HTML in trusted local Markdown; `sanitize` removes it
-and `reject` reports a graph error. Package Markdown in safe mode is always
-sanitized even when the global policy is `"allow"`, and package MDX requires an
-explicit `trust: "mdx"` source declaration.
+The default `sanitize` policy removes raw HTML; `allow` preserves it in trusted
+Markdown and `reject` reports a graph error. Package Markdown in safe mode is
+always sanitized even when the global policy is `"allow"`, and package MDX
+requires an explicit `trust: "mdx"` source declaration.
 
 Configure renderer-level Markdown options such as custom remark or rehype
 plugins and Shiki languages through Astro's top-level `markdown` configuration.

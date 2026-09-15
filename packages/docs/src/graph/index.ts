@@ -45,6 +45,11 @@ import type {
   PackageLockSource,
 } from "../types.js";
 
+interface RepositoryMetadata {
+  url: string;
+  directory?: string;
+}
+
 interface CollectedSource {
   absolutePath: string;
   sourcePath: string;
@@ -55,7 +60,7 @@ interface CollectedSource {
   navigation?: false | NavigationPlacement;
   trust: "markdown" | "mdx";
   packageLock?: PackageLockSource;
-  repository?: { url: string; directory?: string };
+  repository?: RepositoryMetadata;
 }
 
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
@@ -93,6 +98,7 @@ export async function createDocsGraph(
   const routeMap = new Map<string, DocsEntry>();
   const absoluteMap = new Map<string, DocsEntry>();
   const sourceMap = new Map<string, DocsEntry>();
+  const repositoryMap = new Map<string, RepositoryMetadata>();
 
   for (const source of collected) {
     const entry = await readEntry(source, config, diagnostics);
@@ -112,6 +118,7 @@ export async function createDocsGraph(
     absoluteMap.set(normalizeFs(entry.absolutePath), entry);
     sourceMap.set(entry.sourcePath, entry);
     sourceMap.set(entry.id, entry);
+    if (source.repository) repositoryMap.set(entry.id, source.repository);
     entries.push(entry);
   }
 
@@ -125,7 +132,14 @@ export async function createDocsGraph(
   }
 
   for (const entry of entries) {
-    await transformEntry(entry, absoluteMap, routeMap, config, diagnostics);
+    await transformEntry(
+      entry,
+      absoluteMap,
+      routeMap,
+      repositoryMap,
+      config,
+      diagnostics,
+    );
   }
   validateNavigation(config.navigation.items ?? [], routeMap, diagnostics);
   for (const tab of config.navigation.tabs ?? []) {
@@ -441,7 +455,6 @@ async function readEntry(
           },
         }
       : {}),
-    ...(source.repository ? { repository: source.repository } : {}),
   };
 }
 
@@ -482,6 +495,7 @@ async function transformEntry(
   entry: DocsEntry,
   absoluteMap: Map<string, DocsEntry>,
   routeMap: Map<string, DocsEntry>,
+  repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): Promise<void> {
@@ -534,7 +548,15 @@ async function transformEntry(
   visit(ast, (node) => {
     if (node.type === "link") {
       linkTasks.push(
-        rewriteLink(node, entry, absoluteMap, routeMap, config, diagnostics),
+        rewriteLink(
+          node,
+          entry,
+          absoluteMap,
+          routeMap,
+          repositoryMap,
+          config,
+          diagnostics,
+        ),
       );
     } else if (node.type === "image") {
       linkTasks.push(rewriteAsset(node, entry, config, diagnostics));
@@ -544,7 +566,15 @@ async function transformEntry(
         linkTasks.push(rewriteAsset(node, entry, config, diagnostics));
       } else if (kind === "link") {
         linkTasks.push(
-          rewriteLink(node, entry, absoluteMap, routeMap, config, diagnostics),
+          rewriteLink(
+            node,
+            entry,
+            absoluteMap,
+            routeMap,
+            repositoryMap,
+            config,
+            diagnostics,
+          ),
         );
       } else if (kind === "mixed") {
         linkTasks.push(
@@ -553,6 +583,7 @@ async function transformEntry(
             entry,
             absoluteMap,
             routeMap,
+            repositoryMap,
             config,
             diagnostics,
           ),
@@ -565,6 +596,7 @@ async function transformEntry(
     entry,
     absoluteMap,
     routeMap,
+    repositoryMap,
     config,
     diagnostics,
   );
@@ -636,12 +668,21 @@ async function rewriteFrontmatterReferences(
   entry: DocsEntry,
   absoluteMap: Map<string, DocsEntry>,
   routeMap: Map<string, DocsEntry>,
+  repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): Promise<void> {
   for (const action of entry.frontmatter.hero?.actions ?? []) {
     const node: Link = { type: "link", url: action.link, children: [] };
-    await rewriteLink(node, entry, absoluteMap, routeMap, config, diagnostics);
+    await rewriteLink(
+      node,
+      entry,
+      absoluteMap,
+      routeMap,
+      repositoryMap,
+      config,
+      diagnostics,
+    );
     action.link = node.url;
   }
 
@@ -680,6 +721,7 @@ async function rewriteLink(
   entry: DocsEntry,
   absoluteMap: Map<string, DocsEntry>,
   routeMap: Map<string, DocsEntry>,
+  repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): Promise<void> {
@@ -700,7 +742,12 @@ async function rewriteLink(
   }
   if (isExternal(node.url)) {
     const target = config.content.localizeRepositoryLinks
-      ? localizedRepositoryTarget(node.url, entry, absoluteMap)
+      ? localizedRepositoryTarget(
+          node.url,
+          entry,
+          absoluteMap,
+          repositoryMap.get(entry.id),
+        )
       : undefined;
     if (!target) return;
     const { query, fragment } = splitReference(node.url);
@@ -851,13 +898,22 @@ async function rewriteDefinition(
   entry: DocsEntry,
   absoluteMap: Map<string, DocsEntry>,
   routeMap: Map<string, DocsEntry>,
+  repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
   diagnostics: DocsDiagnostic[],
 ): Promise<void> {
   const { pathname } = splitReference(node.url);
   const targetPath = resolve(dirname(entry.absolutePath), safeDecode(pathname));
   if (findDocument(targetPath, absoluteMap) || pathname.startsWith("/")) {
-    await rewriteLink(node, entry, absoluteMap, routeMap, config, diagnostics);
+    await rewriteLink(
+      node,
+      entry,
+      absoluteMap,
+      routeMap,
+      repositoryMap,
+      config,
+      diagnostics,
+    );
   } else {
     await rewriteAsset(node, entry, config, diagnostics);
   }
@@ -1029,13 +1085,14 @@ function localizedRepositoryTarget(
   value: string,
   entry: DocsEntry,
   entries: Map<string, DocsEntry>,
+  metadata: RepositoryMetadata | undefined,
 ): DocsEntry | undefined {
-  if (!entry.repository) return undefined;
+  if (!metadata) return undefined;
   let link: URL;
   let repository: URL;
   try {
     link = new URL(value);
-    repository = new URL(entry.repository.url);
+    repository = new URL(metadata.url);
   } catch {
     return undefined;
   }
@@ -1055,7 +1112,7 @@ function localizedRepositoryTarget(
     return undefined;
   }
 
-  const directory = entry.repository.directory?.replace(/^\/+|\/+$/g, "");
+  const directory = metadata.directory?.replace(/^\/+|\/+$/g, "");
   const matches = [...entries.values()]
     .filter((candidate) => candidate.sourceRoot === entry.sourceRoot)
     .flatMap((candidate) => {
@@ -1085,7 +1142,7 @@ function localizedRepositoryTarget(
 function repositoryMetadata(
   repository:
     string | { type?: string; url?: string; directory?: string } | undefined,
-): { url: string; directory?: string } | undefined {
+): RepositoryMetadata | undefined {
   let raw = typeof repository === "string" ? repository : repository?.url;
   if (!raw) return undefined;
   raw = raw.replace(/^git\+/, "");
@@ -1094,7 +1151,9 @@ function repositoryMetadata(
   try {
     let url = new URL(raw);
     if (url.protocol !== "http:" && url.protocol !== "https:") {
-      if (!url.hostname) return undefined;
+      if (!url.hostname || !["git:", "ssh:"].includes(url.protocol)) {
+        return undefined;
+      }
       url = new URL(`https://${url.hostname}${url.pathname}`);
     }
     url.search = "";

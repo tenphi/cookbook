@@ -47,6 +47,7 @@ import {
 import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
+import { outputPathForPublicAsset } from "./output-path.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = resolve(
@@ -539,7 +540,10 @@ export default function cookbook(
         if (!graph) return;
         for (const asset of graph.assets) {
           if (!asset.sourcePath || !asset.publicPath) continue;
-          const target = join(output, asset.publicPath.replace(/^\//, ""));
+          const target = join(
+            output,
+            outputPathForPublicAsset(asset.publicPath, graph.config.build.base),
+          );
           await mkdir(dirname(target), { recursive: true });
           await cp(asset.sourcePath, target);
         }

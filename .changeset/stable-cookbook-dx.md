@@ -9,7 +9,8 @@ Upgrade the renderer to Astro 7.3 and Starlight 0.42, adopt Starlight's
 Popover-based mobile navigation, and use a single graph-backed rendering path
 that is independent of Astro content collections. Render trusted MDX through
 Starlight with relative imports intact, restore a generated 404 page, and
-support content-hashed local hero images.
+support content-hashed local hero images, including deployments under Astro
+base paths.
 
 Harden locked npm content by confining package paths and globs to the artifact,
 revalidating cached trees, rejecting ambiguous lock matches, removing raw HTML

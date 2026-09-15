@@ -109,7 +109,10 @@ head:
     });
     const graph = await createDocsGraph({
       root,
-      config: { content: { sources: [{ package: "fixture-package" }] } },
+      config: {
+        content: { sources: [{ package: "fixture-package" }] },
+        markdown: { rawHtml: "allow" },
+      },
       lock: {
         schemaVersion: 1,
         sources: [
@@ -144,15 +147,15 @@ head:
       "README.md": "# Fixture\n\n<mark>Trusted HTML</mark>\n",
     });
 
-    const allowed = await createDocsGraph({ root });
+    const allowed = await createDocsGraph({
+      root,
+      config: { markdown: { rawHtml: "allow" } },
+    });
     expect(allowed.entryByRoute("/")?.transformedBody).toContain(
       "<mark>Trusted HTML</mark>",
     );
 
-    const sanitized = await createDocsGraph({
-      root,
-      config: { markdown: { rawHtml: "sanitize" } },
-    });
+    const sanitized = await createDocsGraph({ root });
     expect(sanitized.entryByRoute("/")?.transformedBody).not.toContain(
       "<mark>",
     );
@@ -427,7 +430,7 @@ banner: {}
         },
       }),
       ".cookbook/vendor/package/README.md":
-        "# Package\n\nRead the [API](https://github.com/example/monorepo/blob/main/packages/fixture/docs/api.md?plain=1#usage) and [guide](https://github.com/example/monorepo/tree/main/packages/fixture/docs/guide).\n",
+        "# Package\n\nRead the [API](https://github.com/example/monorepo/blob/main/packages/fixture/docs/api.md?plain=1#usage) and [guide](https://github.com/example/monorepo/tree/main/packages/fixture/docs/guide). Keep the [issue](https://github.com/example/monorepo/issues/42) external.\n",
       ".cookbook/vendor/package/docs/api.md": "# API\n\n## Usage\n",
       ".cookbook/vendor/package/docs/guide/index.md": "# Guide\n",
     });
@@ -459,6 +462,9 @@ banner: {}
     );
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
       "[guide](/manual/guide)",
+    );
+    expect(graph.entryByRoute("/")?.transformedBody).toContain(
+      "[issue](https://github.com/example/monorepo/issues/42)",
     );
     expect(graph.diagnostics).toEqual([]);
   });

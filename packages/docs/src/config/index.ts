@@ -468,7 +468,7 @@ export function normalizeDocsConfig(
     theme: { ...config.theme, brand: config.theme?.brand ?? DEFAULT_BRAND },
     markdown: {
       stripLeadingBadges: true,
-      rawHtml: "allow",
+      rawHtml: "sanitize",
       ...config.markdown,
     },
     search: { enabled: true, ...config.search },

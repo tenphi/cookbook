@@ -524,7 +524,6 @@ export interface DocsEntry {
   assets: DocsAsset[];
   trust: "markdown" | "mdx";
   package?: { requested: string; resolved: string };
-  repository?: { url: string; directory?: string };
 }
 
 export interface DocsRoute {
