@@ -2,6 +2,17 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.13.0
+
+### Minor Changes
+
+- [#60](https://github.com/tenphi/cookbook/pull/60) [`f7185c5`](https://github.com/tenphi/cookbook/commit/f7185c5695b6bf2bd1142ee557b64ce930a1636c) Thanks [@tenphi](https://github.com/tenphi)! - Re-export the Tasty ESLint plugin, recommended and strict rule maps, and a
+  Cookbook validation preset through `/eslint-plugin`. Document and verify
+  consumer style linting with ESLint and oxlint, including shared tokens,
+  responsive aliases, typography presets, and Cookbook styling imports.
+  Support `extends: "@tenphi/cookbook"` and `extends: "@tenphi/starlight"` so
+  consumers can add theme names without copying the preset's arrays.
+
 ## 0.12.0
 
 ### Minor Changes
