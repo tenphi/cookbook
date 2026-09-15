@@ -11,6 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { promisify } from "node:util";
+import { checkStyleLinting } from "./smoke-style-linting.mjs";
 
 const run = promisify(execFile);
 const root = process.cwd();
@@ -41,7 +42,12 @@ try {
       astro: "7.2.9",
       "@tenphi/cookbook": `file:${byPrefix("tenphi-cookbook-")}`,
     },
-    devDependencies: { "@types/react": "^19.0.0" },
+    devDependencies: {
+      "@types/react": "^19.0.0",
+      "@typescript-eslint/parser": "8.70.0",
+      eslint: "10.9.1",
+      oxlint: "1.83.0",
+    },
   };
   await writeFile(
     join(site, "package.json"),
@@ -87,6 +93,7 @@ export default defineConfig({ integrations: [cookbook({ config })] });
     cwd: site,
     maxBuffer: 8 * 1024 * 1024,
   });
+  await checkStyleLinting({ site, root, run });
   await writeFile(
     join(site, "tsconfig.json"),
     JSON.stringify({
@@ -99,7 +106,11 @@ export default defineConfig({ integrations: [cookbook({ config })] });
         moduleResolution: "NodeNext",
         types: ["react"],
       },
-      include: ["docs/components/*.ts"],
+      include: [
+        "docs/components/*.ts",
+        "linting/api.ts",
+        "linting/tasty.config.ts",
+      ],
     }),
   );
   await run("pnpm", ["exec", "tsc", "-p", join(site, "tsconfig.json")], {

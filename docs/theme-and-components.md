@@ -363,7 +363,7 @@ export const SiteTitleRoot = defineComponent("ProjectSiteTitle", {
     display: "flex",
     alignItems: "center",
     gap: "1x",
-    minInlineSize: "0",
+    inlineSize: "min 0",
     color: "#text",
     preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
     textDecoration: "none",
@@ -377,7 +377,7 @@ export const SiteTitleRoot = defineComponent("ProjectSiteTitle", {
     },
     Label: {
       $: "> span",
-      minInlineSize: "0",
+      inlineSize: "min 0",
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
@@ -466,6 +466,107 @@ useGlobalStyles(
 configuration; user configuration contains only the properties to change. They do not require a
 `data-tasty-anatomy` attribute. That attribute remains available for older
 components using the compatibility bridge described above.
+
+## Linting custom styles
+
+`@tenphi/cookbook/eslint-plugin` re-exports the Tasty ESLint plugin together with
+Cookbook's `validationConfig`. The renderer offers the same exports from
+`@tenphi/starlight/eslint-plugin`. Keep style definitions in `.ts` or `.tsx`
+modules, as in the site title example above, to lint them with either ESLint or
+oxlint.
+
+Create `tasty.config.ts` at your project root:
+
+```ts
+import { validationConfig } from "@tenphi/cookbook/eslint-plugin";
+
+export default validationConfig;
+```
+
+The preset registers both Cookbook styling import paths, its built-in tokens,
+units, responsive states, and typography presets. It also describes
+`defineComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
+style objects, variants, and named sub-elements receive the same checks as
+`tasty()` calls. Partial overrides passed to `mergeStyles` may omit default state
+values and retain the plugin's safeguards against fixes that replace base styles.
+
+### ESLint
+
+Install ESLint and a TypeScript parser:
+
+```sh
+pnpm add -D eslint @typescript-eslint/parser
+```
+
+Add the plugin to `eslint.config.mjs`:
+
+```js
+import parser from "@typescript-eslint/parser";
+import tasty from "@tenphi/cookbook/eslint-plugin";
+
+export default [
+  {
+    ...tasty.configs.recommended,
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: { parser },
+  },
+];
+```
+
+Run `pnpm exec eslint docs/components --max-warnings 0`. Use
+`tasty.configs.strict` for additional checks, including custom property names and
+runtime style values. The named `recommended` and `strict` exports contain rule
+maps for configurations that register the plugin themselves.
+
+### oxlint
+
+Install oxlint:
+
+```sh
+pnpm add -D oxlint
+```
+
+Create `oxlint.config.mjs` using its JavaScript plugin support:
+
+```js
+import { recommended } from "@tenphi/cookbook/eslint-plugin";
+
+export default {
+  jsPlugins: [{ name: "tasty", specifier: "@tenphi/cookbook/eslint-plugin" }],
+  rules: recommended,
+};
+```
+
+Run `pnpm exec oxlint --config oxlint.config.mjs docs/components --deny-warnings`.
+The `tasty` alias keeps rule names such as `tasty/known-property` consistent with
+ESLint. Import `strict` instead of `recommended` to enable the stricter rule map.
+Both presets are tested with oxlint 1.83.0; JavaScript plugin support is experimental.
+
+### Custom theme names
+
+Add names introduced by your `docs.config.ts` theme to the validation config.
+For example, after defining `theme.tokens.$project-gap`, `theme.states["@project-wide"]`,
+and `theme.presets["project-title"]`:
+
+```ts
+import {
+  validationConfig,
+  type TastyValidationConfig,
+} from "@tenphi/cookbook/eslint-plugin";
+
+export default {
+  ...validationConfig,
+  tokens: [...validationConfig.tokens, "$project-gap"],
+  states: [...validationConfig.states, "@project-wide"],
+  presets: [...validationConfig.presets, "project-title"],
+} satisfies TastyValidationConfig;
+```
+
+Keep the existing arrays when adding names so built-in styles remain valid.
+The entry point also exports the upstream `StyleFunctionConfig` and
+`ResolvedConfig` types for shared lint configurations. Additional imported
+helpers can be registered in `styleFunctions`; use `partial: true` for helpers
+that merge overrides into existing styles.
 
 ## Static behavior
 

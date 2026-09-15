@@ -25,3 +25,19 @@ named sub-elements. The `/styling` entry point also exports `tasty`, `useGlobalS
 `resolveComponentStyles`, `mergeStyles`, and the `Styles` type. Cookbook extracts
 the CSS automatically. See [Theme and components](https://cookbook.tenphi.me/theme-and-components/)
 for a complete custom logo and site title example.
+
+Lint these styles with the plugin and Cookbook validation preset from
+`@tenphi/cookbook/eslint-plugin`:
+
+```ts
+// tasty.config.ts
+import { validationConfig } from "@tenphi/cookbook/eslint-plugin";
+
+export default validationConfig;
+```
+
+The entry point exports the default Tasty ESLint plugin, `recommended` and `strict`
+rule maps, and the upstream configuration types. The preset recognizes Cookbook's
+theme names and custom styling helpers, including `defineComponent`.
+See [Linting custom styles](https://cookbook.tenphi.me/theme-and-components/#linting-custom-styles)
+for ESLint and oxlint configuration examples.

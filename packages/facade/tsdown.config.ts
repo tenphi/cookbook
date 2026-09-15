@@ -5,6 +5,7 @@ export default defineConfig({
     index: "src/index.ts",
     components: "src/components.ts",
     styling: "src/styling.ts",
+    "eslint-plugin": "src/eslint-plugin.ts",
     cli: "src/cli.ts",
   },
   format: "esm",

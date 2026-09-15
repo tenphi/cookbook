@@ -1,4 +1,12 @@
+import type { TastyValidationConfig } from "@tenphi/eslint-plugin-tasty";
+
 export default {
+  importSources: ["@tenphi/cookbook/styling", "@tenphi/starlight/styling"],
+  styleFunctions: {
+    defineComponent: { argument: 1, kind: "options" },
+    resolveComponentStyles: { argument: 1, kind: "styles" },
+    mergeStyles: { argument: "all", kind: "styles", partial: true },
+  },
   tokens: [
     "$gap",
     "$radius",
@@ -10,13 +18,11 @@ export default {
     "$content-width",
     "$sidebar-width",
     "$control-height",
-    "$sl-nav-height",
-    "$sl-nav-pad-x",
-    "$sl-nav-gap",
-    "$sl-menu-button-size",
-    "$sl-mobile-toc-height",
-    "$sl-content-pad-x",
-    "$sl-shadow-lg",
+    "$transition",
+    "$sharp-radius",
+    "$bold-font-weight",
+    "#white",
+    "#black",
     "#clear",
     "#current",
     "#surface",
@@ -92,4 +98,4 @@ export default {
     "small",
     "code",
   ],
-};
+} satisfies TastyValidationConfig;
