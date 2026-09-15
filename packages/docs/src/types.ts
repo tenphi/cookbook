@@ -85,6 +85,7 @@ export type DocsSource =
 export interface ContentConfig {
   sources?: DocsSource[];
   allowOutsideRoot?: boolean;
+  /** Rewrite absolute links into the current repository to matching Cookbook routes. */
   localizeRepositoryLinks?: boolean;
 }
 
@@ -187,6 +188,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "MarkdownTable",
   "Mermaid",
   "MobileMenuFooter",
+  "MobileMenuToggle",
   "MobileNavigationTabs",
   "MobileTableOfContents",
   "PackageVersion",
@@ -272,6 +274,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   MarkdownTable: ["Table", "Cell", "LastBodyRowCell", "HeaderCell"],
   Mermaid: ["Diagram", "Text", "MonoText"],
   MobileMenuFooter: ["Social"],
+  MobileMenuToggle: ["Control", "Icon", "HoverControl", "ActiveControl"],
   MobileNavigationTabs: [
     "Label",
     "List",
@@ -292,6 +295,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
   Sidebar: [
     "CurrentLink",
+    "OpenPane",
     "Content",
     "List",
     "Item",
@@ -373,7 +377,6 @@ export type ComponentStylesConfig = {
 } & Record<string, ComponentStyleConfig | undefined>;
 
 export interface ThemeConfig {
-  variant?: string;
   brand?: BrandConfig;
   palette?: ThemePaletteConfig;
   states?: Record<string, string>;
@@ -386,11 +389,8 @@ export interface ThemeConfig {
 
 export interface MarkdownConfig {
   stripLeadingBadges?: boolean;
-  rawHtml?: "sanitize" | "allow" | "reject";
-  strictLanguages?: boolean;
-  executablePreviews?: boolean;
-  remarkPlugins?: unknown[];
-  rehypePlugins?: unknown[];
+  /** Raw HTML policy for trusted Markdown. Untrusted package Markdown is always sanitized. */
+  rawHtml?: "allow" | "sanitize" | "reject";
 }
 
 export interface SearchConfig {
@@ -405,7 +405,6 @@ export interface ComponentsConfig {
 export interface BuildConfig {
   strict?: boolean;
   ci?: boolean;
-  base?: string;
   cacheDir?: string;
   maxArtifactBytes?: number;
   maxUnpackedBytes?: number;
@@ -447,19 +446,11 @@ export interface NormalizedDocsConfig {
     ContentConfig;
   navigation: NavigationConfig;
   theme: ThemeConfig & { brand: BrandConfig };
-  markdown: Required<
-    Pick<
-      MarkdownConfig,
-      | "stripLeadingBadges"
-      | "rawHtml"
-      | "strictLanguages"
-      | "executablePreviews"
-    >
-  > &
+  markdown: Required<Pick<MarkdownConfig, "stripLeadingBadges" | "rawHtml">> &
     MarkdownConfig;
   search: Required<SearchConfig>;
   components: ComponentsConfig;
-  build: Required<BuildConfig>;
+  build: Required<BuildConfig> & { base: string };
 }
 
 export interface DocsFrontmatter {
@@ -468,7 +459,8 @@ export interface DocsFrontmatter {
   slug?: string;
   draft?: boolean;
   sidebar?: false | { label?: string; order?: number; group?: string };
-  toc?: false | { minHeadingLevel?: number; maxHeadingLevel?: number };
+  tableOfContents?:
+    false | { minHeadingLevel?: number; maxHeadingLevel?: number };
   editUrl?: false | string;
   /** Starlight page layout. */
   template?: "doc" | "splash";
@@ -486,9 +478,10 @@ export interface DocsFrontmatter {
     }>;
   };
   lastUpdated?: boolean | Date;
-  prev?: false | string;
-  next?: false | string;
-  search?: boolean;
+  prev?: false | string | { link?: string; label?: string };
+  next?: false | string | { link?: string; label?: string };
+  banner?: { content: string };
+  pagefind?: boolean;
   head?: Array<Record<string, unknown>>;
 }
 
@@ -538,6 +531,7 @@ export interface DocsRoute {
   entryId: string;
   sourcePath: string;
   title: string;
+  sidebar?: false | NavigationPlacement;
 }
 
 export interface DocsGraph {
@@ -592,4 +586,6 @@ export interface CreateDocsGraphOptions {
   root?: string;
   config?: DocsConfig;
   lock?: CookbookLock;
+  /** Public URL base used when rewriting routes and assets. */
+  base?: string;
 }

@@ -58,15 +58,17 @@
   "dependencies": {
     "@tenphi/glaze": "catalog:",
     "github-slugger": "^2.0.0",
-    "gray-matter": "^4.0.3",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-gfm": "^3.1.0",
+    "mdast-util-mdx": "^3.0.0",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-extension-gfm": "^3.0.0",
+    "micromark-extension-mdxjs": "^3.0.0",
     "npm-package-arg": "^13.0.2",
     "pacote": "^21.5.1",
     "tinyglobby": "^0.2.15",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@types/mdast": "^4.0.4",

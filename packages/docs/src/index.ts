@@ -11,6 +11,7 @@ export {
   routeForPath,
 } from "./graph/index.js";
 export {
+  assertSafePackagePath,
   defaultLock,
   discoverPackage,
   lockForSource,

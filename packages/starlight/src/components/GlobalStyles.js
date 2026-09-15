@@ -160,29 +160,12 @@ export default function GlobalStyles() {
     fill: "#surface",
   });
 
-  useGlobalStyles(
-    'starlight-menu-button[aria-expanded="true"] ~ .sidebar-pane',
-    {
-      visibility: { "@mobile": "visible" },
-    },
-  );
-
   useGlobalStyles(".sidebar-content", {
     display: "flex",
     flow: "column",
     gap: "($gap * 2)",
     minBlockSize: "100%",
     padding: "($gap * 2) $docs-sidebar-pad-x ($gap * 6)",
-  });
-
-  useGlobalStyles("starlight-menu-button", {
-    display: { "": "none", "@mobile": "block" },
-    position: { "@mobile": "fixed" },
-    zIndex: { "@mobile": "11" },
-    insetBlockStart: {
-      "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2)",
-    },
-    insetInlineEnd: { "@mobile": "$docs-nav-pad-x" },
   });
 
   useGlobalStyles(".main-frame", {
@@ -368,6 +351,10 @@ export default function GlobalStyles() {
         ],
         color: "#accent-text",
         fill: "#accent-surface-subtle",
+      },
+      OpenPane: {
+        $: "&:popover-open",
+        visibility: { "@mobile": "visible" },
       },
       Content: {
         $: ".sidebar-content",
@@ -615,7 +602,7 @@ export default function GlobalStyles() {
         fill: "#surface-2",
         preset: "navigation / strong",
         textDecoration: "none",
-        transition: "fill 120ms ease, translate 120ms ease",
+        transition: "fill $transition, translate $transition",
       },
       HoverAction: {
         $: ".sl-link-button:hover",
@@ -766,7 +753,7 @@ export default function GlobalStyles() {
         radius: "$radius",
         preset: "small / strong",
         cursor: "pointer",
-        transition: "color 120ms ease, fill 120ms ease",
+        transition: "color $transition, fill $transition",
       },
       HoverCopyButton: {
         $: "> [data-copy-code]:hover",
@@ -941,7 +928,7 @@ export default function GlobalStyles() {
       verticalAlign: "middle",
       fill: "#current",
       mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
-      transition: "rotate 120ms ease",
+      transition: "rotate $transition",
     },
   );
 
@@ -1130,7 +1117,7 @@ export default function GlobalStyles() {
     preset: "small",
     boxShadow: "none",
     cursor: "pointer",
-    transition: "color 120ms ease, background-color 120ms ease",
+    transition: "color $transition, background-color $transition",
   });
 
   useGlobalStyles("site-search", {
@@ -1172,7 +1159,7 @@ export default function GlobalStyles() {
     color: "#text-soft",
     fill: "#surface-2",
     boxShadow: "none",
-    transition: "color 120ms ease, background-color 120ms ease",
+    transition: "color $transition, background-color $transition",
     textDecoration: "none",
     overflowWrap: "anywhere",
   });
@@ -1330,7 +1317,7 @@ export default function GlobalStyles() {
     "mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
     {
       mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
-      transition: "rotate 120ms ease",
+      transition: "rotate $transition",
     },
   );
 
@@ -1401,7 +1388,7 @@ export default function GlobalStyles() {
     preset: "small / strong",
     boxShadow: "none",
     cursor: "pointer",
-    transition: "color 120ms ease, background-color 120ms ease",
+    transition: "color $transition, background-color $transition",
   });
 
   useGlobalStyles("site-search button[data-close-modal]:hover", {
@@ -1515,47 +1502,68 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    "starlight-menu-button button, mobile-starlight-toc .toggle",
-    {
+    ".sl-menu-button",
+    resolveComponentStyles("MobileMenuToggle", {
+      display: { "": "none", "@mobile": "block" },
+      position: { "@mobile": "fixed" },
+      zIndex: { "@mobile": "11" },
+      insetBlockStart: {
+        "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2)",
+      },
+      insetInlineEnd: { "@mobile": "$docs-nav-pad-x" },
       color: "#text",
       border: true,
       radius: "$radius",
       fill: "#surface-3",
-      transition: "color 120ms ease, background-color 120ms ease",
-    },
+      transition: "color $transition, background-color $transition",
+      Control: {
+        $: "&.td-menu-button",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+        minBlockSize: "0",
+        padding: "0",
+        color: "#text-soft",
+        boxShadow: "none",
+        cursor: "pointer",
+      },
+      Icon: {
+        $: "> svg",
+        inlineSize: "1.125rem",
+        blockSize: "1.125rem",
+      },
+      HoverControl: {
+        $: "&:hover",
+        color: "#text",
+        borderColor: "#border",
+        fill: "#surface-3-hover",
+      },
+      ActiveControl: {
+        $: "&:active",
+        color: "#text",
+        borderColor: "#border",
+        fill: "#surface-3-pressed",
+        boxShadow: "none",
+      },
+    }),
   );
 
-  useGlobalStyles("starlight-menu-button .td-menu-button", {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    inlineSize: "$docs-menu-button-size",
-    blockSize: "$docs-menu-button-size",
-    minBlockSize: "0",
-    padding: "0",
-    color: "#text-soft",
-    boxShadow: "none",
-    cursor: "pointer",
+  useGlobalStyles("mobile-starlight-toc .toggle", {
+    color: "#text",
+    border: true,
+    radius: "$radius",
+    fill: "#surface-3",
+    transition: "color $transition, background-color $transition",
   });
 
-  useGlobalStyles("starlight-menu-button button > svg", {
-    inlineSize: "1.125rem",
-    blockSize: "1.125rem",
-  });
-
-  useGlobalStyles(
-    'starlight-menu-button[aria-expanded="true"] .open-menu, starlight-menu-button:not([aria-expanded="true"]) .close-menu',
-    {
-      hide: true,
-    },
-  );
-
-  useGlobalStyles("[data-mobile-menu-expanded]", {
+  useGlobalStyles("body:has(#starlight__sidebar:popover-open)", {
     overflow: { "": "auto", "@mobile": "hidden" },
   });
 
   useGlobalStyles(
-    "starlight-menu-button button:hover, mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle",
+    "mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle",
     {
       color: "#text",
       borderColor: "#border",
@@ -1563,15 +1571,12 @@ export default function GlobalStyles() {
     },
   );
 
-  useGlobalStyles(
-    'starlight-menu-button[aria-expanded="true"] button, starlight-menu-button[aria-expanded="true"] button:hover, starlight-menu-button button:active, mobile-starlight-toc .toggle:active',
-    {
-      color: "#text",
-      borderColor: "#border",
-      fill: "#surface-3-pressed",
-      boxShadow: "none",
-    },
-  );
+  useGlobalStyles("mobile-starlight-toc .toggle:active", {
+    color: "#text",
+    borderColor: "#border",
+    fill: "#surface-3-pressed",
+    boxShadow: "none",
+  });
 
   useGlobalStyles("mobile-starlight-toc summary", {
     position: "relative",

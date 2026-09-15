@@ -11,4 +11,3 @@ export interface StarlightOptions {
 }
 
 export default function starlight(options: StarlightOptions): AstroIntegration;
-export function docsSchema(options?: unknown): unknown;

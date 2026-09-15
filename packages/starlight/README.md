@@ -3,6 +3,11 @@
 The supported Astro/Starlight renderer for Cookbook. The default export is a
 complete Astro integration; consumers do not compose Starlight themselves.
 
+The integration uses one graph-backed route pipeline for convention, explicit,
+and locked-package sources. It targets Astro 7.3 and Starlight 0.42, including
+the Popover-based mobile sidebar contract. Application-owned Astro content
+collections remain independent.
+
 `@tenphi/starlight/styling` exports `tasty`, `useGlobalStyles`, `mergeStyles`,
 the `Styles` type, and the `defineComponent` and `resolveComponentStyles`
 helpers for merging `theme.styles` into custom components. The facade exposes

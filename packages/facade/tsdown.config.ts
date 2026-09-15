@@ -14,6 +14,6 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   platform: "node",
-  external: [/^astro(?:\/|$)/, /^@tenphi\//],
+  deps: { neverBundle: [/^astro(?:\/|$)/, /^@tenphi\//] },
   banner: { js: "#!/usr/bin/env node" },
 });

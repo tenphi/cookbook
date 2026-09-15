@@ -29,13 +29,20 @@ Machine-readable output is available for scripts:
 npx @tenphi/cookbook doctor --json
 ```
 
-A healthy JSON result contains the page count:
+A JSON result always uses the same envelope and includes counts and diagnostics:
 
 ```json
-{ "ok": true, "pages": 8 }
+{
+  "ok": true,
+  "pages": 8,
+  "assets": 3,
+  "diagnostics": []
+}
 ```
 
-The process exits non-zero when any error diagnostic is present.
+Thrown configuration and acquisition failures use the same shape with
+`ok: false`. The process exits non-zero when any error diagnostic is present,
+including when no documentation pages are discovered.
 
 ## Update package content
 
@@ -48,7 +55,8 @@ npx @tenphi/cookbook update
 writes the new exact versions and integrity hashes. Review and commit the lock
 diff before deploying.
 
-Use JSON output when another tool consumes the updated lock:
+Use JSON output when another tool consumes the updated lock. It uses the same
+envelope and includes the new lock under `lock`:
 
 ```sh
 npx @tenphi/cookbook update --json

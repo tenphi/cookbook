@@ -61,9 +61,10 @@ Continue with [Getting started](./getting-started.md), then learn how
 ## See the product, not a mock-up
 
 The pages you are reading live in this repository's root `docs/` directory.
-The small Astro app under `apps/reference` points the integration and content
-loader at the repository root, validates this content, builds the site, and
-publishes the result to GitHub Pages. There is no copied documentation tree.
+The small Astro app under `apps/reference` points the integration at the
+repository root, validates this content through the same graph-backed route
+pipeline used by consumer sites, builds the site, and publishes the result to
+GitHub Pages. There is no copied documentation tree.
 
 This homepage also uses Cookbook's public `template: splash` and `hero`
 frontmatter. The heading permalinks, code-copy controls, edit links, and Git

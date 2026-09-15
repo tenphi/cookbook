@@ -2,6 +2,7 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["scripts/fixtures/**"],
   "workspaces": {
+    "apps/convention": { "entry": ["docs/FixtureLabel.astro"] },
     "packages/facade": { "entry": ["tasty.config.mjs"] },
     "packages/starlight": { "entry": ["tasty.config.mjs"] }
   },

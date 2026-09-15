@@ -105,25 +105,23 @@ export default defineConfig({
 });
 ```
 
-If the app also defines an Astro content collection, pass the same root and
-configuration to the Starlight collection adapter:
+Astro content collections are independent of Cookbook. You can add a
+`src/content.config.ts` for application content without duplicating Cookbook's
+configuration or changing how documentation pages render.
 
-```ts
-import { fileURLToPath } from "node:url";
-import { defineCollection } from "astro:content";
-import { createStarlightCollection } from "@tenphi/starlight/content";
-import docs from "../docs.config.js";
+## Upgrading from earlier prereleases
 
-const repositoryRoot = fileURLToPath(new URL("../../..", import.meta.url));
+Cookbook now requires Astro 7.3 or newer and uses Starlight 0.42's native
+JavaScript distribution and Popover-based mobile sidebar. Remove any
+Cookbook-only `docs` collection created with `createStarlightCollection()`;
+the integration owns one graph and rendering path.
 
-export const collections = {
-  docs: defineCollection(createStarlightCollection(docs, repositoryRoot)),
-};
-```
+Page frontmatter now uses Starlight's names directly: replace `toc` with
+`tableOfContents` and `search` with `pagefind`.
 
-Add `@tenphi/starlight` as a direct dependency when using this advanced
-renderer API, and adjust the relative URL for the content configuration file's
-location.
-
-This documentation site uses both calls so the integration and collection
-loader resolve the same repository-owned source files.
+`content.localizeRepositoryLinks` and `markdown.rawHtml` now have enforced,
+documented behavior. The previously accepted but inactive `theme.variant`,
+`markdown.strictLanguages`, and `markdown.executablePreviews` options were
+removed. Configure remark, rehype, Shiki languages, and other renderer options
+through Astro's top-level `markdown` configuration. Configure the hosting path
+only through Astro's top-level `base` setting.

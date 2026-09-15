@@ -29,6 +29,7 @@ export type {
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,
+  NavigationPlacement,
   NavigationTab,
   SearchConfig,
   SiteConfig,

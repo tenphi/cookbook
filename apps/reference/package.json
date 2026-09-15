@@ -10,7 +10,6 @@
     "clean": "rm -rf dist .astro"
   },
   "dependencies": {
-    "@tenphi/starlight": "workspace:*",
     "astro": "catalog:",
     "@tenphi/cookbook": "workspace:*"
   },

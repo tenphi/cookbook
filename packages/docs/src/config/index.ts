@@ -33,18 +33,10 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "favicon",
   ]),
   content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
-  markdown: new Set([
-    "stripLeadingBadges",
-    "rawHtml",
-    "strictLanguages",
-    "executablePreviews",
-    "remarkPlugins",
-    "rehypePlugins",
-  ]),
+  markdown: new Set(["stripLeadingBadges", "rawHtml"]),
   search: new Set(["enabled"]),
   components: new Set(["overrides"]),
   theme: new Set([
-    "variant",
     "brand",
     "palette",
     "states",
@@ -56,7 +48,6 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   build: new Set([
     "strict",
     "ci",
-    "base",
     "cacheDir",
     "maxArtifactBytes",
     "maxUnpackedBytes",
@@ -83,15 +74,37 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
   }
   for (const [section, keys] of Object.entries(OBJECT_KEYS)) {
     const value = config[section as keyof DocsConfig];
-    if (
-      value === undefined ||
-      Array.isArray(value) ||
-      typeof value !== "object"
-    ) {
+    if (value === undefined) continue;
+    if (!isRecord(value)) {
+      invalid(diagnostics, `${section} must be an object.`);
       continue;
     }
     for (const key of Object.keys(value)) {
       if (!keys.has(key)) unknown(diagnostics, `${section}.${key}`);
+    }
+  }
+
+  if (config.navigation !== undefined && !Array.isArray(config.navigation)) {
+    if (!isRecord(config.navigation)) {
+      invalid(diagnostics, "navigation must be an array or object.");
+    } else {
+      for (const key of Object.keys(config.navigation)) {
+        if (!new Set(["items", "tabs"]).has(key)) {
+          unknown(diagnostics, `navigation.${key}`);
+        }
+      }
+      if (
+        config.navigation.items !== undefined &&
+        !Array.isArray(config.navigation.items)
+      ) {
+        invalid(diagnostics, "navigation.items must be an array.");
+      }
+      if (
+        config.navigation.tabs !== undefined &&
+        !Array.isArray(config.navigation.tabs)
+      ) {
+        invalid(diagnostics, "navigation.tabs must be an array.");
+      }
     }
   }
 
@@ -166,6 +179,13 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       }
     }
   }
+  for (const field of ["url", "repository"] as const) {
+    const value = config.site?.[field];
+    if (value === undefined) continue;
+    if (typeof value !== "string" || !isHttpUrl(value)) {
+      invalid(diagnostics, `site.${field} must be an absolute HTTP(S) URL.`);
+    }
+  }
 
   if (
     config.editLink !== undefined &&
@@ -228,8 +248,29 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     );
   }
 
-  const sources = config.content?.sources ?? [];
+  if (
+    config.content?.allowOutsideRoot !== undefined &&
+    typeof config.content.allowOutsideRoot !== "boolean"
+  ) {
+    invalid(diagnostics, "content.allowOutsideRoot must be a boolean.");
+  }
+  if (
+    config.content?.localizeRepositoryLinks !== undefined &&
+    typeof config.content.localizeRepositoryLinks !== "boolean"
+  ) {
+    invalid(diagnostics, "content.localizeRepositoryLinks must be a boolean.");
+  }
+  const configuredSources = config.content?.sources;
+  if (configuredSources !== undefined && !Array.isArray(configuredSources)) {
+    invalid(diagnostics, "content.sources must be an array.");
+  }
+  const sources = Array.isArray(configuredSources) ? configuredSources : [];
   for (const [index, source] of sources.entries()) {
+    if (!isRecord(source)) {
+      invalid(diagnostics, `content.sources[${index}] must be an object.`);
+      continue;
+    }
+    const sourceRecord = source as unknown as Record<string, unknown>;
     const variants = ["file", "glob", "package"].filter((key) => key in source);
     if (variants.length !== 1) {
       diagnostics.push({
@@ -237,6 +278,90 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
         severity: "error",
         message: `content.sources[${index}] must select exactly one of file, glob, or package.`,
       });
+      continue;
+    }
+    const variant = variants[0] as "file" | "glob" | "package";
+    const allowed = {
+      file: new Set(["file", "route", "title", "description", "navigation"]),
+      glob: new Set(["glob", "base", "routeBase", "exclude", "navigation"]),
+      package: new Set([
+        "package",
+        "include",
+        "exclude",
+        "index",
+        "routeBase",
+        "trust",
+      ]),
+    }[variant];
+    for (const key of Object.keys(source)) {
+      if (!allowed.has(key))
+        unknown(diagnostics, `content.sources[${index}].${key}`);
+    }
+    const selector = sourceRecord[variant];
+    if (
+      variant === "glob"
+        ? typeof selector !== "string" &&
+          (!Array.isArray(selector) ||
+            selector.some((value) => typeof value !== "string"))
+        : typeof selector !== "string" || selector.trim() === ""
+    ) {
+      invalid(
+        diagnostics,
+        `content.sources[${index}].${variant} must be ${variant === "glob" ? "a string or string array" : "a non-empty string"}.`,
+      );
+    }
+    for (const list of ["include", "exclude"] as const) {
+      const value = sourceRecord[list];
+      if (
+        value !== undefined &&
+        (!Array.isArray(value) ||
+          value.some((entry) => typeof entry !== "string"))
+      ) {
+        invalid(
+          diagnostics,
+          `content.sources[${index}].${list} must be a string array.`,
+        );
+      }
+    }
+  }
+
+  if (
+    config.markdown?.stripLeadingBadges !== undefined &&
+    typeof config.markdown.stripLeadingBadges !== "boolean"
+  ) {
+    invalid(diagnostics, "markdown.stripLeadingBadges must be a boolean.");
+  }
+  if (
+    config.markdown?.rawHtml !== undefined &&
+    !["allow", "sanitize", "reject"].includes(config.markdown.rawHtml)
+  ) {
+    invalid(
+      diagnostics,
+      'markdown.rawHtml must be "allow", "sanitize", or "reject".',
+    );
+  }
+  if (
+    config.search?.enabled !== undefined &&
+    typeof config.search.enabled !== "boolean"
+  ) {
+    invalid(diagnostics, "search.enabled must be a boolean.");
+  }
+  for (const key of ["strict", "ci"] as const) {
+    const value = config.build?.[key];
+    if (value !== undefined && typeof value !== "boolean") {
+      invalid(diagnostics, `build.${key} must be a boolean.`);
+    }
+  }
+  for (const key of [
+    "maxArtifactBytes",
+    "maxUnpackedBytes",
+    "maxFiles",
+    "maxPathDepth",
+    "maxAssetBytes",
+  ] as const) {
+    const value = config.build?.[key];
+    if (value !== undefined && (!Number.isSafeInteger(value) || value <= 0)) {
+      invalid(diagnostics, `build.${key} must be a positive integer.`);
     }
   }
 
@@ -310,6 +435,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    return ["http:", "https:"].includes(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+}
+
 export function normalizeDocsConfig(
   config: DocsConfig = {},
 ): NormalizedDocsConfig {
@@ -336,8 +469,6 @@ export function normalizeDocsConfig(
     markdown: {
       stripLeadingBadges: true,
       rawHtml: "sanitize",
-      strictLanguages: false,
-      executablePreviews: true,
       ...config.markdown,
     },
     search: { enabled: true, ...config.search },
@@ -380,6 +511,7 @@ export type {
   MarkdownConfig,
   NavigationConfig,
   NavigationItem,
+  NavigationPlacement,
   NavigationTab,
   NormalizedDocsConfig,
   SearchConfig,

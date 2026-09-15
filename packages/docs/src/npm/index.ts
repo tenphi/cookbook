@@ -156,8 +156,10 @@ export async function materializePackage(
   const destination = join(cacheRoot, key);
   const marker = join(destination, ".cookbook-integrity");
   try {
-    if ((await readFile(marker, "utf8")).trim() === source.integrity)
+    if ((await readFile(marker, "utf8")).trim() === source.integrity) {
+      await validateExtractedTree(destination, config);
       return destination;
+    }
   } catch (error) {
     if (!isMissing(error)) throw error;
   }
@@ -248,8 +250,15 @@ export async function discoverPackage(root: string): Promise<PackageDiscovery> {
   );
   let home: string | undefined;
   for (const candidate of homeCandidates) {
+    assertSafePackagePath(candidate, "cookbook.index");
     try {
-      if ((await stat(join(root, candidate))).isFile()) {
+      const path = resolve(root, candidate);
+      if (!inside(root, path)) {
+        throw new Error(
+          `cookbook.index escapes the package root: ${candidate}.`,
+        );
+      }
+      if ((await stat(path)).isFile()) {
         home = candidate;
         break;
       }
@@ -264,12 +273,24 @@ export async function discoverPackage(root: string): Promise<PackageDiscovery> {
         "docs/**/*.{md,mdx}",
         "docs/**/*.{png,jpg,jpeg,gif,webp,avif,svg,pdf,txt,zip}",
       ];
+  for (const pattern of patterns) {
+    assertSafePackagePath(pattern, "cookbook.include");
+  }
+  for (const pattern of hints?.exclude ?? []) {
+    assertSafePackagePath(pattern, "cookbook.exclude");
+  }
   const discovered = await glob(patterns, {
     cwd: root,
     onlyFiles: true,
     dot: false,
     ignore: hints?.exclude ?? [],
   });
+  for (const path of discovered) {
+    assertSafePackagePath(path, "discovered package path");
+    if (!inside(root, resolve(root, path))) {
+      throw new Error(`Discovered path escapes the package root: ${path}.`);
+    }
+  }
   const pages = discovered.filter((path) => /\.mdx?$/i.test(path));
   if (home && !pages.includes(home)) pages.unshift(home);
   const assets = discovered.filter((path) => !/\.mdx?$/i.test(path));
@@ -287,18 +308,39 @@ export function lockForSource(
   lock: CookbookLock | undefined,
   requested: string,
 ): PackageLockSource {
-  const match = lock?.sources.find(
-    (source) =>
-      source.requested === requested ||
-      packageNameFromSpecifier(source.requested) ===
-        packageNameFromSpecifier(requested),
-  );
-  if (!match) {
+  const exact = lock?.sources.find((source) => source.requested === requested);
+  if (exact) return exact;
+  const requestedName = packageNameFromSpecifier(requested);
+  const matches =
+    lock?.sources.filter(
+      (source) => packageNameFromSpecifier(source.requested) === requestedName,
+    ) ?? [];
+  if (matches.length === 0) {
     throw new Error(
       `Package source ${requested} is not locked. Run "cookbook update" to create ${LOCK_FILE}.`,
     );
   }
-  return match;
+  if (matches.length > 1) {
+    throw new Error(
+      `Package source ${requested} matches multiple lock entries. Use the exact requested specifier from ${LOCK_FILE}.`,
+    );
+  }
+  return matches[0] as PackageLockSource;
+}
+
+/** Reject paths and glob patterns that could address files outside a package. */
+export function assertSafePackagePath(path: string, field: string): void {
+  const normalized = path.replaceAll("\\", "/");
+  if (
+    path.trim() === "" ||
+    path.includes("\0") ||
+    isAbsolute(path) ||
+    normalized.startsWith("/") ||
+    /^[a-z]:\//i.test(normalized) ||
+    normalized.includes("..")
+  ) {
+    throw new Error(`${field} must stay within the package root: ${path}.`);
+  }
 }
 
 export function defaultLock(sources: PackageLockSource[]): CookbookLock {

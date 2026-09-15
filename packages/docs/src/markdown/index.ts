@@ -1,7 +1,9 @@
 import GithubSlugger from "github-slugger";
 import { gfmFromMarkdown, gfmToMarkdown } from "mdast-util-gfm";
+import { mdxFromMarkdown, mdxToMarkdown } from "mdast-util-mdx";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { gfm } from "micromark-extension-gfm";
+import { mdxjs } from "micromark-extension-mdxjs";
 import { toMarkdown } from "mdast-util-to-markdown";
 import type {
   Content,
@@ -21,10 +23,16 @@ export interface ParsedMarkdown {
   description?: string;
 }
 
-export function parseMarkdown(body: string): ParsedMarkdown {
+export function parseMarkdown(
+  body: string,
+  options: { mdx?: boolean } = {},
+): ParsedMarkdown {
   const ast = fromMarkdown(body, {
-    extensions: [gfm()],
-    mdastExtensions: [gfmFromMarkdown()],
+    extensions: [gfm(), ...(options.mdx ? [mdxjs()] : [])],
+    mdastExtensions: [
+      gfmFromMarkdown(),
+      ...(options.mdx ? [mdxFromMarkdown()] : []),
+    ],
   });
   const slugger = new GithubSlugger();
   const headings: DocsHeading[] = [];
@@ -77,18 +85,24 @@ export function textContent(
   return "";
 }
 
-export function serializeMarkdown(ast: Root): string {
-  return toMarkdown(ast, { extensions: [gfmToMarkdown()] });
+export function serializeMarkdown(
+  ast: Root,
+  options: { mdx?: boolean } = {},
+): string {
+  return toMarkdown(ast, {
+    extensions: [gfmToMarkdown(), ...(options.mdx ? [mdxToMarkdown()] : [])],
+  });
 }
 
 export function removeRenderedTitle(ast: Root, title: string): void {
-  const first = ast.children[0];
+  const index = ast.children.findIndex((node) => node.type !== "mdxjsEsm");
+  const first = ast.children[index];
   if (
     first?.type === "heading" &&
     first.depth === 1 &&
     textContent(first) === title
   ) {
-    ast.children.shift();
+    ast.children.splice(index, 1);
   }
 }
 

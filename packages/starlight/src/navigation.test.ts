@@ -69,7 +69,7 @@ describe("section navigation", () => {
     );
   });
 
-  it("builds manual sidebars when pages do not use a content collection", () => {
+  it("builds sidebars from graph routes", () => {
     const routes = [
       {
         route: "/",
@@ -118,6 +118,44 @@ describe("section navigation", () => {
             label: "Generated",
             items: [{ label: "Client", link: "/api/client" }],
           },
+        ],
+      },
+    ]);
+  });
+
+  it("applies graph sidebar labels, ordering, groups, and visibility", () => {
+    const routes = [
+      {
+        route: "/hidden",
+        entryId: "hidden",
+        sourcePath: "hidden.md",
+        title: "Hidden",
+        sidebar: false as const,
+      },
+      {
+        route: "/later",
+        entryId: "later",
+        sourcePath: "later.md",
+        title: "Later",
+        sidebar: { order: 2, group: "Guides" },
+      },
+      {
+        route: "/first",
+        entryId: "first",
+        sourcePath: "first.md",
+        title: "First",
+        sidebar: { order: 1, group: "Guides", label: "Start here" },
+      },
+    ];
+
+    expect(
+      starlightPageSidebar(resolveNavigationLayout(undefined), routes),
+    ).toEqual([
+      {
+        label: "Guides",
+        items: [
+          { label: "Start here", link: "/first" },
+          { label: "Later", link: "/later" },
         ],
       },
     ]);

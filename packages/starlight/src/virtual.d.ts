@@ -5,9 +5,11 @@ declare module "virtual:cookbook/config" {
     DocsRoute,
     SiteConfig,
   } from "@tenphi/docs";
+  import type { AstroComponentFactory } from "astro/runtime/server/index.js";
   export const content: {
     entries: Array<
       DocsEntry & {
+        mdx?: boolean;
         rendered?: { html: string; headings: DocsHeading[] };
       }
     >;
@@ -16,6 +18,13 @@ declare module "virtual:cookbook/config" {
     base: string;
     search: boolean;
   };
+  export const mdxLoaders: Record<
+    string,
+    () => Promise<{
+      default: AstroComponentFactory;
+      getHeadings?: () => DocsHeading[] | Promise<DocsHeading[]>;
+    }>
+  >;
 }
 
 declare module "virtual:cookbook/layout" {

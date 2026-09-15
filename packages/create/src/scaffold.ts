@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { cp, mkdir, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import creatorPackage from "../package.json" with { type: "json" };
 import {
   defaultLock,
   discoverPackage,
@@ -81,12 +82,12 @@ export async function scaffold(
   await Promise.all([
     writeFile(
       join(destination, "package.json"),
-      packageJson(packageManager),
+      renderPackageJson(packageManager),
       "utf8",
     ),
     writeFile(
       join(destination, "astro.config.ts"),
-      astroConfig(options, discovery.manifest.name),
+      renderAstroConfig(options, discovery.manifest.name),
       "utf8",
     ),
     writeFile(join(destination, "tsconfig.json"), tsconfig(), "utf8"),
@@ -97,13 +98,14 @@ export async function scaffold(
     ),
     writeDocsLock(destination, defaultLock([projectLock])),
   ]);
-  if (options.deploy === "github-pages") await writeGithubWorkflow(destination);
+  if (options.deploy === "github-pages")
+    await writeGithubWorkflow(destination, packageManager);
   if (options.install !== false)
     await installDependencies(destination, packageManager);
   return { destination, lock: projectLock, discovery, packageManager };
 }
 
-function packageJson(packageManager: PackageManager): string {
+export function renderPackageJson(packageManager: PackageManager): string {
   const packageManagerVersion = {
     npm: "npm@11",
     pnpm: "pnpm@11",
@@ -123,14 +125,20 @@ function packageJson(packageManager: PackageManager): string {
         doctor: "cookbook doctor",
         update: "cookbook update",
       },
-      dependencies: { astro: "^7.2.9", "@tenphi/cookbook": "^0.4.0" },
+      dependencies: {
+        astro: "^7.3.2",
+        "@tenphi/cookbook": `^${creatorPackage.version}`,
+      },
     },
     null,
     2,
   )}\n`;
 }
 
-function astroConfig(options: ScaffoldOptions, packageName: string): string {
+export function renderAstroConfig(
+  options: ScaffoldOptions,
+  packageName: string,
+): string {
   const source = {
     package: options.package,
     ...(options.trustPackage ? { trust: "mdx" as const } : {}),
@@ -142,9 +150,8 @@ function astroConfig(options: ScaffoldOptions, packageName: string): string {
     },
     content: { sources: [source] },
     ...(options.brand ? { theme: { brand: { from: options.brand } } } : {}),
-    ...(options.base ? { build: { base: options.base } } : {}),
   };
-  return `import { defineConfig } from 'astro/config';\nimport cookbook from '@tenphi/cookbook';\n\nconst docs = ${JSON.stringify(docsConfig, null, 2)};\n\nexport default defineConfig({\n  ${options.site ? `site: ${JSON.stringify(options.site)},\n  ` : ""}${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}output: 'static',\n  integrations: [cookbook({ config: docs })],\n});\n`;
+  return `import { defineConfig } from 'astro/config';\nimport cookbook, { defineDocsConfig } from '@tenphi/cookbook';\n\nconst docs = defineDocsConfig(${JSON.stringify(docsConfig, null, 2)});\n\nexport default defineConfig({\n  ${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}output: 'static',\n  integrations: [cookbook({ config: docs })],\n});\n`;
 }
 
 function tsconfig(): string {
@@ -159,13 +166,32 @@ function tsconfig(): string {
   )}\n`;
 }
 
-async function writeGithubWorkflow(destination: string): Promise<void> {
+async function writeGithubWorkflow(
+  destination: string,
+  packageManager: PackageManager,
+): Promise<void> {
   const directory = join(destination, ".github", "workflows");
   await mkdir(directory, { recursive: true });
   await writeFile(
     join(directory, "deploy.yml"),
-    `name: Deploy documentation\non:\n  push:\n    branches: [main]\npermissions:\n  contents: read\n  pages: write\n  id-token: write\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22\n      - run: npm ci\n      - run: npm run build\n      - uses: actions/upload-pages-artifact@v3\n        with:\n          path: dist\n      - uses: actions/deploy-pages@v4\n`,
+    renderGithubWorkflow(packageManager),
   );
+}
+
+export function renderGithubWorkflow(packageManager: PackageManager): string {
+  const setup =
+    packageManager === "pnpm"
+      ? "      - uses: pnpm/action-setup@v6\n"
+      : packageManager === "yarn"
+        ? "      - run: corepack enable\n"
+        : "";
+  const install = {
+    npm: "npm ci",
+    pnpm: "pnpm install --frozen-lockfile",
+    yarn: "yarn install --immutable",
+  }[packageManager];
+
+  return `name: Deploy documentation\n\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\npermissions:\n  actions: read\n  contents: read\n  pages: write\n  id-token: write\n\nconcurrency:\n  group: github-pages\n  cancel-in-progress: false\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n${setup}      - uses: actions/setup-node@v7\n        with:\n          node-version: 22\n          cache: ${packageManager}\n      - run: ${install}\n      - run: ${packageManager} run build\n      - uses: actions/configure-pages@v6\n      - uses: actions/upload-pages-artifact@v5\n        with:\n          path: dist\n\n  deploy:\n    environment:\n      name: github-pages\n      url: \${{ steps.deployment.outputs.page_url }}\n    runs-on: ubuntu-latest\n    needs: build\n    steps:\n      - name: Deploy to GitHub Pages\n        id: deployment\n        uses: actions/deploy-pages@v5\n`;
 }
 
 async function installDependencies(

@@ -4,10 +4,19 @@ Install the complete integration with `npx astro add @tenphi/cookbook`:
 
 ```ts
 import { defineConfig } from "astro/config";
-import cookbook from "@tenphi/cookbook";
+import cookbook, { defineDocsConfig } from "@tenphi/cookbook";
 
-export default defineConfig({ integrations: [cookbook()] });
+const docs = defineDocsConfig({
+  site: { title: "My project" },
+});
+
+export default defineConfig({ integrations: [cookbook({ config: docs })] });
 ```
+
+Without configuration, a root `README.md` becomes `/` and
+`docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes Starlight,
+generates only static output, and derives its URL base from Astro. Adding other
+Astro content collections does not require a Cookbook collection adapter.
 
 Build custom Astro or MDX components with Cookbook's configured styling runtime:
 

@@ -58,21 +58,41 @@ export function starlightPageSidebar(
   layout: ResolvedNavigationLayout,
   routes: DocsRoute[],
 ): StarlightPageSidebarItem[] {
-  const titles = new Map(routes.map((route) => [route.route, route.title]));
+  const visibleRoutes = routes
+    .filter((route) => route.sidebar !== false)
+    .toSorted((left, right) => {
+      const leftOrder =
+        typeof left.sidebar === "object" ? left.sidebar.order : undefined;
+      const rightOrder =
+        typeof right.sidebar === "object" ? right.sidebar.order : undefined;
+      return (
+        (leftOrder ?? Number.POSITIVE_INFINITY) -
+          (rightOrder ?? Number.POSITIVE_INFINITY) ||
+        left.route.localeCompare(right.route)
+      );
+    });
+  const titles = new Map(
+    visibleRoutes.map((route) => [
+      route.route,
+      typeof route.sidebar === "object" && route.sidebar.label
+        ? route.sidebar.label
+        : route.title,
+    ]),
+  );
   const labelFor = (route: string) =>
     titles.get(normalizeNavigationPath(route)) ??
     normalizeNavigationPath(route).split("/").filter(Boolean).at(-1) ??
     "Home";
   const generatedItems = (directory: string) => {
     const root = normalizeNavigationPath(directory);
-    return routes
-      .filter(
+    return groupedRoutes(
+      visibleRoutes.filter(
         (route) =>
           root === "/" ||
           route.route === root ||
           route.route.startsWith(`${root}/`),
-      )
-      .map((route) => ({ label: route.title, link: route.route }));
+      ),
+    );
   };
   const convert = (item: NavigationItem): StarlightPageSidebarItem => {
     if (typeof item === "string") {
@@ -91,7 +111,7 @@ export function starlightPageSidebar(
   };
   const fallback = layout.items?.length
     ? layout.items.map(convert)
-    : routes.map((route) => ({ label: route.title, link: route.route }));
+    : groupedRoutes(visibleRoutes);
   if (!layout.sectioned) return fallback;
 
   return [
@@ -103,6 +123,33 @@ export function starlightPageSidebar(
         ? [{ label: tab.label, items: tab.items.map(convert) }]
         : [],
     ),
+  ];
+}
+
+function groupedRoutes(routes: DocsRoute[]): StarlightPageSidebarItem[] {
+  const items: StarlightPageSidebarItem[] = [];
+  const groups = new Map<string, StarlightPageSidebarItem[]>();
+  for (const route of routes) {
+    const item = {
+      label:
+        typeof route.sidebar === "object" && route.sidebar.label
+          ? route.sidebar.label
+          : route.title,
+      link: route.route,
+    };
+    const group =
+      typeof route.sidebar === "object" ? route.sidebar.group : undefined;
+    if (!group) {
+      items.push(item);
+      continue;
+    }
+    const grouped = groups.get(group) ?? [];
+    grouped.push(item);
+    groups.set(group, grouped);
+  }
+  return [
+    ...items,
+    ...Array.from(groups, ([label, grouped]) => ({ label, items: grouped })),
   ];
 }
 
