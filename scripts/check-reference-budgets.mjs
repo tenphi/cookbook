@@ -32,7 +32,8 @@ for (const name of entries) {
 // complete Tasty style trees so every configured field and sub-element reaches
 // its target, rather than being manually cherry-picked in GlobalStyles. Tasty
 // 3.8 also emits typed custom-property registrations for configured tokens.
-const cssBudget = 140 * 1024;
+// The four customizable callout palettes add 12 semantic roles in four modes.
+const cssBudget = 150 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");

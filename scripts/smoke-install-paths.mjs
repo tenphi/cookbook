@@ -70,6 +70,8 @@ const config = defineDocsConfig({
     presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
     styles: {
       StarlightHeader: { Logo: { hide: true } },
+    },
+    customStyles: {
       ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
       ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
     },

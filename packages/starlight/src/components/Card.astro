@@ -1,10 +1,7 @@
 ---
 import { CardLink, CardRoot } from "./TastyComponents.js";
 
-interface Props {
-  title?: string;
-  href?: string;
-}
+import type { CardProps as Props } from "./props.js";
 
 const { title, href } = Astro.props;
 const Root = href ? CardLink : CardRoot;

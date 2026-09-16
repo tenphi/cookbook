@@ -61,6 +61,7 @@ describe("docs configuration", () => {
     expect(schema.properties.markdown.properties.rawHtml.enum).toEqual([
       "allow",
       "sanitize",
+      "strip",
       "reject",
     ]);
     expect(schema.properties.markdown.properties.rawHtml.default).toBe(
@@ -233,7 +234,7 @@ describe("docs configuration", () => {
   it("publishes plain component style overrides in the JSON schema", () => {
     expect(schema.properties.navigation.oneOf).toHaveLength(2);
     const componentStyle =
-      schema.properties.theme.properties.styles.additionalProperties;
+      schema.properties.theme.properties.styles.properties.Sidebar;
     expect(componentStyle.type).toBe("object");
     expect(componentStyle.propertyNames?.not?.const).toBe("mode");
   });

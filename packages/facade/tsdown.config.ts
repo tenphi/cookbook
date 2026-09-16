@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    config: "src/config.ts",
     components: "src/components.ts",
     styling: "src/styling.ts",
     "eslint-plugin": "src/eslint-plugin.ts",

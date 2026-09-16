@@ -55,8 +55,6 @@ describe("npm package safety", () => {
     };
 
     expect(lockForSource(lock, "fixture@next")).toBe(exact);
-    expect(() => lockForSource(lock, "fixture@^3")).toThrow(
-      /matches multiple lock entries/,
-    );
+    expect(() => lockForSource(lock, "fixture@^3")).toThrow(/is not locked/);
   });
 });

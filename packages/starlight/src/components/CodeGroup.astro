@@ -1,0 +1,24 @@
+---
+import Tabs from "./Tabs.astro";
+import Tab from "./Tab.astro";
+import { CodeGroupRoot } from "./TastyComponents.js";
+import type { CodeGroupProps as Props } from "./props.js";
+const { label = "Code examples", items } = Astro.props;
+---
+
+<CodeGroupRoot>
+  <Tabs label={label}>
+    {
+      items.map((item) => (
+        <Tab label={item.label}>
+          {item.language && (
+            <CodeGroupRoot.Caption>{item.language}</CodeGroupRoot.Caption>
+          )}
+          <CodeGroupRoot.Pre>
+            <CodeGroupRoot.Code>{item.code}</CodeGroupRoot.Code>
+          </CodeGroupRoot.Pre>
+        </Tab>
+      ))
+    }
+  </Tabs>
+</CodeGroupRoot>

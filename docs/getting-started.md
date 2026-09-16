@@ -1,60 +1,80 @@
 ---
 title: Getting started
-description: Create documentation from an npm package or add Cookbook to an Astro project.
+description: Start a documentation site, document an existing repository, or use a published npm package.
 sidebar:
   order: 2
 ---
 
-Cookbook requires Node.js 22.14 or newer. The package creator is the fastest
-route when the project you want to document is already published to npm.
+Cookbook requires Node.js 22.14 or newer.
 
-## Generate from an npm package
+## Create your first site
+
+```sh
+npm create @tenphi/cookbook@latest my-docs -- --yes
+cd my-docs
+npm run dev
+```
+
+The creator writes a README, Astro configuration, and `docs.config.ts`, then
+installs dependencies. Edit `README.md` to change the home page. Add
+`docs/guide.md` to create `/guide`. New and edited pages appear in the development
+server without a restart.
+
+## Document an existing repository
+
+Run this from your repository root:
+
+```sh
+npm create @tenphi/cookbook@latest docs-site -- --source . --yes
+cd docs-site
+npm run dev
+```
+
+The generated `docs.config.ts` points back to your repository. Your root README
+becomes the home page and `docs/**/*.{md,mdx}` supplies the other pages. Cookbook
+reads those files without copying or rewriting them.
+
+Use `--no-install` to generate files before installing dependencies. The creator
+refuses to overwrite a non-empty destination in non-interactive mode.
+
+## Document a published npm package
 
 ```sh
 npm create @tenphi/cookbook@latest my-package-docs -- \
-  --package @scope/package@latest \
-  --yes
+  --package @scope/package@latest --yes
 cd my-package-docs
 npm run dev
 ```
 
-The creator inspects the published artifact, discovers its README, `docs/`
-tree, and assets, then writes a minimal Astro project. It resolves the package
-specifier to an exact version and integrity hash in `cookbook.lock.json`.
-Commit that lock file so local and CI builds use the same content.
-
+The creator discovers documentation inside the actual published artifact and
+writes its exact version and integrity to `cookbook.lock.json`. Commit this file.
 The documented package is not installed and its lifecycle scripts do not run.
-Use [`cookbook update`](./cli.md#update-package-content) when you intentionally
-want to resolve a mutable tag or range again.
+Run `npm run update` when you want to resolve the requested tag or range again.
 
-## Add to an Astro project
+## Add to an existing Astro project
 
 ```sh
 npx astro add @tenphi/cookbook
 ```
 
-The resulting Astro configuration needs one integration:
+Your Astro configuration needs one integration:
 
 ```ts
 import { defineConfig } from "astro/config";
 import cookbook from "@tenphi/cookbook";
 
-export default defineConfig({
-  integrations: [cookbook()],
-});
+export default defineConfig({ integrations: [cookbook()] });
 ```
 
-With no options, Cookbook uses convention mode: a root `README.md` becomes
-the home page and `docs/**/*.{md,mdx}` becomes the rest of the site. Cookbook
-already composes Starlight; do not add a second Starlight integration.
+Cookbook includes Starlight and discovers `docs.config.ts` automatically.
+With no documentation configuration, it uses README/docs conventions.
 
-## Add explicit configuration
+## Configure the site
 
-Create `docs.config.ts` when you need custom sources, navigation, or theme
-values:
+Create `docs.config.ts` next to `astro.config.ts`:
 
 ```ts
-import { defineDocsConfig } from "@tenphi/cookbook";
+import { defineDocsConfig } from "@tenphi/cookbook/config";
 
 export default defineDocsConfig({
   site: {
@@ -62,66 +82,39 @@ export default defineDocsConfig({
     description: "Documentation for Example Project",
     repository: "https://github.com/example/project",
   },
-  content: {
-    sources: [
-      { file: "README.md", route: "/" },
-      { glob: "docs/**/*.{md,mdx}", base: "docs" },
-    ],
-  },
-  theme: { brand: { from: "#2f5bff" } },
+  theme: { brand: "#2f5bff" },
 });
 ```
 
-Pass it to the integration:
-
-```ts
-import { defineConfig } from "astro/config";
-import cookbook from "@tenphi/cookbook";
-import docs from "./docs.config.js";
-
-export default defineConfig({
-  output: "static",
-  integrations: [cookbook({ config: docs })],
-});
-```
-
-Read [Content sources](./content-sources.md) before combining local and package
-content, or jump to the [Configuration reference](./configuration.md).
+The integration and CLI load the same configuration. Supported filenames are
+`docs.config.ts`, `.mts`, `.js`, and `.mjs`, in that order. An explicit integration
+`config` object takes precedence; `configFile: false` disables discovery.
+Use `cookbook({ configFile: "./config/manual.ts" })` and
+`cookbook doctor --config ./config/manual.ts` for a nonstandard location.
 
 ## Monorepo roots
 
-An Astro app nested inside a monorepo can read documentation from the
-repository root. Pass its absolute path to the integration:
+An app in `apps/docs/` can use repository content with:
 
 ```ts
-import { fileURLToPath } from "node:url";
-import { defineConfig } from "astro/config";
-import cookbook from "@tenphi/cookbook";
+import { defineDocsConfig } from "@tenphi/cookbook/config";
 
-const repositoryRoot = fileURLToPath(new URL("../..", import.meta.url));
-
-export default defineConfig({
-  integrations: [cookbook({ root: repositoryRoot })],
-});
+export default defineDocsConfig({ root: "../.." });
 ```
 
-Astro content collections are independent of Cookbook. You can add a
-`src/content.config.ts` for application content without duplicating Cookbook's
-configuration or changing how documentation pages render.
+`root` is relative to the documentation configuration file. It controls content,
+local assets, and `cookbook.lock.json`. Run `npm run doctor` from the app directory;
+it resolves the same repository root as the integration. Individual sources can
+also declare their own roots for multi-package sites.
 
-## Upgrading from earlier prereleases
+## Validate and publish
 
-Cookbook now requires Astro 7.3 or newer and uses Starlight 0.42's native
-JavaScript distribution and Popover-based mobile sidebar. Remove any
-Cookbook-only `docs` collection created with `createStarlightCollection()`;
-the integration owns one graph and rendering path.
+```sh
+npm run doctor
+npm run build
+npm run preview
+```
 
-Page frontmatter now uses Starlight's names directly: replace `toc` with
-`tableOfContents` and `search` with `pagefind`.
-
-`content.localizeRepositoryLinks` and `markdown.rawHtml` now have enforced,
-documented behavior. The previously accepted but inactive `theme.variant`,
-`markdown.strictLanguages`, and `markdown.executablePreviews` options were
-removed. Configure remark, rehype, Shiki languages, and other renderer options
-through Astro's top-level `markdown` configuration. Configure the hosting path
-only through Astro's top-level `base` setting.
+See [working examples](./examples.md), [authoring components](./authoring.mdx),
+and [deployment](./deployment.md). Existing users should read the
+[prerelease migration guide](./migration.md).

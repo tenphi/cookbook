@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { parseArgs } from "node:util";
-import { confirm, prompt } from "./prompts.js";
+import { confirm } from "./prompts.js";
 import { scaffold, type PackageManager } from "./scaffold.js";
 
 const { positionals, values } = parseArgs({
@@ -8,6 +8,7 @@ const { positionals, values } = parseArgs({
   allowNegative: true,
   options: {
     package: { type: "string" },
+    source: { type: "string" },
     yes: { type: "boolean", short: "y", default: false },
     brand: { type: "string" },
     site: { type: "string" },
@@ -24,12 +25,14 @@ const { positionals, values } = parseArgs({
 
 if (values.help) printHelp();
 
-const packageSpecifier =
-  values.package ?? (values.yes ? undefined : await prompt("npm package: "));
-if (!packageSpecifier) {
-  console.error("--package is required in non-interactive mode.");
-  printHelp(1);
-}
+if (values.package && values.source)
+  throw new Error("Choose either --package or --source.");
+if (values.open && !values.install)
+  throw new Error(
+    "--open requires dependency installation; remove --no-install.",
+  );
+if ((values.vendor || values["trust-package"]) && !values.package)
+  throw new Error("--vendor and --trust-package require --package.");
 
 const manager = values["package-manager"];
 if (manager && !["npm", "pnpm", "yarn"].includes(manager))
@@ -39,7 +42,8 @@ if (deployment && deployment !== "github-pages" && deployment !== "none")
   throw new Error(`Invalid deploy preset: ${deployment}.`);
 
 const result = await scaffold({
-  package: packageSpecifier,
+  ...(values.package ? { package: values.package } : {}),
+  ...(values.source ? { source: values.source } : {}),
   ...(positionals[0] ? { destination: positionals[0] } : {}),
   ...(manager ? { packageManager: manager as PackageManager } : {}),
   install: values.install,
@@ -60,14 +64,10 @@ const result = await scaffold({
 });
 
 console.log(
-  `\nPackage  ${result.lock.resolved}\nHome     ${result.discovery.home ?? "(none)"}\nPages    ${result.discovery.pages.length}\nAssets   ${result.discovery.assets.length}\n\nCreated ${result.destination}`,
+  `\nCreated ${result.destination}${result.lock ? `\nPackage  ${result.lock.resolved}\nPages    ${result.discovery?.pages.length ?? 0}` : ""}\n\nNext:\n  cd ${JSON.stringify(result.destination)}\n  ${values.install ? "" : `${result.packageManager} install\n  `}${result.packageManager} run dev`,
 );
+
 if (values.open) {
-  if (!values.install) {
-    throw new Error(
-      "--open requires dependency installation; remove --no-install.",
-    );
-  }
   const args =
     result.packageManager === "npm"
       ? ["run", "dev", "--", "--open"]
@@ -82,7 +82,7 @@ if (values.open) {
 
 function printHelp(code = 0): never {
   console.log(
-    `Usage: create-cookbook [destination] --package <specifier> [options]\n\nOptions:\n  --yes, -y\n  --brand <color>\n  --site <url>\n  --base <path>\n  --deploy github-pages|none\n  --package-manager npm|pnpm|yarn\n  --no-install\n  --vendor\n  --trust-package\n  --open`,
+    `Usage: create-cookbook [destination] [--source <repository> | --package <specifier>] [options]\n\nOptions:\n  --yes, -y\n  --brand <color>\n  --site <url>\n  --base <path>\n  --deploy github-pages|none\n  --package-manager npm|pnpm|yarn\n  --no-install\n  --vendor\n  --trust-package\n  --open`,
   );
   process.exit(code);
 }

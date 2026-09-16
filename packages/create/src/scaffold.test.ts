@@ -1,13 +1,76 @@
-import { describe, expect, it } from "vitest";
+import {
+  mkdtemp,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createDocsGraph, resolveDocsProject } from "@tenphi/docs";
+import { afterEach, describe, expect, it } from "vitest";
 import creatorPackage from "../package.json" with { type: "json" };
 import {
   inferPackageManager,
   renderAstroConfig,
+  renderDocsConfig,
   renderGithubWorkflow,
   renderPackageJson,
+  scaffold,
 } from "./scaffold.js";
 
+const roots: string[] = [];
+afterEach(async () => {
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true })),
+  );
+});
+
+async function localFixture(source = false) {
+  const root = await mkdtemp(join(tmpdir(), "cookbook-create-"));
+  roots.push(root);
+  const destination = join(root, "site");
+  if (source) {
+    await mkdir(join(root, "repository"));
+    await writeFile(
+      join(root, "repository", "README.md"),
+      "# Existing repository\n",
+    );
+  }
+  await scaffold({
+    destination,
+    install: false,
+    ...(source ? { source: join(root, "repository") } : {}),
+  });
+  const modules = fileURLToPath(
+    new URL("../../../apps/convention/node_modules", import.meta.url),
+  );
+  await symlink(modules, join(destination, "node_modules"), "dir");
+  const project = await resolveDocsProject({ root: destination });
+  return { root, destination, project, graph: await createDocsGraph(project) };
+}
+
 describe("creator defaults", () => {
+  it("creates a local starter whose discovered config resolves its content", async () => {
+    const { destination, project, graph } = await localFixture();
+    expect(project.root).toBe(destination);
+    expect(graph.diagnostics).toEqual([]);
+    expect(graph.entryByRoute("/")?.title).toBe("Documentation");
+    expect(await readdir(destination)).not.toContain("cookbook.lock.json");
+    expect(
+      await readFile(join(destination, "astro.config.ts"), "utf8"),
+    ).toContain("cookbook()");
+  });
+  it("keeps existing repository content outside the generated app", async () => {
+    const { root, destination, project, graph } = await localFixture(true);
+    expect(project.root).toBe(resolve(root, "repository"));
+    expect(graph.entryByRoute("/")?.title).toBe("Existing repository");
+    expect(graph.diagnostics).toEqual([]);
+    expect(await readdir(destination)).not.toContain("README.md");
+  });
   it.each([
     ["pnpm/11.0.0 node/v22", "pnpm"],
     ["yarn/4.9.0 npm/? node/v22", "yarn"],
@@ -29,18 +92,20 @@ describe("creator defaults", () => {
   });
 
   it("wraps generated documentation config in defineDocsConfig", () => {
-    const config = renderAstroConfig(
-      {
-        package: "fixture",
-        site: "https://docs.example.com",
-        base: "/fixture/",
-      },
-      "fixture",
-    );
+    const config = renderAstroConfig({
+      package: "fixture",
+      site: "https://docs.example.com",
+      base: "/fixture/",
+    });
 
-    expect(config).toContain("const docs = defineDocsConfig(");
+    expect(config).toContain("integrations: [cookbook()]");
     expect(config).toContain('base: "/fixture/"');
-    expect(config.match(/https:\/\/docs\.example\.com/g)).toHaveLength(1);
+    expect(
+      renderDocsConfig(
+        { package: "fixture", site: "https://docs.example.com" },
+        "fixture",
+      ),
+    ).toContain("export default defineDocsConfig(");
     expect(config).not.toContain('"build"');
   });
 

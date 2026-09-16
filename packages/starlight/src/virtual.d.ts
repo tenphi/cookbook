@@ -14,6 +14,7 @@ declare module "virtual:cookbook/config" {
       }
     >;
     routes: DocsRoute[];
+    redirects: Record<string, string>;
     site: SiteConfig;
     base: string;
     search: boolean;

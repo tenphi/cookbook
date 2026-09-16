@@ -10,6 +10,28 @@ import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
 describe("Glaze theme adapter", () => {
+  it("resolves customized status palettes in all four appearance modes", () => {
+    const defaults = resolveDocsTheme();
+    const custom = resolveDocsTheme({
+      palette: {
+        info: "#9333ea",
+        success: "#0891b2",
+        warning: "#ea580c",
+        danger: "#be123c",
+      },
+    });
+    expect(custom.diagnostics).toEqual([]);
+    for (const role of ["info", "success", "warning", "danger"]) {
+      for (const suffix of ["", "-text", "-surface"]) {
+        const colors = custom.colorTokens[`#${role}${suffix}`];
+        expect(Object.keys(colors!)).toHaveLength(4);
+        expect(Object.values(colors!)).toEqual(
+          Array(4).fill(expect.stringMatching(/^oklch\(/)),
+        );
+        expect(colors).not.toEqual(defaults.colorTokens[`#${role}${suffix}`]);
+      }
+    }
+  });
   it("emits all appearance modes at the configured APCA floors", () => {
     const theme = resolveDocsTheme({
       brand: { from: "#315efb", contrast: { apca: 45 } },

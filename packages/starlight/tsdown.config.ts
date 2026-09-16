@@ -4,6 +4,8 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     components: "src/components.ts",
+    "components/props": "src/components/props.ts",
+    "client/tabs": "src/client/tabs.ts",
     styling: "src/styling.ts",
     "eslint-plugin": "src/eslint-plugin.ts",
     navigation: "src/navigation.ts",

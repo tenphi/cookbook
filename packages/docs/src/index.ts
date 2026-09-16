@@ -1,9 +1,12 @@
 export {
   defineDocsConfig,
+  mergeDocsConfig,
   normalizeDocsConfig,
   validateConfig,
   DocsConfigError,
 } from "./config/index.js";
+export { resolveDocsProject } from "./project/index.js";
+export type { DocsProject, DocsProjectOptions } from "./project/index.js";
 export { createDocsLoader } from "./content/index.js";
 export {
   createDocsGraph,
@@ -18,6 +21,7 @@ export {
   materializePackage,
   packageNameFromSpecifier,
   readDocsLock,
+  reconcileDocsLock,
   resolvePackageLock,
   validateLock,
   writeDocsLock,

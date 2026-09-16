@@ -1,0 +1,15 @@
+---
+import { CalloutRoot } from "./TastyComponents.js";
+import type { CalloutProps as Props } from "./props.js";
+const {
+  kind = "note",
+  title = { note: "Note", tip: "Tip", caution: "Caution", danger: "Danger" }[
+    kind
+  ],
+} = Astro.props;
+---
+
+<CalloutRoot data-kind={kind} aria-label={title}>
+  <CalloutRoot.Title>{title}</CalloutRoot.Title>
+  <CalloutRoot.Body><slot /></CalloutRoot.Body>
+</CalloutRoot>

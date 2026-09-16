@@ -14,6 +14,7 @@ import starlight from "./starlight-runtime.js";
 import {
   createDocsGraph,
   assertValidDocs,
+  resolveDocsProject,
   type DocsConfig,
 } from "@tenphi/docs";
 import {
@@ -63,8 +64,6 @@ const tastyExtractStaticMiddleware = packageRequire.resolve(
 const astroReactServer = packageRequire.resolve("@astrojs/react/server.js");
 const astroReactClient = packageRequire.resolve("@astrojs/react/client.js");
 const astroReactIntegration = packageRequire.resolve("@astrojs/react");
-const reactRoot = dirname(packageRequire.resolve("react/package.json"));
-const reactDomRoot = dirname(packageRequire.resolve("react-dom/package.json"));
 const importNative = new Function("specifier", "return import(specifier)") as (
   specifier: string,
 ) => Promise<{ default: () => AstroIntegration }>;
@@ -72,11 +71,49 @@ const importNative = new Function("specifier", "return import(specifier)") as (
 export interface CookbookOptions {
   config?: DocsConfig;
   root?: string;
+  configFile?: string | false;
 }
 
 export default function cookbook(
   options: CookbookOptions = {},
 ): AstroIntegration {
+  let integration: AstroIntegration | undefined;
+  return {
+    name: "cookbook",
+    hooks: {
+      "astro:config:setup": async (context) => {
+        const project = await resolveDocsProject({
+          ...options,
+          root: options.root ?? fileURLToPath(context.config.root),
+        });
+        if (project.configFile) context.addWatchFile(project.configFile);
+        integration = configuredCookbook({
+          config: project.config,
+          root: project.root,
+        });
+        await callInner([integration], "astro:config:setup", context);
+      },
+      "astro:config:done": async (context) => {
+        if (integration)
+          await callInner([integration], "astro:config:done", context);
+      },
+      "astro:server:setup": async (context) => {
+        if (integration)
+          await callInner([integration], "astro:server:setup", context);
+      },
+      "astro:build:start": async (context) => {
+        if (integration)
+          await callInner([integration], "astro:build:start", context);
+      },
+      "astro:build:done": async (context) => {
+        if (integration)
+          await callInner([integration], "astro:build:done", context);
+      },
+    },
+  };
+}
+
+function configuredCookbook(options: CookbookOptions): AstroIntegration {
   const docsTheme = resolveDocsTheme(options.config?.theme);
   if (
     docsTheme.diagnostics.some((diagnostic) => diagnostic.severity === "error")
@@ -86,7 +123,10 @@ export default function cookbook(
     );
   }
   configureTastyTheme(options.config?.theme, docsTheme);
-  configureComponentStyles(options.config?.theme?.styles);
+  configureComponentStyles({
+    ...options.config?.theme?.customStyles,
+    ...options.config?.theme?.styles,
+  });
   const headerPath = fileURLToPath(
     new URL("./overrides/Header.astro", import.meta.url),
   );
@@ -274,71 +314,102 @@ export default function cookbook(
           },
           vite: {
             ssr: {
-              external: [
-                "@tenphi/docs",
-                "react",
-                "react-dom",
-                "react-dom/server",
-              ],
+              external: ["@tenphi/docs", "react", "react-dom"],
             },
             plugins: [
+              {
+                name: "cookbook-react-runtime",
+                enforce: "post",
+                configResolved(config) {
+                  for (const environment of Object.values(
+                    config.environments,
+                  )) {
+                    if (environment.consumer === "server")
+                      environment.resolve.dedupe =
+                        environment.resolve.dedupe.filter(
+                          (id) => id !== "react" && id !== "react-dom",
+                        );
+                    if (environment.consumer === "client")
+                      environment.optimizeDeps.include =
+                        environment.optimizeDeps.include?.map((id) =>
+                          /^react(?:-dom)?(?:\/|$)/.test(id)
+                            ? packageRequire.resolve(id)
+                            : id,
+                        ) ?? [];
+                  }
+                },
+                resolveId(id, _importer, settings) {
+                  if (
+                    !settings?.ssr &&
+                    this.environment.config.consumer !== "server" &&
+                    /^react(?:-dom)?(?:\/|$)/.test(id)
+                  ) {
+                    return packageRequire.resolve(id);
+                  }
+                },
+              },
               stripStarlightStylesPlugin(starlightRoot),
-              virtualDocsPlugin(async () => {
-                const loaded = await loadGraph(true);
-                const entries = await Promise.all(
-                  loaded.entries.map(async (entry) => {
-                    if (
-                      entry.trust === "mdx" &&
-                      entry.sourcePath.toLowerCase().endsWith(".mdx")
-                    ) {
-                      return { ...entry, mdx: true };
-                    }
-                    const { image, markdown, srcDir } = markdownRuntime;
-                    markdownRenderer ??= markdown.processor.createRenderer({
-                      image,
-                      syntaxHighlight: markdown.syntaxHighlight,
-                      shikiConfig: markdown.shikiConfig,
-                      gfm: markdown.gfm,
-                      smartypants: markdown.smartypants,
-                    } as unknown as Parameters<
-                      typeof markdown.processor.createRenderer
-                    >[0]);
-                    const renderer = await markdownRenderer;
-                    const rendered = await renderer.render(
-                      entry.transformedBody,
-                      {
-                        frontmatter: entry.frontmatter,
-                        fileURL: starlightContentUrl(entry.route, srcDir),
-                      },
-                    );
-                    return {
-                      ...entry,
-                      rendered: {
-                        html: rendered.code,
-                        headings: rendered.metadata.headings,
-                      },
-                    };
-                  }),
-                );
-                return {
-                  entries,
-                  routes: loaded.routes,
-                  site: documentedSite(loaded),
-                  base: loaded.config.build.base,
-                  search: loaded.config.search.enabled,
-                };
-              }, navigation),
+              virtualDocsPlugin(
+                async () => {
+                  const loaded = await loadGraph(true);
+                  const entries = await Promise.all(
+                    loaded.entries.map(async (entry) => {
+                      if (
+                        entry.trust === "mdx" &&
+                        entry.sourcePath.toLowerCase().endsWith(".mdx")
+                      ) {
+                        return { ...entry, mdx: true };
+                      }
+                      const { image, markdown, srcDir } = markdownRuntime;
+                      markdownRenderer ??= markdown.processor.createRenderer({
+                        image,
+                        syntaxHighlight: markdown.syntaxHighlight,
+                        shikiConfig: markdown.shikiConfig,
+                        gfm: markdown.gfm,
+                        smartypants: markdown.smartypants,
+                      } as unknown as Parameters<
+                        typeof markdown.processor.createRenderer
+                      >[0]);
+                      const renderer = await markdownRenderer;
+                      const rendered = await renderer.render(
+                        entry.transformedBody,
+                        {
+                          frontmatter: entry.frontmatter,
+                          fileURL: starlightContentUrl(entry.route, srcDir),
+                        },
+                      );
+                      return {
+                        ...entry,
+                        rendered: {
+                          html: rendered.code,
+                          headings: rendered.metadata.headings,
+                        },
+                      };
+                    }),
+                  );
+                  return {
+                    entries,
+                    routes: loaded.routes,
+                    redirects: loaded.redirects,
+                    site: documentedSite(loaded),
+                    base: loaded.config.build.base,
+                    search: loaded.config.search.enabled,
+                  };
+                },
+                navigation,
+                () => [
+                  projectRoot!,
+                  ...(graphConfig?.content?.sources ?? []).flatMap((source) =>
+                    "package" in source
+                      ? []
+                      : [resolve(projectRoot!, source.root ?? ".")],
+                  ),
+                  ...(graph?.entries.map((entry) => entry.sourceRoot) ?? []),
+                ],
+              ),
             ],
             resolve: {
               alias: [
-                {
-                  find: "react-dom",
-                  replacement: reactDomRoot,
-                },
-                {
-                  find: "react",
-                  replacement: reactRoot,
-                },
                 {
                   find: "@astrojs/starlight",
                   replacement: join(starlightRoot, "dist"),
@@ -582,20 +653,32 @@ function registerCookbookMarkdownPlugins(processor: {
 function stripStarlightStylesPlugin(root: string) {
   const normalizedRoot = root.replaceAll("\\", "/");
   const emptyPrintId = "\0cookbook:empty-starlight-print";
+  const emptyStyleId = "\0cookbook:empty-starlight-style.css";
   return {
     name: "cookbook-strip-starlight-css",
     enforce: "pre" as const,
     resolveId(source: string, importer: string | undefined) {
+      const normalized = source.replaceAll("\\", "/").replace(/^\/@fs/, "");
+      const owned =
+        normalized.startsWith(`${normalizedRoot}/`) ||
+        importer?.replaceAll("\\", "/").startsWith(`${normalizedRoot}/`);
       if (
         importer?.replaceAll("\\", "/").startsWith(`${normalizedRoot}/`) &&
         source.endsWith("/style/print.css?url&no-inline")
       ) {
         return emptyPrintId;
       }
+      if (
+        owned &&
+        (/\.css(?:\?|$)/.test(source) ||
+          /\.astro\?.*\btype=style\b/.test(source))
+      )
+        return emptyStyleId;
       return undefined;
     },
     load(id: string) {
       if (id === emptyPrintId) return 'export default "data:text/css,";';
+      if (id === emptyStyleId) return "";
       return undefined;
     },
     transform(code: string, id: string) {
@@ -681,7 +764,7 @@ function configureTastyTheme(
   resolved: ReturnType<typeof resolveDocsTheme>,
 ): void {
   const tokens = tastyTokens(resolved) as ConfigTokens;
-  const globalStyles = resolveLegacyAnatomyStyles(theme?.styles);
+  const globalStyles = resolveLegacyAnatomyStyles(theme?.customStyles);
 
   configure({
     states: {
@@ -736,6 +819,7 @@ function withoutStarlightDocsRoute(
 function virtualDocsPlugin(
   getContent: () => unknown | Promise<unknown>,
   layout: ResolvedNavigationLayout,
+  getWatchRoots: () => string[],
 ) {
   const configId = "\0virtual:cookbook/config";
   const layoutId = "\0virtual:cookbook/layout";
@@ -760,13 +844,22 @@ function virtualDocsPlugin(
 
   async function loadContent(): Promise<VirtualContent> {
     contentPromise ??= Promise.resolve(getContent()) as Promise<VirtualContent>;
-    const content = await contentPromise;
+    let content: VirtualContent;
+    try {
+      content = await contentPromise;
+    } catch (error) {
+      contentPromise = undefined;
+      throw error;
+    }
     mdxRecords = content.entries.flatMap((entry, index) =>
       entry.mdx
         ? [
             {
               entry,
-              sourceId: entry.absolutePath.replace(/\.mdx$/i, ".cookbook.mdx"),
+              sourceId: entry.absolutePath.replace(
+                /\.mdx$/i,
+                `.cookbook-${index}.mdx`,
+              ),
               virtualId: `${mdxPrefix}${index}`,
             },
           ]
@@ -778,6 +871,32 @@ function virtualDocsPlugin(
   return {
     name: "cookbook-data",
     enforce: "pre" as const,
+    configureServer(server: HookParameters<"astro:server:setup">["server"]) {
+      const roots = [...new Set(getWatchRoots())];
+      server.watcher.add(roots);
+      const changed = (_event: string, path: string) => {
+        const owned = roots.some(
+          (root) => path === root || path.startsWith(`${root}/`),
+        );
+        if (
+          !watchedPaths.has(path) &&
+          !(
+            owned &&
+            (/\.mdx?$/i.test(path) || path.endsWith("/cookbook.lock.json"))
+          )
+        )
+          return;
+        contentPromise = undefined;
+        mdxRecords = [];
+        for (const environment of Object.values(server.environments))
+          environment.moduleGraph.invalidateAll();
+        server.ws.send({ type: "full-reload" });
+      };
+      server.watcher.on("all", changed);
+      server.httpServer?.once("close", () =>
+        server.watcher.off("all", changed),
+      );
+    },
     async resolveId(id: string) {
       if (id === "virtual:cookbook/config") return configId;
       if (id === "virtual:cookbook/layout") return layoutId;

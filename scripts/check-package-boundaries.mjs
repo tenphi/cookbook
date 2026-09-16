@@ -8,6 +8,7 @@ const files = (await readdir(facadeSource)).filter((file) =>
 );
 const allowedImports = new Set([
   "@tenphi/docs",
+  "@tenphi/docs/config",
   "@tenphi/starlight",
   "@tenphi/starlight/components",
   "@tenphi/starlight/styling",

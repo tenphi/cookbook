@@ -1,0 +1,10 @@
+---
+import { TabRoot } from "./TastyComponents.js";
+import type { TabProps as Props } from "./props.js";
+const { label } = Astro.props;
+---
+
+<TabRoot data-tab-panel data-label={label}>
+  <TabRoot.Heading data-tab-heading>{label}</TabRoot.Heading>
+  <slot />
+</TabRoot>

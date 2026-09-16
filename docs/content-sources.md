@@ -63,6 +63,34 @@ use extensionless routes.
 
 Source paths are resolved from the configured project root. Paths outside that
 root are rejected unless `content.allowOutsideRoot` is explicitly enabled.
+Prefer an explicit source `root` when documenting another package; file and
+glob paths, links, and assets are confined to that declared source root.
+
+## Source identities and repeated mounts
+
+Every source can have an `id` containing letters, digits, underscores, and
+hyphens. Without one, Cookbook uses `source-1`, `source-2`, and so on. Explicit
+IDs are stable when declarations are reordered and must be unique.
+
+```ts
+content: {
+  sources: [
+    { id: "v1", root: "versions/v1", glob: "**/*.md", routeBase: "/v1" },
+    { id: "v2", root: "versions/v2", glob: "**/*.md", routeBase: "/v2" },
+  ];
+}
+```
+
+The same files may appear in several mounts. Relative links prefer the current
+source; an unambiguous page in another source can also resolve by file path.
+Use `source:v2/guide.md` to select another mount explicitly. The path is relative
+to that source's root, before `base` is removed from routes. Queries and heading
+fragments are preserved.
+
+A frontmatter `slug` is relative to `routeBase`, including when it begins with
+`/`. For example, `slug: intro` under `/v2` creates `/v2/intro`. File sources also
+accept `routeBase`, which prefixes their explicit `route`. Empty `sources: []`
+means no sources; omit the property to enable conventions.
 
 ## npm package sources
 
@@ -78,13 +106,14 @@ Package sources read documentation from the actual npm artifact:
 }
 ```
 
-A production build uses the exact version and integrity stored in
+Run `cookbook update` to create or reconcile the lock after editing sources.
+A production build uses the exact requested specifier, version, and integrity stored in
 `cookbook.lock.json`. The package creator writes this lock automatically.
 Artifacts are integrity-checked, extracted with file-count and size limits,
 and cached by integrity.
 
-Package Markdown is untrusted by default. Raw HTML in Markdown and
-HTML-capable frontmatter is removed, custom `head` entries are discarded,
+Package Markdown is untrusted by default. Raw HTML is sanitized to safe
+elements, HTML-capable frontmatter is stripped, custom `head` entries are discarded,
 unsafe URL protocols are rejected, and MDX cannot execute. Set `trust: "mdx"`
 only after reviewing the exact locked artifact; doing so allows its build-time
 code to run. Trusted MDX is compiled by Starlight, including relative component

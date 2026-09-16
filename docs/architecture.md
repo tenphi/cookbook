@@ -83,8 +83,8 @@ diagnostics without importing Starlight.
 ## Reference app
 
 The monorepo's `apps/reference` project is both the deployed documentation site
-and an end-to-end fixture. Its Cookbook integration receives the repository root
-explicitly, then loads this `docs/` tree through the same route pipeline used by
+and an end-to-end fixture. Its integration discovers `docs.config.ts`, whose
+`root: "../.."` loads this `docs/` tree through the same route pipeline used by
 convention-mode sites. CI builds the same app before GitHub Pages publishes it.
 
 Return to [Cookbook](./index.md) or inspect the

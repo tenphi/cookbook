@@ -4,13 +4,17 @@ Install the complete integration with `npx astro add @tenphi/cookbook`:
 
 ```ts
 import { defineConfig } from "astro/config";
-import cookbook, { defineDocsConfig } from "@tenphi/cookbook";
+import cookbook from "@tenphi/cookbook";
 
-const docs = defineDocsConfig({
-  site: { title: "My project" },
-});
+export default defineConfig({ integrations: [cookbook()] });
+```
 
-export default defineConfig({ integrations: [cookbook({ config: docs })] });
+Optional `docs.config.ts` is discovered by both Astro and the CLI:
+
+```ts
+import { defineDocsConfig } from "@tenphi/cookbook/config";
+
+export default defineDocsConfig({ site: { title: "My project" } });
 ```
 
 Without configuration, a root `README.md` becomes `/` and
@@ -29,7 +33,7 @@ export const ProjectBadge = defineComponent("ProjectBadge", {
 });
 ```
 
-Customize this component's root through `theme.styles.ProjectBadge`; it has no
+Customize this component's root through `theme.customStyles.ProjectBadge`; it has no
 named sub-elements. The `/styling` entry point also exports `tasty`, `useGlobalStyles`,
 `resolveComponentStyles`, `mergeStyles`, and the `Styles` type. Cookbook extracts
 the CSS automatically. See [Theme and components](https://cookbook.tenphi.me/theme-and-components/)
