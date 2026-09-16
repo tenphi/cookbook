@@ -96,7 +96,10 @@ export function buildRootChangelog(packageChangelogs) {
       const changes = entries.filter((entry) => entry.rank === rank);
       if (changes.length === 0) continue;
       lines.push("", `### ${heading}`, "");
-      lines.push(...changes.map((entry) => entry.bullet));
+      const separator = changes.some((entry) => entry.bullet.includes("\n\n"))
+        ? "\n\n"
+        : "\n";
+      lines.push(changes.map((entry) => entry.bullet).join(separator));
     }
   }
 

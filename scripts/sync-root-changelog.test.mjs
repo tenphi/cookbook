@@ -5,6 +5,16 @@ import {
 } from "./sync-root-changelog.mjs";
 
 describe("root changelog", () => {
+  it("separates list entries when a change contains multiple paragraphs", () => {
+    const changelog = buildRootChangelog([
+      "# Package A\n\n## 1.2.0\n\n### Minor Changes\n\n- New feature\n\n  Migration details.\n\n- Another feature\n",
+    ]);
+
+    expect(changelog).toContain(
+      "- New feature\n\n  Migration details.\n\n- Another feature\n",
+    );
+  });
+
   it("combines package changes while removing dependency-only duplicates", () => {
     const sharedChange = [
       "### Minor Changes",
