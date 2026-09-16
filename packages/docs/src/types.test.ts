@@ -21,6 +21,7 @@ describe("component style metadata", () => {
       "List",
       "Item",
       "TopLevelSpacing",
+      "GroupSpacing",
       "NestedItem",
       "Control",
       "Summary",

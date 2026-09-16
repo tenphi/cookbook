@@ -11,6 +11,7 @@ All notable changes to Cookbook are documented here. Package-specific details re
   Add source IDs and roots, repeated mounts, scoped slugs, explicit cross-source links, redirects, reusable configuration presets, HTML sanitization, preserved page metadata, typed component styles and props, and accessible tabs, callouts, and code groups. Update guides and add development and public API regression checks.
 
   Breaking prerelease changes: locks must match requested package specifiers; slugs are relative to source mounts; safe HTML is preserved by `sanitize` (use `strip` for removal); custom styles move to `theme.customStyles`; `Tabs` expects labeled `Tab` panels. See the migration guide.
+
 - [#62](https://github.com/tenphi/cookbook/pull/62) [`990f3a7`](https://github.com/tenphi/cookbook/commit/990f3a79de225086cf3b5d2376817b0ed9a41c74) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade the renderer to Astro 7.3 and Starlight 0.42, adopt Starlight's
   Popover-based mobile navigation, and use a single graph-backed rendering path
   that is independent of Astro content collections. Render trusted MDX through

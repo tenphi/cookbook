@@ -217,7 +217,9 @@ describe("docs configuration", () => {
           Sidebar: { Link: { padding: "1x" } },
           StarlightHeader: { padding: "2x" },
           TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
-          ThemeSelect: { display: "grid" },
+          ThemeSelect: { Panel: { padding: "2x" } },
+          SocialIcons: { Link: { radius: "999px" } },
+          MarkdownInlineCode: { fontSize: "0.9em" },
         },
       },
     });
@@ -227,7 +229,9 @@ describe("docs configuration", () => {
       Sidebar: { Link: { padding: "1x" } },
       StarlightHeader: { padding: "2x" },
       TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
-      ThemeSelect: { display: "grid" },
+      ThemeSelect: { Panel: { padding: "2x" } },
+      SocialIcons: { Link: { radius: "999px" } },
+      MarkdownInlineCode: { fontSize: "0.9em" },
     });
   });
 

@@ -221,6 +221,7 @@ describe("Glaze theme adapter", () => {
       "'JetBrains Mono Variable'",
     );
     expect(theme.presets.body?.lineHeight).toBe(1.65);
+    expect(theme.presets.body?.fontWeight).toBe(400);
     expect(theme.presets.body?.letterSpacing).toBe("0");
     expect(theme.presets.body?.boldFontWeight).toBe(640);
     expect(theme.presets.heading?.fontWeight).toBe(610);
@@ -234,7 +235,7 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.h6?.letterSpacing).toBe("0");
     expect(theme.presets).not.toHaveProperty("strong");
     expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
-    expect(theme.presets.navigation?.fontWeight).toBe(540);
+    expect(theme.presets.navigation?.fontWeight).toBe(450);
     expect(theme.colors.shadow.light).toMatch(/^oklch\(/);
     expect(theme.colors.shadow.dark).toMatch(/^oklch\(/);
     expect(theme.colors.shadow.dark).not.toBe(theme.colors.shadow.light);

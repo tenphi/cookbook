@@ -94,8 +94,12 @@ Borders stay intentionally quiet: Glaze derives their hue from `brand` but
 uses only one quarter of the brand saturation. Normal and high-contrast modes
 change border tone, not that restrained saturation relationship.
 
-The contrast control in the desktop header and mobile menu can follow the
-system, force the normal palette, or activate the Glaze high-contrast palette.
+The Appearance button in the desktop and mobile header opens one panel with
+Color scheme and Contrast sections. Color scheme offers Light, Dark, and Auto;
+Contrast offers Normal, High, and Auto. Each preference is independent, and
+existing saved choices are preserved. The panel supports keyboard navigation,
+Escape, and outside-click dismissal. Contrast can follow the system, force the
+normal palette, or activate the Glaze high-contrast palette.
 System mode responds to `prefers-contrast: more`; an explicit selection is
 persisted and takes precedence over that media query.
 
@@ -173,11 +177,17 @@ and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
 `strong` modifier, so their weight comes from the active preset's
 `boldFontWeight` instead of a separate element-specific value. `strong` is a
 reserved modifier keyword, not a named preset; the modifier-only form is
-equivalent to `inherit / strong`. Default body tracking is neutral, while
+equivalent to `inherit / strong`. Body text uses a regular `400` weight and
+neutral tracking, while
 headings use a medium `610` weight and progressively gentle negative tracking.
-The separate `720` heading bold weight keeps emphasized heading text and the
-branded site title visually distinct. Additional named presets are passed
-through to Tasty SSR for use in custom MDX components.
+The separate `720` heading bold weight keeps emphasized heading text distinct.
+Navigation uses a lighter `450` weight with `580` for the current sidebar page,
+while smaller group labels establish hierarchy without oversized bold text.
+Adjacent sidebar items have a `1bw` gap. Inline code scales to `0.875em` of its
+surrounding text, including smaller table text; code blocks keep the `code` preset
+size. Customize inline code through `theme.styles.MarkdownInlineCode`.
+Additional named presets are passed through to Tasty SSR for use in custom MDX
+components.
 Cookbook applies each semantic typography role through its complete Tasty
 `preset`, so configured fields such as `fontStyle` and `textTransform` are not
 silently omitted.
@@ -203,10 +213,10 @@ base style object inside the renderer, following Tasty's
 theme: {
   styles: {
     ThemeSelect: {
-      Select: {
+      Trigger: {
         border: "#border-strong"
       },
-      Picker: {
+      Panel: {
         padding: "1x",
         shadow: "0 1rem 3rem #shadow"
       }
@@ -235,34 +245,35 @@ is merged into the base inside Cookbook.
 Every configurable surface accepts styles at the root plus these named Tasty
 sub-elements:
 
-| Configuration name      | Named sub-elements                                                                                                                                                                                                      |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                                     |
-| `Callout`               | `Title`, `Body`, `Tip`, `Caution`, `Danger`                                                                                                                                                                             |
-| `CodeGroup`             | `Caption`, `Pre`, `Code`                                                                                                                                                                                                |
-| `Tab`                   | `Heading`, `Hidden`, `HiddenHeading`                                                                                                                                                                                    |
-| `ContrastSelect`        | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                                       |
-| `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                                          |
-| `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                    |
-| `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                         |
-| `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                           |
-| `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`                                                                                                                                        |
-| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `HoverLink`                                                                                                                  |
-| `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                                        |
-| `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                                           |
-| `MobileMenuFooter`      | `Social`                                                                                                                                                                                                                |
-| `MobileMenuToggle`      | `Control`, `Icon`, `HoverControl`, `ActiveControl`                                                                                                                                                                      |
-| `MobileNavigationTabs`  | `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`                                                                                                                                                             |
-| `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                             |
-| `PackageVersion`        | None                                                                                                                                                                                                                    |
-| `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                   |
-| `Sidebar`               | `CurrentLink`, `OpenPane`, `Content`, `List`, `Item`, `TopLevelSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
-| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                      |
-| `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                        |
-| `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                     |
-| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                              |
-| `ThemeSelect`           | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                                       |
-| `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                      |
+| Configuration name      | Named sub-elements                                                                                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                                                     |
+| `Callout`               | `Title`, `Body`, `Tip`, `Caution`, `Danger`                                                                                                                                                                                             |
+| `CodeGroup`             | `Caption`, `Pre`, `Code`                                                                                                                                                                                                                |
+| `Tab`                   | `Heading`, `Hidden`, `HiddenHeading`                                                                                                                                                                                                    |
+| `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                                                          |
+| `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                                    |
+| `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                                         |
+| `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                                           |
+| `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`                                                                                                                                                        |
+| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `HoverLink`, `LinkIcon`                                                                                                                      |
+| `MarkdownInlineCode`    | None                                                                                                                                                                                                                                    |
+| `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                                                        |
+| `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                                                           |
+| `MobileMenuFooter`      | `Social`                                                                                                                                                                                                                                |
+| `MobileMenuToggle`      | `Control`, `Icon`, `HoverControl`, `ActiveControl`                                                                                                                                                                                      |
+| `MobileNavigationTabs`  | `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`                                                                                                                                                                             |
+| `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                                             |
+| `PackageVersion`        | None                                                                                                                                                                                                                                    |
+| `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                                   |
+| `Sidebar`               | `CurrentLink`, `OpenPane`, `Content`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
+| `SocialIcons`           | `Link`, `HoverLink`, `Icon`                                                                                                                                                                                                             |
+| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                      |
+| `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                        |
+| `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                     |
+| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                              |
+| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `Icon`, `Panel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                             |
+| `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                                      |
 
 `COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and
 `COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the complete sub-element lists for
@@ -270,7 +281,13 @@ theme editors and other tooling. The corresponding TypeScript types are
 `CookbookComponentName`, `CookbookComponentSubElementName`,
 `CookbookComponentStyles`, `ComponentStyleConfig`, and `ComponentStylesConfig`.
 Known configuration names provide editor suggestions for their named
-sub-elements.
+sub-elements. `ThemeSelect` styles the combined Appearance panel; replace old
+`Select` and `Picker` overrides with `Trigger` and `Panel`. The separate
+`ContrastSelect` surface is replaced by the same `ThemeSelect` panel and option
+sub-elements. `SocialIcons` styles the shared icon-button links in the header
+and mobile menu. Heading permalinks
+use a target aligned with the final text line and an icon that scales with the
+heading; customize it with `MarkdownHeading.Link` and `MarkdownHeading.LinkIcon`.
 
 For the three navigation surfaces, root properties customize the navigation
 container; the `MobileTableOfContents` root is the list inside the mobile

@@ -164,6 +164,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
       MobileMenuFooter: mobileMenuFooterPath,
       MobileMenuToggle: mobileMenuTogglePath,
       ThemeSelect: themeSelectPath,
+      SocialIcons: fileURLToPath(
+        new URL("./overrides/SocialIcons.astro", import.meta.url),
+      ),
     },
     options.config?.components?.overrides,
     emptyFooterPath,
