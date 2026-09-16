@@ -1,69 +1,139 @@
 ---
 import Icon from "@astrojs/starlight/user-components/Icon.astro";
+import contrastIcon from "../icons/contrast.svg?raw";
 import { ThemeSelectRoot } from "../components/LayoutComponents.js";
+
+const id = `appearance-${crypto.randomUUID()}`;
+const schemes = [
+  { value: "light", label: Astro.locals.t("themeSelect.light"), icon: "sun" },
+  { value: "dark", label: Astro.locals.t("themeSelect.dark"), icon: "moon" },
+  { value: "auto", label: Astro.locals.t("themeSelect.auto"), icon: "laptop" },
+] as const;
+const contrasts = [
+  { value: "normal", label: "Normal" },
+  { value: "more", label: "High" },
+  { value: "system", label: "Auto" },
+];
 ---
 
 <ThemeSelectRoot data-tasty-anatomy="ThemeSelect">
-  <label>
-    <span class="sr-only">{Astro.locals.t("themeSelect.accessibleLabel")}</span>
-    <Icon name="laptop" class="label-icon" />
-    <select autocomplete="off">
-      <option value="dark">{Astro.locals.t("themeSelect.dark")}</option>
-      <option value="light">{Astro.locals.t("themeSelect.light")}</option>
-      <option value="auto" selected>{Astro.locals.t("themeSelect.auto")}</option
-      >
-    </select>
-  </label>
+  <button
+    type="button"
+    popovertarget={id}
+    aria-label="Appearance"
+    title="Appearance"
+  >
+    <span aria-hidden="true" set:html={contrastIcon} />
+  </button>
+  <div id={id} popover="auto" role="group" aria-label="Appearance">
+    <fieldset>
+      <legend>Color scheme</legend>
+      {
+        schemes.map(({ value, label, icon }) => (
+          <label>
+            <input
+              type="radio"
+              name={`${id}-scheme`}
+              value={value}
+              data-appearance-scheme
+              checked={value === "auto"}
+            />
+            <Icon name={icon} />
+            <span>{label}</span>
+            <Icon name="approve-check" class="checkmark" />
+          </label>
+        ))
+      }
+    </fieldset>
+    <fieldset>
+      <legend>Contrast</legend>
+      {
+        contrasts.map(({ value, label }) => (
+          <label>
+            <input
+              type="radio"
+              name={`${id}-contrast`}
+              value={value}
+              data-appearance-contrast
+              checked={value === "system"}
+            />
+            <span>{label}</span>
+            <Icon name="approve-check" class="checkmark" />
+          </label>
+        ))
+      }
+    </fieldset>
+  </div>
 </ThemeSelectRoot>
 
-<script is:inline>
-  StarlightThemeProvider.updatePickers();
-</script>
-
 <script>
-  type Theme = "auto" | "dark" | "light";
+  import {
+    loadPreferences,
+    storePreferences,
+    parseScheme,
+    parseContrast,
+  } from "../components/appearance-preferences.js";
 
-  const storageKey = "starlight-theme";
-  const parseTheme = (theme: unknown): Theme =>
-    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
-  const loadTheme = (): Theme =>
-    parseTheme(
-      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-    );
-  const storeTheme = (theme: Theme): void => {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(
-        storageKey,
-        theme === "light" || theme === "dark" ? theme : "",
-      );
-    }
-  };
-  const preferredScheme = (): Theme =>
-    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-  const updateTheme = (theme: Theme): void => {
-    StarlightThemeProvider.updatePickers(theme);
+  let current = loadPreferences();
+  const systemScheme = matchMedia("(prefers-color-scheme: light)");
+
+  function applyPreferences(): void {
     document.documentElement.dataset.theme =
-      theme === "auto" ? preferredScheme() : theme;
-    storeTheme(theme);
-  };
+      current.scheme === "auto"
+        ? systemScheme.matches
+          ? "light"
+          : "dark"
+        : current.scheme;
+    if (current.contrast === "system") {
+      delete document.documentElement.dataset.contrast;
+    } else {
+      document.documentElement.dataset.contrast = current.contrast;
+    }
+    document
+      .querySelectorAll<HTMLInputElement>("[data-appearance-scheme]")
+      .forEach((input) => {
+        input.checked = input.value === current.scheme;
+      });
+    document
+      .querySelectorAll<HTMLInputElement>("[data-appearance-contrast]")
+      .forEach((input) => {
+        input.checked = input.value === current.contrast;
+      });
+  }
 
-  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") updateTheme("auto");
+  systemScheme.addEventListener("change", () => {
+    if (current.scheme === "auto") applyPreferences();
+  });
+  window.addEventListener("storage", (event) => {
+    if (
+      !event.key ||
+      ["starlight-theme", "cookbook-appearance"].includes(event.key)
+    ) {
+      current = loadPreferences();
+      applyPreferences();
+    }
   });
 
-  class CookbookThemeSelect extends HTMLElement {
-    constructor() {
-      super();
-      updateTheme(loadTheme());
-      this.querySelector("select")?.addEventListener("change", (event) => {
-        if (event.currentTarget instanceof HTMLSelectElement) {
-          updateTheme(parseTheme(event.currentTarget.value));
-        }
+  class CookbookAppearanceMenu extends HTMLElement {
+    connectedCallback(): void {
+      if (this.dataset.ready) return;
+      this.dataset.ready = "true";
+      this.addEventListener("change", (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        if (input.hasAttribute("data-appearance-scheme")) {
+          current.scheme = parseScheme(input.value);
+        } else if (input.hasAttribute("data-appearance-contrast")) {
+          current.contrast = parseContrast(input.value);
+        } else return;
+        storePreferences(current);
+        applyPreferences();
       });
+      applyPreferences();
     }
   }
 
-  if (!customElements.get("starlight-theme-select")) {
-    customElements.define("starlight-theme-select", CookbookThemeSelect);
+  if (!customElements.get("cookbook-appearance-menu")) {
+    customElements.define("cookbook-appearance-menu", CookbookAppearanceMenu);
   }
 </script>

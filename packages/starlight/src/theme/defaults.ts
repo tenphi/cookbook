@@ -49,9 +49,9 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
     fontFamily: "var(--body-font-family)",
     fontSize: "0.9375rem",
     lineHeight: 1.4,
-    letterSpacing: "-0.006em",
-    fontWeight: 540,
-    boldFontWeight: 650,
+    letterSpacing: "0",
+    fontWeight: 450,
+    boldFontWeight: 580,
   },
   small: {
     fontFamily: "var(--body-font-family)",
@@ -59,7 +59,7 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
     lineHeight: 1.45,
     letterSpacing: "-0.002em",
     fontWeight: 420,
-    boldFontWeight: 650,
+    boldFontWeight: 600,
   },
   code: {
     fontFamily: MONO_FONT,

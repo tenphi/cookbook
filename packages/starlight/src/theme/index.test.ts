@@ -234,7 +234,7 @@ describe("Glaze theme adapter", () => {
     expect(theme.presets.h6?.letterSpacing).toBe("0");
     expect(theme.presets).not.toHaveProperty("strong");
     expect(theme.presets.navigation?.fontSize).toBe("0.9375rem");
-    expect(theme.presets.navigation?.fontWeight).toBe(540);
+    expect(theme.presets.navigation?.fontWeight).toBe(450);
     expect(theme.colors.shadow.light).toMatch(/^oklch\(/);
     expect(theme.colors.shadow.dark).toMatch(/^oklch\(/);
     expect(theme.colors.shadow.dark).not.toBe(theme.colors.shadow.light);

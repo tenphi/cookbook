@@ -351,6 +351,7 @@ export default function GlobalStyles() {
         ],
         color: "#accent-text",
         fill: "#accent-surface-subtle",
+        preset: "navigation / strong",
       },
       OpenPane: {
         $: "&:popover-open",
@@ -367,6 +368,9 @@ export default function GlobalStyles() {
       },
       List: {
         $: "ul",
+        display: "grid",
+        gap: "1bw",
+        margin: "0",
         padding: "0",
         listStyle: "none",
       },
@@ -376,24 +380,29 @@ export default function GlobalStyles() {
       },
       TopLevelSpacing: {
         $: ".top-level > li + li",
-        marginBlockStart: "($gap * 3)",
+        marginBlockStart: "0",
+      },
+      GroupSpacing: {
+        $: ".top-level > li + li:has(> details)",
+        marginBlockStart: "($gap * 2.5)",
       },
       NestedItem: {
         $: "ul ul li",
-        marginInlineStart: "($gap * 0.75)",
-        paddingInlineStart: "($gap * 0.75)",
-        borderInlineStart: "0",
+        marginInlineStart: "($gap * 1.25)",
+        paddingInlineStart: "($gap * 0.5)",
+        borderInlineStart: "$border-width solid #border",
       },
       Control: {
         $: ["summary", "a"],
-        padding: "($gap * 0.8) ($gap * 1.25)",
+        blockSize: "min 2.25rem",
+        padding: "($gap * 0.75) ($gap * 1.25)",
         color: "#text-soft",
-        lineHeight: "1.45",
         radius: "$radius",
         textDecoration: "none",
       },
       Summary: {
         $: "summary",
+        blockMargin: "1bw end",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -412,7 +421,7 @@ export default function GlobalStyles() {
         minInlineSize: "0",
         overflow: "hidden",
         color: "#text",
-        preset: "navigation / strong",
+        preset: "small / strong",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
       },
@@ -438,13 +447,13 @@ export default function GlobalStyles() {
         fill: "#surface-2-hover",
       },
       SummaryMarker: {
-        $: "summary::marker",
+        $: "summary::marker, summary::-webkit-details-marker",
         hide: true,
       },
       TopLevelLink: {
         $: "a.large",
         color: "#text",
-        preset: "navigation / strong",
+        preset: "navigation",
       },
     }),
   );
@@ -460,8 +469,7 @@ export default function GlobalStyles() {
         $: "h2",
         marginBlockEnd: "$gap",
         color: "#text",
-        preset: "navigation / strong",
-        lineHeight: "$heading-line-height",
+        preset: "small / strong",
       },
       List: {
         $: "ul",
@@ -707,13 +715,14 @@ export default function GlobalStyles() {
 
   useGlobalStyles(
     ".sl-markdown-content code:not(:where(pre *, .not-content *))",
-    {
+    resolveComponentStyles("MarkdownInlineCode", {
       padding: "0.125rem 0.375rem",
       color: "#text",
       fill: "#surface-2",
-      fontSize: "$small-font-size",
+      preset: "code",
+      fontSize: "0.875em",
       radius: "($radius * 0.65)",
-    },
+    }),
   );
 
   useGlobalStyles(
@@ -946,7 +955,7 @@ export default function GlobalStyles() {
       Heading: {
         $: "> :first-child",
         display: "inline",
-        paddingInlineEnd: "0.35em",
+        paddingInlineEnd: "0.2em",
       },
       Heading1: { $: "&.level-h1", preset: "h1" },
       Heading2: { $: "&.level-h2", preset: "h2" },
@@ -956,14 +965,26 @@ export default function GlobalStyles() {
       Heading6: { $: "&.level-h6", preset: "h6" },
       Link: {
         $: "> .sl-anchor-link",
-        display: "inline-flex",
+        display: "inline-grid",
+        placeItems: "center",
+        inlineSize: "max(1.5rem, 1em)",
+        blockSize: "max(1.5rem, 1em)",
+        verticalAlign: "middle",
         color: "#text-muted",
+        radius: "$radius",
         userSelect: "none",
         textDecoration: "none",
       },
       HoverLink: {
-        $: "> .sl-anchor-link:hover",
+        $: "> .sl-anchor-link:hover, > .sl-anchor-link:focus-visible",
         color: "#accent-text",
+        fill: "#surface-2-hover",
+      },
+      LinkIcon: {
+        $: "> .sl-anchor-link .sl-anchor-icon, > .sl-anchor-link svg",
+        display: "block",
+        inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
+        blockSize: "clamp(1rem, 0.65em, 1.5rem)",
       },
     }),
   );

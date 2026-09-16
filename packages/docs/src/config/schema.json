@@ -224,14 +224,6 @@
                 }
               }
             },
-            "ContrastSelect": {
-              "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
-            },
             "Footer": {
               "type": "object",
               "propertyNames": {
@@ -393,6 +385,22 @@
               }
             },
             "StarlightHeader": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "MarkdownInlineCode": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SocialIcons": {
               "type": "object",
               "propertyNames": {
                 "not": {

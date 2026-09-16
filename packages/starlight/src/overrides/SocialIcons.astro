@@ -1,0 +1,19 @@
+---
+import config from "virtual:starlight/user-config";
+import Icon from "@astrojs/starlight/user-components/Icon.astro";
+import { SocialIconsRoot } from "../components/LayoutComponents.js";
+
+const links = config.social || [];
+---
+
+{
+  links.length > 0 && (
+    <SocialIconsRoot data-tasty-anatomy="SocialIcons">
+      {links.map(({ label, href, icon }) => (
+        <a href={href} rel="me" aria-label={label} title={label}>
+          <Icon name={icon} />
+        </a>
+      ))}
+    </SocialIconsRoot>
+  )
+}
