@@ -15,6 +15,7 @@ import type { Definition, Image, Link, Root } from "mdast";
 import { glob } from "tinyglobby";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
+import { sanitizeMarkup } from "../html/index.js";
 import { normalizeDocsConfig } from "../config/index.js";
 import {
   cloneAst,
@@ -51,9 +52,12 @@ interface RepositoryMetadata {
 }
 
 interface CollectedSource {
+  sourceId: string;
+  routeBase?: string;
   absolutePath: string;
   sourcePath: string;
   sourceRoot: string;
+  editPath?: string;
   route?: string;
   title?: string;
   description?: string;
@@ -66,6 +70,7 @@ interface CollectedSource {
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
 const execFileAsync = promisify(execFile);
 const FRONTMATTER_KEYS = new Set([
+  "aliases",
   "title",
   "description",
   "slug",
@@ -96,8 +101,8 @@ export async function createDocsGraph(
   const collected = await collectSources(root, config, lock, diagnostics);
   const entries: DocsEntry[] = [];
   const routeMap = new Map<string, DocsEntry>();
-  const absoluteMap = new Map<string, DocsEntry>();
-  const sourceMap = new Map<string, DocsEntry>();
+  const absoluteMap = new Map<string, DocsEntry[]>();
+  const sourceMap = new Map<string, DocsEntry[]>();
   const repositoryMap = new Map<string, RepositoryMetadata>();
 
   for (const source of collected) {
@@ -115,9 +120,13 @@ export async function createDocsGraph(
       continue;
     }
     routeMap.set(entry.route, entry);
-    absoluteMap.set(normalizeFs(entry.absolutePath), entry);
-    sourceMap.set(entry.sourcePath, entry);
-    sourceMap.set(entry.id, entry);
+    const absolute = normalizeFs(entry.absolutePath);
+    absoluteMap.set(absolute, [...(absoluteMap.get(absolute) ?? []), entry]);
+    sourceMap.set(entry.sourcePath, [
+      ...(sourceMap.get(entry.sourcePath) ?? []),
+      entry,
+    ]);
+    sourceMap.set(entry.id, [entry]);
     if (source.repository) repositoryMap.set(entry.id, source.repository);
     entries.push(entry);
   }
@@ -131,6 +140,16 @@ export async function createDocsGraph(
     });
   }
 
+  const redirects = resolveRedirects(
+    config.redirects,
+    entries,
+    routeMap,
+    diagnostics,
+  );
+  for (const [alias, target] of Object.entries(redirects)) {
+    const entry = routeMap.get(target);
+    if (entry) routeMap.set(alias, entry);
+  }
   for (const entry of entries) {
     await transformEntry(
       entry,
@@ -172,6 +191,7 @@ export async function createDocsGraph(
     ).values(),
   );
   return {
+    redirects,
     root,
     config,
     entries,
@@ -181,10 +201,60 @@ export async function createDocsGraph(
     entryByRoute(route) {
       return routeMap.get(normalizeRoute(route));
     },
-    entryBySource(sourcePath) {
-      return sourceMap.get(sourcePath);
+    entryBySource(sourcePath, sourceId) {
+      const matches = sourceMap.get(sourcePath) ?? [];
+      return sourceId
+        ? matches.find((entry) => entry.sourceId === sourceId)
+        : matches.length === 1
+          ? matches[0]
+          : undefined;
     },
   };
+}
+
+function resolveRedirects(
+  configured: Record<string, string>,
+  entries: DocsEntry[],
+  routes: Map<string, DocsEntry>,
+  diagnostics: DocsDiagnostic[],
+): Record<string, string> {
+  const requested = new Map<string, string>();
+  const error = (message: string) =>
+    diagnostics.push({
+      code: "DOCS_REDIRECT_INVALID",
+      severity: "error",
+      message,
+    });
+  const add = (from: string, to: string) => {
+    try {
+      const alias = normalizeRoute(from);
+      const target = normalizeRoute(to);
+      if (routes.has(alias) || requested.has(alias))
+        error(`Redirect ${alias} conflicts with an existing page or redirect.`);
+      else requested.set(alias, target);
+    } catch (cause) {
+      error(errorMessage(cause));
+    }
+  };
+  for (const [from, to] of Object.entries(configured)) add(from, to);
+  for (const entry of entries) {
+    for (const alias of entry.frontmatter.aliases ?? [])
+      add(`${entry.routeBase}/${alias}`, entry.route);
+  }
+  const result: Record<string, string> = {};
+  for (const [alias, target] of requested) {
+    const seen = new Set([alias]);
+    let current = target;
+    while (requested.has(current) && !seen.has(current)) {
+      seen.add(current);
+      current = requested.get(current)!;
+    }
+    if (seen.has(current)) error(`Redirect cycle includes ${alias}.`);
+    else if (!routes.has(current))
+      error(`Redirect ${alias} points to missing document ${current}.`);
+    else result[alias] = current;
+  }
+  return result;
 }
 
 async function collectSources(
@@ -193,15 +263,31 @@ async function collectSources(
   lock: CreateDocsGraphOptions["lock"],
   diagnostics: DocsDiagnostic[],
 ): Promise<CollectedSource[]> {
-  const declarations = config.content.sources?.length
-    ? config.content.sources
-    : await conventionSources(root);
+  const declarations =
+    config.content.sources ?? (await conventionSources(root));
   const results: CollectedSource[] = [];
   const identities = new Set<string>();
 
-  for (const declaration of declarations) {
+  const sourceIds = new Set<string>();
+  for (const [index, declaration] of declarations.entries()) {
+    const sourceId = declaration.id ?? `source-${index + 1}`;
+    if (sourceIds.has(sourceId)) {
+      diagnostics.push({
+        code: "DOCS_DUPLICATE_SOURCE",
+        severity: "error",
+        message: `Source id ${sourceId} is declared more than once.`,
+      });
+      continue;
+    }
+    sourceIds.add(sourceId);
     try {
-      const found = await collectDeclaration(root, declaration, config, lock);
+      const found = await collectDeclaration(
+        root,
+        declaration,
+        config,
+        lock,
+        sourceId,
+      );
       if (found.length === 0) {
         diagnostics.push({
           code: "DOCS_SOURCE_NOT_FOUND",
@@ -210,7 +296,7 @@ async function collectSources(
         });
       }
       for (const source of found) {
-        const identity = normalizeFs(source.absolutePath);
+        const identity = `${sourceId}:${normalizeFs(source.absolutePath)}`;
         if (identities.has(identity)) continue;
         identities.add(identity);
         results.push(source);
@@ -245,9 +331,15 @@ async function collectDeclaration(
   declaration: DocsSource,
   config: NormalizedDocsConfig,
   lock: CreateDocsGraphOptions["lock"],
+  sourceId: string,
 ): Promise<CollectedSource[]> {
   if ("package" in declaration) {
     const packageLock = lockForSource(lock, declaration.package);
+    if (declaration.registry && packageLock.registry !== declaration.registry) {
+      throw new Error(
+        `Registry changed for ${declaration.package}. Run "cookbook update".`,
+      );
+    }
     const sourceRoot = await materializePackage(
       packageLock,
       config.build,
@@ -284,6 +376,10 @@ async function collectDeclaration(
         const absolutePath = resolve(sourceRoot, path);
         if (!inside(sourceRoot, absolutePath)) throw new OutsideRootError(path);
         return {
+          sourceId,
+          ...(declaration.routeBase
+            ? { routeBase: declaration.routeBase }
+            : {}),
           absolutePath,
           sourcePath: path,
           sourceRoot,
@@ -298,23 +394,36 @@ async function collectDeclaration(
       });
   }
 
+  const sourceRoot = resolve(root, declaration.root ?? ".");
   const repository = config.content.localizeRepositoryLinks
     ? repositoryMetadata(config.site.repository)
     : undefined;
 
   if ("file" in declaration) {
     const absolutePath = resolveSourcePath(
-      root,
+      sourceRoot,
       declaration.file,
       config.content.allowOutsideRoot,
     );
     if (!(await isFile(absolutePath))) return [];
     return [
       {
+        sourceId,
+        ...(declaration.routeBase ? { routeBase: declaration.routeBase } : {}),
         absolutePath,
-        sourcePath: toPosix(relative(root, absolutePath)),
-        sourceRoot: root,
-        ...(declaration.route ? { route: declaration.route } : {}),
+        sourcePath: toPosix(relative(sourceRoot, absolutePath)),
+        editPath: toPosix(
+          relative(
+            inside(root, absolutePath) ? root : sourceRoot,
+            absolutePath,
+          ),
+        ),
+        sourceRoot,
+        route: declaration.route
+          ? normalizeRoute(
+              `${declaration.routeBase ?? ""}/${declaration.route}`,
+            )
+          : routeForPath(declaration.file, undefined, declaration.routeBase),
         ...(declaration.title ? { title: declaration.title } : {}),
         ...(declaration.description
           ? { description: declaration.description }
@@ -332,21 +441,26 @@ async function collectDeclaration(
     ? declaration.glob
     : [declaration.glob];
   const paths = await glob(patterns, {
-    cwd: root,
+    cwd: sourceRoot,
     onlyFiles: true,
     dot: false,
     ignore: ["**/_*/**", "**/_*", ...(declaration.exclude ?? [])],
   });
   return paths.map((path) => {
     const absolutePath = resolveSourcePath(
-      root,
+      sourceRoot,
       path,
       config.content.allowOutsideRoot,
     );
     return {
+      sourceId,
+      ...(declaration.routeBase ? { routeBase: declaration.routeBase } : {}),
       absolutePath,
-      sourcePath: toPosix(relative(root, absolutePath)),
-      sourceRoot: root,
+      sourcePath: toPosix(relative(sourceRoot, absolutePath)),
+      editPath: toPosix(
+        relative(inside(root, absolutePath) ? root : sourceRoot, absolutePath),
+      ),
+      sourceRoot,
       route: routeForPath(path, declaration.base, declaration.routeBase),
       ...(declaration.navigation === false ? { navigation: false } : {}),
       trust: "mdx",
@@ -391,8 +505,14 @@ async function readEntry(
     frontmatter.sidebar = source.navigation;
   }
   const diagnosticCount = diagnostics.length;
+  const metadata: Record<string, unknown> = {};
   for (const key of Object.keys(frontmatter)) {
     if (!FRONTMATTER_KEYS.has(key)) {
+      if (config.content.frontmatter !== "reject") {
+        metadata[key] = (frontmatter as Record<string, unknown>)[key];
+        delete (frontmatter as Record<string, unknown>)[key];
+        continue;
+      }
       diagnostics.push({
         code: "DOCS_FRONTMATTER_INVALID",
         severity: "error",
@@ -406,7 +526,9 @@ async function readEntry(
   const mdx = extname(source.sourcePath).toLowerCase() === ".mdx";
   const parsed = parseMarkdown(parsedMatter.content, { mdx });
   const route = normalizeRoute(
-    frontmatter.slug ?? source.route ?? routeForPath(source.sourcePath),
+    frontmatter.slug !== undefined
+      ? `${source.routeBase ?? ""}/${frontmatter.slug}`
+      : (source.route ?? routeForPath(source.sourcePath)),
   );
   const title =
     frontmatter.title ??
@@ -430,9 +552,11 @@ async function readEntry(
       });
     }
   }
-  const idPrefix = source.packageLock?.resolved ?? "local";
   return {
-    id: `${idPrefix}:${source.sourcePath}`,
+    id: `${source.sourceId}:${source.sourcePath}`,
+    sourceId: source.sourceId,
+    routeBase: source.routeBase ?? "/",
+    metadata,
     sourcePath: source.sourcePath,
     absolutePath: source.absolutePath,
     sourceRoot: source.sourceRoot,
@@ -467,7 +591,7 @@ async function resolvePageMetadata(
     const baseUrl = config.editLink.baseUrl.endsWith("/")
       ? config.editLink.baseUrl
       : `${config.editLink.baseUrl}/`;
-    frontmatter.editUrl = `${baseUrl}${source.sourcePath.replace(/^\/+/, "")}`;
+    frontmatter.editUrl = `${baseUrl}${(source.editPath ?? source.sourcePath).replace(/^\/+/, "")}`;
   }
 
   if (frontmatter.lastUpdated === false) return;
@@ -493,7 +617,7 @@ async function resolvePageMetadata(
 
 async function transformEntry(
   entry: DocsEntry,
-  absoluteMap: Map<string, DocsEntry>,
+  absoluteMap: Map<string, DocsEntry[]>,
   routeMap: Map<string, DocsEntry>,
   repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
@@ -504,34 +628,59 @@ async function transformEntry(
   if (config.markdown.stripLeadingBadges) stripLeadingBadgeBlock(ast);
   removeRenderedTitle(ast, entry.title);
 
-  visit(ast, (node) => {
-    if (node.type !== "html") return;
+  const htmlTasks: Promise<void>[] = [];
+  visit(ast, "html", (node) => {
     const policy = rawHtmlPolicy(entry, config);
     if (policy === "allow") return;
-    if (policy === "reject") {
-      diagnostics.push({
-        code: "DOCS_RAW_HTML_REJECTED",
-        severity: "error",
-        message: `Raw HTML is not allowed by markdown.rawHtml: ${entry.sourcePath}.`,
-        file: entry.sourcePath,
-        ...(node.position?.start.line
-          ? { line: node.position.start.line }
-          : {}),
-      });
-    } else if (entry.trust === "markdown") {
-      diagnostics.push({
-        code: "DOCS_UNTRUSTED_HTML",
-        severity: "warning",
-        message:
-          "Raw HTML was removed from package Markdown. Use trust: 'mdx' only for packages you trust.",
-        file: entry.sourcePath,
-        ...(node.position?.start.line
-          ? { line: node.position.start.line }
-          : {}),
-      });
+    if (policy === "sanitize") {
+      htmlTasks.push(
+        sanitizeMarkup(node.value, async (url, kind) => {
+          const reference: Link = {
+            type: "link",
+            url,
+            children: [],
+            ...(node.position ? { position: node.position } : {}),
+          };
+          if (kind === "link") {
+            await rewriteLink(
+              reference,
+              entry,
+              absoluteMap,
+              routeMap,
+              repositoryMap,
+              config,
+              diagnostics,
+            );
+          } else {
+            const image: Image = {
+              type: "image",
+              url,
+              alt: "",
+              ...(node.position ? { position: node.position } : {}),
+            };
+            await rewriteAsset(image, entry, config, diagnostics);
+            reference.url = image.url;
+          }
+          return reference.url;
+        }).then((html) => {
+          node.value = html;
+        }),
+      );
+      return;
     }
+    diagnostics.push({
+      code:
+        policy === "reject"
+          ? "DOCS_RAW_HTML_REJECTED"
+          : "DOCS_RAW_HTML_STRIPPED",
+      severity: policy === "reject" ? "error" : "warning",
+      message: `Raw HTML was ${policy === "reject" ? "rejected" : "removed"}: ${entry.sourcePath}.`,
+      file: entry.sourcePath,
+      ...lineData(node),
+    });
     node.value = "";
   });
+  await Promise.all(htmlTasks);
 
   const referenceKinds = new Map<string, "link" | "image" | "mixed">();
   visit(ast, (node) => {
@@ -661,12 +810,13 @@ function rawHtmlPolicy(
   config: NormalizedDocsConfig,
 ): NormalizedDocsConfig["markdown"]["rawHtml"] {
   if (config.markdown.rawHtml === "reject") return "reject";
+  if (config.markdown.rawHtml === "strip") return "strip";
   return entry.trust === "markdown" ? "sanitize" : config.markdown.rawHtml;
 }
 
 async function rewriteFrontmatterReferences(
   entry: DocsEntry,
-  absoluteMap: Map<string, DocsEntry>,
+  absoluteMap: Map<string, DocsEntry[]>,
   routeMap: Map<string, DocsEntry>,
   repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
@@ -719,7 +869,7 @@ async function rewriteFrontmatterAsset(
 async function rewriteLink(
   node: Link | Definition,
   entry: DocsEntry,
-  absoluteMap: Map<string, DocsEntry>,
+  absoluteMap: Map<string, DocsEntry[]>,
   routeMap: Map<string, DocsEntry>,
   repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
@@ -730,6 +880,28 @@ async function rewriteLink(
     ...lineData(node),
   };
   entry.links.push(reference);
+  if (node.url.startsWith("source:")) {
+    const { pathname, query, fragment } = splitReference(node.url.slice(7));
+    const slash = pathname.indexOf("/");
+    const sourceId = slash < 0 ? pathname : pathname.slice(0, slash);
+    const sourcePath = safeDecode(pathname.slice(slash + 1));
+    const target = [...absoluteMap.values()]
+      .flat()
+      .find(
+        (candidate) =>
+          candidate.sourceId === sourceId &&
+          candidate.sourcePath === sourcePath,
+      );
+    if (!target || slash < 0)
+      missingLink(diagnostics, entry, node, node.url, config);
+    else {
+      node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+      reference.resolved = node.url;
+      reference.targetSource = target.sourcePath;
+      validateFragment(fragment, target, entry, node, diagnostics, config);
+    }
+    return;
+  }
   if (unsafeProtocol(node.url)) {
     diagnostic(
       diagnostics,
@@ -784,8 +956,18 @@ async function rewriteLink(
     );
     return;
   }
-  const target = findDocument(targetPath, absoluteMap);
+  const target = findDocument(targetPath, absoluteMap, entry.sourceId);
   if (!target) {
+    if (documentMatches(targetPath, absoluteMap).length > 1) {
+      diagnostic(
+        diagnostics,
+        "DOCS_AMBIGUOUS_LINK",
+        `Link matches multiple source mounts: ${node.url}. Use source:<id>/<path> to choose a source.`,
+        entry,
+        node,
+      );
+      return;
+    }
     if (await isFile(targetPath)) {
       const asset = await materializeAsset(
         node.url,
@@ -896,7 +1078,7 @@ async function materializeAsset(
 async function rewriteDefinition(
   node: Definition,
   entry: DocsEntry,
-  absoluteMap: Map<string, DocsEntry>,
+  absoluteMap: Map<string, DocsEntry[]>,
   routeMap: Map<string, DocsEntry>,
   repositoryMap: Map<string, RepositoryMetadata>,
   config: NormalizedDocsConfig,
@@ -904,7 +1086,11 @@ async function rewriteDefinition(
 ): Promise<void> {
   const { pathname } = splitReference(node.url);
   const targetPath = resolve(dirname(entry.absolutePath), safeDecode(pathname));
-  if (findDocument(targetPath, absoluteMap) || pathname.startsWith("/")) {
+  if (
+    documentMatches(targetPath, absoluteMap).length > 0 ||
+    node.url.startsWith("source:") ||
+    pathname.startsWith("/")
+  ) {
     await rewriteLink(
       node,
       entry,
@@ -921,8 +1107,20 @@ async function rewriteDefinition(
 
 function findDocument(
   path: string,
-  absoluteMap: Map<string, DocsEntry>,
+  absoluteMap: Map<string, DocsEntry[]>,
+  sourceId?: string,
 ): DocsEntry | undefined {
+  const matches = documentMatches(path, absoluteMap);
+  return (
+    matches.find((item) => item.sourceId === sourceId) ??
+    (matches.length === 1 ? matches[0] : undefined)
+  );
+}
+
+function documentMatches(
+  path: string,
+  absoluteMap: Map<string, DocsEntry[]>,
+): DocsEntry[] {
   const candidates = [
     path,
     ...MARKDOWN_EXTENSIONS.map((extension) => `${path}${extension}`),
@@ -934,10 +1132,10 @@ function findDocument(
     ),
   ];
   for (const candidate of candidates) {
-    const entry = absoluteMap.get(normalizeFs(candidate));
-    if (entry) return entry;
+    const matches = absoluteMap.get(normalizeFs(candidate)) ?? [];
+    if (matches.length) return matches;
   }
-  return undefined;
+  return [];
 }
 
 function validateFragment(
@@ -1084,7 +1282,7 @@ function isExternal(url: string): boolean {
 function localizedRepositoryTarget(
   value: string,
   entry: DocsEntry,
-  entries: Map<string, DocsEntry>,
+  entries: Map<string, DocsEntry[]>,
   metadata: RepositoryMetadata | undefined,
 ): DocsEntry | undefined {
   if (!metadata) return undefined;
@@ -1114,6 +1312,7 @@ function localizedRepositoryTarget(
 
   const directory = metadata.directory?.replace(/^\/+|\/+$/g, "");
   const matches = [...entries.values()]
+    .flat()
     .filter((candidate) => candidate.sourceRoot === entry.sourceRoot)
     .flatMap((candidate) => {
       const sourcePath = candidate.sourcePath.replace(/^\/+/, "");
@@ -1135,7 +1334,12 @@ function localizedRepositoryTarget(
       );
       return matched ? [{ candidate, length: matched.length }] : [];
     })
-    .sort((left, right) => right.length - left.length);
+    .sort(
+      (left, right) =>
+        Number(right.candidate.sourceId === entry.sourceId) -
+          Number(left.candidate.sourceId === entry.sourceId) ||
+        right.length - left.length,
+    );
   return matches[0]?.candidate;
 }
 
@@ -1311,6 +1515,12 @@ function validateFrontmatter(
       message,
       file,
     });
+  if (
+    value.aliases !== undefined &&
+    (!Array.isArray(value.aliases) ||
+      value.aliases.some((alias) => typeof alias !== "string"))
+  )
+    error("aliases must be an array of route strings.");
   for (const key of ["title", "description", "slug"] as const) {
     if (record[key] !== undefined && typeof record[key] !== "string") {
       error(`${key} must be a string.`);

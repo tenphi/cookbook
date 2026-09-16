@@ -3,6 +3,7 @@ export {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
   defineDocsConfig,
+  mergeDocsConfig,
 } from "@tenphi/docs";
 export type {
   BrandConfig,

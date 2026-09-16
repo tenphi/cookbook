@@ -27,7 +27,9 @@
     "changeset": "changeset",
     "version:packages": "changeset version && node scripts/sync-root-changelog.mjs",
     "sync:changelog": "node scripts/sync-root-changelog.mjs",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "check:development": "node scripts/smoke-development.mjs",
+    "check:types": "tsc -p packages/facade/type-tests/tsconfig.json"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

@@ -1,9 +1,10 @@
 import { spawn } from "node:child_process";
 import { cp, mkdir, readdir, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { basename, join, relative, resolve } from "node:path";
 import creatorPackage from "../package.json" with { type: "json" };
 import {
   defaultLock,
+  normalizeDocsConfig,
   discoverPackage,
   materializePackage,
   packageNameFromSpecifier,
@@ -16,7 +17,9 @@ import {
 export type PackageManager = "npm" | "pnpm" | "yarn";
 
 export interface ScaffoldOptions {
-  package: string;
+  package?: string;
+  /** Existing repository to document; omit both source and package for a starter. */
+  source?: string;
   destination?: string;
   packageManager?: PackageManager;
   install?: boolean;
@@ -31,46 +34,64 @@ export interface ScaffoldOptions {
 
 export interface ScaffoldResult {
   destination: string;
-  lock: PackageLockSource;
-  discovery: PackageDiscovery;
+  lock?: PackageLockSource;
+  discovery?: PackageDiscovery;
   packageManager: PackageManager;
 }
 
 export async function scaffold(
   options: ScaffoldOptions,
 ): Promise<ScaffoldResult> {
-  const packageName = packageNameFromSpecifier(options.package);
+  if (options.package && options.source)
+    throw new Error("Choose either --package or --source.");
+  if ((options.vendor || options.trustPackage) && !options.package)
+    throw new Error("--vendor and --trust-package require --package.");
+  normalizeDocsConfig({
+    ...(options.site ? { site: { url: options.site } } : {}),
+    ...(options.brand ? { theme: { brand: options.brand } } : {}),
+  });
+  const packageName = options.package
+    ? packageNameFromSpecifier(options.package)
+    : undefined;
   const destination = resolve(
-    options.destination ?? `${packageName.replace(/^@[^/]+\//, "")}-docs`,
+    options.destination ??
+      (packageName
+        ? `${packageName.replace(/^@[^/]+\//, "")}-docs`
+        : "docs-site"),
   );
   const packageManager = options.packageManager ?? inferPackageManager();
-  const lock = await resolvePackageLock(options.package);
-  const buildDefaults = {
-    strict: true,
-    ci: false,
-    base: "/",
-    cacheDir: "",
-    maxArtifactBytes: 25 * 1024 * 1024,
-    maxUnpackedBytes: 100 * 1024 * 1024,
-    maxFiles: 10_000,
-    maxPathDepth: 24,
-    maxAssetBytes: 20 * 1024 * 1024,
-  };
-  const packageRoot = await materializePackage(lock, buildDefaults);
-  const discovery = await discoverPackage(packageRoot);
-
-  await mkdir(destination, { recursive: true });
-  const existing = await readdir(destination);
-  if (existing.length > 0) {
-    const confirmed = await options.confirmNonEmpty?.(destination);
-    if (!confirmed)
-      throw new Error(`Destination is not empty: ${destination}.`);
+  let existing: string[] = [];
+  try {
+    existing = await readdir(destination);
+  } catch (error) {
+    if (!(
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ))
+      throw error;
   }
+  if (existing.length > 0 && !(await options.confirmNonEmpty?.(destination)))
+    throw new Error(`Destination is not empty: ${destination}.`);
+  if (options.source) await readdir(resolve(options.source));
+  const lock = options.package
+    ? await resolvePackageLock(options.package)
+    : undefined;
+  const buildDefaults = normalizeDocsConfig().build;
+  const packageRoot = lock
+    ? await materializePackage(lock, buildDefaults)
+    : undefined;
+  const discovery = packageRoot
+    ? await discoverPackage(packageRoot)
+    : undefined;
+  await mkdir(destination, { recursive: true });
 
-  const projectLock = options.vendor
-    ? { ...lock, vendored: ".cookbook/vendor/package" }
-    : lock;
-  if (options.vendor && projectLock.vendored) {
+  const projectLock =
+    lock && options.vendor
+      ? { ...lock, vendored: ".cookbook/vendor/package" }
+      : lock;
+  if (packageRoot && projectLock?.vendored) {
     await mkdir(join(destination, ".cookbook", "vendor"), {
       recursive: true,
     });
@@ -87,7 +108,7 @@ export async function scaffold(
     ),
     writeFile(
       join(destination, "astro.config.ts"),
-      renderAstroConfig(options, discovery.manifest.name),
+      renderAstroConfig(options),
       "utf8",
     ),
     writeFile(join(destination, "tsconfig.json"), tsconfig(), "utf8"),
@@ -96,13 +117,41 @@ export async function scaffold(
       "node_modules/\ndist/\n.astro/\n",
       "utf8",
     ),
-    writeDocsLock(destination, defaultLock([projectLock])),
+    writeFile(
+      join(destination, "docs.config.ts"),
+      renderDocsConfig(
+        options,
+        discovery?.manifest.name ??
+          (options.source
+            ? basename(resolve(options.source))
+            : "Documentation"),
+        destination,
+      ),
+      "utf8",
+    ),
+    ...(projectLock
+      ? [writeDocsLock(destination, defaultLock([projectLock]))]
+      : []),
+    ...(!options.package && !options.source
+      ? [
+          writeFile(
+            join(destination, "README.md"),
+            "# Documentation\n\nWelcome to your documentation. Add Markdown pages in `docs/` to get started.\n",
+            "utf8",
+          ),
+        ]
+      : []),
   ]);
   if (options.deploy === "github-pages")
     await writeGithubWorkflow(destination, packageManager);
   if (options.install !== false)
     await installDependencies(destination, packageManager);
-  return { destination, lock: projectLock, discovery, packageManager };
+  return {
+    destination,
+    ...(projectLock ? { lock: projectLock } : {}),
+    ...(discovery ? { discovery } : {}),
+    packageManager,
+  };
 }
 
 export function renderPackageJson(packageManager: PackageManager): string {
@@ -135,23 +184,41 @@ export function renderPackageJson(packageManager: PackageManager): string {
   )}\n`;
 }
 
-export function renderAstroConfig(
+export function renderAstroConfig(options: ScaffoldOptions): string {
+  return `import { defineConfig } from 'astro/config';\nimport cookbook from '@tenphi/cookbook';\n\nexport default defineConfig({\n  ${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}integrations: [cookbook()],\n});\n`;
+}
+
+export function renderDocsConfig(
   options: ScaffoldOptions,
-  packageName: string,
+  title: string,
+  destination = resolve(options.destination ?? "docs-site"),
 ): string {
-  const source = {
-    package: options.package,
-    ...(options.trustPackage ? { trust: "mdx" as const } : {}),
+  const config = {
+    ...(options.source
+      ? {
+          root:
+            relative(destination, resolve(options.source)).replaceAll(
+              "\\",
+              "/",
+            ) || ".",
+        }
+      : {}),
+    site: { title, ...(options.site ? { url: options.site } : {}) },
+    ...(options.package
+      ? {
+          content: {
+            sources: [
+              {
+                package: options.package,
+                ...(options.trustPackage ? { trust: "mdx" } : {}),
+              },
+            ],
+          },
+        }
+      : {}),
+    ...(options.brand ? { theme: { brand: options.brand } } : {}),
   };
-  const docsConfig = {
-    site: {
-      title: packageName,
-      ...(options.site ? { url: options.site } : {}),
-    },
-    content: { sources: [source] },
-    ...(options.brand ? { theme: { brand: { from: options.brand } } } : {}),
-  };
-  return `import { defineConfig } from 'astro/config';\nimport cookbook, { defineDocsConfig } from '@tenphi/cookbook';\n\nconst docs = defineDocsConfig(${JSON.stringify(docsConfig, null, 2)});\n\nexport default defineConfig({\n  ${options.base ? `base: ${JSON.stringify(options.base)},\n  ` : ""}output: 'static',\n  integrations: [cookbook({ config: docs })],\n});\n`;
+  return `import { defineDocsConfig } from '@tenphi/cookbook/config';\n\nexport default defineDocsConfig(${JSON.stringify(config, null, 2)});\n`;
 }
 
 function tsconfig(): string {

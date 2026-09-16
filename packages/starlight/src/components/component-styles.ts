@@ -1,19 +1,15 @@
 import { mergeStyles, type Styles } from "@tenphi/tasty/core";
-import {
-  COOKBOOK_COMPONENT_NAMES,
-  type ComponentStyleConfig,
-  type ComponentStylesConfig,
-} from "@tenphi/docs";
+import { COOKBOOK_COMPONENT_NAMES } from "@tenphi/docs";
 
 // Astro can load the integration and renderer through separate module graphs.
 // Keep their component configuration on the shared process global.
 const sharedConfiguration = globalThis as typeof globalThis & {
-  __tenphiCookbookComponentStyles?: ComponentStylesConfig;
+  __tenphiCookbookComponentStyles?: Record<string, Styles | undefined>;
 };
 const cookbookComponentNames = new Set<string>(COOKBOOK_COMPONENT_NAMES);
 
 export function configureComponentStyles(
-  styles: ComponentStylesConfig | undefined,
+  styles: Record<string, Styles | undefined> | undefined,
 ): void {
   sharedConfiguration.__tenphiCookbookComponentStyles = styles ?? {};
 }
@@ -24,8 +20,7 @@ export function resolveComponentStyles(
   baseStyles: Styles,
 ): Styles {
   const configuredStyles = sharedConfiguration
-    .__tenphiCookbookComponentStyles?.[name] as
-    ComponentStyleConfig | undefined;
+    .__tenphiCookbookComponentStyles?.[name] as Styles | undefined;
   return configuredStyles
     ? mergeStyles(baseStyles, configuredStyles as Styles)
     : baseStyles;
@@ -40,12 +35,12 @@ export function resolveComponentStyleOverride(
 
 /** Preserve custom anatomy names from the pre-component style API. */
 export function resolveLegacyAnatomyStyles(
-  styles: ComponentStylesConfig | undefined,
+  styles: Record<string, Styles | undefined> | undefined,
 ): Record<string, Styles> | undefined {
   if (!styles) return undefined;
   const entries = Object.entries(styles)
     .filter(
-      (entry): entry is [string, ComponentStyleConfig] =>
+      (entry): entry is [string, Styles] =>
         !cookbookComponentNames.has(entry[0]) && entry[1] !== undefined,
     )
     .map(([name, value]) => [`[data-tasty-anatomy="${name}"]`, value]);

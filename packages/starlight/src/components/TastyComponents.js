@@ -140,13 +140,117 @@ export const TabsRoot = customizeComponent(
   tasty({
     as: "div",
     styles: {
-      display: "flex",
-      flow: "row wrap",
-      gap: "1x",
-      padding: "1x",
+      margin: "2x 0",
       border: true,
       radius: "1cr",
-      fill: "#surface-2",
+      overflow: "clip",
+      fill: "#surface",
+      List: {
+        padding: "1x",
+        display: "flex",
+        gap: "1x",
+        overflow: "auto",
+        fill: "#surface-2",
+      },
+      Button: {
+        $: "> [data-tabs-list] > button",
+        margin: "0",
+        preset: "navigation",
+        padding: "1x 2x",
+        border: "0",
+        radius: "1r",
+        color: "#text",
+        fill: "#clear",
+        cursor: "pointer",
+        whiteSpace: "nowrap",
+      },
+      SelectedButton: {
+        $: '> [data-tabs-list] > button[aria-selected="true"]',
+        color: "#accent-surface-text",
+        fill: "#accent-surface",
+      },
+      FocusedButton: {
+        $: "> [data-tabs-list] > button:focus-visible",
+        outline: "2px #focus / -2px",
+      },
     },
+    elements: { List: "div" },
+  }),
+);
+
+export const TabRoot = customizeComponent(
+  "Tab",
+  tasty({
+    as: "section",
+    styles: {
+      margin: "0",
+      padding: "2x",
+      Heading: { margin: "0 0 1x", preset: "h3" },
+      Hidden: { $: "&[hidden]", hide: true },
+      HiddenHeading: { $: "> [data-tab-heading][hidden]", hide: true },
+    },
+    elements: { Heading: "h3" },
+  }),
+);
+
+export const CalloutRoot = customizeComponent(
+  "Callout",
+  tasty({
+    as: "aside",
+    styles: {
+      "#callout-border": "#info",
+      "#callout-text": "#info-text",
+      "#callout-surface": "#info-surface",
+      margin: "2x 0",
+      padding: "2x 3x",
+      border: "1bw #callout-border",
+      radius: "1cr",
+      fill: "#callout-surface",
+      color: "#text",
+      Title: {
+        preset: "body / strong",
+        color: "#callout-text",
+        margin: "0 0 1x",
+      },
+      Body: { color: "#text", margin: "0" },
+      Tip: {
+        $: '&[data-kind="tip"]',
+        "#callout-border": "#success",
+        "#callout-text": "#success-text",
+        "#callout-surface": "#success-surface",
+      },
+      Caution: {
+        $: '&[data-kind="caution"]',
+        "#callout-border": "#warning",
+        "#callout-text": "#warning-text",
+        "#callout-surface": "#warning-surface",
+      },
+      Danger: {
+        $: '&[data-kind="danger"]',
+        "#callout-border": "#danger",
+        "#callout-text": "#danger-text",
+        "#callout-surface": "#danger-surface",
+      },
+    },
+    elements: { Title: "p", Body: "div" },
+  }),
+);
+
+export const CodeGroupRoot = customizeComponent(
+  "CodeGroup",
+  tasty({
+    as: "div",
+    styles: {
+      Caption: { preset: "small", color: "#text-soft", margin: "0 0 1x" },
+      Pre: {
+        margin: "0",
+        padding: "2x",
+        overflow: "auto",
+        fill: "#surface-2",
+        radius: "1r",
+      },
+      Code: { preset: "code", color: "#text", whiteSpace: "pre" },
+    },
+    elements: { Caption: "p", Pre: "pre", Code: "code" },
   }),
 );

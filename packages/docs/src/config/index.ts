@@ -1,3 +1,9 @@
+import { glaze } from "@tenphi/glaze";
+import { mergeStyles, type Styles } from "@tenphi/tasty/core";
+import {
+  COOKBOOK_COMPONENT_NAMES,
+  COOKBOOK_COMPONENT_SUB_ELEMENTS,
+} from "../types.js";
 import type {
   DocsConfig,
   DocsDiagnostic,
@@ -8,6 +14,8 @@ const DEFAULT_BRAND = "#315efb";
 const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
 const SITE_ICON_KEYS = new Set(["source", "background"]);
 const ROOT_KEYS = new Set([
+  "root",
+  "redirects",
   "site",
   "head",
   "editLink",
@@ -32,7 +40,12 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "repository",
     "favicon",
   ]),
-  content: new Set(["sources", "allowOutsideRoot", "localizeRepositoryLinks"]),
+  content: new Set([
+    "sources",
+    "allowOutsideRoot",
+    "localizeRepositoryLinks",
+    "frontmatter",
+  ]),
   markdown: new Set(["stripLeadingBadges", "rawHtml"]),
   search: new Set(["enabled"]),
   components: new Set(["overrides"]),
@@ -43,6 +56,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "tokens",
     "presets",
     "styles",
+    "customStyles",
     "contrastLevel",
   ]),
   build: new Set([
@@ -69,6 +83,13 @@ export class DocsConfigError extends Error {
 
 export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
   const diagnostics: DocsDiagnostic[] = [];
+  if (config === null || typeof config !== "object" || Array.isArray(config)) {
+    invalid(diagnostics, "Documentation configuration must be an object.");
+    return diagnostics;
+  }
+  if (config.root !== undefined && typeof config.root !== "string") {
+    invalid(diagnostics, "root must be a directory path.");
+  }
   for (const key of Object.keys(config)) {
     if (!ROOT_KEYS.has(key)) unknown(diagnostics, key);
   }
@@ -108,6 +129,14 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  if (
+    config.redirects !== undefined &&
+    (!isRecord(config.redirects) ||
+      Object.values(config.redirects).some(
+        (value) => typeof value !== "string",
+      ))
+  )
+    invalid(diagnostics, "redirects must map old routes to document routes.");
   const head = config.head;
   if (head !== undefined && !Array.isArray(head)) {
     invalid(diagnostics, "head must be an array.");
@@ -282,10 +311,29 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
     const variant = variants[0] as "file" | "glob" | "package";
     const allowed = {
-      file: new Set(["file", "route", "title", "description", "navigation"]),
-      glob: new Set(["glob", "base", "routeBase", "exclude", "navigation"]),
+      file: new Set([
+        "id",
+        "root",
+        "routeBase",
+        "file",
+        "route",
+        "title",
+        "description",
+        "navigation",
+      ]),
+      glob: new Set([
+        "id",
+        "root",
+        "glob",
+        "base",
+        "routeBase",
+        "exclude",
+        "navigation",
+      ]),
       package: new Set([
+        "id",
         "package",
+        "registry",
         "include",
         "exclude",
         "index",
@@ -297,6 +345,50 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       if (!allowed.has(key))
         unknown(diagnostics, `content.sources[${index}].${key}`);
     }
+    for (const field of [
+      "id",
+      "root",
+      "route",
+      "routeBase",
+      "base",
+      "index",
+      "title",
+      "description",
+      "registry",
+    ]) {
+      if (
+        sourceRecord[field] !== undefined &&
+        typeof sourceRecord[field] !== "string"
+      )
+        invalid(
+          diagnostics,
+          `content.sources[${index}].${field} must be a string.`,
+        );
+    }
+    if (
+      typeof sourceRecord.id === "string" &&
+      !/^[a-zA-Z0-9_-]+$/.test(sourceRecord.id)
+    )
+      invalid(
+        diagnostics,
+        `content.sources[${index}].id must contain only letters, numbers, underscores, and hyphens.`,
+      );
+    if (
+      sourceRecord.trust !== undefined &&
+      !["markdown", "mdx"].includes(String(sourceRecord.trust))
+    )
+      invalid(
+        diagnostics,
+        `content.sources[${index}].trust must be "markdown" or "mdx".`,
+      );
+    if (
+      typeof sourceRecord.registry === "string" &&
+      !isHttpUrl(sourceRecord.registry)
+    )
+      invalid(
+        diagnostics,
+        `content.sources[${index}].registry must be an absolute HTTP(S) URL.`,
+      );
     const selector = sourceRecord[variant];
     if (
       variant === "glob"
@@ -333,11 +425,11 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
   }
   if (
     config.markdown?.rawHtml !== undefined &&
-    !["allow", "sanitize", "reject"].includes(config.markdown.rawHtml)
+    !["allow", "sanitize", "strip", "reject"].includes(config.markdown.rawHtml)
   ) {
     invalid(
       diagnostics,
-      'markdown.rawHtml must be "allow", "sanitize", or "reject".',
+      'markdown.rawHtml must be "allow", "sanitize", "strip", or "reject".',
     );
   }
   if (
@@ -385,19 +477,121 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  if (
+    config.content?.frontmatter !== undefined &&
+    !["preserve", "reject"].includes(config.content.frontmatter)
+  )
+    invalid(diagnostics, 'content.frontmatter must be "preserve" or "reject".');
+  for (const field of [
+    "styles",
+    "customStyles",
+    "palette",
+    "tokens",
+    "states",
+    "presets",
+  ] as const) {
+    if (config.theme?.[field] !== undefined && !isRecord(config.theme[field]))
+      invalid(diagnostics, `theme.${field} must be an object.`);
+  }
   for (const [name, entry] of Object.entries(config.theme?.styles ?? {})) {
-    if (!isRecord(entry)) {
+    if (!(COOKBOOK_COMPONENT_NAMES as readonly string[]).includes(name)) {
+      unknown(
+        diagnostics,
+        `theme.styles.${name}; register custom components under theme.customStyles`,
+      );
+      continue;
+    }
+    if (!isRecord(entry))
       invalid(
         diagnostics,
         `theme.styles.${name} must be a Tasty style object.`,
       );
-    } else if ("mode" in entry) {
+    else {
+      if ("mode" in entry)
+        invalid(
+          diagnostics,
+          `theme.styles.${name} must contain only Tasty properties, without a mode wrapper.`,
+        );
+      const elements: readonly string[] =
+        COOKBOOK_COMPONENT_SUB_ELEMENTS[
+          name as keyof typeof COOKBOOK_COMPONENT_SUB_ELEMENTS
+        ];
+      for (const key of Object.keys(entry)) {
+        if (/^[A-Z]/.test(key) && !elements.includes(key))
+          unknown(diagnostics, `theme.styles.${name}.${key}`);
+      }
+    }
+  }
+  for (const [name, entry] of Object.entries(
+    config.theme?.customStyles ?? {},
+  )) {
+    if ((COOKBOOK_COMPONENT_NAMES as readonly string[]).includes(name))
       invalid(
         diagnostics,
-        `theme.styles.${name} must contain only the Tasty style properties to override, without a mode wrapper.`,
+        `Use theme.styles.${name} for a built-in component.`,
+      );
+    if (
+      !/^[A-Za-z][A-Za-z0-9_-]*$/.test(name) ||
+      !isRecord(entry) ||
+      "mode" in entry
+    )
+      invalid(
+        diagnostics,
+        `theme.customStyles.${name} must be a named partial Tasty style object.`,
+      );
+  }
+  for (const [name, value] of Object.entries(config.theme?.palette ?? {})) {
+    if (
+      ![
+        "surface",
+        "text",
+        "textSoft",
+        "info",
+        "success",
+        "warning",
+        "danger",
+      ].includes(name)
+    )
+      unknown(diagnostics, `theme.palette.${name}`);
+    try {
+      glaze.color({ from: value }).resolve();
+    } catch (error) {
+      invalid(
+        diagnostics,
+        `theme.palette.${name}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
+  if (brand !== undefined) {
+    try {
+      glaze
+        .color({
+          from:
+            typeof brand === "object" && brand !== null && "from" in brand
+              ? brand.from
+              : brand,
+        })
+        .resolve();
+    } catch (error) {
+      invalid(
+        diagnostics,
+        `theme.brand: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+  const contrast = config.theme?.contrastLevel;
+  if (
+    contrast !== undefined &&
+    contrast !== "auto" &&
+    (typeof contrast !== "number" ||
+      !Number.isFinite(contrast) ||
+      contrast < 0 ||
+      contrast > 100)
+  )
+    invalid(
+      diagnostics,
+      'theme.contrastLevel must be "auto" or a number from 0 to 100.',
+    );
 
   const componentOverrides = config.components?.overrides;
   if (componentOverrides !== undefined && !isRecord(componentOverrides)) {
@@ -453,6 +647,7 @@ export function normalizeDocsConfig(
     : (config.navigation ?? {});
 
   return {
+    redirects: { ...config.redirects },
     site: { ...config.site },
     head: [...(config.head ?? [])],
     ...(config.editLink ? { editLink: { ...config.editLink } } : {}),
@@ -488,11 +683,51 @@ export function normalizeDocsConfig(
   };
 }
 
-export function defineDocsConfig<const T extends DocsConfig>(config: T): T {
+export function defineDocsConfig(config: DocsConfig): DocsConfig {
   const diagnostics = validateConfig(config);
   if (diagnostics.length > 0) throw new DocsConfigError(diagnostics);
   return config;
 }
+
+/** Compose presets. Objects merge, arrays replace, and styles use Tasty semantics. */
+export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
+  const merge = (
+    base: Record<string, unknown>,
+    next: Record<string, unknown>,
+  ) => {
+    const result = { ...base };
+    for (const [key, value] of Object.entries(next)) {
+      if (value === undefined) continue;
+      result[key] = isRecord(value)
+        ? merge(isRecord(result[key]) ? result[key] : {}, value)
+        : Array.isArray(value)
+          ? [...value]
+          : value;
+    }
+    return result;
+  };
+  return defineDocsConfig(
+    configs.reduce<DocsConfig>((base, next) => {
+      const diagnostics = validateConfig(next);
+      if (diagnostics.length) throw new DocsConfigError(diagnostics);
+      const result = merge(
+        base as Record<string, unknown>,
+        next as Record<string, unknown>,
+      ) as DocsConfig;
+      for (const field of ["styles", "customStyles"] as const) {
+        if (!next.theme?.[field]) continue;
+        const styles = { ...base.theme?.[field] } as Record<string, Styles>;
+        for (const [name, configured] of Object.entries(next.theme[field])) {
+          styles[name] = mergeStyles(styles[name] ?? {}, configured);
+        }
+        result.theme![field] = styles;
+      }
+      return result;
+    }, {}),
+  );
+}
+
+export { COOKBOOK_COMPONENT_NAMES, COOKBOOK_COMPONENT_SUB_ELEMENTS };
 
 export type {
   BrandConfig,

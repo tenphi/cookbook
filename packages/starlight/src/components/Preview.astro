@@ -1,12 +1,7 @@
 ---
 import { PreviewRoot } from "./TastyComponents.js";
 
-interface Props {
-  title: string;
-  html?: string;
-  css?: string;
-  javascript?: string;
-}
+import type { PreviewProps as Props } from "./props.js";
 
 const { title, html = "", css = "", javascript } = Astro.props;
 const source = `<!doctype html><meta charset="utf-8"><style>${css}</style>${html}${javascript ? `<script>${javascript}<\/script>` : ""}`;

@@ -9,8 +9,13 @@ Static, repository-native documentation built with Astro, Starlight,
 ## Quick start
 
 ```sh
-npm create @tenphi/cookbook@latest my-package-docs -- --package your-package
+npm create @tenphi/cookbook@latest my-docs -- --yes
+cd my-docs
+npm run dev
 ```
+
+Use `--source .` to document an existing repository or `--package your-package`
+to document a published npm artifact.
 
 For an existing Astro project:
 

@@ -1,17 +1,16 @@
 ---
 import { TabsRoot } from "./TastyComponents.js";
-
-interface Props {
-  label?: string;
-}
+import type { TabsProps as Props } from "./props.js";
 const { label = "Examples" } = Astro.props;
 ---
 
-<TabsRoot
-  className="td-tabs"
-  role="group"
-  aria-label={label}
-  data-tasty-anatomy="Tabs"
->
+<TabsRoot data-cookbook-tabs aria-label={label}>
+  <TabsRoot.List data-tabs-list />
   <slot />
 </TabsRoot>
+
+<script>
+  import { initializeTabs } from "../client/tabs.js";
+  initializeTabs();
+  document.addEventListener("astro:page-load", initializeTabs);
+</script>

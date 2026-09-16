@@ -56,7 +56,9 @@ in configuration reviews.
 ## Semantic palette
 
 `brand` controls accent text, fills, and focus. The optional palette inputs
-control the neutral reading surface. The authored surface is preserved in the
+control the neutral reading surface. `info`, `success`, `warning`, and `danger`
+configure callout status seeds; each exposes a border role, `-text`, and
+`-surface` semantic tokens for all schemes and contrast modes. The authored surface is preserved in the
 light scheme; its dark counterpart is deliberately desaturated so a nearly
 white tint cannot turn into vivid dark chrome when its tone is inverted. Glaze
 resolves all values independently for light, dark, normal, and high-contrast
@@ -236,6 +238,9 @@ sub-elements:
 | Configuration name      | Named sub-elements                                                                                                                                                                                                      |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                                     |
+| `Callout`               | `Title`, `Body`, `Tip`, `Caution`, `Danger`                                                                                                                                                                             |
+| `CodeGroup`             | `Caption`, `Pre`, `Code`                                                                                                                                                                                                |
+| `Tab`                   | `Heading`, `Hidden`, `HiddenHeading`                                                                                                                                                                                    |
 | `ContrastSelect`        | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                                       |
 | `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                                          |
 | `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                    |
@@ -254,7 +259,7 @@ sub-elements:
 | `Sidebar`               | `CurrentLink`, `OpenPane`, `Content`, `List`, `Item`, `TopLevelSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
 | `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                      |
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                        |
-| `Tabs`                  | None                                                                                                                                                                                                                    |
+| `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                     |
 | `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                              |
 | `ThemeSelect`           | `Label`, `Icon`, `IconSvg`, `Select`, `PickerIcon`, `Picker`, `OpenPicker`, `Option`, `HoverOption`, `CheckedOption`, `Checkmark`                                                                                       |
 | `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                      |
@@ -278,9 +283,9 @@ Cookbook link uses the semantic brand link color.
 Astro component. Prefer `theme.styles` when the markup and behavior remain the
 same.
 
-Custom names remain compatible with the earlier anatomy API: an unrecognized
-name targets a user-authored matching `data-tasty-anatomy` attribute. Built-in
-names never use that selector bridge.
+Register custom names and their partial Tasty objects in `theme.customStyles`.
+Built-in names belong in `theme.styles` and reject misspelled sub-elements.
+Custom names can also target a matching user-authored `data-tasty-anatomy` attribute.
 
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
@@ -320,7 +325,12 @@ import { Card, Logo, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
 - `Card` renders a titled article or link.
 - `Logo` renders the Cookbook mark using the active brand color.
 - `Steps` provides an ordered steps container.
-- `Tabs` provides a labeled grouping container.
+- `Tabs` and `Tab` provide accessible tabbed panels.
+- `Callout` renders a note, tip, caution, or danger block.
+- `CodeGroup` renders labeled source strings in tabs.
+
+See [Authoring components](./authoring.mdx) for complete examples and props.
+
 - `Preview` isolates HTML and CSS with declarative Shadow DOM, or JavaScript
   in a sandboxed iframe.
 
@@ -335,14 +345,14 @@ runtime as Cookbook, with its semantic colors, typography presets, units, and
 responsive states. The renderer package also exposes them from
 `@tenphi/starlight/styling`.
 
-| Export                   | Purpose                                                                      |
-| ------------------------ | ---------------------------------------------------------------------------- |
-| `defineComponent`        | Create a named Tasty component with its `theme.styles[name]` overrides.      |
-| `tasty`                  | Use Tasty directly without binding a component to `theme.styles`.            |
-| `useGlobalStyles`        | Collect a global Tasty style tree while rendering a page.                    |
-| `resolveComponentStyles` | Merge `theme.styles[name]` into a complete base style tree for global rules. |
-| `mergeStyles`            | Compose your own base styles with Tasty's deep-merge semantics.              |
-| `Styles`                 | TypeScript type for a Tasty style object.                                    |
+| Export                   | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `defineComponent`        | Create a named Tasty component with its `theme.customStyles[name]` overrides.      |
+| `tasty`                  | Use Tasty directly without binding a component to `theme.customStyles`.            |
+| `useGlobalStyles`        | Collect a global Tasty style tree while rendering a page.                          |
+| `resolveComponentStyles` | Merge `theme.customStyles[name]` into a complete base style tree for global rules. |
+| `mergeStyles`            | Compose your own base styles with Tasty's deep-merge semantics.                    |
+| `Styles`                 | TypeScript type for a Tasty style object.                                          |
 
 Cookbook supplies the React renderer and extracts these styles into its static
 CSS. No additional Tasty dependency, Astro integration, or `client:*` directive
@@ -415,7 +425,7 @@ components: {
   }
 },
 theme: {
-  styles: {
+  customStyles: {
     StarlightHeader: { Logo: { hide: true } },
     ProjectSiteTitle: { Logo: { color: "#text" } }
   }
@@ -423,7 +433,7 @@ theme: {
 ```
 
 `defineComponent(name, options)` accepts Tasty factory options and a name for
-`theme.styles[name]`. It merges the configured partial style object before
+`theme.customStyles[name]`. It merges the configured partial style object before
 creating the component, retaining the other base properties and responsive
 states. Tasty options such as `elements`, `variants`, `styleProps`, `modProps`,
 and `tokenProps` keep their behavior and inferred types, including generated
@@ -432,7 +442,7 @@ Configured styles become the component's defaults; variants and styles passed
 at render time follow Tasty's usual precedence.
 
 Use `defineComponent` when authoring a component that should support
-`theme.styles`. Use `tasty` directly for ordinary Tasty creation or composition
+`theme.customStyles`. Use `tasty` directly for ordinary Tasty creation or composition
 that does not need a configuration name. To define a named component around
 an existing React component that forwards `className`, pass it as `as` in the options. Use `className`
 when passing a class to a Tasty component from Astro.
@@ -441,7 +451,7 @@ when passing a class to a Tasty component from Astro.
 
 For markup you do not render through a Tasty component, call
 `useGlobalStyles()` during rendering. For example, this Astro component
-supports root styles and a `Label` sub-element through `theme.styles.ProjectNote`:
+supports root styles and a `Label` sub-element through `theme.customStyles.ProjectNote`:
 
 ```astro
 ---
@@ -463,7 +473,7 @@ useGlobalStyles(
 <aside class="project-note"><strong>Note</strong><slot /></aside>
 ```
 
-`defineComponent` and `resolveComponentStyles` read the same `theme.styles`
+`defineComponent` and `resolveComponentStyles` read the same `theme.customStyles`
 configuration; user configuration contains only the properties to change. They do not require a
 `data-tasty-anatomy` attribute. That attribute remains available for older
 components using the compatibility bridge described above.

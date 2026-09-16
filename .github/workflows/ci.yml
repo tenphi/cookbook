@@ -23,6 +23,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm check:types
+      - run: pnpm check:development
       - run: pnpm knip
       - run: pnpm build:reference
       - run: node scripts/check-reference-budgets.mjs

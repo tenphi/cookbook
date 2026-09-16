@@ -1,0 +1,86 @@
+---
+title: Authoring components
+description: Use accessible tabs, callouts, code groups, cards, steps, and isolated previews.
+sidebar:
+  order: 4
+---
+
+import { Callout, CodeGroup, Tab, Tabs } from "@tenphi/cookbook/components";
+
+Write ordinary Markdown for most pages. Use MDX when a page needs components,
+and import them from `@tenphi/cookbook/components`. Local MDX is supported by
+default; npm MDX requires an explicit `trust: "mdx"` source declaration.
+
+## Tabs
+
+Every panel requires a `label`. Arrow keys, Home, and End move between tabs;
+right-to-left layouts reverse the horizontal arrow direction. Without
+JavaScript, all panels remain readable under their headings.
+
+```mdx
+import { Tab, Tabs } from "@tenphi/cookbook/components";
+
+<Tabs label="Installation">
+  <Tab label="npm">Run `npm install your-package`.</Tab>
+  <Tab label="pnpm">Run `pnpm add your-package`.</Tab>
+</Tabs>
+```
+
+<Tabs label="Installation">
+  <Tab label="npm">Run `npm install your-package`.</Tab>
+  <Tab label="pnpm">Run `pnpm add your-package`.</Tab>
+</Tabs>
+
+## Callouts
+
+Use `kind="note"`, `"tip"`, `"caution"`, or `"danger"`; `title` overrides the
+visible label. The default kind is `note`. Status colors come from
+`theme.palette.info`, `success`, `warning`, and `danger` and adapt to all schemes
+and contrast modes.
+
+```mdx
+<Callout kind="tip" title="Keep content close to code">
+  Relative Markdown links continue to work after Cookbook assigns public routes.
+</Callout>
+```
+
+<Callout kind="tip" title="Keep content close to code">
+  Relative Markdown links continue to work after Cookbook assigns public routes.
+</Callout>
+
+## Code groups
+
+Pass labeled source strings to create an accessible tabbed code group. `language`
+is an optional visible label; these programmatic snippets render as escaped plain
+text. Ordinary fenced Markdown provides syntax highlighting.
+
+```mdx
+<CodeGroup
+  label="Install Cookbook"
+  items={[
+    { label: "npm", language: "shell", code: "npm install @tenphi/cookbook" },
+    { label: "pnpm", language: "shell", code: "pnpm add @tenphi/cookbook" },
+  ]}
+/>
+```
+
+<CodeGroup
+  label="Install Cookbook"
+  items={[
+    { label: "npm", language: "shell", code: "npm install @tenphi/cookbook" },
+    { label: "pnpm", language: "shell", code: "pnpm add @tenphi/cookbook" },
+  ]}
+/>
+
+## Other components
+
+| Component | Props and behavior                                                                                                |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                         |
+| `Steps`   | Ordered list container; supply `li` elements                                                                      |
+| `Logo`    | Optional `label`, `decorative`, and `class`; renders the Cookbook mark                                            |
+| `Preview` | Required `title`; optional `html`, `css`, and `javascript`; isolates examples in Shadow DOM or a sandboxed iframe |
+
+The public package exports each component's props type, such as `TabProps`,
+`CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are
+listed in [Theme and components](./theme-and-components.md#style-customization).

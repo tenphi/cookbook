@@ -21,6 +21,7 @@ import type {
   PackageLockSource,
   PackageManifest,
   CookbookLock,
+  DocsConfig,
 } from "../types.js";
 
 const DEFAULT_REGISTRY = "https://registry.npmjs.org/";
@@ -80,11 +81,105 @@ export async function writeDocsLock(
   lock: CookbookLock,
 ): Promise<void> {
   validateLock(lock);
-  await writeFile(
-    join(root, LOCK_FILE),
-    `${JSON.stringify(lock, null, 2)}\n`,
-    "utf8",
+  const temporary = await mkdtemp(join(root, ".cookbook-lock-"));
+  try {
+    await writeFile(
+      join(temporary, LOCK_FILE),
+      `${JSON.stringify(lock, null, 2)}\n`,
+      "utf8",
+    );
+    await rename(join(temporary, LOCK_FILE), join(root, LOCK_FILE));
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+  }
+}
+
+/** Reconcile declarations, including the first lock and removed sources. */
+export async function reconcileDocsLock(
+  config: DocsConfig,
+  existing: CookbookLock | undefined,
+  options: {
+    packages?: string[];
+    resolve?: typeof resolvePackageLock;
+  } = {},
+): Promise<CookbookLock> {
+  const configured = (config.content?.sources ?? []).filter(
+    (source) => "package" in source,
   );
+  const unique = new Map<string, (typeof configured)[number]>();
+  for (const declaration of configured) {
+    const previous = unique.get(declaration.package);
+    if (
+      previous?.registry &&
+      declaration.registry &&
+      previous.registry !== declaration.registry
+    )
+      throw new Error(
+        `Package source ${declaration.package} declares conflicting registries.`,
+      );
+    unique.set(declaration.package, {
+      ...declaration,
+      ...(previous?.registry ? { registry: previous.registry } : {}),
+    });
+  }
+  const declarations = [...unique.values()];
+  const selectors = options.packages ?? [];
+  for (const selector of selectors) {
+    if (
+      !declarations.some(
+        (source) =>
+          source.package === selector ||
+          packageNameFromSpecifier(source.package) === selector,
+      )
+    ) {
+      throw new Error(`No configured package source matches "${selector}".`);
+    }
+  }
+  const sources: PackageLockSource[] = [];
+  for (const declaration of declarations) {
+    const current = existing?.sources.find(
+      (source) => source.requested === declaration.package,
+    );
+    const selected =
+      selectors.length === 0 ||
+      selectors.some(
+        (selector) =>
+          selector === declaration.package ||
+          selector === packageNameFromSpecifier(declaration.package),
+      );
+    if (
+      !selected &&
+      current &&
+      (!declaration.registry || declaration.registry === current.registry)
+    ) {
+      sources.push(current);
+      continue;
+    }
+    if (!selected)
+      throw new Error(
+        `Package source ${declaration.package} is not locked. Run "cookbook update" without a package selector.`,
+      );
+    const previous =
+      current ??
+      existing?.sources.find(
+        (source) =>
+          packageNameFromSpecifier(source.requested) ===
+          packageNameFromSpecifier(declaration.package),
+      );
+    const registry = declaration.registry ?? previous?.registry;
+    const next = await (options.resolve ?? resolvePackageLock)(
+      declaration.package,
+      registry ? { registry } : {},
+    );
+    if (previous?.vendored) {
+      next.vendored =
+        next.integrity === previous.integrity
+          ? previous.vendored
+          : `.cookbook/vendor/${createHash("sha256").update(next.integrity).digest("hex")}`;
+    }
+    sources.push(next);
+  }
+  return defaultLock(sources);
 }
 
 export function validateLock(lock: CookbookLock): void {
@@ -310,22 +405,9 @@ export function lockForSource(
 ): PackageLockSource {
   const exact = lock?.sources.find((source) => source.requested === requested);
   if (exact) return exact;
-  const requestedName = packageNameFromSpecifier(requested);
-  const matches =
-    lock?.sources.filter(
-      (source) => packageNameFromSpecifier(source.requested) === requestedName,
-    ) ?? [];
-  if (matches.length === 0) {
-    throw new Error(
-      `Package source ${requested} is not locked. Run "cookbook update" to create ${LOCK_FILE}.`,
-    );
-  }
-  if (matches.length > 1) {
-    throw new Error(
-      `Package source ${requested} matches multiple lock entries. Use the exact requested specifier from ${LOCK_FILE}.`,
-    );
-  }
-  return matches[0] as PackageLockSource;
+  throw new Error(
+    `Package source ${requested} is not locked. Run "cookbook update" to reconcile ${LOCK_FILE} with docs.config.ts.`,
+  );
 }
 
 /** Reject paths and glob patterns that could address files outside a package. */

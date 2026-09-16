@@ -1,7 +1,8 @@
-import { defineDocsConfig } from "@tenphi/cookbook";
+import { defineDocsConfig } from "@tenphi/cookbook/config";
 import cookbookPackage from "../../packages/facade/package.json" with { type: "json" };
 
 export default defineDocsConfig({
+  root: "../..",
   site: {
     title: "Cookbook",
     version: cookbookPackage.version,
@@ -34,6 +35,8 @@ export default defineDocsConfig({
         items: [
           "/",
           "/getting-started",
+          "/examples",
+          "/authoring",
           {
             label: "Author content",
             items: [
@@ -62,6 +65,7 @@ export default defineDocsConfig({
             items: ["/cli", "/deployment"],
           },
           "/architecture",
+          "/migration",
         ],
       },
     ],

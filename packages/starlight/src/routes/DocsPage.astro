@@ -7,18 +7,32 @@ import { starlightPageSidebar } from "../navigation.js";
 export const prerender = true;
 
 export function getStaticPaths() {
-  return content.entries
-    .filter(
-      (entry) =>
-        import.meta.env.MODE !== "production" || !entry.frontmatter.draft,
-    )
-    .map((entry) => ({
+  const entries = content.entries.filter(
+    (entry) =>
+      import.meta.env.MODE !== "production" || !entry.frontmatter.draft,
+  );
+  return [
+    ...entries.map((entry) => ({
       params: { route: entry.route === "/" ? undefined : entry.route.slice(1) },
       props: { entry, routes: content.routes },
-    }));
+    })),
+    ...Object.entries(content.redirects).flatMap(([alias, target]) => {
+      const entry = entries.find((entry) => entry.route === target);
+      return entry
+        ? [
+            {
+              params: { route: alias === "/" ? undefined : alias.slice(1) },
+              props: { entry, routes: content.routes, redirect: target },
+            },
+          ]
+        : [];
+    }),
+  ];
 }
 
-const { entry, routes } = Astro.props;
+const { entry, routes, redirect } = Astro.props;
+if (redirect)
+  return Astro.redirect(`${content.base.replace(/\/$/, "")}${redirect}`, 301);
 const loadMdx = mdxLoaders[entry.route];
 if (!entry.rendered && !loadMdx) {
   throw new Error(`Cookbook did not render ${entry.sourcePath}.`);

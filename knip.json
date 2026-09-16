@@ -3,7 +3,8 @@
   "ignore": ["scripts/fixtures/**"],
   "workspaces": {
     "apps/convention": { "entry": ["docs/FixtureLabel.astro"] },
-    "packages/facade": { "entry": ["tasty.config.mjs"] },
+    "apps/reference": { "entry": ["docs.config.ts"] },
+    "packages/facade": { "entry": ["tasty.config.mjs", "type-tests/index.ts"] },
     "packages/starlight": { "entry": ["tasty.config.mjs"] }
   },
   "ignoreDependencies": [

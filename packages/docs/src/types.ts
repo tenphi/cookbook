@@ -1,3 +1,4 @@
+import type { Styles, StylesWithoutSelectors } from "@tenphi/tasty/core";
 import type { GlazeColorValue } from "@tenphi/glaze";
 import type { Root } from "mdast";
 
@@ -58,9 +59,14 @@ export interface NavigationPlacement {
   group?: string;
 }
 
-export type DocsSource =
+export type DocsSource = {
+  /** Stable name for cross-source links and repeated mounts. */
+  id?: string;
+  routeBase?: string;
+} & (
   | {
       file: string;
+      root?: string;
       route?: string;
       title?: string;
       description?: string;
@@ -68,6 +74,7 @@ export type DocsSource =
     }
   | {
       glob: string | string[];
+      root?: string;
       base?: string;
       routeBase?: string;
       exclude?: string[];
@@ -75,18 +82,22 @@ export type DocsSource =
     }
   | {
       package: string;
+      registry?: string;
       include?: string[];
       exclude?: string[];
       index?: string;
       routeBase?: string;
       trust?: "markdown" | "mdx";
-    };
+    }
+);
 
 export interface ContentConfig {
   sources?: DocsSource[];
   allowOutsideRoot?: boolean;
   /** Rewrite absolute links into the current repository to matching Cookbook routes. */
   localizeRepositoryLinks?: boolean;
+  /** Keep unrelated metadata without exposing it as renderer frontmatter. */
+  frontmatter?: "preserve" | "reject";
 }
 
 export type NavigationItem =
@@ -167,6 +178,10 @@ export interface TypographyPresets {
 
 /** Semantic palette inputs. Glaze resolves every value for all appearance modes. */
 export interface ThemePaletteConfig {
+  info?: GlazeColorValue;
+  success?: GlazeColorValue;
+  warning?: GlazeColorValue;
+  danger?: GlazeColorValue;
   /** Light-scheme page surface; dark and high-contrast values adapt. */
   surface?: GlazeColorValue;
   /** Primary reading text seed, resolved against `surface`. */
@@ -178,6 +193,9 @@ export interface ThemePaletteConfig {
 /** Cookbook UI surfaces whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
   "Card",
+  "Callout",
+  "CodeGroup",
+  "Tab",
   "ContrastSelect",
   "Footer",
   "Hero",
@@ -207,6 +225,9 @@ export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   Card: ["Heading2", "Heading3", "Paragraph"],
+  Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
+  CodeGroup: ["Caption", "Pre", "Code"],
+  Tab: ["Heading", "Hidden", "HiddenHeading"],
   ContrastSelect: [
     "Label",
     "Icon",
@@ -312,7 +333,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "TopLevelLink",
   ],
   Steps: ["Item", "Marker"],
-  Tabs: [],
+  Tabs: ["List", "Button", "SelectedButton", "FocusedButton"],
   TableOfContents: [
     "Heading",
     "List",
@@ -362,7 +383,14 @@ export type CookbookComponentSubElementName<
 > = (typeof COOKBOOK_COMPONENT_SUB_ELEMENTS)[Name][number];
 
 /** A serializable partial Tasty style object, merged into the base internally. */
-export type ComponentStyles = Record<string, unknown> & { mode?: never };
+export type ComponentStyles = StylesWithoutSelectors & {
+  $?: string;
+  mode?: never;
+  recipe?: string;
+  [token: `$${string}`]: Styles[string];
+  [color: `#${string}`]: Styles[string];
+  [state: `@${string}`]: Styles[string];
+};
 
 /** Style properties supplied by the user to override Cookbook defaults. */
 export type ComponentStyleConfig = ComponentStyles;
@@ -374,7 +402,7 @@ export type CookbookComponentStyles<Name extends CookbookComponentName> =
 
 export type ComponentStylesConfig = {
   [Name in CookbookComponentName]?: CookbookComponentStyles<Name>;
-} & Record<string, ComponentStyleConfig | undefined>;
+};
 
 export interface ThemeConfig {
   brand?: BrandConfig;
@@ -384,13 +412,15 @@ export interface ThemeConfig {
   presets?: TypographyPresets;
   /** Tasty UI styles, keyed by Cookbook component or bridge name. */
   styles?: ComponentStylesConfig;
+  /** Explicit registration and overrides for user-authored components. */
+  customStyles?: Record<string, Styles>;
   contrastLevel?: number | "auto";
 }
 
 export interface MarkdownConfig {
   stripLeadingBadges?: boolean;
   /** Raw HTML policy for trusted Markdown. Untrusted package Markdown is always sanitized. */
-  rawHtml?: "allow" | "sanitize" | "reject";
+  rawHtml?: "allow" | "sanitize" | "strip" | "reject";
 }
 
 export interface SearchConfig {
@@ -414,6 +444,10 @@ export interface BuildConfig {
 }
 
 export interface DocsConfig {
+  /** Content and lock directory, relative to docs.config.ts (or the inline root). */
+  root?: string;
+  /** Old public routes mapped to current document routes. */
+  redirects?: Record<string, string>;
   site?: SiteConfig;
   head?: HeadConfig[];
   /** Enable source-aware “Edit page” links. */
@@ -434,6 +468,7 @@ export interface DocsConfig {
 }
 
 export interface NormalizedDocsConfig {
+  redirects: Record<string, string>;
   site: SiteConfig;
   head: HeadConfig[];
   editLink?: EditLinkConfig;
@@ -454,6 +489,7 @@ export interface NormalizedDocsConfig {
 }
 
 export interface DocsFrontmatter {
+  aliases?: string[];
   title?: string;
   description?: string;
   slug?: string;
@@ -509,6 +545,9 @@ export interface DocsAsset extends DocsReference {
 
 export interface DocsEntry {
   id: string;
+  sourceId: string;
+  routeBase: string;
+  metadata: Record<string, unknown>;
   sourcePath: string;
   absolutePath: string;
   sourceRoot: string;
@@ -535,6 +574,7 @@ export interface DocsRoute {
 }
 
 export interface DocsGraph {
+  redirects: Record<string, string>;
   root: string;
   config: NormalizedDocsConfig;
   entries: DocsEntry[];
@@ -542,7 +582,7 @@ export interface DocsGraph {
   assets: DocsAsset[];
   diagnostics: DocsDiagnostic[];
   entryByRoute(route: string): DocsEntry | undefined;
-  entryBySource(sourcePath: string): DocsEntry | undefined;
+  entryBySource(sourcePath: string, sourceId?: string): DocsEntry | undefined;
 }
 
 export interface PackageLockSource {
