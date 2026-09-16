@@ -177,7 +177,8 @@ and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
 `strong` modifier, so their weight comes from the active preset's
 `boldFontWeight` instead of a separate element-specific value. `strong` is a
 reserved modifier keyword, not a named preset; the modifier-only form is
-equivalent to `inherit / strong`. Default body tracking is neutral, while
+equivalent to `inherit / strong`. Body text uses a regular `400` weight and
+neutral tracking, while
 headings use a medium `610` weight and progressively gentle negative tracking.
 The separate `720` heading bold weight keeps emphasized heading text distinct.
 Navigation uses a lighter `450` weight with `580` for the current sidebar page,

@@ -221,6 +221,7 @@ describe("Glaze theme adapter", () => {
       "'JetBrains Mono Variable'",
     );
     expect(theme.presets.body?.lineHeight).toBe(1.65);
+    expect(theme.presets.body?.fontWeight).toBe(400);
     expect(theme.presets.body?.letterSpacing).toBe("0");
     expect(theme.presets.body?.boldFontWeight).toBe(640);
     expect(theme.presets.heading?.fontWeight).toBe(610);

@@ -28,7 +28,7 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
     fontSize: "1rem",
     lineHeight: 1.65,
     letterSpacing: "0",
-    fontWeight: 420,
+    fontWeight: 400,
     boldFontWeight: 640,
   },
   heading: {
