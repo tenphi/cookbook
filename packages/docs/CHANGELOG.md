@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.15.0
+
+### Minor Changes
+
+- [#65](https://github.com/tenphi/cookbook/pull/65) [`9c373f1`](https://github.com/tenphi/cookbook/commit/9c373f105d8a77cadb0f90d1e0b95024527c8b7c) Thanks [@tenphi](https://github.com/tenphi)! - Use regular-weight body text and refine navigation typography and spacing, combine scheme and contrast in an accessible Appearance panel, and align social links as clear icon buttons. Scale inline code with surrounding text, including tables, and align heading permalink targets and icons. Add SocialIcons and MarkdownInlineCode style customization; the ThemeSelect anatomy now exposes Trigger, Panel, and radio-option sub-elements in place of the previous ThemeSelect and ContrastSelect controls.
+
 ## 0.14.0
 
 ### Minor Changes
