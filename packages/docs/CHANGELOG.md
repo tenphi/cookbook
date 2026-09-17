@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.15.1
+
+### Patch Changes
+
+- [#67](https://github.com/tenphi/cookbook/pull/67) [`66a8aa2`](https://github.com/tenphi/cookbook/commit/66a8aa2d4b2d8be916a5a5bb13fed0e54d18638c) Thanks [@tenphi](https://github.com/tenphi)! - Use a palette icon and matching mobile button styles for Appearance and a calmer default blue with 68% saturation. Remove unused mobile menu space on pages without a sidebar, and make the mobile navigation fill the viewport below the header without browser popover borders or margins.
+
 ## 0.15.0
 
 ### Minor Changes
