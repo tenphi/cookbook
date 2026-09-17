@@ -26,11 +26,12 @@ cover the configuration language accepted by `theme.styles`:
 
 ## Brand color
 
-The short form accepts any color value supported by Glaze:
+The default brand is a calm blue with 68% OKHSL saturation. The short form
+accepts any color value supported by Glaze:
 
 ```ts
 theme: {
-  brand: "#2f5bff",
+  brand: "okhsl(266 68% 48%)",
 }
 ```
 
@@ -66,7 +67,7 @@ modes:
 
 ```ts
 theme: {
-  brand: "#2f5bff",
+  brand: "okhsl(266 68% 48%)",
   palette: {
     surface: "#fffdf8",
     text: "#211f1c",
@@ -272,7 +273,7 @@ sub-elements:
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                        |
 | `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                     |
 | `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                              |
-| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `Icon`, `Panel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                             |
+| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`            |
 | `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                                      |
 
 `COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and

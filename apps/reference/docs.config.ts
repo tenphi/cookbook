@@ -71,7 +71,7 @@ export default defineDocsConfig({
     ],
   },
   theme: {
-    brand: { from: "#2f5bff" },
+    brand: { from: "okhsl(266 68% 48%)" },
     palette: {
       surface: "#fcfcff",
       text: "#20232a",

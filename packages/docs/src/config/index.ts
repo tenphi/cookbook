@@ -10,7 +10,7 @@ import type {
   NormalizedDocsConfig,
 } from "../types.js";
 
-const DEFAULT_BRAND = "#315efb";
+const DEFAULT_BRAND = "okhsl(266 68% 48%)";
 const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
 const SITE_ICON_KEYS = new Set(["source", "background"]);
 const ROOT_KEYS = new Set([

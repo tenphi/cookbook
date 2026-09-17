@@ -5,7 +5,7 @@ import type { HeadConfig, SiteConfig } from "@tenphi/docs";
 import sharp from "sharp";
 
 const ICON_DIRECTORY = "_cookbook/icons";
-const DEFAULT_ICON_BACKGROUND = "#315efb";
+const DEFAULT_ICON_BACKGROUND = "#4b6dc3";
 const SUPPORTED_SOURCE_FORMATS = new Set([
   "avif",
   "gif",
