@@ -100,6 +100,10 @@ export const StarlightHeaderRoot = customizeComponent(
   tasty({
     as: "div",
     styles: {
+      "$docs-header-menu-space": {
+        "": "0rem",
+        "[data-has-sidebar]": "($docs-menu-button-size + $docs-nav-gap)",
+      },
       display: "flex",
       flow: "column",
       inlineSize: "0 100% ($layout-width - ($docs-sidebar-pad-x * 2))",
@@ -143,7 +147,7 @@ export const StarlightHeaderRoot = customizeComponent(
         inlineSize: {
           "": "max none",
           "@mobile":
-            "max (100% - (($docs-menu-button-size + $docs-nav-gap) * 3))",
+            "max (100% - (($docs-menu-button-size + $docs-nav-gap) * 2) - $docs-header-menu-space)",
         },
       },
       Logo: {
@@ -178,7 +182,7 @@ export const StarlightHeaderRoot = customizeComponent(
         inlineInset: {
           "": "auto end",
           "@mobile":
-            "($docs-nav-pad-x + (($docs-menu-button-size + $docs-nav-gap) * 2)) end",
+            "($docs-nav-pad-x + $docs-menu-button-size + $docs-nav-gap + $docs-header-menu-space) end",
         },
         placeItems: { "": "normal", "@mobile": "center" },
         inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
@@ -220,8 +224,7 @@ export const StarlightHeaderRoot = customizeComponent(
         },
         inlineInset: {
           "": "auto end",
-          "@mobile":
-            "($docs-nav-pad-x + $docs-menu-button-size + $docs-nav-gap) end",
+          "@mobile": "($docs-nav-pad-x + $docs-header-menu-space) end",
         },
         placeItems: { "": "normal", "@mobile": "center" },
         inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
@@ -242,24 +245,36 @@ export const ThemeSelectRoot = customizeComponent(
         $: "> button",
         display: "grid",
         placeItems: "center",
-        inlineSize: "$control-height",
-        blockSize: "$control-height",
+        inlineSize: {
+          "": "$control-height",
+          "@mobile": "$docs-menu-button-size",
+        },
+        blockSize: {
+          "": "$control-height",
+          "@mobile": "$docs-menu-button-size",
+        },
         padding: "0",
         color: "#text-soft",
-        fill: "#clear",
-        border: "0",
+        fill: { "": "#clear", "@mobile": "#surface-3" },
+        border: { "": "0", "@mobile": true },
         radius: "$radius",
+        transition: "color $transition, fill $transition",
       },
       HoverTrigger: {
         $: "> button:hover, &:has([popover]:popover-open) > button",
         color: "#text",
-        fill: "#surface-2-hover",
+        fill: { "": "#surface-2-hover", "@mobile": "#surface-3-hover" },
+      },
+      ActiveTrigger: {
+        $: "> button:active",
+        color: "#text",
+        fill: { "": "#surface-2-pressed", "@mobile": "#surface-3-pressed" },
       },
       Icon: {
         $: "> button svg",
         display: "block",
-        inlineSize: "1.25rem",
-        blockSize: "1.25rem",
+        inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
+        blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
       },
       Panel: {
         $: "[popover]",

@@ -406,7 +406,7 @@ function normalizeBrand(
 ): Exclude<BrandConfig, GlazeColorValue> & { from: GlazeColorValue } {
   if (typeof brand === "object" && brand !== null && "from" in brand)
     return brand;
-  return { from: brand ?? "#315efb" };
+  return { from: brand ?? "okhsl(266 68% 48%)" };
 }
 
 function score(

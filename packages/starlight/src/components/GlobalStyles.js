@@ -147,27 +147,6 @@ export default function GlobalStyles() {
     fill: "#surface",
   });
 
-  useGlobalStyles(".sidebar-pane", {
-    visibility: { "": "visible", "@mobile": "hidden" },
-    position: "fixed",
-    zIndex: { "": "8", "@mobile": "12" },
-    insetBlockStart: "$docs-nav-height",
-    insetBlockEnd: "0",
-    insetInlineStart: "0",
-    inlineSize: { "": "$sidebar-width", "@mobile": "100%" },
-    overflowY: "auto",
-    scrollbarGutter: "stable",
-    fill: "#surface",
-  });
-
-  useGlobalStyles(".sidebar-content", {
-    display: "flex",
-    flow: "column",
-    gap: "($gap * 2)",
-    minBlockSize: "100%",
-    padding: "($gap * 2) $docs-sidebar-pad-x ($gap * 6)",
-  });
-
   useGlobalStyles(".main-frame", {
     minInlineSize: "0",
     paddingBlockStart: "($docs-nav-height + $docs-mobile-toc-height)",
@@ -336,13 +315,32 @@ export default function GlobalStyles() {
     { radius: "$radius" },
   );
 
-  useGlobalStyles("body > .page > .header, .sidebar-pane", {
+  useGlobalStyles("body > .page > .header", {
     fill: "#surface",
   });
 
   useGlobalStyles(
     "#starlight__sidebar",
     resolveComponentStyles("Sidebar", {
+      display: { "@desktop": "block" },
+      visibility: { "": "visible", "@mobile": "hidden" },
+      position: "fixed",
+      zIndex: { "": "8", "@mobile": "12" },
+      blockInset: "$docs-nav-height start, 0 end",
+      inlineInset: {
+        "": "0 start, auto end",
+        "@desktop":
+          "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
+      },
+      inlineSize: { "": "$sidebar-width", "@mobile": "100%" },
+      blockSize: "auto",
+      margin: "0",
+      padding: "0",
+      border: "0",
+      color: "#text",
+      overflowY: "auto",
+      scrollbarGutter: "stable",
+      fill: "#surface",
       CurrentLink: {
         $: [
           'a[aria-current="page"]',
@@ -359,6 +357,10 @@ export default function GlobalStyles() {
       },
       Content: {
         $: ".sidebar-content",
+        display: "flex",
+        flow: "column",
+        minBlockSize: "100%",
+        paddingInline: "$docs-sidebar-pad-x",
         gap: "($gap * 3)",
         paddingBlockStart: {
           "": "($gap * 4)",
@@ -1940,12 +1942,6 @@ export default function GlobalStyles() {
     },
     marginInlineEnd: {
       "@desktop": "auto",
-    },
-  });
-
-  useGlobalStyles(".sidebar-pane", {
-    insetInlineStart: {
-      "@desktop": "max(0px, calc((100% - $layout-width) / 2))",
     },
   });
 

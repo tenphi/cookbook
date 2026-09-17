@@ -338,6 +338,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ThemeSelect: [
     "Trigger",
     "HoverTrigger",
+    "ActiveTrigger",
     "Icon",
     "Panel",
     "Section",

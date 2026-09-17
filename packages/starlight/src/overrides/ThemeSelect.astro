@@ -1,6 +1,6 @@
 ---
 import Icon from "@astrojs/starlight/user-components/Icon.astro";
-import contrastIcon from "../icons/contrast.svg?raw";
+import paletteIcon from "../icons/palette.svg?raw";
 import { ThemeSelectRoot } from "../components/LayoutComponents.js";
 
 const id = `appearance-${crypto.randomUUID()}`;
@@ -23,7 +23,7 @@ const contrasts = [
     aria-label="Appearance"
     title="Appearance"
   >
-    <span aria-hidden="true" set:html={contrastIcon} />
+    <span aria-hidden="true" set:html={paletteIcon} />
   </button>
   <div id={id} popover="auto" role="group" aria-label="Appearance">
     <fieldset>
