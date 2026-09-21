@@ -186,8 +186,10 @@ Navigation uses a lighter `450` weight with `580` for the current sidebar page,
 while smaller group labels establish hierarchy without oversized bold text.
 Top-level sidebar groups are always-visible section headings with their direct
 links aligned beneath them. Deeper groups expand on click or keyboard activation;
-only ancestors of the current page start open. Expansion choices are remembered
-for the browser tab, and the current page remains visible after navigation.
+only ancestors of the current page start open. Explicit expansion choices are
+remembered for the browser tab; automatically revealing the current page does
+not overwrite them. Desktop scroll position is restored independently of mobile
+menu scrolling, and the current page's ancestors remain open after navigation.
 Nested groups use indentation without vertical rails. Customize section headings
 with `theme.styles.Sidebar.SectionHeading`, indentation with `NestedItem`, and
 disclosure icons with `Caret` and `ExpandedCaret`.

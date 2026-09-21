@@ -375,6 +375,7 @@ export default function GlobalStyles() {
       List: {
         $: "ul",
         display: "grid",
+        gridTemplateColumns: "minmax(0, 1fr)",
         gap: "1bw",
         margin: "0",
         padding: "0",
