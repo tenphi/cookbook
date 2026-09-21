@@ -1,5 +1,28 @@
 # @tenphi/cookbook
 
+## 0.16.0
+
+### Minor Changes
+
+- [#70](https://github.com/tenphi/cookbook/pull/70) [`b522b14`](https://github.com/tenphi/cookbook/commit/b522b14994c1bec2adeadc6efcdb07f0ac35c9c9) Thanks [@tenphi](https://github.com/tenphi)! - Ship Cookbook documentation with the public package, including consumer
+  customization rules and versioned Tasty and Glaze reference snapshots with
+  local links. Expose documentation paths through `@tenphi/cookbook/docs/*` for
+  tooling and document how projects can guide coding agents and lint custom styles.
+  Set an explicit package documentation index so the bundled guide has a single
+  home route when used as a Cookbook content source.
+
+- [#72](https://github.com/tenphi/cookbook/pull/72) [`db5339d`](https://github.com/tenphi/cookbook/commit/db5339d7298df9b8912003ff5ff96398c7692033) Thanks [@tenphi](https://github.com/tenphi)! - Add configurable header buttons with a mobile More menu, a translucent blurred
+  header, and a mobile navigation row opening a left drawer with a section
+  selector. Hide the table of contents on tablet and mobile, retain plain icon
+  button styling, and expose the new layout, header, search, and drawer surfaces
+  through theme styles and the header palette role.
+
+### Patch Changes
+
+- Updated dependencies [[`7696043`](https://github.com/tenphi/cookbook/commit/76960432f481be38fb67e1669196dc6b8ef2efe0), [`66a8aa2`](https://github.com/tenphi/cookbook/commit/66a8aa2d4b2d8be916a5a5bb13fed0e54d18638c), [`037160c`](https://github.com/tenphi/cookbook/commit/037160cd9093911b6b58cb2dcb95aba2c5ca060a), [`7caaa59`](https://github.com/tenphi/cookbook/commit/7caaa597fdc37d4f6616c25cbc0e11299949954b), [`db5339d`](https://github.com/tenphi/cookbook/commit/db5339d7298df9b8912003ff5ff96398c7692033)]:
+  - @tenphi/docs@0.16.0
+  - @tenphi/starlight@0.16.0
+
 ## 0.15.0
 
 ### Patch Changes
