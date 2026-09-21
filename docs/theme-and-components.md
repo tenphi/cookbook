@@ -102,7 +102,11 @@ The Appearance button in the desktop and mobile header opens one panel with
 Color scheme and Contrast sections. Color scheme offers Light, Dark, and Auto;
 Contrast offers Normal, High, and Auto. Each preference is independent, and
 existing saved choices are preserved. The panel supports keyboard navigation,
-Escape, and outside-click dismissal. Contrast can follow the system, force the
+Escape, and outside-click dismissal. The popover fades and scales vertically
+from 96% to 100% over 120ms using native entry and exit transitions. Reduced
+motion disables the transition. Customize these states with
+`theme.styles.ThemeSelect.Panel` and `OpenPanel`; the root `$popover-transition`
+token controls the duration. Contrast can follow the system, force the
 normal palette, or activate the Glaze high-contrast palette.
 System mode responds to `prefers-contrast: more`; an explicit selection is
 persisted and takes precedence over that media query.
@@ -295,7 +299,7 @@ sub-elements:
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                                                                                                                                                                                                                                                                    |
+| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                                                                                                                                                                                                                                                       |
 | `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 `COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and

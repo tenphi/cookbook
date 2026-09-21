@@ -238,6 +238,7 @@ export const ThemeSelectRoot = customizeComponent(
     styles: {
       display: "flex",
       flexShrink: "0",
+      "$popover-transition": "120ms",
       Trigger: {
         $: "> button",
         display: "grid",
@@ -290,6 +291,19 @@ export const ThemeSelectRoot = customizeComponent(
         border: true,
         radius: "$card-radius",
         shadow: "0 0.75rem 2rem #shadow",
+        opacity: "0",
+        scale: "1 0.96",
+        transformOrigin: "top",
+        transition: {
+          "": "none",
+          "!@reduced-motion":
+            "opacity $popover-transition ease-out, scale $popover-transition ease-out, display $popover-transition allow-discrete, overlay $popover-transition allow-discrete",
+        },
+      },
+      OpenPanel: {
+        $: "[popover]:popover-open",
+        opacity: { "": "1", "@starting": "0" },
+        scale: { "": "1", "@starting": "1 0.96" },
       },
       Section: {
         $: "fieldset",

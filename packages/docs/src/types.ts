@@ -412,6 +412,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ActiveTrigger",
     "Icon",
     "Panel",
+    "OpenPanel",
     "Section",
     "SectionSpacing",
     "SectionLabel",

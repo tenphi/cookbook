@@ -38,7 +38,9 @@ for (const name of entries) {
 // configurable header-logo link add another 1 KiB for these owned surfaces.
 // The owned sidebar adds customizable section headings, disclosure carets,
 // linked group states, and badges (4 KiB).
-const cssBudget = 160 * 1024;
+// Native drawer and appearance-popover motion, including reduced-motion rules,
+// add another 1 KiB of Tasty-generated CSS.
+const cssBudget = 161 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -149,6 +151,15 @@ for (const transition of [
       `The mobile drawer is missing its ${transition} transition.`,
     );
   }
+}
+if (
+  !/\[popover\]:popover-open\s*\{\s*@starting-style\s*\{[^}]*opacity:\s*0;[^}]*scale:\s*1 0\.96/.test(
+    sharedCss,
+  )
+) {
+  throw new Error(
+    "The appearance popover must preserve its native fade and scale entry styles.",
+  );
 }
 const home = await readFile(join(output, "index.html"), "utf8");
 const sidebarHtml = (html) => {
