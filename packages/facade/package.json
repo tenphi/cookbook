@@ -43,6 +43,9 @@
     "README.md",
     "LICENSE"
   ],
+  "cookbook": {
+    "index": "docs/index.md"
+  },
   "scripts": {
     "build": "tsdown --config tsdown.config.ts && node ../../scripts/pack-docs.mjs",
     "prepack": "node ../../scripts/pack-docs.mjs",

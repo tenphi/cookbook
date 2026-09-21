@@ -4,6 +4,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { validateDocumentation } from "./pack-docs.mjs";
+import {
+  createDocsGraph,
+  discoverPackage,
+} from "../packages/docs/dist/index.js";
 
 const run = promisify(execFile);
 const root = process.cwd();
@@ -61,6 +65,24 @@ try {
       await run("tar", ["-xzf", path, "-C", extracted]);
       const packageRoot = join(extracted, "package");
       await validateDocumentation(packageRoot);
+      const discovery = await discoverPackage(packageRoot);
+      if (discovery.home !== "docs/index.md")
+        throw new Error(
+          "Cookbook's package documentation must use docs/index.md as its home.",
+        );
+      const graph = await createDocsGraph({
+        root: packageRoot,
+        config: {
+          content: { sources: [{ glob: discovery.pages, base: "docs" }] },
+        },
+      });
+      const errors = graph.diagnostics.filter(
+        (diagnostic) => diagnostic.severity === "error",
+      );
+      if (errors.length > 0)
+        throw new Error(
+          `Packed documentation graph is invalid: ${JSON.stringify(errors)}`,
+        );
       const references = JSON.parse(
         await readFile(
           join(packageRoot, "docs/upstream/manifest.json"),
