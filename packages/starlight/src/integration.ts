@@ -156,6 +156,12 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   );
   const components = resolveComponentOverrides(
     {
+      PageFrame: fileURLToPath(
+        new URL("./overrides/PageFrame.astro", import.meta.url),
+      ),
+      MobileTableOfContents: fileURLToPath(
+        new URL("./overrides/MobileTableOfContents.astro", import.meta.url),
+      ),
       Footer: footerPath,
       Header: headerPath,
       Hero: heroPath,

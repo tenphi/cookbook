@@ -5,3 +5,10 @@ const content = addHeadingPermalinks(await Astro.slots.render("default"));
 ---
 
 <div class="sl-markdown-content" set:html={content} />
+
+<script>
+  import { initializeHeadingLinks } from "../client/heading-links.js";
+
+  initializeHeadingLinks();
+  document.addEventListener("astro:page-load", initializeHeadingLinks);
+</script>

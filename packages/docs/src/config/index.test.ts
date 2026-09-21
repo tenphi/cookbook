@@ -1,6 +1,10 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DocsConfigError, normalizeDocsConfig } from "./index.js";
+import {
+  DocsConfigError,
+  normalizeDocsConfig,
+  COOKBOOK_COMPONENT_NAMES,
+} from "./index.js";
 
 const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
@@ -27,6 +31,7 @@ const schema = JSON.parse(
     theme: {
       properties: {
         styles: {
+          properties: Record<string, unknown>;
           additionalProperties: {
             type?: string;
             propertyNames?: { not?: { const?: string } };
@@ -82,6 +87,58 @@ describe("docs configuration", () => {
     expect(() =>
       normalizeDocsConfig({ site: { repository: "javascript:alert(1)" } }),
     ).toThrow(/site\.repository must be an absolute HTTP/);
+  });
+
+  it("lists every configurable component in the public schema", () => {
+    expect(
+      Object.keys(schema.properties.theme.properties.styles.properties).sort(),
+    ).toEqual([...COOKBOOK_COMPONENT_NAMES].sort());
+  });
+
+  it("preserves header buttons and their variants", () => {
+    const headerLinks = [
+      {
+        label: "Guide",
+        link: "/guide?lang=en#start",
+        variant: "primary" as const,
+      },
+      { label: "Releases", link: "https://example.com/releases", newTab: true },
+      { label: "Overview", link: "#overview" },
+    ];
+    expect(
+      normalizeDocsConfig({ site: { headerLinks } }).site.headerLinks,
+    ).toEqual(headerLinks);
+    expect(
+      normalizeDocsConfig({ site: { headerLinks: [] } }).site.headerLinks,
+    ).toEqual([]);
+    expect(
+      normalizeDocsConfig({ theme: { palette: { header: "#fafafa" } } }).theme
+        .palette?.header,
+    ).toBe("#fafafa");
+  });
+
+  it("accepts a custom overlay color seed", () => {
+    expect(
+      normalizeDocsConfig({ theme: { palette: { overlay: "#131025" } } }).theme
+        .palette?.overlay,
+    ).toBe("#131025");
+  });
+
+  it.each([
+    "not an array",
+    [null],
+    [{ label: "", link: "/" }],
+    [{ label: "Link", link: "javascript:alert(1)" }],
+    [{ label: "Link", link: "//example.com" }],
+    [{ label: "Link", link: "relative" }],
+    [{ label: "Link", link: "/path with spaces" }],
+    [{ label: "Link", link: "/", variant: "unknown" }],
+    [{ label: "Link", link: "/", newTab: "yes" }],
+    [{ label: "Link", link: "/", typo: true }],
+  ])("rejects malformed header buttons: %j", (headerLinks) => {
+    expect(() =>
+      normalizeDocsConfig({ site: { headerLinks } } as never),
+    ).toThrow(/site\.headerLinks/);
   });
 
   it("preserves documented package metadata", () => {

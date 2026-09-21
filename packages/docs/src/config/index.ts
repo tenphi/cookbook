@@ -39,6 +39,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "url",
     "repository",
     "favicon",
+    "headerLinks",
   ]),
   content: new Set([
     "sources",
@@ -102,6 +103,45 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
     for (const key of Object.keys(value)) {
       if (!keys.has(key)) unknown(diagnostics, `${section}.${key}`);
+    }
+  }
+
+  if (isRecord(config.site) && config.site.headerLinks !== undefined) {
+    if (!Array.isArray(config.site.headerLinks)) {
+      invalid(diagnostics, "site.headerLinks must be an array.");
+    } else {
+      config.site.headerLinks.forEach((item, index) => {
+        const path = `site.headerLinks[${index}]`;
+        if (!isRecord(item)) {
+          invalid(diagnostics, `${path} must be an object.`);
+          return;
+        }
+        for (const key of Object.keys(item)) {
+          if (!["label", "link", "variant", "newTab"].includes(key))
+            unknown(diagnostics, `${path}.${key}`);
+        }
+        if (typeof item.label !== "string" || !item.label.trim())
+          invalid(diagnostics, `${path}.label must be a non-empty string.`);
+        if (
+          typeof item.link !== "string" ||
+          /[\\\s]/.test(item.link) ||
+          !(/^(?:\/(?!\/)|#)/.test(item.link) || isHttpUrl(item.link))
+        )
+          invalid(
+            diagnostics,
+            `${path}.link must be an HTTP(S) URL, root-relative route, or fragment.`,
+          );
+        if (
+          item.variant !== undefined &&
+          !["default", "primary"].includes(item.variant as string)
+        )
+          invalid(
+            diagnostics,
+            `${path}.variant must be "default" or "primary".`,
+          );
+        if (item.newTab !== undefined && typeof item.newTab !== "boolean")
+          invalid(diagnostics, `${path}.newTab must be a boolean.`);
+      });
     }
   }
 
@@ -569,6 +609,8 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     if (
       ![
         "surface",
+        "header",
+        "overlay",
         "text",
         "textSoft",
         "info",
@@ -829,6 +871,7 @@ export type {
   NormalizedDocsConfig,
   SearchConfig,
   SiteConfig,
+  HeaderLink,
   SiteIconConfig,
   ThemeConfig,
   ThemePaletteConfig,

@@ -38,7 +38,10 @@ for (const name of entries) {
 // configurable header-logo link add another 1 KiB for these owned surfaces.
 // The owned sidebar adds customizable section headings, disclosure carets,
 // linked group states, and badges (4 KiB).
-const cssBudget = 160 * 1024;
+// Native drawer and appearance-popover motion, including reduced-motion rules,
+// add another 1 KiB of Tasty-generated CSS.
+// Customizable heading-link copy feedback adds another 1 KiB.
+const cssBudget = 162 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -50,6 +53,11 @@ const allCss = (
 ).join("\n");
 if (/details:has\(a\[aria-current="page"\]\)/.test(sharedCss)) {
   throw new Error("Sidebar ancestors must not receive current-page styling.");
+}
+if (/#starlight__sidebar details > ul > li\s*\{/.test(sharedCss)) {
+  throw new Error(
+    "Sidebar group indentation must not affect the mobile section selector.",
+  );
 }
 for (const [pattern, label] of [
   [/--sl-/i, "Starlight custom properties"],
@@ -110,10 +118,7 @@ for (const [selector, label] of [
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
-  [
-    "mobile-starlight-toc .dropdown .isMobile a > span",
-    "mobile table of contents",
-  ],
+  [".sl-menu-button .td-menu-button__page", "mobile navigation breadcrumb"],
 ]) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   if (
@@ -124,13 +129,72 @@ for (const [selector, label] of [
     throw new Error(`Long ${label} must truncate with an ellipsis.`);
   }
 }
+if (
+  !/backdrop-filter:\s*blur\(16px\)/.test(sharedCss) ||
+  !sharedCss.includes("var(--header-color)")
+) {
+  throw new Error(
+    "The header must use its semantic translucent surface and backdrop blur.",
+  );
+}
+if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
+  throw new Error(
+    "The desktop table of contents must override Starlight's hidden utility.",
+  );
+}
+for (const transition of [
+  "translate 120ms ease-out",
+  "display 120ms allow-discrete",
+  "overlay 120ms allow-discrete",
+]) {
+  if (!sharedCss.includes(transition)) {
+    throw new Error(
+      `The mobile drawer is missing its ${transition} transition.`,
+    );
+  }
+}
+if (
+  !/\[popover\]:popover-open\s*\{\s*@starting-style\s*\{[^}]*opacity:\s*0;[^}]*scale:\s*1 0\.96/.test(
+    sharedCss,
+  )
+) {
+  throw new Error(
+    "The appearance popover must preserve its native fade and scale entry styles.",
+  );
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 const sidebarHtml = (html) => {
   const sidebar =
-    /<cookbook-sidebar\b[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(html)?.[1];
+    /<cookbook-sidebar(?=[\s>])[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(
+      html,
+    )?.[1];
   if (!sidebar) throw new Error("The owned sidebar tree is missing.");
   return sidebar;
 };
+const guide = await readFile(
+  join(output, "getting-started/index.html"),
+  "utf8",
+);
+if (guide.includes("mobile-starlight-toc")) {
+  throw new Error(
+    "Mobile and tablet pages must not render a compact table of contents.",
+  );
+}
+for (const marker of [
+  "<cookbook-sidebar-pane",
+  'aria-label="Choose section"',
+  'aria-label="More"',
+  'aria-label="More links"',
+  'aria-label="Close navigation"',
+]) {
+  if (!guide.includes(marker))
+    throw new Error(`Responsive navigation is missing ${marker}.`);
+}
+if ((guide.match(/data-variant="primary"/g) ?? []).length !== 1) {
+  throw new Error(
+    "Primary header button variants must only apply in the desktop header.",
+  );
+}
 const initialSidebar = sidebarHtml(
   await readFile(join(output, "getting-started/index.html"), "utf8"),
 );

@@ -12,7 +12,9 @@ describe("navigation global style architecture", () => {
   it.each([
     ["#starlight__sidebar", "Sidebar"],
     [".right-sidebar-panel", "TableOfContents"],
-    ["mobile-starlight-toc .dropdown .isMobile", "MobileTableOfContents"],
+    [".right-sidebar-container", "TableOfContentsLayout"],
+    ["body > .page > .header", "HeaderFrame"],
+    ["site-search button[data-open-modal]", "SearchButton"],
   ])("customizes %s through theme.styles.%s", (selector, componentName) => {
     expect(source).toMatch(
       new RegExp(

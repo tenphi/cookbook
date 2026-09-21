@@ -366,7 +366,7 @@ component names and their overrides in `theme.customStyles`. Structural Astro ov
 `theme.states` registers additional Tasty state shorthands, and `contrastLevel`
 is forwarded to Glaze's palette resolution.
 The built-in documentation navigation surfaces are available as `Sidebar`,
-`TableOfContents`, and `MobileTableOfContents`; see
+`TableOfContents`, `MobileMenuToggle`, and `MobileNavigationTabs`; see
 [Theme and components](./theme-and-components.md#style-customization) for their
 complete sub-element lists.
 
@@ -480,3 +480,39 @@ routes and assets cannot drift between two configurations. An empty `cacheDir`
 uses `~/.cache/cookbook`; set an explicit path to relocate downloaded package
 artifacts. Package limits protect builds from unexpected registry artifacts;
 raise them deliberately for a reviewed package.
+
+## Header buttons
+
+Configure the top bar with `site.headerLinks`. Links appear beside search on
+larger screens and in a More popover below 50rem. The desktop header supports
+primary buttons; More uses a compact, left-aligned list of uniform navigation
+links. Omit the array (or use `[]`) to hide More.
+
+```ts
+export default defineDocsConfig({
+  site: {
+    headerLinks: [
+      {
+        label: "Changelog",
+        link: "https://example.com/changelog",
+        newTab: true,
+      },
+      { label: "Get started", link: "/getting-started", variant: "primary" },
+    ],
+  },
+});
+```
+
+Each entry requires a non-empty `label` and a `link` (an HTTP(S) URL,
+root-relative route, or fragment). Cookbook prefixes root-relative links with
+the Astro base. `variant` is `default` or `primary` and applies on desktop;
+`newTab` defaults to false
+and adds safe new-window attributes when enabled. Customize the complete
+button and popover style tree through `theme.styles.HeaderLinks`.
+
+`theme.palette.header` sets the translucent header's color seed. It defaults
+to `theme.palette.surface`; Glaze resolves it for light, dark, and both high
+contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFrame`.
+`theme.palette.overlay` controls the fixed underlay color, defaulting to black at
+50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
+a 120ms slide transition; customize these through `theme.styles.Sidebar`.

@@ -32,6 +32,34 @@ describe("Glaze theme adapter", () => {
       }
     }
   });
+  it("resolves a customizable translucent header in every appearance mode", () => {
+    const defaults = resolveDocsTheme();
+    const custom = resolveDocsTheme({ palette: { header: "#f3eaff" } });
+    const inherited = resolveDocsTheme({ palette: { surface: "#f3eaff" } });
+    const colors = custom.colorTokens["#header"]!;
+    expect(Object.keys(colors)).toHaveLength(4);
+    expect(Object.values(colors)).toEqual(
+      Array(4).fill(expect.stringMatching(/ \/ 0\.7\)$/)),
+    );
+    expect(colors).not.toEqual(defaults.colorTokens["#header"]);
+    expect(colors).toEqual(inherited.colorTokens["#header"]);
+  });
+
+  it("keeps underlays black in all modes and honors a custom fixed seed", () => {
+    const defaults = resolveDocsTheme();
+    expect(Object.values(defaults.colorTokens["#overlay"]!)).toEqual(
+      Array(4).fill("oklch(0 0 0 / 0.5)"),
+    );
+    const custom = resolveDocsTheme({ palette: { overlay: "#131025" } });
+    const colors = Object.values(custom.colorTokens["#overlay"]!);
+    expect(colors).toHaveLength(4);
+    for (const color of colors) {
+      expect(color).not.toBe("oklch(0 0 0 / 0.5)");
+      expect(color).toMatch(/ \/ 0\.5\)$/);
+      expect(colorLuminance(color)).toBeLessThan(0.03);
+    }
+  });
+
   it("emits all appearance modes at the configured APCA floors", () => {
     const theme = resolveDocsTheme({
       brand: { from: "#315efb", contrast: { apca: 45 } },

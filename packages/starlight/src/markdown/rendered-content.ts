@@ -24,7 +24,7 @@ export function addHeadingPermalinks(html: string): string {
       const title = escapeAttribute(
         decodeEntities(content.replace(tags, "").trim()),
       );
-      return `<div class="sl-heading-wrapper level-h${level}">${heading}<a class="sl-anchor-link" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”">#</a></div>`;
+      return `<div class="sl-heading-wrapper level-h${level}">${heading}<a class="sl-anchor-link" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”"><span class="sl-anchor-icon" aria-hidden="true">#</span></a></div>`;
     },
   );
 }
