@@ -150,6 +150,14 @@ export const StarlightHeaderRoot = customizeComponent(
             "max (100% - (($docs-menu-button-size + $docs-nav-gap) * 2) - $docs-header-menu-space)",
         },
       },
+      LogoLink: {
+        $: ".td-header__logo-link",
+        display: "inline-grid",
+        flexShrink: "0",
+        placeItems: "center",
+        color: "#text",
+        textDecoration: "none",
+      },
       Logo: {
         $: ".td-header__logo",
         inlineSize: {

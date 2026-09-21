@@ -22,6 +22,7 @@ const shouldRenderSearch =
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const currentPath = navigationPath(Astro.url.pathname, base || "/");
 const activeTab = activeNavigationTab(layout.tabs, currentPath);
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 
 function tabHref(link: string): string {
   return link.startsWith("/") ? `${base}${link}` || "/" : link;
@@ -36,7 +37,13 @@ function tabHref(link: string): string {
 >
   <div class="td-header__primary">
     <div class="td-header__title">
-      <Logo class="td-header__logo" decorative />
+      <a
+        class="td-header__logo-link"
+        href={siteTitleHref}
+        aria-label={`${siteTitle} home`}
+      >
+        <Logo class="td-header__logo" decorative />
+      </a>
       <SiteTitle />
       <PackageVersion version={content.site.version} />
     </div>

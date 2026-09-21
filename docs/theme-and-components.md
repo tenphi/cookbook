@@ -123,8 +123,8 @@ accepted for compatibility.
 theme: {
   tokens: {
     "$gap": "0.5rem",
-    "$radius": "6px",
-    "$card-radius": "10px",
+    "$radius": "8px",
+    "$card-radius": "16px",
     "$border-width": "1px",
     "$outline-width": "2px",
     "$outline-offset": "2px",
@@ -257,7 +257,7 @@ sub-elements:
 | `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                                         |
 | `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                                           |
 | `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`                                                                                                                                                        |
-| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `HoverLink`, `LinkIcon`                                                                                                                      |
+| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`                                                                                                      |
 | `MarkdownInlineCode`    | None                                                                                                                                                                                                                                    |
 | `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                                                        |
 | `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                                                           |
@@ -269,7 +269,7 @@ sub-elements:
 | `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                                   |
 | `Sidebar`               | `CurrentLink`, `OpenPane`, `Content`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `TopLevelLink` |
 | `SocialIcons`           | `Link`, `HoverLink`, `Icon`                                                                                                                                                                                                             |
-| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                      |
+| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                          |
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                        |
 | `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                     |
 | `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                              |
@@ -286,9 +286,11 @@ sub-elements. `ThemeSelect` styles the combined Appearance panel; replace old
 `Select` and `Picker` overrides with `Trigger` and `Panel`. The separate
 `ContrastSelect` surface is replaced by the same `ThemeSelect` panel and option
 sub-elements. `SocialIcons` styles the shared icon-button links in the header
-and mobile menu. Heading permalinks
-use a target aligned with the final text line and an icon that scales with the
-heading; customize it with `MarkdownHeading.Link` and `MarkdownHeading.LinkIcon`.
+and mobile menu. On wider layouts, heading permalinks sit to the left of the
+heading and are revealed on heading hover or keyboard focus. On mobile they
+stay visible and inline so the target is not clipped by the narrower content
+gutter. Customize the behavior with `MarkdownHeading.Link`,
+`MarkdownHeading.RevealedLink`, and `MarkdownHeading.LinkIcon`.
 
 For the three navigation surfaces, root properties customize the navigation
 container; the `MobileTableOfContents` root is the list inside the mobile
@@ -309,8 +311,8 @@ The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
 CSS during the build, while appearance controls add only the small client
 behavior needed to persist selected theme and contrast modes. The compact
-Cookbook logo is shown beside the project title in the default top bar and is
-also the default generated favicon. Use
+Cookbook logo is shown beside the project title in the default top bar, links
+to the localized home page, and is also the default generated favicon. Use
 [`site.favicon`](./configuration.md#site-icons) to generate the complete icon
 set from project artwork.
 
@@ -443,8 +445,10 @@ components: {
   }
 },
 theme: {
+  styles: {
+    StarlightHeader: { LogoLink: { hide: true } }
+  },
   customStyles: {
-    StarlightHeader: { Logo: { hide: true } },
     ProjectSiteTitle: { Logo: { color: "#text" } }
   }
 }

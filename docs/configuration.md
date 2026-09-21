@@ -293,8 +293,8 @@ theme: {
     textSoft: "#626875"
   },
   tokens: {
-    "$radius": "6px",
-    "$card-radius": "10px",
+    "$radius": "8px",
+    "$card-radius": "16px",
     "$border-width": "1px",
     "$layout-width": "87.5rem",
     "$content-width": "58rem",
@@ -320,7 +320,7 @@ theme: {
 ```
 
 The default brand is `okhsl(266 68% 48%)`, a blue with 68% saturation; controls
-use a `6px` radius and cards use `10px`. Onest is the default body and heading family, while JetBrains Mono is
+use an `8px` radius and cards use `16px`. Onest is the default body and heading family, while JetBrains Mono is
 used for code. The default layout is capped at `87.5rem` (1400px), matching the
 Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `palette`
 supplies semantic Glaze inputs rather than component colors,
