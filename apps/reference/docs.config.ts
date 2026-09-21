@@ -48,7 +48,7 @@ export default defineDocsConfig({
                   "/starlight-comparison",
                   {
                     label: "Presentation",
-                    items: ["/theme-and-components"],
+                    items: ["/customization-rules", "/theme-and-components"],
                   },
                 ],
               },

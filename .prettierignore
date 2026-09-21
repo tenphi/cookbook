@@ -3,3 +3,4 @@ node_modules
 **/.astro
 coverage
 pnpm-lock.yaml
+packages/facade/docs

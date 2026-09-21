@@ -9,6 +9,9 @@ Cookbook uses Glaze to derive light, dark, and high-contrast values from one
 brand input, then exposes the result through Tasty tokens and component
 anatomy.
 
+Start with the [customization rules](./customization-rules.md) for the consumer
+contract, local package references, and guidance for coding agents.
+
 Use the [Glaze documentation](https://glaze.tenphi.me) to learn how palette
 inputs, color modes, and contrast targets are resolved. These Tasty references
 cover the configuration language accepted by `theme.styles`:
