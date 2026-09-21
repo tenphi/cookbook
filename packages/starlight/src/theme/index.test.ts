@@ -212,8 +212,8 @@ describe("Glaze theme adapter", () => {
         expect(colorSaturation(color)).toBeGreaterThanOrEqual(0.8);
       }
     }
-    expect(tokens.$radius).toBe("6px");
-    expect(tokens["$card-radius"]).toBe("10px");
+    expect(tokens.$radius).toBe("8px");
+    expect(tokens["$card-radius"]).toBe("16px");
     expect(tokens["$layout-width"]).toBe("87.5rem");
     expect(theme.presets.body?.fontFamily).toContain("'Onest Variable'");
     expect(theme.presets.heading?.fontFamily).toContain("'Onest Variable'");

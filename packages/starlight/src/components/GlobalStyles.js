@@ -953,11 +953,12 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".sl-markdown-content .sl-heading-wrapper",
     resolveComponentStyles("MarkdownHeading", {
+      position: "relative",
       preset: "heading",
       Heading: {
         $: "> :first-child",
         display: "inline",
-        paddingInlineEnd: "0.2em",
+        paddingInlineEnd: { "": "0", "@mobile": "1.75rem" },
       },
       Heading1: { $: "&.level-h1", preset: "h1" },
       Heading2: { $: "&.level-h2", preset: "h2" },
@@ -967,15 +968,32 @@ export default function GlobalStyles() {
       Heading6: { $: "&.level-h6", preset: "h6" },
       Link: {
         $: "> .sl-anchor-link",
+        position: { "": "absolute", "@mobile": "relative" },
+        insetBlockStart: {
+          "": "calc((1lh - 1.75rem) / 2)",
+          "@mobile": "auto",
+        },
+        insetInlineStart: { "": "-2rem", "@mobile": "auto" },
         display: "inline-grid",
         placeItems: "center",
-        inlineSize: "max(1.5rem, 1em)",
-        blockSize: "max(1.5rem, 1em)",
-        verticalAlign: "middle",
+        inlineSize: { "": "1.75rem", "@mobile": "1.5rem" },
+        blockSize: { "": "1.75rem", "@mobile": "1.5rem" },
+        marginInlineStart: { "": "0", "@mobile": "-1.5rem" },
+        verticalAlign: { "": "baseline", "@mobile": "middle" },
         color: "#text-muted",
+        opacity: {
+          "": "1",
+          "@media(hover: hover)": "0",
+          "@mobile": "1",
+        },
         radius: "$radius",
         userSelect: "none",
         textDecoration: "none",
+        transition: "color $transition, fill $transition, opacity $transition",
+      },
+      RevealedLink: {
+        $: "&:hover > .sl-anchor-link, > .sl-anchor-link:focus-visible",
+        opacity: "1",
       },
       HoverLink: {
         $: "> .sl-anchor-link:hover, > .sl-anchor-link:focus-visible",
