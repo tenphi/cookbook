@@ -368,6 +368,10 @@ export default function GlobalStyles() {
         },
         paddingBlockEnd: "($gap * 6)",
       },
+      Tree: {
+        $: "cookbook-sidebar",
+        display: "block",
+      },
       List: {
         $: "ul",
         display: "grid",
@@ -385,20 +389,26 @@ export default function GlobalStyles() {
         marginBlockStart: "0",
       },
       GroupSpacing: {
-        $: ".top-level > li + li:has(> details)",
+        $: ".top-level > li + li:has(> .sidebar-section-label)",
         marginBlockStart: "($gap * 2.5)",
       },
       NestedItem: {
-        $: "ul ul li",
-        marginInlineStart: "($gap * 1.25)",
-        paddingInlineStart: "($gap * 0.5)",
-        borderInlineStart: "$border-width solid #border",
+        $: "details > ul > li",
+        marginInlineStart: "($gap * 1.5)",
+      },
+      SectionHeading: {
+        $: ".sidebar-section-label",
+        margin: "0 0 1bw",
+        padding: "($gap * 0.75) ($gap * 1.25)",
+        color: "#text",
+        preset: "small / strong",
       },
       Control: {
         $: ["summary", "a"],
         blockSize: "min 2.25rem",
         padding: "($gap * 0.75) ($gap * 1.25)",
         color: "#text-soft",
+        preset: "navigation",
         radius: "$radius",
         textDecoration: "none",
       },
@@ -408,22 +418,24 @@ export default function GlobalStyles() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        gap: "1x",
         cursor: "pointer",
         userSelect: "none",
       },
       GroupLabel: {
-        $: "summary > .group-label",
+        $: ["summary > .group-label", ".sidebar-section-label"],
         display: "flex",
         alignItems: "center",
         minInlineSize: "0",
         gap: "0.25em",
       },
       GroupLabelText: {
-        $: "summary > .group-label > span:first-child",
+        $: [
+          "summary > .group-label > span:first-child",
+          ".sidebar-section-label > span:first-child",
+        ],
         minInlineSize: "0",
         overflow: "hidden",
-        color: "#text",
-        preset: "small / strong",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
       },
@@ -444,7 +456,12 @@ export default function GlobalStyles() {
         whiteSpace: "nowrap",
       },
       InteractiveControl: {
-        $: ["a:hover", "a:focus-visible", "summary:hover"],
+        $: [
+          "a:hover",
+          "a:focus-visible",
+          "summary:hover",
+          "summary:focus-visible",
+        ],
         color: "#text",
         fill: "#surface-2-hover",
       },
@@ -452,8 +469,34 @@ export default function GlobalStyles() {
         $: "summary::marker, summary::-webkit-details-marker",
         hide: true,
       },
+      Caret: {
+        $: "summary > .sidebar-caret",
+        flexShrink: "0",
+        inlineSize: "1rem",
+        blockSize: "1rem",
+        transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
+      },
+      ExpandedCaret: {
+        $: "details[open] > summary > .sidebar-caret",
+        transform: "rotate(90deg)",
+      },
+      ActiveGroup: {
+        $: 'details:has(a[aria-current="page"]) > summary',
+        color: "#text",
+        preset: "navigation / strong",
+      },
+      Badge: {
+        $: ".sidebar-badge",
+        flexShrink: "0",
+        padding: "0.125rem 0.375rem",
+        color: "#text-soft",
+        fill: "#surface-3",
+        border: "$border-width solid #border",
+        radius: "$radius",
+        preset: "small",
+      },
       TopLevelLink: {
-        $: "a.large",
+        $: 'a.large:not([aria-current="page"])',
         color: "#text",
         preset: "navigation",
       },
@@ -1308,14 +1351,14 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    "site-search button[data-open-modal] > svg, .pagination-links a > svg, mobile-starlight-toc .toggle > svg, #starlight__sidebar summary > svg.caret",
+    "site-search button[data-open-modal] > svg, .pagination-links a > svg, mobile-starlight-toc .toggle > svg",
     {
       hide: true,
     },
   );
 
   useGlobalStyles(
-    "site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
+    "site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after",
     {
       content: '""',
       display: "block",
@@ -1354,20 +1397,14 @@ export default function GlobalStyles() {
     mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
   });
 
-  useGlobalStyles(
-    "mobile-starlight-toc .toggle::after, #starlight__sidebar summary::after",
-    {
-      mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
-      transition: "rotate $transition",
-    },
-  );
+  useGlobalStyles("mobile-starlight-toc .toggle::after", {
+    mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
+    transition: "rotate $transition",
+  });
 
-  useGlobalStyles(
-    "mobile-starlight-toc details[open] .toggle::after, #starlight__sidebar details[open] > summary::after",
-    {
-      rotate: "90deg",
-    },
-  );
+  useGlobalStyles("mobile-starlight-toc details[open] .toggle::after", {
+    rotate: "90deg",
+  });
 
   useGlobalStyles("site-search dialog", {
     inlineSize: { "": "90%", "@mobile": "100%" },

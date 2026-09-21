@@ -36,7 +36,9 @@ for (const name of entries) {
 // The combined appearance panel, social buttons, and heading permalink targets
 // retain complete customizable anatomy. The responsive permalink placement and
 // configurable header-logo link add another 1 KiB for these owned surfaces.
-const cssBudget = 156 * 1024;
+// The owned sidebar adds customizable section headings, disclosure carets,
+// active ancestor states, and badges (4 KiB).
+const cssBudget = 160 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -120,6 +122,40 @@ for (const [selector, label] of [
   }
 }
 const home = await readFile(join(output, "index.html"), "utf8");
+const sidebarHtml = (html) => {
+  const sidebar =
+    /<cookbook-sidebar\b[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(html)?.[1];
+  if (!sidebar) throw new Error("The owned sidebar tree is missing.");
+  return sidebar;
+};
+const initialSidebar = sidebarHtml(
+  await readFile(join(output, "getting-started/index.html"), "utf8"),
+);
+if (
+  !/<h2 class="sidebar-section-label group-label">\s*<span>Author content<\/span>/.test(
+    initialSidebar,
+  ) ||
+  /<summary>\s*<span class="group-label">\s*<span>Author content<\/span>/.test(
+    initialSidebar,
+  ) ||
+  /<details\b[^>]*\bopen(?:\s|>|=)/.test(initialSidebar) ||
+  (initialSidebar.match(/<details\b/g) || []).length !== 2
+) {
+  throw new Error(
+    "Sidebar sections must stay flat and nested groups must start collapsed.",
+  );
+}
+const themeSidebar = sidebarHtml(
+  await readFile(join(output, "theme-and-components/index.html"), "utf8"),
+);
+if (
+  (themeSidebar.match(/<details\b[^>]*\bopen(?:\s|>|=)/g) || []).length !== 2 ||
+  !/<a\b[^>]*aria-current="page"[^>]*>\s*<span>Theme and components<\/span>/.test(
+    themeSidebar,
+  )
+) {
+  throw new Error("The sidebar must open every ancestor of the current page.");
+}
 for (const [pattern, label] of [
   [
     /<link\b(?=[^>]*rel="icon")(?=[^>]*sizes="32x32")(?=[^>]*href="\/_cookbook\/icons\/favicon-32x32\.png")[^>]*>/,

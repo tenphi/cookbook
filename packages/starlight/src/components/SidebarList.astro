@@ -1,0 +1,88 @@
+---
+import type { SidebarEntry } from "@astrojs/starlight/utils/routing/types";
+
+interface Props {
+  entries: SidebarEntry[];
+  depth?: number;
+  path?: string[];
+}
+
+const { entries, depth = 0, path = [] } = Astro.props;
+const containsCurrent = (items: SidebarEntry[]): boolean =>
+  items.some((item) =>
+    item.type === "link" ? item.isCurrent : containsCurrent(item.entries),
+  );
+---
+
+<ul class:list={{ "top-level": depth === 0 }}>
+  {
+    entries.map((entry, index) => {
+      const groupPath = [...path, `${index}:${entry.label}`];
+      const badge = entry.badge && (
+        <span
+          class:list={["sidebar-badge", entry.badge.variant, entry.badge.class]}
+        >
+          {entry.badge.text}
+        </span>
+      );
+      return (
+        <li>
+          {entry.type === "link" ? (
+            <a
+              {...entry.attrs}
+              href={entry.href}
+              aria-current={entry.isCurrent ? "page" : undefined}
+              class:list={[entry.attrs.class, { large: depth === 0 }]}
+            >
+              <span>{entry.label}</span>
+              {badge}
+            </a>
+          ) : depth === 0 ? (
+            <>
+              <h2 class="sidebar-section-label group-label">
+                <span>{entry.label}</span>
+                {badge}
+              </h2>
+              <Astro.self
+                entries={entry.entries}
+                depth={depth + 1}
+                path={groupPath}
+              />
+            </>
+          ) : (
+            <details
+              open={containsCurrent(entry.entries)}
+              data-sidebar-group={JSON.stringify(groupPath)}
+            >
+              <summary>
+                <span class="group-label">
+                  <span>{entry.label}</span>
+                  {badge}
+                </span>
+                <svg
+                  class="sidebar-caret"
+                  viewBox="0 0 16 16"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="m6 4 4 4-4 4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </summary>
+              <Astro.self
+                entries={entry.entries}
+                depth={depth + 1}
+                path={groupPath}
+              />
+            </details>
+          )}
+        </li>
+      );
+    })
+  }
+</ul>
