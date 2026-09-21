@@ -163,7 +163,11 @@ describe("section navigation", () => {
   it("keeps group pages in pagination once and marks them for linked headers", () => {
     const sidebar = starlightPageSidebar(
       resolveNavigationLayout([
-        { label: "Guide", link: "/guide", items: ["/guide/", "/child"] },
+        {
+          label: "Guide",
+          link: "/guide",
+          items: ["guide", "/guide/", "/child"],
+        },
         { label: "API", link: "/api", autogenerate: { directory: "/api" } },
         { label: "Empty", link: "/empty", items: [] },
       ]),

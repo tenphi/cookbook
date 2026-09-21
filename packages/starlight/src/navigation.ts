@@ -145,7 +145,7 @@ function withoutRoute(
   const target = normalizeNavigationPath(route);
   return items.flatMap((item): StarlightPageSidebarItem[] => {
     if ("link" in item) {
-      return item.link.startsWith("/") &&
+      return !/^(?:[a-z][a-z\d+.-]*:|\/\/|[?#])/i.test(item.link) &&
         normalizeNavigationPath(item.link) === target
         ? []
         : [item];
