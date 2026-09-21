@@ -34,8 +34,9 @@ for (const name of entries) {
 // 3.8 also emits typed custom-property registrations for configured tokens.
 // The four customizable callout palettes add 12 semantic roles in four modes.
 // The combined appearance panel, social buttons, and heading permalink targets
-// retain complete customizable anatomy. Allow 5 KiB for these owned surfaces.
-const cssBudget = 155 * 1024;
+// retain complete customizable anatomy. The responsive permalink placement and
+// configurable header-logo link add another 1 KiB for these owned surfaces.
+const cssBudget = 156 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
