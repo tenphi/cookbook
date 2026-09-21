@@ -294,9 +294,10 @@ previous/next page navigation. A group with no remaining children becomes a
 regular page link.
 
 Top-level sections stay flat; their linked headings navigate to their pages.
-For nested groups, clicking the header or chevron selects the parent page and
-toggles its children. On the parent page, the same control toggles without
-reloading. Enter and Space work too, while modified clicks and opening a link
+For nested groups, clicking an unselected header or its chevron selects the parent
+page and opens its children, keeping them open if already expanded. Clicking the
+selected parent toggles its children without reloading. Selecting and collapsing
+an open, unselected group therefore takes two clicks. Enter and Space work too, while modified clicks and opening a link
 in a new tab retain normal link behavior. Groups without a `link` only toggle.
 Only the selected page is highlighted; its ancestors keep their normal styling.
 

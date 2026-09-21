@@ -187,7 +187,8 @@ while smaller group labels establish hierarchy without oversized bold text.
 Top-level sidebar groups are always-visible section headings with their direct
 links aligned beneath them. Deeper groups expand on click or keyboard activation;
 the current group and its ancestors start open. Groups can have a parent-page
-`link`; activating a linked header selects that page while toggling its children.
+`link`; activating an unselected linked header selects that page and keeps its
+children open. Activating the selected header toggles its children.
 The current group can stay collapsed because its header remains visible. Only
 the current page is highlighted; ancestors receive no extra emphasis. Explicit expansion choices are
 remembered for the browser tab; automatically revealing the current page does

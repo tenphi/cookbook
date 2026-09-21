@@ -192,11 +192,15 @@ describe("linked sidebar groups", () => {
     expect(groups[0].open).toBe(true);
   });
 
-  it("saves a collapse before following the parent link from a child", () => {
+  it("selects an open parent first and requires a second click to collapse it", () => {
     const { groups, links } = mountLinked("leaf");
     expect(activate(links[0]).defaultPrevented).toBe(false);
-    expect(groups[0].open).toBe(false);
-    expect(JSON.parse(sessionStorage.getItem(key)!)).toEqual({ parent: false });
+    expect(groups[0].open).toBe(true);
+    expect(JSON.parse(sessionStorage.getItem(key)!)).toEqual({ parent: true });
+    const selected = mountLinked("parent");
+    expect(selected.groups[0].open).toBe(true);
+    expect(activate(selected.links[0]).defaultPrevented).toBe(true);
+    expect(selected.groups[0].open).toBe(false);
     expect(mountLinked("parent").groups[0].open).toBe(false);
     // Back/direct navigation to the leaf must reveal it again.
     expect(mountLinked("leaf").groups.map((group) => group.open)).toEqual([
@@ -207,7 +211,8 @@ describe("linked sidebar groups", () => {
 
   it("reveals the current page when Back restores the cached document", () => {
     const { groups, links } = mountLinked("leaf");
-    activate(links[0]);
+    groups[0].open = false;
+    groups[0].dispatchEvent(new Event("toggle"));
     expect(groups[0].open).toBe(false);
     window.dispatchEvent(
       Object.assign(new Event("pageshow"), { persisted: true }),

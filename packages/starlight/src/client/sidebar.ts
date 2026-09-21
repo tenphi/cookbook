@@ -96,13 +96,13 @@ class CookbookSidebar extends HTMLElement {
               link.click();
               return;
             }
-            group.open = !group.open;
+            const current = link.getAttribute("aria-current") === "page";
+            group.open = current ? !group.open : true;
             syncExpanded();
             // Persist before navigation: the native toggle event is queued and
             // may never run before the browser unloads this document.
             saveOpen();
-            if (link.getAttribute("aria-current") === "page")
-              event.preventDefault();
+            if (current) event.preventDefault();
           },
           { signal },
         );
