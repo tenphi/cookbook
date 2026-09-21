@@ -48,7 +48,7 @@ export default defineDocsConfig({
                   {
                     label: "Presentation",
                     link: "/theme-and-components",
-                    items: ["/authoring"],
+                    items: ["/customization-rules", "/authoring"],
                   },
                 ],
               },

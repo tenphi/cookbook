@@ -6,6 +6,10 @@ Static, repository-native documentation built with Astro, Starlight,
 [Read the documentation](https://cookbook.tenphi.me) or browse the
 [repository-native source](docs/index.md).
 
+Before customizing a site, read the [customization rules](docs/customization-rules.md).
+The published `@tenphi/cookbook` package includes these docs and versioned Tasty
+and Glaze references for local use by consumers and coding agents.
+
 ## Quick start
 
 ```sh
