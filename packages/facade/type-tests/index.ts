@@ -54,3 +54,29 @@ defineDocsConfig({
 });
 // @ts-expect-error Group page links must be strings.
 defineDocsConfig({ navigation: [{ label: "Guides", link: 123, items: [] }] });
+
+defineDocsConfig({
+  site: {
+    headerLinks: [
+      { label: "Start", link: "/start", variant: "primary", newTab: false },
+    ],
+  },
+  theme: {
+    palette: { header: "#fafaff" },
+    styles: {
+      HeaderFrame: { backdropFilter: "blur(12px)" },
+      HeaderLinks: { PrimaryLink: { radius: "999px" } },
+      SearchButton: { Icon: { inlineSize: "1.25rem" } },
+      Sidebar: { Close: { color: "#text" } },
+      MobileNavigationTabs: { Trigger: { radius: "1r" } },
+    },
+  },
+});
+defineDocsConfig({
+  site: {
+    headerLinks: [
+      // @ts-expect-error Header links must use a supported variant.
+      { label: "Start", link: "/start", variant: "danger" },
+    ],
+  },
+});

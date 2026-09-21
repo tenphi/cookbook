@@ -1,4 +1,6 @@
 ---
+import Icon from "@astrojs/starlight/user-components/Icon.astro";
+import Logo from "../components/Logo.astro";
 import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
 import { layout } from "virtual:cookbook/layout";
 import SidebarList from "../components/SidebarList.astro";
@@ -26,6 +28,23 @@ const sidebar =
       ? []
       : fullSidebar;
 ---
+
+<div class="td-sidebar-heading">
+  <a
+    class="td-sidebar-heading__home"
+    href={Astro.locals.starlightRoute.siteTitleHref}
+  >
+    <Logo decorative />
+    <span>{Astro.locals.starlightRoute.siteTitle}</span>
+  </a>
+  <button
+    type="button"
+    popovertarget="starlight__sidebar"
+    popovertargetaction="hide"
+    aria-label="Close navigation"
+    autofocus><Icon name="close" /></button
+  >
+</div>
 
 <MobileNavigationTabs
   base={import.meta.env.BASE_URL}

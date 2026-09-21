@@ -110,10 +110,7 @@ for (const [selector, label] of [
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
-  [
-    "mobile-starlight-toc .dropdown .isMobile a > span",
-    "mobile table of contents",
-  ],
+  [".sl-menu-button .td-menu-button__page", "mobile navigation breadcrumb"],
 ]) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   if (
@@ -124,13 +121,47 @@ for (const [selector, label] of [
     throw new Error(`Long ${label} must truncate with an ellipsis.`);
   }
 }
+if (
+  !/backdrop-filter:\s*blur\(16px\)/.test(sharedCss) ||
+  !sharedCss.includes("var(--header-color)")
+) {
+  throw new Error(
+    "The header must use its semantic translucent surface and backdrop blur.",
+  );
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 const sidebarHtml = (html) => {
   const sidebar =
-    /<cookbook-sidebar\b[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(html)?.[1];
+    /<cookbook-sidebar(?=[\s>])[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(
+      html,
+    )?.[1];
   if (!sidebar) throw new Error("The owned sidebar tree is missing.");
   return sidebar;
 };
+const guide = await readFile(
+  join(output, "getting-started/index.html"),
+  "utf8",
+);
+if (guide.includes("mobile-starlight-toc")) {
+  throw new Error(
+    "Mobile and tablet pages must not render a compact table of contents.",
+  );
+}
+for (const marker of [
+  "<cookbook-sidebar-pane",
+  'aria-label="Choose section"',
+  'aria-label="More"',
+  'aria-label="More links"',
+  'aria-label="Close navigation"',
+]) {
+  if (!guide.includes(marker))
+    throw new Error(`Responsive navigation is missing ${marker}.`);
+}
+if ((guide.match(/data-variant="primary"/g) ?? []).length !== 2) {
+  throw new Error(
+    "Header primary button styling must be preserved in the mobile menu.",
+  );
+}
 const initialSidebar = sidebarHtml(
   await readFile(join(output, "getting-started/index.html"), "utf8"),
 );

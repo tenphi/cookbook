@@ -1,0 +1,35 @@
+---
+import { PageFrameRoot } from "../components/LayoutComponents.js";
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+<PageFrameRoot
+  className="page"
+  data-tasty-anatomy="PageFrame"
+  data-has-sidebar={hasSidebar ? "" : undefined}
+>
+  <header class="header"><slot name="header" /></header>
+  {
+    hasSidebar && (
+      <cookbook-sidebar-pane
+        id="starlight__sidebar"
+        class="sidebar-pane print:hidden"
+        popover="auto"
+        aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
+        tabindex="-1"
+      >
+        <nav
+          class="sidebar-content sl-flex"
+          aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
+        >
+          <slot name="sidebar" />
+        </nav>
+      </cookbook-sidebar-pane>
+    )
+  }
+  <div class="main-frame"><slot /></div>
+</PageFrameRoot>
+
+<script>
+  import "../client/navigation.js";
+</script>

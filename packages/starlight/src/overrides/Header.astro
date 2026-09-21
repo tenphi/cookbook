@@ -4,6 +4,8 @@ import LanguageSelect from "virtual:starlight/components/LanguageSelect";
 import Search from "virtual:starlight/components/Search";
 import SiteTitle from "virtual:starlight/components/SiteTitle";
 import SocialIcons from "virtual:starlight/components/SocialIcons";
+import MobileMenuToggle from "virtual:starlight/components/MobileMenuToggle";
+import HeaderLinks from "../components/HeaderLinks.astro";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
@@ -50,6 +52,7 @@ function tabHref(link: string): string {
     <div class="td-header__search print:hidden">
       {shouldRenderSearch && <Search />}
     </div>
+    <HeaderLinks />
     <div class="td-header__mobile-theme md:sl-hidden print:hidden">
       <ThemeSelect />
     </div>
@@ -77,6 +80,7 @@ function tabHref(link: string): string {
       </TopNavigationRoot>
     )
   }
+  {Astro.locals.starlightRoute.hasSidebar && <MobileMenuToggle />}
 </StarlightHeaderRoot>
 
 <script src="../client/code-copy.js"></script>

@@ -48,6 +48,32 @@
               }
             }
           ]
+        },
+        "headerLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "link"],
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "link": {
+                "type": "string",
+                "pattern": "^(?:https?://[^\\s\\\\]+|/(?!/)[^\\s\\\\]*|#[^\\s\\\\]*)$"
+              },
+              "variant": {
+                "enum": ["default", "primary"]
+              },
+              "newTab": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
         }
       }
     },
@@ -164,7 +190,8 @@
             "info": {},
             "success": {},
             "warning": {},
-            "danger": {}
+            "danger": {},
+            "header": {}
           }
         },
         "states": {
@@ -401,6 +428,54 @@
               }
             },
             "SocialIcons": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "HeaderFrame": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "HeaderLinks": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Layout": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SearchButton": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "TableOfContentsLayout": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "PageFrame": {
               "type": "object",
               "propertyNames": {
                 "not": {

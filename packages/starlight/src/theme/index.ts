@@ -88,6 +88,12 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       mode: "auto",
       darkSaturation: 0.35,
     },
+    header: {
+      from: theme.palette?.header ?? surfaceFrom,
+      mode: "auto",
+      darkSaturation: 0.35,
+      opacity: 0.88,
+    },
     "surface-2": {
       base: "surface",
       tone: "-2",

@@ -15,6 +15,14 @@ describe("component style metadata", () => {
 
   it("publishes the complete navigation sub-element lists", () => {
     expect(COOKBOOK_COMPONENT_SUB_ELEMENTS.Sidebar).toEqual([
+      "Backdrop",
+      "MobileHeading",
+      "HomeLink",
+      "HomeLogo",
+      "HomeLabel",
+      "Close",
+      "HoverClose",
+      "CloseIcon",
       "CurrentLink",
       "OpenPane",
       "Content",

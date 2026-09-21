@@ -22,8 +22,18 @@ export interface SiteConfig {
   description?: string;
   url?: string;
   repository?: string;
+  /** Header buttons, collapsed into a More menu on mobile. */
+  headerLinks?: HeaderLink[];
   /** Source artwork used to generate browser, touch, and installable-app icons. */
   favicon?: string | SiteIconConfig;
+}
+
+export interface HeaderLink {
+  label: string;
+  /** HTTP(S) URL, root-relative route (prefixed with the site base), or fragment. */
+  link: string;
+  variant?: "default" | "primary";
+  newTab?: boolean;
 }
 
 export interface SiteIconConfig {
@@ -184,6 +194,8 @@ export interface ThemePaletteConfig {
   danger?: GlazeColorValue;
   /** Light-scheme page surface; dark and high-contrast values adapt. */
   surface?: GlazeColorValue;
+  /** Translucent header surface seed; defaults to the page surface. */
+  header?: GlazeColorValue;
   /** Primary reading text seed, resolved against `surface`. */
   text?: GlazeColorValue;
   /** Secondary text seed, resolved against `surface`. */
@@ -198,6 +210,12 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Tab",
   "Footer",
   "Hero",
+  "PageFrame",
+  "HeaderFrame",
+  "HeaderLinks",
+  "Layout",
+  "SearchButton",
+  "TableOfContentsLayout",
   "LanguageSelect",
   "Logo",
   "MarkdownCodeBlock",
@@ -225,6 +243,24 @@ export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  PageFrame: ["MainFrame", "SidebarFrame", "Columns"],
+  HeaderFrame: [],
+  HeaderLinks: [
+    "Desktop",
+    "Link",
+    "HoverLink",
+    "PrimaryLink",
+    "HoverPrimaryLink",
+    "Trigger",
+    "HoverTrigger",
+    "Panel",
+    "PanelNavigation",
+    "Close",
+    "HoverClose",
+  ],
+  Layout: ["LockedPage"],
+  SearchButton: ["Label", "Shortcut", "Hover", "Active", "NativeIcon", "Icon"],
+  TableOfContentsLayout: ["Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
   Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
   CodeGroup: ["Caption", "Pre", "Code"],
@@ -286,8 +322,19 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   MarkdownInlineCode: [],
   Mermaid: ["Diagram", "Text", "MonoText"],
   MobileMenuFooter: ["Social"],
-  MobileMenuToggle: ["Control", "Icon", "HoverControl", "ActiveControl"],
+  MobileMenuToggle: [
+    "Control",
+    "Icon",
+    "Section",
+    "Page",
+    "HoverControl",
+    "ActiveControl",
+  ],
   MobileNavigationTabs: [
+    "Trigger",
+    "Marker",
+    "Caret",
+    "ExpandedCaret",
     "Label",
     "List",
     "Item",
@@ -306,6 +353,14 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   PackageVersion: [],
   Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
   Sidebar: [
+    "Backdrop",
+    "MobileHeading",
+    "HomeLink",
+    "HomeLogo",
+    "HomeLabel",
+    "Close",
+    "HoverClose",
+    "CloseIcon",
     "CurrentLink",
     "OpenPane",
     "Content",

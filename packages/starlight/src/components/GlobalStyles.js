@@ -29,20 +29,34 @@ export default function GlobalStyles() {
     fontDisplay: "swap",
   });
 
-  useGlobalStyles(":root", {
-    colorScheme: "dark",
-    "$docs-nav-height": "4.5rem",
-    "$docs-nav-pad-x": "clamp(1.25rem, 2.5vw, 2rem)",
-    "$docs-nav-gap": "0.75rem",
-    "$docs-sidebar-pad-x": "1.5rem",
-    "$docs-content-pad-x": "clamp(1.5rem, 4vw, 4rem)",
-    "$docs-menu-button-size": "2.5rem",
-    "$docs-mobile-toc-height": "0rem",
-  });
-
-  useGlobalStyles(":root:has(.td-top-tabs)", {
-    "$docs-nav-height": "7rem",
-  });
+  useGlobalStyles(
+    ":root",
+    resolveComponentStyles("Layout", {
+      colorScheme: "dark",
+      "$docs-nav-height": {
+        "": "4.5rem",
+        ":has(.td-top-tabs)": "7rem",
+        "@mobile": "3.5rem",
+        "@mobile & [data-has-sidebar]": "6.5rem",
+      },
+      "$docs-nav-pad-x": {
+        "": "clamp(1.25rem, 2.5vw, 2rem)",
+        "@mobile": "1rem",
+      },
+      "$docs-nav-gap": { "": "0.75rem", "@mobile": "0.5rem" },
+      "$docs-sidebar-pad-x": "1.5rem",
+      "$docs-content-pad-x": {
+        "": "clamp(1.5rem, 4vw, 4rem)",
+        "@mobile": "1rem",
+      },
+      "$docs-menu-button-size": { "": "2.5rem", "@mobile": "2.25rem" },
+      "$docs-mobile-toc-height": "0rem",
+      LockedPage: {
+        $: "&:has(#starlight__sidebar:popover-open)",
+        overflow: { "@mobile": "hidden" },
+      },
+    }),
+  );
 
   useGlobalStyles(':root[data-theme="light"]', {
     colorScheme: "light",
@@ -130,37 +144,20 @@ export default function GlobalStyles() {
     color: "#accent-text",
   });
 
-  useGlobalStyles(".page", {
-    display: "flex",
-    flow: "column",
-    minBlockSize: "100vh",
-  });
-
-  useGlobalStyles("body > .page > .header", {
-    position: "fixed",
-    zIndex: "10",
-    inset: "0 0 auto",
-    inlineSize: "100%",
-    blockSize: "$docs-nav-height",
-    padding: "0 $docs-nav-pad-x",
-    borderBlockEnd: "$border-width solid #border",
-    fill: "#surface",
-  });
-
-  useGlobalStyles(".main-frame", {
-    minInlineSize: "0",
-    paddingBlockStart: "($docs-nav-height + $docs-mobile-toc-height)",
-    paddingInlineStart: "0",
-  });
-
-  useGlobalStyles("[data-has-sidebar] .main-frame", {
-    paddingInlineStart: { "": "$sidebar-width", "@mobile": "0" },
-  });
-
-  useGlobalStyles(".main-frame > .lg\\:sl-flex", {
-    display: { "": "flex", "@narrow-layout": "block" },
-    minInlineSize: "0",
-  });
+  useGlobalStyles(
+    "body > .page > .header",
+    resolveComponentStyles("HeaderFrame", {
+      position: "fixed",
+      zIndex: "10",
+      inset: "0 0 auto",
+      inlineSize: "100%",
+      blockSize: "$docs-nav-height",
+      padding: "0 $docs-nav-pad-x",
+      borderBlockEnd: "$border-width solid #border",
+      fill: "#header",
+      backdropFilter: "blur(16px)",
+    }),
+  );
 
   useGlobalStyles(".main-pane", {
     isolation: "isolate",
@@ -176,34 +173,34 @@ export default function GlobalStyles() {
     },
   });
 
-  useGlobalStyles(".right-sidebar-container", {
-    order: "2",
-    position: "relative",
-    inlineSize: {
-      "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
-      "@narrow-layout": "100%",
-    },
-  });
-
-  useGlobalStyles(".right-sidebar", {
-    position: { "": "fixed", "@narrow-layout": "static" },
-    insetBlockStart: { "": "0", "@narrow-layout": "auto" },
-    inlineSize: { "": "inherit", "@narrow-layout": "100%" },
-    blockSize: { "": "100vh", "@narrow-layout": "auto" },
-    paddingBlockStart: {
-      "": "$docs-nav-height",
-      "@narrow-layout": "0",
-    },
-    overflowY: { "": "auto", "@narrow-layout": "visible" },
-    scrollbarWidth: "none",
-  });
+  useGlobalStyles(
+    ".right-sidebar-container",
+    resolveComponentStyles("TableOfContentsLayout", {
+      Content: {
+        $: ".right-sidebar",
+        position: { "": "fixed", "@narrow-layout": "static" },
+        insetBlockStart: { "": "0", "@narrow-layout": "auto" },
+        inlineSize: { "": "inherit", "@narrow-layout": "100%" },
+        blockSize: { "": "100vh", "@narrow-layout": "auto" },
+        paddingBlockStart: {
+          "": "$docs-nav-height",
+          "@narrow-layout": "0",
+        },
+        overflowY: { "": "auto", "@narrow-layout": "visible" },
+        scrollbarWidth: "none",
+      },
+      hide: { "": false, "@narrow-layout": true },
+      order: "2",
+      position: "relative",
+      inlineSize: {
+        "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
+        "@narrow-layout": "100%",
+      },
+    }),
+  );
 
   useGlobalStyles(".lg\\:sl-hidden", {
     display: { "": "none", "@narrow-layout": "block" },
-  });
-
-  useGlobalStyles(".right-sidebar-panel", {
-    display: { "": "block", "@narrow-layout": "none" },
   });
 
   useGlobalStyles(".md\\:sl-hidden", {
@@ -311,13 +308,9 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    'site-search button[data-open-modal], site-search dialog, .pagination-links a, a[aria-current="page"]',
+    'site-search dialog, .pagination-links a, a[aria-current="page"]',
     { radius: "$radius" },
   );
-
-  useGlobalStyles("body > .page > .header", {
-    fill: "#surface",
-  });
 
   useGlobalStyles(
     "#starlight__sidebar",
@@ -326,13 +319,16 @@ export default function GlobalStyles() {
       visibility: { "": "visible", "@mobile": "hidden" },
       position: "fixed",
       zIndex: { "": "8", "@mobile": "12" },
-      blockInset: "$docs-nav-height start, 0 end",
+      blockInset: { "": "$docs-nav-height start, 0 end", "@mobile": "0" },
       inlineInset: {
         "": "0 start, auto end",
         "@desktop":
           "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
       },
-      inlineSize: { "": "$sidebar-width", "@mobile": "100%" },
+      inlineSize: {
+        "": "$sidebar-width",
+        "@mobile": "min(22rem, calc(100% - 2rem))",
+      },
       blockSize: "auto",
       margin: "0",
       padding: "0",
@@ -341,11 +337,66 @@ export default function GlobalStyles() {
       overflowY: "auto",
       scrollbarGutter: "stable",
       fill: "#surface",
+      overscrollBehavior: "contain",
+      Backdrop: { $: "&::backdrop", fill: "#overlay" },
+      MobileHeading: {
+        $: ".td-sidebar-heading",
+        display: "flex",
+        hide: { "": true, "@mobile": false },
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "$gap",
+      },
+      HomeLink: {
+        $: ".td-sidebar-heading__home",
+        display: "flex",
+        alignItems: "center",
+        textDecoration: "none",
+        inlineSize: "min 0",
+        padding: "0",
+        gap: "$gap",
+        color: "#text",
+        preset: "h4",
+      },
+      HomeLogo: {
+        $: ".td-sidebar-heading__home > span:first-child",
+        inlineSize: "2rem",
+        blockSize: "2rem",
+      },
+      HomeLabel: {
+        $: ".td-sidebar-heading__home > span:last-child",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      },
+      Close: {
+        $: ".td-sidebar-heading > button",
+        display: "grid",
+        placeItems: "center",
+        flexShrink: "0",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+        padding: "0",
+        border: "0",
+        color: "#text-soft",
+        fill: "#clear",
+        radius: "$radius",
+      },
+      HoverClose: {
+        $: ".td-sidebar-heading > button:hover",
+        color: "#text",
+        fill: "#surface-2-hover",
+      },
+      CloseIcon: {
+        $: ".td-sidebar-heading > button > svg",
+        inlineSize: "1.25rem",
+        blockSize: "1.25rem",
+      },
       CurrentLink: {
         $: [
-          'a[aria-current="page"]',
-          'a[aria-current="page"]:hover',
-          'a[aria-current="page"]:focus',
+          'cookbook-sidebar a[aria-current="page"]',
+          'cookbook-sidebar a[aria-current="page"]:hover',
+          'cookbook-sidebar a[aria-current="page"]:focus',
         ],
         color: "#accent-text",
         fill: "#accent-surface-subtle",
@@ -361,10 +412,11 @@ export default function GlobalStyles() {
         flow: "column",
         minBlockSize: "100%",
         paddingInline: "$docs-sidebar-pad-x",
-        gap: "($gap * 3)",
+        gap: "($gap * 2)",
         paddingBlockStart: {
           "": "($gap * 4)",
           "@medium-layout": "($gap * 1.5)",
+          "@mobile": "($gap * 2)",
         },
         paddingBlockEnd: "($gap * 6)",
       },
@@ -373,7 +425,7 @@ export default function GlobalStyles() {
         display: "block",
       },
       List: {
-        $: "ul",
+        $: "cookbook-sidebar ul",
         display: "grid",
         gridTemplateColumns: "minmax(0, 1fr)",
         gap: "1bw",
@@ -382,7 +434,7 @@ export default function GlobalStyles() {
         listStyle: "none",
       },
       Item: {
-        $: "li",
+        $: "cookbook-sidebar li",
         overflowWrap: "anywhere",
       },
       TopLevelSpacing: {
@@ -405,7 +457,7 @@ export default function GlobalStyles() {
         preset: "small / strong",
       },
       Control: {
-        $: ["summary", "a"],
+        $: ["cookbook-sidebar summary", "cookbook-sidebar a"],
         blockSize: "min 2.25rem",
         padding: "($gap * 0.75) ($gap * 1.25)",
         color: "#text-soft",
@@ -414,7 +466,7 @@ export default function GlobalStyles() {
         textDecoration: "none",
       },
       Summary: {
-        $: "summary",
+        $: "cookbook-sidebar summary",
         blockMargin: "1bw end",
         display: "flex",
         alignItems: "center",
@@ -438,7 +490,7 @@ export default function GlobalStyles() {
         whiteSpace: "nowrap",
       },
       Link: {
-        $: "a",
+        $: "cookbook-sidebar a",
         inlineSize: "100%",
         display: "flex",
         alignItems: "center",
@@ -456,16 +508,16 @@ export default function GlobalStyles() {
       },
       InteractiveControl: {
         $: [
-          "a:hover",
-          "a:focus-visible",
-          "summary:hover",
-          "summary:focus-visible",
+          "cookbook-sidebar a:hover",
+          "cookbook-sidebar a:focus-visible",
+          "cookbook-sidebar summary:hover",
+          "cookbook-sidebar summary:focus-visible",
         ],
         color: "#text",
         fill: "#surface-2-hover",
       },
       SummaryMarker: {
-        $: "summary::marker, summary::-webkit-details-marker",
+        $: "cookbook-sidebar summary::marker, summary::-webkit-details-marker",
         hide: true,
       },
       Caret: {
@@ -520,6 +572,7 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".right-sidebar-panel",
     resolveComponentStyles("TableOfContents", {
+      hide: { "": false, "@narrow-layout": true },
       paddingBlockStart: "($gap * 5)",
       paddingInlineStart: "$docs-sidebar-pad-x",
       paddingInlineEnd: "$docs-sidebar-pad-x",
@@ -1200,51 +1253,55 @@ export default function GlobalStyles() {
     fill: "#border",
   });
 
-  useGlobalStyles("site-search button[data-open-modal]", {
-    display: "flex",
-    alignItems: "center",
-    gap: "$gap",
-    inlineSize: "100%",
-    maxInlineSize: "22rem",
-    blockSize: "$control-height",
-    paddingInlineStart: "($gap * 1.5)",
-    paddingInlineEnd: "$gap",
-    color: "#text-soft",
-    border: true,
-    fill: "#surface",
-    preset: "small",
-    boxShadow: "none",
-    cursor: "pointer",
-    transition: "color $transition, background-color $transition",
-  });
+  useGlobalStyles("site-search", { display: "contents" });
 
-  useGlobalStyles("site-search", {
-    display: "contents",
-  });
-
-  useGlobalStyles("site-search button[data-open-modal] > :last-child", {
-    marginInlineStart: "auto",
-  });
-
-  useGlobalStyles("site-search button[data-open-modal] > kbd", {
-    display: { "": "flex", "@mobile": "none" },
-    gap: "0.25em",
-    paddingInlineStart: "0.375rem",
-    paddingInlineEnd: "0.375rem",
-    fill: "#surface-3",
-    preset: "body",
-    fontSize: "0.75rem",
-    radius: "($radius * 0.75)",
-  });
-
-  useGlobalStyles("site-search button[data-open-modal]:hover", {
-    borderColor: "#border",
-    fill: "#surface-2-hover",
-  });
-
-  useGlobalStyles("site-search button[data-open-modal]:active", {
-    fill: "#surface-2-pressed",
-  });
+  useGlobalStyles(
+    "site-search button[data-open-modal]",
+    resolveComponentStyles("SearchButton", {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: { "": "flex-start", "@mobile": "center" },
+      gap: "$gap",
+      inlineSize: { "": "100%", "@mobile": "$docs-menu-button-size" },
+      maxInlineSize: "22rem",
+      blockSize: { "": "$control-height", "@mobile": "$docs-menu-button-size" },
+      minBlockSize: "0",
+      padding: { "": "0 $gap 0 ($gap * 1.5)", "@mobile": "0" },
+      color: "#text-soft",
+      border: { "": true, "@mobile": "0" },
+      radius: "$radius",
+      fill: { "": "#surface", "@mobile": "#clear" },
+      preset: "small",
+      shadow: "none",
+      cursor: "pointer",
+      transition: "color $transition, fill $transition",
+      Label: { $: "> span", hide: { "": false, "@mobile": true } },
+      Shortcut: {
+        $: "> kbd",
+        display: "flex",
+        hide: { "": false, "@narrow-layout": true },
+        gap: "0.25em",
+        inlineMargin: "auto start",
+        inlinePadding: "0.375rem",
+        fill: "#surface-3",
+        preset: "small",
+        radius: "($radius * 0.75)",
+      },
+      Hover: { $: "&:hover", color: "#text", fill: "#surface-2-hover" },
+      Active: { $: "&:active", color: "#text", fill: "#surface-2-pressed" },
+      NativeIcon: { $: "> svg", hide: true },
+      Icon: {
+        $: "&::before",
+        content: '""',
+        display: "block",
+        flexShrink: "0",
+        inlineSize: { "": "1rem", "@mobile": "1.25rem" },
+        blockSize: { "": "1rem", "@mobile": "1.25rem" },
+        fill: "#current",
+        mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
+      },
+    }),
+  );
 
   useGlobalStyles(".pagination-links a", {
     display: "flex",
@@ -1364,15 +1421,12 @@ export default function GlobalStyles() {
     },
   });
 
-  useGlobalStyles(
-    "site-search button[data-open-modal] > svg, .pagination-links a > svg, mobile-starlight-toc .toggle > svg",
-    {
-      hide: true,
-    },
-  );
+  useGlobalStyles(".pagination-links a > svg", {
+    hide: true,
+  });
 
   useGlobalStyles(
-    "site-search button[data-open-modal]::before, site-search button[data-close-modal]::before, .pagination-links a::before, mobile-starlight-toc .toggle::after",
+    "site-search button[data-close-modal]::before, .pagination-links a::before",
     {
       content: '""',
       display: "block",
@@ -1384,10 +1438,6 @@ export default function GlobalStyles() {
       fill: "#current",
     },
   );
-
-  useGlobalStyles("site-search button[data-open-modal]::before", {
-    mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
-  });
 
   useGlobalStyles("site-search button[data-close-modal]::before", {
     mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
@@ -1409,15 +1459,6 @@ export default function GlobalStyles() {
 
   useGlobalStyles('[dir="rtl"] .pagination-links a[rel="next"]::before', {
     mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
-  });
-
-  useGlobalStyles("mobile-starlight-toc .toggle::after", {
-    mask: `url("${svgIconUrl(chevronRightIcon)}") center / contain no-repeat`,
-    transition: "rotate $transition",
-  });
-
-  useGlobalStyles("mobile-starlight-toc details[open] .toggle::after", {
-    rotate: "90deg",
   });
 
   useGlobalStyles("site-search dialog", {
@@ -1596,213 +1637,45 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".sl-menu-button",
     resolveComponentStyles("MobileMenuToggle", {
-      display: { "": "none", "@mobile": "block" },
-      position: { "@mobile": "fixed" },
-      zIndex: { "@mobile": "11" },
-      insetBlockStart: {
-        "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2)",
-      },
-      insetInlineEnd: { "@mobile": "$docs-nav-pad-x" },
-      color: "#text",
-      border: true,
-      radius: "$radius",
-      fill: "#surface-3",
-      transition: "color $transition, background-color $transition",
-      Control: {
-        $: "&.td-menu-button",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        inlineSize: "$docs-menu-button-size",
-        blockSize: "$docs-menu-button-size",
-        minBlockSize: "0",
-        padding: "0",
-        color: "#text-soft",
-        boxShadow: "none",
-        cursor: "pointer",
-      },
+      display: { "": "none", "@mobile": "flex" },
+      alignItems: "center",
+      gap: "$gap",
+      inlineSize: "100%",
+      blockSize: "3rem",
+      minBlockSize: "0",
+      flexShrink: "0",
+      padding: "0",
+      border: "0",
+      blockBorder: "$border-width solid #border start",
+      radius: "0",
+      color: "#text-soft",
+      fill: "#clear",
+      preset: "navigation",
+      textAlign: "start",
+      Control: { $: "&.td-menu-button", cursor: "pointer" },
       Icon: {
         $: "> svg",
+        flexShrink: "0",
         inlineSize: "1.125rem",
         blockSize: "1.125rem",
       },
-      HoverControl: {
-        $: "&:hover",
-        color: "#text",
-        borderColor: "#border",
-        fill: "#surface-3-hover",
-      },
-      ActiveControl: {
-        $: "&:active",
-        color: "#text",
-        borderColor: "#border",
-        fill: "#surface-3-pressed",
-        boxShadow: "none",
-      },
-    }),
-  );
-
-  useGlobalStyles("mobile-starlight-toc .toggle", {
-    color: "#text",
-    border: true,
-    radius: "$radius",
-    fill: "#surface-3",
-    transition: "color $transition, background-color $transition",
-  });
-
-  useGlobalStyles("body:has(#starlight__sidebar:popover-open)", {
-    overflow: { "": "auto", "@mobile": "hidden" },
-  });
-
-  useGlobalStyles(
-    "mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle",
-    {
-      color: "#text",
-      borderColor: "#border",
-      fill: "#surface-3-hover",
-    },
-  );
-
-  useGlobalStyles("mobile-starlight-toc .toggle:active", {
-    color: "#text",
-    borderColor: "#border",
-    fill: "#surface-3-pressed",
-    boxShadow: "none",
-  });
-
-  useGlobalStyles("mobile-starlight-toc summary", {
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: "$gap",
-    paddingInlineStart: "$docs-content-pad-x",
-    paddingInlineEnd: "$docs-content-pad-x",
-  });
-
-  useGlobalStyles(
-    "mobile-starlight-toc .toggle, mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
-    {
-      display: "inline-flex",
-      alignItems: "center",
-      flexShrink: "0",
-      gap: "$gap",
-      margin: "0",
-      padding: "0",
-      color: "#text-soft",
-      preset: "small / strong",
-      border: "0",
-      radius: "0",
-      fill: "#clear",
-      boxShadow: "none",
-    },
-  );
-
-  useGlobalStyles(
-    "mobile-starlight-toc .toggle:hover, mobile-starlight-toc details[open] .toggle, mobile-starlight-toc .toggle:active",
-    {
-      color: "#text",
-    },
-  );
-
-  useGlobalStyles("mobile-starlight-toc summary .toggle", {
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles("mobile-starlight-toc .dropdown", {
-    position: "absolute",
-    inset: "100% top",
-    insetInlineStart: "$docs-content-pad-x",
-    zIndex: "1",
-    display: "block",
-    inlineSize: "min(22rem, (100% - ($docs-content-pad-x * 2)))",
-    maxBlockSize:
-      "min(24rem, (100vh - ($docs-mobile-toc-height + ($gap * 4))))",
-    margin: "$gap 0 0",
-    padding: "4px",
-    overflow: "auto",
-    color: "#text",
-    border: true,
-    radius: "$card-radius",
-    fill: "#surface-2",
-    shadow: "0 0.75rem 2rem #shadow",
-  });
-
-  useGlobalStyles("mobile-starlight-toc nav", {
-    position: "fixed",
-    zIndex: "9",
-    insetBlockStart: "($docs-nav-height - $border-width)",
-    insetInlineStart: {
-      "": "0",
-      "@medium-layout": "$sidebar-width",
-    },
-    insetInlineEnd: "0",
-    fill: "#surface",
-  });
-
-  useGlobalStyles("mobile-starlight-toc details", {
-    position: "relative",
-  });
-
-  useGlobalStyles("mobile-starlight-toc .display-current", {
-    minInlineSize: "0",
-    overflow: "hidden",
-    color: "#text",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  });
-
-  useGlobalStyles(
-    "mobile-starlight-toc .dropdown .isMobile",
-    resolveComponentStyles("MobileTableOfContents", {
-      display: "grid",
-      gridTemplateColumns: "minmax(0, 1fr)",
-      minInlineSize: "0",
-      gap: "1px",
-      margin: "0",
-      padding: "0",
-      listStyle: "none",
-
-      Item: {
-        $: "> li",
-        minInlineSize: "0",
-        margin: "0",
-        padding: "0",
-        listStyle: "none",
-      },
-      Link: {
-        $: "a",
-        display: "flex",
-        alignItems: "center",
-        minInlineSize: "0",
-        minBlockSize: "2.5rem",
-        padding: "0.625rem 0.75rem",
-        color: "#text-soft",
-        radius: "$radius",
-        fill: "#surface-2",
-        textDecoration: "none",
-      },
-      LinkLabel: {
-        $: "a > span",
-        minInlineSize: "0",
+      Section: {
+        $: ".td-menu-button__section",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
+        inlineSize: "max 40%",
       },
-      HoverLink: {
-        $: "a:hover",
+      Page: {
+        $: ".td-menu-button__page",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
         color: "#text",
-        fill: "#surface-2-hover",
+        preset: "navigation / strong",
       },
-      CurrentLink: {
-        $: 'a[aria-current="true"]',
-        color: "#accent-text",
-        fill: "#accent-surface-2-subtle",
-      },
-      CurrentIndicator: {
-        $: 'a[aria-current="true"]::after',
-        blockSize: "1rem",
-      },
+      HoverControl: { $: "&:hover", color: "#text" },
+      ActiveControl: { $: "&:active", color: "#accent-text" },
     }),
   );
 
@@ -1865,153 +1738,6 @@ export default function GlobalStyles() {
     maxInlineSize: "100%",
     overflow: "auto",
     scrollbarWidth: "thin",
-  });
-
-  useGlobalStyles(":root, :root:has(.td-top-tabs)", {
-    "$docs-nav-height": {
-      "@mobile": "3.5rem",
-    },
-    "$docs-nav-pad-x": {
-      "@mobile": "1rem",
-    },
-    "$docs-content-pad-x": {
-      "@mobile": "1rem",
-    },
-    "$docs-nav-gap": {
-      "@mobile": "0.5rem",
-    },
-    "$docs-menu-button-size": {
-      "@mobile": "2.25rem",
-    },
-  });
-
-  useGlobalStyles(
-    "site-search button[data-open-modal], site-search button[data-open-modal]",
-    {
-      justifyContent: {
-        "@mobile": "center",
-      },
-      inlineSize: {
-        "@mobile": "$docs-menu-button-size",
-      },
-      blockSize: {
-        "@mobile": "$docs-menu-button-size",
-      },
-      minBlockSize: {
-        "@mobile": "0",
-      },
-      padding: {
-        "@mobile": "0",
-      },
-      color: {
-        "@mobile": "#text-soft",
-      },
-      fill: {
-        "@mobile": "#surface-3",
-      },
-    },
-  );
-
-  useGlobalStyles(
-    "site-search button[data-open-modal]:hover, site-search button[data-open-modal]:hover",
-    {
-      color: {
-        "@mobile": "#text",
-      },
-      fill: {
-        "@mobile": "#surface-3-hover",
-      },
-    },
-  );
-
-  useGlobalStyles(
-    "site-search button[data-open-modal]:active, site-search button[data-open-modal]:active",
-    {
-      color: {
-        "@mobile": "#text",
-      },
-      fill: {
-        "@mobile": "#surface-3-pressed",
-      },
-    },
-  );
-
-  useGlobalStyles("site-search button[data-open-modal]::before", {
-    inlineSize: {
-      "@mobile": "1.125rem",
-    },
-    blockSize: {
-      "@mobile": "1.125rem",
-    },
-  });
-
-  useGlobalStyles(":root[data-has-toc]", {
-    "$docs-mobile-toc-height": {
-      "@narrow-layout": "2.5rem",
-    },
-  });
-
-  useGlobalStyles("mobile-starlight-toc nav", {
-    borderBlockEnd: {
-      "@narrow-layout": "$border-width solid #border",
-    },
-  });
-
-  useGlobalStyles(
-    "mobile-starlight-toc summary, mobile-starlight-toc summary",
-    {
-      blockSize: {
-        "@narrow-layout": "2.5rem",
-      },
-    },
-  );
-
-  useGlobalStyles(":root[data-has-toc] main > .content-panel:first-of-type", {
-    paddingBlockStart: {
-      "@narrow-layout": "0",
-    },
-  });
-
-  useGlobalStyles(":root[data-has-toc], :root[data-has-toc]", {
-    "$docs-mobile-toc-height": {
-      "@medium-layout": "calc(2.5rem + ($gap * 3))",
-    },
-  });
-
-  useGlobalStyles("mobile-starlight-toc nav, mobile-starlight-toc nav", {
-    paddingBlockStart: {
-      "@medium-layout": "($gap * 3)",
-    },
-    borderBlockEnd: {
-      "@medium-layout": "0",
-    },
-  });
-
-  useGlobalStyles(":root:has(.td-top-tabs) body > .page > .header", {
-    paddingBlockStart: {
-      "@desktop": "0",
-    },
-    paddingBlockEnd: {
-      "@desktop": "0",
-    },
-  });
-
-  useGlobalStyles("body > .page > .header", {
-    borderBottom: {
-      "@desktop": "$border-width solid #border",
-    },
-  });
-
-  useGlobalStyles(".main-frame", {
-    inlineSize: {
-      "@desktop": "min(100%, $layout-width)",
-    },
-    marginInlineStart: {
-      "@desktop": "auto",
-    },
-    marginInlineEnd: {
-      "@desktop": "auto",
-    },
   });
 
   useGlobalStyles("*, *::before, *::after", {

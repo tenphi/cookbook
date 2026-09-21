@@ -32,6 +32,19 @@ describe("Glaze theme adapter", () => {
       }
     }
   });
+  it("resolves a customizable translucent header in every appearance mode", () => {
+    const defaults = resolveDocsTheme();
+    const custom = resolveDocsTheme({ palette: { header: "#f3eaff" } });
+    const inherited = resolveDocsTheme({ palette: { surface: "#f3eaff" } });
+    const colors = custom.colorTokens["#header"]!;
+    expect(Object.keys(colors)).toHaveLength(4);
+    expect(Object.values(colors)).toEqual(
+      Array(4).fill(expect.stringMatching(/ \/ 0\.88\)$/)),
+    );
+    expect(colors).not.toEqual(defaults.colorTokens["#header"]);
+    expect(colors).toEqual(inherited.colorTokens["#header"]);
+  });
+
   it("emits all appearance modes at the configured APCA floors", () => {
     const theme = resolveDocsTheme({
       brand: { from: "#315efb", contrast: { apca: 45 } },

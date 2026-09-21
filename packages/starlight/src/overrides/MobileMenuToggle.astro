@@ -1,12 +1,25 @@
 ---
 import Icon from "@astrojs/starlight/user-components/Icon.astro";
+import { layout } from "virtual:cookbook/layout";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+const route = Astro.locals.starlightRoute;
+const active = activeNavigationTab(
+  layout.tabs,
+  navigationPath(Astro.url.pathname, import.meta.env.BASE_URL),
+);
+const section = layout.tabs[active]?.label;
 ---
 
 <button
   type="button"
   popovertarget="starlight__sidebar"
-  class="td-menu-button sl-menu-button sl-flex md:sl-hidden print:hidden"
+  aria-controls="starlight__sidebar"
+  aria-expanded="false"
+  class="td-menu-button sl-menu-button print:hidden"
 >
   <Icon name="bars" class="open-menu" />
   <span class="sr-only">{Astro.locals.t("menuButton.accessibleLabel")}</span>
+  {section && <span class="td-menu-button__section">{section}</span>}
+  {section && <Icon name="right-caret" />}
+  <span class="td-menu-button__page">{route.entry.data.title}</span>
 </button>

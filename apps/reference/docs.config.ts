@@ -9,6 +9,15 @@ export default defineDocsConfig({
     description: "Repository-native documentation for Astro.",
     url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",
+    headerLinks: [
+      { label: "Examples", link: "/examples" },
+      {
+        label: "Changelog",
+        link: "https://github.com/tenphi/cookbook/releases",
+        newTab: true,
+      },
+      { label: "Get started", link: "/getting-started", variant: "primary" },
+    ],
   },
   head: [
     {

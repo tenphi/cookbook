@@ -4,6 +4,34 @@ import { configureCookbookStates } from "./tasty-states.js";
 
 configureCookbookStates();
 
+export const PageFrameRoot = customizeComponent(
+  "PageFrame",
+  tasty({
+    as: "div",
+    styles: {
+      display: "flex",
+      flow: "column",
+      blockSize: "min 100vh",
+      MainFrame: {
+        $: "> .main-frame",
+        inlineSize: { "": "0 100%", "@desktop": "min(100%, $layout-width)" },
+        inlineMargin: "auto",
+        blockPadding: "$docs-nav-height start",
+        inlinePadding: "0 start",
+      },
+      SidebarFrame: {
+        $: "&[data-has-sidebar] > .main-frame",
+        inlinePadding: { "": "$sidebar-width start", "@mobile": "0 start" },
+      },
+      Columns: {
+        $: "> .main-frame > div",
+        display: { "": "flex", "@narrow-layout": "block" },
+        inlineSize: "min 0",
+      },
+    },
+  }),
+);
+
 export const LogoRoot = customizeComponent(
   "Logo",
   tasty({
@@ -100,10 +128,6 @@ export const StarlightHeaderRoot = customizeComponent(
   tasty({
     as: "div",
     styles: {
-      "$docs-header-menu-space": {
-        "": "0rem",
-        "[data-has-sidebar]": "($docs-menu-button-size + $docs-nav-gap)",
-      },
       display: "flex",
       flow: "column",
       inlineSize: "0 100% ($layout-width - ($docs-sidebar-pad-x * 2))",
@@ -112,25 +136,11 @@ export const StarlightHeaderRoot = customizeComponent(
 
       Primary: {
         $: ".td-header__primary",
-        display: {
-          "": "grid",
-          "@mobile": "flex",
-        },
-        gridColumns:
-          "minmax(9rem, $sidebar-width) minmax(12rem, 28rem) minmax(5rem, 1fr)",
-        placeItems: "center stretch",
-        justifyContent: {
-          "": "normal",
-          "@mobile": "space-between",
-        },
-        flexGrow: "1",
-        flexShrink: "1",
-        flexBasis: "0%",
-        gap: {
-          "": "clamp(1rem, 2.5vw, 2.5rem)",
-          "@mobile": "$gap",
-        },
-        blockSize: "min 0",
+        display: "flex",
+        alignItems: "center",
+        gap: { "": "clamp(0.5rem, 1.5vw, 1.5rem)", "@mobile": "0.5rem" },
+        blockSize: { "": "4.5rem", "@mobile": "3.5rem" },
+        flexShrink: "0",
       },
       TitleAndSearch: {
         $: ".td-header__title, .td-header__search",
@@ -144,11 +154,9 @@ export const StarlightHeaderRoot = customizeComponent(
         flow: "row",
         gap: "$gap",
         overflow: "hidden",
-        inlineSize: {
-          "": "max none",
-          "@mobile":
-            "max (100% - (($docs-menu-button-size + $docs-nav-gap) * 2) - $docs-header-menu-space)",
-        },
+        flexShrink: "1",
+        inlineSize: "min 0",
+        inlineMargin: { "": "0 end", "@mobile": "auto end" },
       },
       LogoLink: {
         $: ".td-header__logo-link",
@@ -181,26 +189,15 @@ export const StarlightHeaderRoot = customizeComponent(
       },
       Search: {
         $: ".td-header__search",
-        position: { "": "static", "@mobile": "fixed" },
-        zIndex: { "": "auto", "@mobile": "10" },
-        inset: {
-          "": "auto top",
-          "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2) top",
-        },
-        inlineInset: {
-          "": "auto end",
-          "@mobile":
-            "($docs-nav-pad-x + $docs-menu-button-size + $docs-nav-gap + $docs-header-menu-space) end",
-        },
-        placeItems: { "": "normal", "@mobile": "center" },
-        inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
-        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
-        inlineMargin: "0 start",
+        flexGrow: { "": "1", "@mobile": "0" },
+        flexShrink: { "": "1", "@mobile": "0" },
+        inlineSize: { "": "min 8rem", "@mobile": "$docs-menu-button-size" },
+        inlineMargin: { "": "auto", "@mobile": "0" },
       },
       SearchElement: {
         $: ".td-header__search site-search",
-        inlineSize: "100%",
-        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
+        inlineSize: "0 100% 28rem",
+        inlineMargin: "auto",
       },
       Tools: {
         $: ".td-header__tools",
@@ -224,19 +221,10 @@ export const StarlightHeaderRoot = customizeComponent(
         $: ".td-header__mobile-theme",
         display: "grid",
         hide: { "": true, "@mobile": false },
-        position: { "": "static", "@mobile": "fixed" },
-        zIndex: { "": "auto", "@mobile": "10" },
-        inset: {
-          "": "auto top",
-          "@mobile": "(($docs-nav-height - $docs-menu-button-size) / 2) top",
-        },
-        inlineInset: {
-          "": "auto end",
-          "@mobile": "($docs-nav-pad-x + $docs-header-menu-space) end",
-        },
-        placeItems: { "": "normal", "@mobile": "center" },
-        inlineSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
-        blockSize: { "": "auto", "@mobile": "$docs-menu-button-size" },
+        flexShrink: "0",
+        order: "1",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
       },
     },
   }),
@@ -263,20 +251,20 @@ export const ThemeSelectRoot = customizeComponent(
         },
         padding: "0",
         color: "#text-soft",
-        fill: { "": "#clear", "@mobile": "#surface-3" },
-        border: { "": "0", "@mobile": true },
+        fill: "#clear",
+        border: "0",
         radius: "$radius",
         transition: "color $transition, fill $transition",
       },
       HoverTrigger: {
         $: "> button:hover, &:has([popover]:popover-open) > button",
         color: "#text",
-        fill: { "": "#surface-2-hover", "@mobile": "#surface-3-hover" },
+        fill: "#surface-2-hover",
       },
       ActiveTrigger: {
         $: "> button:active",
         color: "#text",
-        fill: { "": "#surface-2-pressed", "@mobile": "#surface-3-pressed" },
+        fill: "#surface-2-pressed",
       },
       Icon: {
         $: "> button svg",
@@ -288,7 +276,7 @@ export const ThemeSelectRoot = customizeComponent(
         $: "[popover]",
         position: "fixed",
         inset: "auto",
-        blockInset: { "": "4rem start", "@mobile": "$docs-nav-height start" },
+        blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
         inlineInset:
           "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
         inlineSize: "min(15rem, calc(100vw - 2 * $docs-nav-pad-x))",
@@ -424,23 +412,45 @@ export const MobileNavigationTabsRoot = customizeComponent(
       display: "grid",
       hide: { "": false, "@desktop": true },
       gap: "$gap",
-      blockMargin: "($gap * 2) end",
-      blockPadding: "($gap * 2) end",
-      blockBorder: "$border-width solid #border end",
+      blockMargin: "0",
       Label: {
         $: ".td-mobile-tabs__label",
-        inlinePadding: "($gap * 1.25)",
-        color: "#text",
-        preset: "navigation",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
       },
+      Trigger: {
+        $: "summary",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "$gap",
+        blockSize: "min 2.75rem",
+        padding: "$gap ($gap * 1.25)",
+        border: true,
+        radius: "$radius",
+        color: "#text-soft",
+        fill: "#surface",
+        preset: "navigation",
+        listStyle: "none",
+      },
+      Marker: {
+        $: "summary::marker, summary::-webkit-details-marker",
+        hide: true,
+      },
+      Caret: { $: "summary > svg", flexShrink: "0" },
+      ExpandedCaret: { $: "details[open] > summary > svg", rotate: "180deg" },
       List: {
         $: "ul",
         display: "grid",
-        gridColumns: "repeat(2, minmax(0, 1fr))",
-        gap: "$gap",
-        padding: "0",
-        margin: "0",
+        gap: "1bw",
+        padding: "$gap",
+        blockMargin: "$gap start",
+        margin: "$gap 0 0",
         listStyle: "none",
+        border: true,
+        radius: "$radius",
+        fill: "#surface",
       },
       Item: { $: "li", margin: "0" },
       Link: {
@@ -543,6 +553,106 @@ export const FooterRoot = customizeComponent(
       HoverCreditLink: {
         $: ".td-footer__credit a:hover",
         color: "#text",
+      },
+    },
+  }),
+);
+
+export const HeaderLinksRoot = customizeComponent(
+  "HeaderLinks",
+  tasty({
+    as: "cookbook-header-links",
+    styles: {
+      display: "flex",
+      flexShrink: "0",
+      order: { "": "0", "@mobile": "2" },
+      Desktop: {
+        $: ".td-header-links__desktop",
+        display: "flex",
+        hide: { "": false, "@mobile": true },
+        alignItems: "center",
+        gap: "($gap * 0.5)",
+      },
+      Link: {
+        $: "a",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        blockSize: "min $control-height",
+        padding: "$gap ($gap * 1.25)",
+        radius: "$radius",
+        color: "#text-soft",
+        fill: "#clear",
+        preset: "small / strong",
+        textDecoration: "none",
+        whiteSpace: "nowrap",
+      },
+      HoverLink: { $: "a:hover", color: "#text", fill: "#surface-2-hover" },
+      PrimaryLink: {
+        $: 'a[data-variant="primary"]',
+        color: "#accent-surface-text",
+        fill: "#accent-surface",
+      },
+      HoverPrimaryLink: {
+        $: 'a[data-variant="primary"]:hover',
+        filter: "brightness(1.1)",
+      },
+      Trigger: {
+        $: ".td-header-links__trigger",
+        display: "grid",
+        hide: { "": true, "@mobile": false },
+        placeItems: "center",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+        padding: "0",
+        border: "0",
+        radius: "$radius",
+        color: "#text-soft",
+        fill: "#clear",
+      },
+      HoverTrigger: {
+        $: ".td-header-links__trigger:hover",
+        color: "#text",
+        fill: "#surface-2-hover",
+      },
+      Panel: {
+        $: ".td-header-links__panel",
+        position: "fixed",
+        inset: "0.5rem $docs-nav-pad-x auto auto",
+        inlineSize: "min(20rem, calc(100vw - 2 * $docs-nav-pad-x))",
+        blockSize: "max (100dvh - 1rem)",
+        overflowY: "auto",
+        margin: "0",
+        padding: "3rem $gap $gap",
+        color: "#text",
+        fill: "#surface",
+        border: true,
+        radius: "$card-radius",
+        shadow: "0 0.75rem 2rem #shadow",
+      },
+      PanelNavigation: {
+        $: ".td-header-links__panel nav",
+        display: "grid",
+        gap: "$gap",
+      },
+      Close: {
+        $: ".td-header-links__close",
+        position: "absolute",
+        inset: "$gap $gap auto auto",
+        display: "grid",
+        placeItems: "center",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+        padding: "0",
+        border: "0",
+        color: "#text-soft",
+        fill: "#clear",
+        radius: "$radius",
+      },
+      HoverClose: {
+        $: ".td-header-links__close:hover",
+        color: "#text",
+        fill: "#surface-2-hover",
       },
     },
   }),
