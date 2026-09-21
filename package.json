@@ -39,6 +39,7 @@
     "@tenphi/eslint-plugin-tasty": "1.1.0",
     "@types/node": "^22.15.2",
     "eslint": "10.9.1",
+    "happy-dom": "^20.14.5",
     "knip": "6.32.2",
     "prettier": "^3.9.0",
     "prettier-plugin-astro": "0.14.1",

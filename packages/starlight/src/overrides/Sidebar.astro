@@ -1,8 +1,7 @@
 ---
 import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
 import { layout } from "virtual:cookbook/layout";
-import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
-import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
+import SidebarList from "../components/SidebarList.astro";
 import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 
@@ -33,10 +32,16 @@ const sidebar =
   currentPath={Astro.url.pathname}
 />
 
-<SidebarPersister>
-  <SidebarSublist sublist={sidebar} />
-</SidebarPersister>
+<cookbook-sidebar
+  data-storage-key={`cookbook-sidebar:${import.meta.env.BASE_URL}:${groupIndex ?? "all"}`}
+>
+  <SidebarList entries={sidebar} />
+</cookbook-sidebar>
 
 <div class="md:sl-hidden">
   <MobileMenuFooter />
 </div>
+
+<script>
+  import "../client/sidebar.js";
+</script>

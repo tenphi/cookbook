@@ -567,6 +567,14 @@
               "items": {
                 "$ref": "#/$defs/navigationItem"
               }
+            },
+            "link": {
+              "type": "string",
+              "pattern": "^/(?!/)[^?#\\\\\\s]*$",
+              "description": "Optional parent page route, without a deployment base, query, or fragment.",
+              "not": {
+                "pattern": "//|(^|/)\\.{1,2}(/|$)"
+              }
             }
           }
         },
@@ -586,6 +594,14 @@
                 "directory": {
                   "type": "string"
                 }
+              }
+            },
+            "link": {
+              "type": "string",
+              "pattern": "^/(?!/)[^?#\\\\\\s]*$",
+              "description": "Optional parent page route, without a deployment base, query, or fragment.",
+              "not": {
+                "pattern": "//|(^|/)\\.{1,2}(/|$)"
               }
             }
           }

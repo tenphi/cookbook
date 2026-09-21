@@ -336,6 +336,37 @@ banner: {}
     );
   });
 
+  it("validates group page links along with their children", async () => {
+    const root = await createDocsFixture({ "README.md": "# Fixture\n" });
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        navigation: [
+          {
+            label: "Manual",
+            link: "/missing-parent",
+            items: ["/missing-child"],
+          },
+          {
+            label: "Generated",
+            link: "/missing-generated-parent",
+            autogenerate: { directory: "/" },
+          },
+          { label: "Valid", link: "/", items: ["/"] },
+        ],
+      },
+    });
+    expect(
+      graph.diagnostics
+        .filter(({ code }) => code === "DOCS_NAV_TARGET_NOT_FOUND")
+        .map(({ message }) => message),
+    ).toEqual([
+      "Navigation target does not exist: /missing-parent.",
+      "Navigation target does not exist: /missing-child.",
+      "Navigation target does not exist: /missing-generated-parent.",
+    ]);
+  });
+
   it("validates deeply nested navigation owned by a tab", async () => {
     const root = await createDocsFixture({ "README.md": "# Fixture\n" });
     const graph = await createDocsGraph({

@@ -12,6 +12,7 @@ export default defineConfig({
     "client/appearance": "src/client/appearance.ts",
     "client/code-copy": "src/client/code-copy.ts",
     "client/search": "src/client/search.ts",
+    "client/sidebar": "src/client/sidebar.ts",
     "markdown/rendered-content": "src/markdown/rendered-content.ts",
   },
   format: "esm",

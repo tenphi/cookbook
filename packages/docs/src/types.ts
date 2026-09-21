@@ -102,8 +102,8 @@ export interface ContentConfig {
 
 export type NavigationItem =
   | string
-  | { label: string; items: NavigationItem[] }
-  | { label: string; autogenerate: { directory: string } }
+  | { label: string; link?: string; items: NavigationItem[] }
+  | { label: string; link?: string; autogenerate: { directory: string } }
   | { label: string; link: string };
 
 export interface NavigationTab {
@@ -309,11 +309,13 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CurrentLink",
     "OpenPane",
     "Content",
+    "Tree",
     "List",
     "Item",
     "TopLevelSpacing",
     "GroupSpacing",
     "NestedItem",
+    "SectionHeading",
     "Control",
     "Summary",
     "GroupLabel",
@@ -322,6 +324,13 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "LinkLabel",
     "InteractiveControl",
     "SummaryMarker",
+    "Caret",
+    "ExpandedCaret",
+    "LinkedSummary",
+    "GroupLink",
+    "LinkedSectionHeading",
+    "SectionLink",
+    "Badge",
     "TopLevelLink",
   ],
   Steps: ["Item", "Marker"],

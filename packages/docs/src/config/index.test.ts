@@ -289,6 +289,56 @@ describe("docs configuration", () => {
     ).toThrow(/without a mode wrapper/);
   });
 
+  it("preserves optional page links on manual and generated groups", () => {
+    const navigation = [
+      { label: "Guides", link: "/guides", items: ["/guide"] },
+      { label: "API", link: "/reference", autogenerate: { directory: "/api" } },
+    ];
+    expect(normalizeDocsConfig({ navigation }).navigation.items).toEqual(
+      navigation,
+    );
+  });
+
+  it.each([
+    42,
+    null,
+    "https://example.com",
+    "//example.com",
+    "relative",
+    "/page#heading",
+    "/page?query",
+    "/../page",
+    "/page/./child",
+    "/page//child",
+    "/page with spaces",
+    "/page\\child",
+  ])("rejects invalid parent page links at any depth: %j", (link) => {
+    expect(() =>
+      normalizeDocsConfig({
+        navigation: {
+          tabs: [
+            {
+              label: "Guide",
+              link: "/",
+              items: [
+                {
+                  label: "Outer",
+                  items: [
+                    {
+                      label: "Parent",
+                      link,
+                      autogenerate: { directory: "/" },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      } as never),
+    ).toThrow(".link must be a root-relative page route");
+  });
+
   it("preserves optional primary navigation tabs", () => {
     const config = normalizeDocsConfig({
       navigation: {

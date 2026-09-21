@@ -160,4 +160,109 @@ describe("section navigation", () => {
       },
     ]);
   });
+  it("keeps group pages in pagination once and marks them for linked headers", () => {
+    const sidebar = starlightPageSidebar(
+      resolveNavigationLayout([
+        {
+          label: "Guide",
+          link: "/guide",
+          items: ["guide", "/guide/", "/child"],
+        },
+        { label: "API", link: "/api", autogenerate: { directory: "/api" } },
+        { label: "Empty", link: "/empty", items: [] },
+      ]),
+      [
+        {
+          route: "/api",
+          entryId: "api",
+          sourcePath: "api.md",
+          title: "API root",
+          sidebar: { group: "Overview" },
+        },
+        {
+          route: "/api/client",
+          entryId: "client",
+          sourcePath: "client.md",
+          title: "Client",
+        },
+      ],
+    );
+    expect(sidebar).toEqual([
+      {
+        label: "Guide",
+        items: [
+          {
+            label: "Guide",
+            link: "/guide",
+            attrs: { "data-cookbook-group-link": "" },
+          },
+          { label: "child", link: "/child" },
+        ],
+      },
+      {
+        label: "API",
+        items: [
+          {
+            label: "API",
+            link: "/api",
+            attrs: { "data-cookbook-group-link": "" },
+          },
+          { label: "Client", link: "/api/client" },
+        ],
+      },
+      { label: "Empty", link: "/empty" },
+    ]);
+  });
+
+  it("turns a nested group into a leaf when removing a duplicate parent leaves no children", () => {
+    const sidebar = starlightPageSidebar(
+      resolveNavigationLayout([
+        {
+          label: "Parent",
+          link: "/parent",
+          items: [{ label: "Child", link: "/child", items: ["/parent"] }],
+        },
+      ]),
+      [],
+    );
+    expect(sidebar).toEqual([
+      {
+        label: "Parent",
+        items: [
+          {
+            label: "Parent",
+            link: "/parent",
+            attrs: { "data-cookbook-group-link": "" },
+          },
+          { label: "Child", link: "/child" },
+        ],
+      },
+    ]);
+  });
+
+  it("matches manual and generated parent pages outside their tab URL prefix", () => {
+    const tabs = [
+      {
+        label: "Guide",
+        link: "/guide",
+        items: [
+          { label: "Configuration", link: "/configuration", items: ["/child"] },
+        ],
+      },
+      {
+        label: "API",
+        link: "/api",
+        items: [
+          {
+            label: "API root",
+            link: "/reference",
+            autogenerate: { directory: "/classes" },
+          },
+        ],
+      },
+    ];
+    expect(activeNavigationTab(tabs, "/configuration")).toBe(0);
+    expect(activeNavigationTab(tabs, "/reference")).toBe(1);
+    expect(activeNavigationTab(tabs, "/classes/client")).toBe(1);
+  });
 });

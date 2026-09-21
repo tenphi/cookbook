@@ -128,6 +128,31 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       }
     }
   }
+  if (Array.isArray(config.navigation)) {
+    validateNavigationItems(config.navigation, "navigation", diagnostics);
+  } else if (isRecord(config.navigation)) {
+    if (Array.isArray(config.navigation.items)) {
+      validateNavigationItems(
+        config.navigation.items,
+        "navigation.items",
+        diagnostics,
+      );
+    }
+    if (Array.isArray(config.navigation.tabs)) {
+      for (const [index, tab] of config.navigation.tabs.entries()) {
+        const path = `navigation.tabs[${index}]`;
+        if (
+          !isRecord(tab) ||
+          typeof tab.label !== "string" ||
+          typeof tab.link !== "string"
+        ) {
+          invalid(diagnostics, `${path} must have a label and link.`);
+        } else if (tab.items !== undefined) {
+          validateNavigationItems(tab.items, `${path}.items`, diagnostics);
+        }
+      }
+    }
+  }
 
   if (
     config.redirects !== undefined &&
@@ -634,6 +659,59 @@ function isHttpUrl(value: string): boolean {
     return ["http:", "https:"].includes(new URL(value).protocol);
   } catch {
     return false;
+  }
+}
+
+function validateNavigationItems(
+  items: unknown,
+  path: string,
+  diagnostics: DocsDiagnostic[],
+): void {
+  if (!Array.isArray(items)) {
+    invalid(diagnostics, `${path} must be an array.`);
+    return;
+  }
+  for (const [index, item] of items.entries()) {
+    const itemPath = `${path}[${index}]`;
+    if (typeof item === "string") continue;
+    if (!isRecord(item) || typeof item.label !== "string") {
+      invalid(
+        diagnostics,
+        `${itemPath} must be a route or a labeled navigation item.`,
+      );
+      continue;
+    }
+    const group = "items" in item || "autogenerate" in item;
+    if (
+      group &&
+      item.link !== undefined &&
+      (typeof item.link !== "string" ||
+        !/^\/(?!\/)[^?#\\\s]*$/.test(item.link) ||
+        item.link.includes("//") ||
+        item.link
+          .split("/")
+          .some((segment) => segment === "." || segment === ".."))
+    ) {
+      invalid(
+        diagnostics,
+        `${itemPath}.link must be a root-relative page route without a query or fragment.`,
+      );
+    }
+    if ("items" in item) {
+      validateNavigationItems(item.items, `${itemPath}.items`, diagnostics);
+    } else if ("autogenerate" in item) {
+      if (
+        !isRecord(item.autogenerate) ||
+        typeof item.autogenerate.directory !== "string"
+      ) {
+        invalid(
+          diagnostics,
+          `${itemPath}.autogenerate.directory must be a directory path.`,
+        );
+      }
+    } else if (typeof item.link !== "string") {
+      invalid(diagnostics, `${itemPath}.link must be a URL or route.`);
+    }
   }
 }
 

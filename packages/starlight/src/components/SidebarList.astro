@@ -1,0 +1,122 @@
+---
+import type { SidebarEntry } from "@astrojs/starlight/utils/routing/types";
+
+interface Props {
+  entries: SidebarEntry[];
+  depth?: number;
+  path?: string[];
+}
+
+const { entries, depth = 0, path = [] } = Astro.props;
+const containsCurrent = (items: SidebarEntry[]): boolean =>
+  items.some((item) =>
+    item.type === "link" ? item.isCurrent : containsCurrent(item.entries),
+  );
+---
+
+<ul class:list={{ "top-level": depth === 0 }}>
+  {
+    entries.map((entry, index) => {
+      const groupPath = [...path, `${index}:${entry.label}`];
+      const first = entry.type === "group" ? entry.entries[0] : undefined;
+      const groupLink =
+        first?.type === "link" && "data-cookbook-group-link" in first.attrs
+          ? first
+          : undefined;
+      const children =
+        entry.type === "group" ? entry.entries.slice(groupLink ? 1 : 0) : [];
+      const open = Boolean(groupLink?.isCurrent) || containsCurrent(children);
+      const badge = entry.badge && (
+        <span
+          class:list={["sidebar-badge", entry.badge.variant, entry.badge.class]}
+        >
+          {entry.badge.text}
+        </span>
+      );
+      const label = (
+        <span class="group-label">
+          <span>{entry.label}</span>
+          {badge}
+        </span>
+      );
+      const caret = (
+        <svg class="sidebar-caret" viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="m6 4 4 4-4 4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      );
+      return (
+        <li>
+          {entry.type === "link" ? (
+            <a
+              {...entry.attrs}
+              href={entry.href}
+              aria-current={entry.isCurrent ? "page" : undefined}
+              class:list={[entry.attrs.class, { large: depth === 0 }]}
+            >
+              <span>{entry.label}</span>
+              {badge}
+            </a>
+          ) : depth === 0 ? (
+            <>
+              <h2 class="sidebar-section-label group-label">
+                {groupLink ? (
+                  <a
+                    {...groupLink.attrs}
+                    href={groupLink.href}
+                    aria-current={groupLink.isCurrent ? "page" : undefined}
+                  >
+                    <span>{entry.label}</span>
+                    {badge}
+                  </a>
+                ) : (
+                  <>
+                    <span>{entry.label}</span>
+                    {badge}
+                  </>
+                )}
+              </h2>
+              <Astro.self
+                entries={children}
+                depth={depth + 1}
+                path={groupPath}
+              />
+            </>
+          ) : (
+            <details open={open} data-sidebar-group={JSON.stringify(groupPath)}>
+              <summary tabindex={groupLink ? -1 : undefined}>
+                {groupLink ? (
+                  <a
+                    {...groupLink.attrs}
+                    href={groupLink.href}
+                    aria-current={groupLink.isCurrent ? "page" : undefined}
+                    aria-expanded={open}
+                  >
+                    {label}
+                    {caret}
+                  </a>
+                ) : (
+                  <>
+                    {label}
+                    {caret}
+                  </>
+                )}
+              </summary>
+              <Astro.self
+                entries={children}
+                depth={depth + 1}
+                path={groupPath}
+              />
+            </details>
+          )}
+        </li>
+      );
+    })
+  }
+</ul>
