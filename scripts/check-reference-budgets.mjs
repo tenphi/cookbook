@@ -37,7 +37,7 @@ for (const name of entries) {
 // retain complete customizable anatomy. The responsive permalink placement and
 // configurable header-logo link add another 1 KiB for these owned surfaces.
 // The owned sidebar adds customizable section headings, disclosure carets,
-// active ancestor states, and badges (4 KiB).
+// linked group states, and badges (4 KiB).
 const cssBudget = 160 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
@@ -48,6 +48,9 @@ const allCss = (
     cssEntries.map((name) => readFile(join(output, name), "utf8")),
   )
 ).join("\n");
+if (/details:has\(a\[aria-current="page"\]\)/.test(sharedCss)) {
+  throw new Error("Sidebar ancestors must not receive current-page styling.");
+}
 for (const [pattern, label] of [
   [/--sl-/i, "Starlight custom properties"],
   [/@layer\s+starlight/i, "Starlight cascade layers"],
@@ -103,7 +106,7 @@ if (
 for (const [selector, label] of [
   ["#starlight__sidebar a > span:first-child", "left navigation links"],
   [
-    "#starlight__sidebar summary > .group-label > span:first-child",
+    "#starlight__sidebar .group-label > span:first-child",
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
@@ -150,7 +153,7 @@ const themeSidebar = sidebarHtml(
 );
 if (
   (themeSidebar.match(/<details\b[^>]*\bopen(?:\s|>|=)/g) || []).length !== 2 ||
-  !/<a\b[^>]*aria-current="page"[^>]*>\s*<span>Theme and components<\/span>/.test(
+  !/<a\b[^>]*aria-current="page"[^>]*>\s*<span class="group-label">\s*<span>Presentation<\/span>/.test(
     themeSidebar,
   )
 ) {

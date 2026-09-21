@@ -424,17 +424,14 @@ export default function GlobalStyles() {
         userSelect: "none",
       },
       GroupLabel: {
-        $: ["summary > .group-label", ".sidebar-section-label"],
+        $: ".group-label",
         display: "flex",
         alignItems: "center",
         minInlineSize: "0",
         gap: "0.25em",
       },
       GroupLabelText: {
-        $: [
-          "summary > .group-label > span:first-child",
-          ".sidebar-section-label > span:first-child",
-        ],
+        $: ".group-label > span:first-child",
         minInlineSize: "0",
         overflow: "hidden",
         textOverflow: "ellipsis",
@@ -442,6 +439,7 @@ export default function GlobalStyles() {
       },
       Link: {
         $: "a",
+        inlineSize: "100%",
         display: "flex",
         alignItems: "center",
         minInlineSize: "0",
@@ -471,20 +469,35 @@ export default function GlobalStyles() {
         hide: true,
       },
       Caret: {
-        $: "summary > .sidebar-caret",
+        $: ".sidebar-caret",
         flexShrink: "0",
         inlineSize: "1rem",
         blockSize: "1rem",
         transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
       },
       ExpandedCaret: {
-        $: "details[open] > summary > .sidebar-caret",
+        $: [
+          "details[open] > summary > .sidebar-caret",
+          "details[open] > summary > a > .sidebar-caret",
+        ],
         transform: "rotate(90deg)",
       },
-      ActiveGroup: {
-        $: 'details:has(a[aria-current="page"]) > summary',
+      LinkedSummary: {
+        $: "summary:has(> a)",
+        padding: "0",
+      },
+      GroupLink: {
+        $: "summary > a",
+        justifyContent: "space-between",
+      },
+      LinkedSectionHeading: {
+        $: ".sidebar-section-label:has(> a)",
+        padding: "0",
+      },
+      SectionLink: {
+        $: '.sidebar-section-label > a:not([aria-current="page"])',
         color: "#text",
-        preset: "navigation / strong",
+        preset: "small / strong",
       },
       Badge: {
         $: ".sidebar-badge",

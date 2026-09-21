@@ -1190,11 +1190,8 @@ function validateNavigation(
           message: `Navigation target does not exist: ${item}.`,
         });
       }
-    } else if ("items" in item) {
-      validateNavigation(item.items, routes, diagnostics);
     } else if (
-      "link" in item &&
-      item.link.startsWith("/") &&
+      item.link?.startsWith("/") &&
       !routes.has(normalizeRoute(item.link))
     ) {
       diagnostics.push({
@@ -1202,6 +1199,9 @@ function validateNavigation(
         severity: "error",
         message: `Navigation target does not exist: ${item.link}.`,
       });
+    }
+    if (typeof item !== "string" && "items" in item) {
+      validateNavigation(item.items, routes, diagnostics);
     }
   }
 }

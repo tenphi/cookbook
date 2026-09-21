@@ -45,3 +45,12 @@ const logo: ComponentProps<typeof Logo> = {
   decorative: true,
 };
 void [tab, missingTabLabel, missingTitle, logo];
+
+defineDocsConfig({
+  navigation: [
+    { label: "Guides", link: "/guides", items: ["/guide"] },
+    { label: "API", link: "/api", autogenerate: { directory: "/api" } },
+  ],
+});
+// @ts-expect-error Group page links must be strings.
+defineDocsConfig({ navigation: [{ label: "Guides", link: 123, items: [] }] });

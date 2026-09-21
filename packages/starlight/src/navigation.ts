@@ -18,7 +18,7 @@ export interface ResolvedNavigationLayout {
 }
 
 export type StarlightPageSidebarItem =
-  | { label: string; link: string }
+  | { label: string; link: string; attrs?: Record<string, string> }
   | { label: string; items: StarlightPageSidebarItem[] };
 
 export function resolveNavigationLayout(
@@ -98,13 +98,25 @@ export function starlightPageSidebar(
     if (typeof item === "string") {
       return { label: labelFor(item), link: item };
     }
-    if ("items" in item) {
-      return { label: item.label, items: item.items.map(convert) };
-    }
-    if ("autogenerate" in item) {
+    if ("items" in item || "autogenerate" in item) {
+      let children =
+        "items" in item
+          ? item.items.map(convert)
+          : generatedItems(item.autogenerate.directory);
+      if (item.link) {
+        children = withoutRoute(children, item.link);
+        // Keep the parent in Starlight's route resolution and pagination. The
+        // owned sidebar promotes this marked entry into the group header.
+        if (!children.length) return { label: item.label, link: item.link };
+        children.unshift({
+          label: item.label,
+          link: item.link,
+          attrs: { "data-cookbook-group-link": "" },
+        });
+      }
       return {
         label: item.label,
-        items: generatedItems(item.autogenerate.directory),
+        items: children,
       };
     }
     return item;
@@ -124,6 +136,32 @@ export function starlightPageSidebar(
         : [],
     ),
   ];
+}
+
+function withoutRoute(
+  items: StarlightPageSidebarItem[],
+  route: string,
+): StarlightPageSidebarItem[] {
+  const target = normalizeNavigationPath(route);
+  return items.flatMap((item): StarlightPageSidebarItem[] => {
+    if ("link" in item) {
+      return item.link.startsWith("/") &&
+        normalizeNavigationPath(item.link) === target
+        ? []
+        : [item];
+    }
+    const children = withoutRoute(item.items, route);
+    const first = children[0];
+    if (
+      children.length === 1 &&
+      first &&
+      "link" in first &&
+      first.attrs?.["data-cookbook-group-link"] !== undefined
+    ) {
+      return [{ label: item.label, link: first.link }];
+    }
+    return children.length ? [{ ...item, items: children }] : [];
+  });
 }
 
 function groupedRoutes(routes: DocsRoute[]): StarlightPageSidebarItem[] {
@@ -203,6 +241,9 @@ function navigationMatchScore(
         score = Math.max(score, 20_000);
       continue;
     }
+    if (item.link) {
+      score = Math.max(score, linkMatchScore(item.link, current, 20_000));
+    }
     if ("items" in item) {
       score = Math.max(score, navigationMatchScore(item.items, current));
       continue;
@@ -214,7 +255,6 @@ function navigationMatchScore(
       );
       continue;
     }
-    score = Math.max(score, linkMatchScore(item.link, current, 20_000));
   }
   return score;
 }

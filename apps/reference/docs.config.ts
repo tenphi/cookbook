@@ -36,19 +36,19 @@ export default defineDocsConfig({
           "/",
           "/getting-started",
           "/examples",
-          "/authoring",
           {
             label: "Author content",
             items: [
               "/content-sources",
               {
                 label: "Customize",
+                link: "/configuration",
                 items: [
-                  "/configuration",
                   "/starlight-comparison",
                   {
                     label: "Presentation",
-                    items: ["/theme-and-components"],
+                    link: "/theme-and-components",
+                    items: ["/authoring"],
                   },
                 ],
               },
@@ -62,7 +62,8 @@ export default defineDocsConfig({
         items: [
           {
             label: "Operations",
-            items: ["/cli", "/deployment"],
+            link: "/cli",
+            items: ["/deployment"],
           },
           "/architecture",
           "/migration",

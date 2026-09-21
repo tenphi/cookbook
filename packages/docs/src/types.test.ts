@@ -35,7 +35,10 @@ describe("component style metadata", () => {
       "SummaryMarker",
       "Caret",
       "ExpandedCaret",
-      "ActiveGroup",
+      "LinkedSummary",
+      "GroupLink",
+      "LinkedSectionHeading",
+      "SectionLink",
       "Badge",
       "TopLevelLink",
     ]);
