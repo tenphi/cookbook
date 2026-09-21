@@ -158,13 +158,6 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       intensity: [12, 20],
       tuning: { alphaMax: 0.28 },
     },
-    overlay: {
-      type: "mix",
-      base: "surface",
-      target: "text",
-      value: [58, 68],
-      blend: "transparent",
-    },
     clear: { from: "#ffffff", mode: "fixed", opacity: 0 },
     ...statusColors("info", theme.palette?.info ?? "#2563eb"),
     ...statusColors("success", theme.palette?.success ?? "#16a34a"),
@@ -176,6 +169,21 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     ...statusColors("purple", "#9333ea"),
     ...statusColors("red", "#dc2626"),
   } satisfies ColorMap);
+
+  // Underlays retain their authored dark tone instead of following text or
+  // being lifted into the dark scheme's surface tone window.
+  const overlayTheme = glaze(0, 0, {
+    ...glazeOptions,
+    lightTone: false,
+    darkTone: false,
+  });
+  overlayTheme.colors({
+    overlay: {
+      from: theme.palette?.overlay ?? "#000000",
+      mode: "fixed",
+      opacity: 0.5,
+    },
+  });
 
   const resolvedBrandSeed = glaze
     .color({ from: brand.from, mode: "fixed" })
@@ -349,6 +357,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     colors,
     colorTokens: {
       ...colorTokens,
+      ...overlayTheme.tasty(tastyOptions),
       "#border": requiredJsonColor(borderTokens, "#border"),
       "#border-strong": requiredJsonColor(borderTokens, "#border-strong"),
       ...syntaxTokens,

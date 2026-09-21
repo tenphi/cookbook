@@ -610,6 +610,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       ![
         "surface",
         "header",
+        "overlay",
         "text",
         "textSoft",
         "info",

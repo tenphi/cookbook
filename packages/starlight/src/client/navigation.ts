@@ -35,6 +35,11 @@ class CookbookSidebarPane extends HTMLElement {
         const open = !desktop.matches && this.matches(":popover-open");
         this.#trigger?.setAttribute("aria-expanded", String(open));
         if (open) {
+          // Establish the closed position after the popover enters the top
+          // layer so its attribute change transitions from an actual layout.
+          // Tasty's global SSR renderer does not preserve @starting-style.
+          this.getBoundingClientRect();
+          this.setAttribute("data-open", "");
           for (const element of document.querySelectorAll<HTMLElement>(
             ".header, .main-frame, .sl-skip-link",
           )) {
@@ -110,6 +115,7 @@ class CookbookSidebarPane extends HTMLElement {
   }
 
   #release() {
+    this.removeAttribute("data-open");
     for (const [element, inert] of this.#inert) element.inert = inert;
     this.#inert.clear();
     this.#trigger?.setAttribute("aria-expanded", "false");

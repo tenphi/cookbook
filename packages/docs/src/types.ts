@@ -197,6 +197,8 @@ export interface ThemePaletteConfig {
   surface?: GlazeColorValue;
   /** Translucent header surface seed; defaults to the page surface. */
   header?: GlazeColorValue;
+  /** Fixed underlay seed; defaults to black at 50% opacity in every scheme. */
+  overlay?: GlazeColorValue;
   /** Primary reading text seed, resolved against `surface`. */
   text?: GlazeColorValue;
   /** Secondary text seed, resolved against `surface`. */
@@ -357,6 +359,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
   Sidebar: [
     "Backdrop",
+    "OpenBackdrop",
     "MobileHeading",
     "HomeLink",
     "HomeLogo",

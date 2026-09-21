@@ -334,7 +334,27 @@ export default function GlobalStyles() {
       scrollbarGutter: "stable",
       fill: "#surface",
       overscrollBehavior: "contain",
-      Backdrop: { $: "&::backdrop", fill: "#overlay" },
+      shadow: { "": "none", "@mobile": "0.25rem 0 1rem #shadow" },
+      translate: { "": "0", "@mobile": "-100% 0" },
+      transition: {
+        "": "none",
+        "@mobile & !@reduced-motion":
+          "translate 120ms ease-out, visibility 120ms, display 120ms allow-discrete, overlay 120ms allow-discrete",
+      },
+      Backdrop: {
+        $: "&::backdrop",
+        fill: "#overlay",
+        opacity: "0",
+        transition: {
+          "": "none",
+          "@mobile & !@reduced-motion":
+            "opacity 120ms ease-out, display 120ms allow-discrete, overlay 120ms allow-discrete",
+        },
+      },
+      OpenBackdrop: {
+        $: "&:popover-open[data-open]::backdrop",
+        opacity: "1",
+      },
       MobileHeading: {
         $: ".td-sidebar-heading",
         display: "flex",
@@ -399,8 +419,9 @@ export default function GlobalStyles() {
         preset: "navigation / strong",
       },
       OpenPane: {
-        $: "&:popover-open",
+        $: "&:popover-open[data-open]",
         visibility: { "@mobile": "visible" },
+        translate: { "@mobile": "0" },
       },
       Content: {
         $: ".sidebar-content",

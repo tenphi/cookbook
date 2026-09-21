@@ -191,7 +191,8 @@
             "success": {},
             "warning": {},
             "danger": {},
-            "header": {}
+            "header": {},
+            "overlay": {}
           }
         },
         "states": {

@@ -513,3 +513,6 @@ button and popover style tree through `theme.styles.HeaderLinks`.
 `theme.palette.header` sets the translucent header's color seed. It defaults
 to `theme.palette.surface`; Glaze resolves it for light, dark, and both high
 contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFrame`.
+`theme.palette.overlay` controls the fixed underlay color, defaulting to black at
+50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
+a 120ms slide transition; customize these through `theme.styles.Sidebar`.

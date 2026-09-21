@@ -139,6 +139,17 @@ if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
     "The desktop table of contents must override Starlight's hidden utility.",
   );
 }
+for (const transition of [
+  "translate 120ms ease-out",
+  "display 120ms allow-discrete",
+  "overlay 120ms allow-discrete",
+]) {
+  if (!sharedCss.includes(transition)) {
+    throw new Error(
+      `The mobile drawer is missing its ${transition} transition.`,
+    );
+  }
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 const sidebarHtml = (html) => {
   const sidebar =

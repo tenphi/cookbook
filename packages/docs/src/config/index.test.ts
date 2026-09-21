@@ -117,6 +117,13 @@ describe("docs configuration", () => {
     ).toBe("#fafafa");
   });
 
+  it("accepts a custom overlay color seed", () => {
+    expect(
+      normalizeDocsConfig({ theme: { palette: { overlay: "#131025" } } }).theme
+        .palette?.overlay,
+    ).toBe("#131025");
+  });
+
   it.each([
     "not an array",
     [null],

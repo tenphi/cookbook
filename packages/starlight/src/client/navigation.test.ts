@@ -62,11 +62,13 @@ describe("responsive navigation", () => {
     const { pane, toggle, trigger, main, header, close } = mount();
     main.inert = true;
     toggle(true);
+    expect(pane.hasAttribute("data-open")).toBe(true);
     expect(pane.getAttribute("role")).toBe("dialog");
     expect(header.inert).toBe(true);
     expect(document.activeElement).toBe(close);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
     toggle(false);
+    expect(pane.hasAttribute("data-open")).toBe(false);
     expect(header.inert).toBe(false);
     expect(main.inert).toBe(true);
     expect(document.activeElement).toBe(trigger);
@@ -136,6 +138,7 @@ describe("responsive navigation", () => {
     desktop = true;
     media.dispatchEvent(new Event("change"));
     expect(pane.popover).toBeNull();
+    expect(pane.hasAttribute("data-open")).toBe(false);
     expect(pane.hasAttribute("role")).toBe(false);
     expect(header.inert).toBe(false);
     expect(main.inert).toBe(false);
@@ -144,6 +147,7 @@ describe("responsive navigation", () => {
     expect(pane.popover).toBe("auto");
     toggle(true);
     pane.remove();
+    expect(pane.hasAttribute("data-open")).toBe(false);
     expect(header.inert).toBe(false);
     expect(main.inert).toBe(false);
   });
