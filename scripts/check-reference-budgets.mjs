@@ -40,7 +40,8 @@ for (const name of entries) {
 // linked group states, and badges (4 KiB).
 // Native drawer and appearance-popover motion, including reduced-motion rules,
 // add another 1 KiB of Tasty-generated CSS.
-const cssBudget = 161 * 1024;
+// Customizable heading-link copy feedback adds another 1 KiB.
+const cssBudget = 162 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");

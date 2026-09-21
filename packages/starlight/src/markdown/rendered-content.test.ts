@@ -9,7 +9,9 @@ describe("rendered Markdown content", () => {
 
     expect(html).toContain('class="sl-heading-wrapper level-h2"');
     expect(html).toContain('class="sl-anchor-link" href="#install"');
-    expect(html).toContain(">#</a>");
+    expect(html).toContain(
+      'class="sl-anchor-icon" aria-hidden="true">#</span>',
+    );
     expect(html).toContain("Permalink to “Install &amp; configure”");
   });
 

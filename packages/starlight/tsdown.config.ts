@@ -11,6 +11,7 @@ export default defineConfig({
     navigation: "src/navigation.ts",
     "client/appearance": "src/client/appearance.ts",
     "client/code-copy": "src/client/code-copy.ts",
+    "client/heading-links": "src/client/heading-links.ts",
     "client/search": "src/client/search.ts",
     "client/navigation": "src/client/navigation.ts",
     "client/sidebar": "src/client/sidebar.ts",

@@ -1130,6 +1130,24 @@ export default function GlobalStyles() {
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
         blockSize: "clamp(1rem, 0.65em, 1.5rem)",
       },
+      CopiedLink: {
+        $: '> .sl-anchor-link[data-copy-state="copied"]',
+        color: "#green-text",
+        opacity: "1",
+      },
+      CopiedLinkIcon: {
+        $: '> .sl-anchor-link[data-copy-state="copied"] > .sl-anchor-icon',
+        visibility: "hidden",
+      },
+      CopiedIcon: {
+        $: '> .sl-anchor-link[data-copy-state="copied"]::after',
+        content: '""',
+        position: "absolute",
+        inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
+        blockSize: "clamp(1rem, 0.65em, 1.5rem)",
+        fill: "#current",
+        mask: `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
+      },
     }),
   );
 
