@@ -1,8 +1,9 @@
 import { execFile } from "node:child_process";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { validateDocumentation } from "./pack-docs.mjs";
 
 const run = promisify(execFile);
 const root = process.cwd();
@@ -41,6 +42,49 @@ try {
       );
     }
     const manifest = JSON.parse(manifestText);
+    if (manifest.name === "@tenphi/cookbook") {
+      for (const required of [
+        "docs/index.md",
+        "docs/customization-rules.md",
+        "docs/theme-and-components.md",
+        "docs/upstream/manifest.json",
+        "docs/upstream/tasty/docs/ai-agents.md",
+        "docs/upstream/glaze/docs/api.md",
+        "docs/upstream/tasty/LICENSE",
+        "docs/upstream/glaze/LICENSE",
+      ]) {
+        if (!files.has(`package/${required}`))
+          throw new Error(`${tarball} is missing ${required}.`);
+      }
+      const extracted = join(temporary, "extracted");
+      await mkdir(extracted);
+      await run("tar", ["-xzf", path, "-C", extracted]);
+      const packageRoot = join(extracted, "package");
+      await validateDocumentation(packageRoot);
+      const references = JSON.parse(
+        await readFile(
+          join(packageRoot, "docs/upstream/manifest.json"),
+          "utf8",
+        ),
+      );
+      for (const reference of references) {
+        const dependency = JSON.parse(
+          await readFile(
+            join(
+              root,
+              "packages/starlight/node_modules",
+              reference.name,
+              "package.json",
+            ),
+            "utf8",
+          ),
+        );
+        if (reference.version !== dependency.version)
+          throw new Error(
+            `Stale ${reference.name} documentation: ${reference.version}.`,
+          );
+      }
+    }
     if (
       ["@tenphi/cookbook", "@tenphi/starlight"].includes(manifest.name) &&
       !files.has("package/tasty.config.mjs")

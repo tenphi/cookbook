@@ -95,6 +95,25 @@ export default defineConfig({ integrations: [cookbook({ config })] });
     cwd: site,
     maxBuffer: 8 * 1024 * 1024,
   });
+  await run(
+    "node",
+    [
+      "--input-type=module",
+      "-e",
+      `
+import { readFile } from 'node:fs/promises';
+const guide = new URL(import.meta.resolve('@tenphi/cookbook/docs/customization-rules.md'));
+const contents = await readFile(guide, 'utf8');
+if (!contents.includes('./upstream/tasty/docs/ai-agents.md'))
+  throw new Error('Installed customization guide lacks local upstream references.');
+for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api.md']) {
+  if (!(await readFile(new URL(path, guide), 'utf8')).length)
+    throw new Error('Installed documentation is empty: ' + path);
+}
+`,
+    ],
+    { cwd: site },
+  );
   await checkStyleLinting({ site, root, run });
   await writeFile(
     join(site, "tsconfig.json"),

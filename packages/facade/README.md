@@ -1,5 +1,13 @@
 # @tenphi/cookbook
 
+Before changing a site's appearance, read the
+[customization rules](./docs/customization-rules.md)
+([online](https://cookbook.tenphi.me/customization-rules/)). The package ships
+the complete [Cookbook documentation](./docs/index.md) and local Tasty and Glaze
+references under `docs/upstream/`, including Tasty's
+[style rules for AI agents](./docs/upstream/tasty/docs/ai-agents.md).
+The guide includes a project instruction snippet and the lint setup.
+
 Install the complete integration with `npx astro add @tenphi/cookbook`:
 
 ```ts

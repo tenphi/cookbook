@@ -33,17 +33,20 @@
     "./config": {
       "types": "./dist/config.d.ts",
       "import": "./dist/config.js"
-    }
+    },
+    "./docs/*": "./docs/*"
   },
   "files": [
     "dist",
+    "docs",
     "tasty.config.mjs",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown --config tsdown.config.ts",
-    "clean": "rm -rf dist",
+    "build": "tsdown --config tsdown.config.ts && node ../../scripts/pack-docs.mjs",
+    "prepack": "node ../../scripts/pack-docs.mjs",
+    "clean": "rm -rf dist docs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
