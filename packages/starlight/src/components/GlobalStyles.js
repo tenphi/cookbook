@@ -178,14 +178,10 @@ export default function GlobalStyles() {
     resolveComponentStyles("TableOfContentsLayout", {
       Content: {
         $: ".right-sidebar",
-        position: { "": "fixed", "@narrow-layout": "static" },
-        insetBlockStart: { "": "0", "@narrow-layout": "auto" },
-        inlineSize: { "": "inherit", "@narrow-layout": "100%" },
-        blockSize: { "": "100vh", "@narrow-layout": "auto" },
-        paddingBlockStart: {
-          "": "$docs-nav-height",
-          "@narrow-layout": "0",
-        },
+        position: "sticky",
+        insetBlockStart: "$docs-nav-height",
+        inlineSize: "100%",
+        blockSize: "calc(100vh - $docs-nav-height)",
         overflowY: { "": "auto", "@narrow-layout": "visible" },
         scrollbarWidth: "none",
       },
@@ -572,6 +568,7 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".right-sidebar-panel",
     resolveComponentStyles("TableOfContents", {
+      display: "block",
       hide: { "": false, "@narrow-layout": true },
       paddingBlockStart: "($gap * 5)",
       paddingInlineStart: "$docs-sidebar-pad-x",

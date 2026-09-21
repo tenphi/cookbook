@@ -129,6 +129,11 @@ if (
     "The header must use its semantic translucent surface and backdrop blur.",
   );
 }
+if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
+  throw new Error(
+    "The desktop table of contents must override Starlight's hidden utility.",
+  );
+}
 const home = await readFile(join(output, "index.html"), "utf8");
 const sidebarHtml = (html) => {
   const sidebar =
