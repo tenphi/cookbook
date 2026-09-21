@@ -409,11 +409,7 @@ export default function GlobalStyles() {
         minBlockSize: "100%",
         paddingInline: "$docs-sidebar-pad-x",
         gap: "($gap * 2)",
-        paddingBlockStart: {
-          "": "($gap * 4)",
-          "@medium-layout": "($gap * 1.5)",
-          "@mobile": "($gap * 2)",
-        },
+        paddingBlockStart: "($gap * 2)",
         paddingBlockEnd: "($gap * 6)",
       },
       Tree: {
@@ -442,7 +438,7 @@ export default function GlobalStyles() {
         marginBlockStart: "($gap * 2.5)",
       },
       NestedItem: {
-        $: "details > ul > li",
+        $: "cookbook-sidebar details > ul > li",
         marginInlineStart: "($gap * 1.5)",
       },
       SectionHeading: {
@@ -570,13 +566,13 @@ export default function GlobalStyles() {
     resolveComponentStyles("TableOfContents", {
       display: "block",
       hide: { "": false, "@narrow-layout": true },
-      paddingBlockStart: "($gap * 5)",
+      paddingBlockStart: "($gap * 3)",
       paddingInlineStart: "$docs-sidebar-pad-x",
       paddingInlineEnd: "$docs-sidebar-pad-x",
 
       Heading: {
         $: "h2",
-        marginBlockEnd: "$gap",
+        margin: "0 0 $gap",
         color: "#text",
         preset: "small / strong",
       },

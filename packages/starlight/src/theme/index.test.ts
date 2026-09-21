@@ -39,7 +39,7 @@ describe("Glaze theme adapter", () => {
     const colors = custom.colorTokens["#header"]!;
     expect(Object.keys(colors)).toHaveLength(4);
     expect(Object.values(colors)).toEqual(
-      Array(4).fill(expect.stringMatching(/ \/ 0\.88\)$/)),
+      Array(4).fill(expect.stringMatching(/ \/ 0\.7\)$/)),
     );
     expect(colors).not.toEqual(defaults.colorTokens["#header"]);
     expect(colors).toEqual(inherited.colorTokens["#header"]);

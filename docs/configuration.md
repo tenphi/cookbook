@@ -484,8 +484,9 @@ raise them deliberately for a reviewed package.
 ## Header buttons
 
 Configure the top bar with `site.headerLinks`. Links appear beside search on
-larger screens and in a More popover below 50rem. The same button styles and
-primary variant apply in both places. Omit the array (or use `[]`) to hide More.
+larger screens and in a More popover below 50rem. The desktop header supports
+primary buttons; More uses a compact, left-aligned list of uniform navigation
+links. Omit the array (or use `[]`) to hide More.
 
 ```ts
 export default defineDocsConfig({
@@ -504,7 +505,8 @@ export default defineDocsConfig({
 
 Each entry requires a non-empty `label` and a `link` (an HTTP(S) URL,
 root-relative route, or fragment). Cookbook prefixes root-relative links with
-the Astro base. `variant` is `default` or `primary`; `newTab` defaults to false
+the Astro base. `variant` is `default` or `primary` and applies on desktop;
+`newTab` defaults to false
 and adds safe new-window attributes when enabled. Customize the complete
 button and popover style tree through `theme.styles.HeaderLinks`.
 

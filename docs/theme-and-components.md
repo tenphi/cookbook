@@ -289,7 +289,7 @@ sub-elements:
 | `TableOfContentsLayout` | `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `SearchButton`          | `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `Layout`                | `LockedPage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `HeaderLinks`           | `Desktop`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                                                 |
+| `HeaderLinks`           | `Desktop`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                  |
 | `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `PageFrame`             | `MainFrame`, `SidebarFrame`, `Columns`                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -633,7 +633,7 @@ output.
 ### Responsive header and navigation
 
 The header uses `#header`, generated from `theme.palette.header` (or the page
-surface) at 88% opacity in all four appearance modes, with a 16px backdrop blur.
+surface) at 70% opacity in all four appearance modes, with a 16px backdrop blur.
 Customize the outer bar with `theme.styles.HeaderFrame`, its contents with
 `StarlightHeader`, and header buttons with `HeaderLinks` and `SearchButton`.
 
@@ -641,8 +641,10 @@ Below 50rem, page navigation moves into a header row and opens a left drawer.
 `MobileMenuToggle.Section` and `Page` style its breadcrumb labels. The drawer
 contains the complete active section, a collapsible `MobileNavigationTabs`
 selector, and a close button. `Sidebar.Backdrop` styles the overlay.
-Icon buttons retain their plain desktop appearance on mobile, and header link
-variants are preserved inside More.
+Icon buttons retain their plain desktop appearance on mobile. More uses
+left-aligned navigation links with a `1bw` gap, without primary button variants.
+`HeaderLinks.PanelLink` styles the menu rows; `FirstPanelLink` reserves space
+for the close button. The inset divider above the tabs belongs to `TopNavigation`.
 
 The table of contents is hidden below 72rem through `TableOfContentsLayout`.
 `MobileTableOfContents` remains a legacy style name for custom overrides; the

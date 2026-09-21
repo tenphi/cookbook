@@ -32,6 +32,7 @@ export interface HeaderLink {
   label: string;
   /** HTTP(S) URL, root-relative route (prefixed with the site base), or fragment. */
   link: string;
+  /** Desktop button variant; mobile More menus use uniform navigation links. */
   variant?: "default" | "primary";
   newTab?: boolean;
 }
@@ -255,6 +256,8 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "HoverTrigger",
     "Panel",
     "PanelNavigation",
+    "PanelLink",
+    "FirstPanelLink",
     "Close",
     "HoverClose",
   ],

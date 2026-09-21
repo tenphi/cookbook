@@ -51,6 +51,11 @@ const allCss = (
 if (/details:has\(a\[aria-current="page"\]\)/.test(sharedCss)) {
   throw new Error("Sidebar ancestors must not receive current-page styling.");
 }
+if (/#starlight__sidebar details > ul > li\s*\{/.test(sharedCss)) {
+  throw new Error(
+    "Sidebar group indentation must not affect the mobile section selector.",
+  );
+}
 for (const [pattern, label] of [
   [/--sl-/i, "Starlight custom properties"],
   [/@layer\s+starlight/i, "Starlight cascade layers"],
@@ -162,9 +167,9 @@ for (const marker of [
   if (!guide.includes(marker))
     throw new Error(`Responsive navigation is missing ${marker}.`);
 }
-if ((guide.match(/data-variant="primary"/g) ?? []).length !== 2) {
+if ((guide.match(/data-variant="primary"/g) ?? []).length !== 1) {
   throw new Error(
-    "Header primary button styling must be preserved in the mobile menu.",
+    "Primary header button variants must only apply in the desktop header.",
   );
 }
 const initialSidebar = sidebarHtml(

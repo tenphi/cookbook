@@ -69,7 +69,6 @@ const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
           {links.map((link) => (
             <a
               href={href(link.link)}
-              data-variant={link.variant}
               target={link.newTab ? "_blank" : undefined}
               rel={link.newTab ? "noopener noreferrer" : undefined}
             >

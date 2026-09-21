@@ -90,6 +90,7 @@ export const TopNavigationRoot = customizeComponent(
       gap: "clamp(1.25rem, 2.5vw, 2.5rem)",
       inlineSize: "100%",
       blockSize: "min 2.5rem",
+      blockBorder: "1bw solid #border start",
       overflowX: "auto",
       scrollbar: "none",
 
@@ -623,7 +624,7 @@ export const HeaderLinksRoot = customizeComponent(
         blockSize: "max (100dvh - 1rem)",
         overflowY: "auto",
         margin: "0",
-        padding: "3rem $gap $gap",
+        padding: "$gap",
         color: "#text",
         fill: "#surface",
         border: true,
@@ -633,7 +634,22 @@ export const HeaderLinksRoot = customizeComponent(
       PanelNavigation: {
         $: ".td-header-links__panel nav",
         display: "grid",
-        gap: "$gap",
+        gap: "1bw",
+      },
+      PanelLink: {
+        $: ".td-header-links__panel a",
+        justifyContent: "flex-start",
+        blockSize: "min $docs-menu-button-size",
+        inlinePadding: "($gap * 1.5)",
+        preset: "navigation",
+        textAlign: "start",
+        whiteSpace: "normal",
+        overflowWrap: "anywhere",
+      },
+      FirstPanelLink: {
+        $: ".td-header-links__panel a:first-child",
+        inlinePadding:
+          "($gap * 1.5) start, ($docs-menu-button-size + $gap) end",
       },
       Close: {
         $: ".td-header-links__close",

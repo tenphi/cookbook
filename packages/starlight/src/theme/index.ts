@@ -92,7 +92,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       from: theme.palette?.header ?? surfaceFrom,
       mode: "auto",
       darkSaturation: 0.35,
-      opacity: 0.88,
+      opacity: 0.7,
     },
     "surface-2": {
       base: "surface",
