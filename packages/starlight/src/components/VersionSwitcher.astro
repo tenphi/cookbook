@@ -1,0 +1,39 @@
+---
+import type { DocsRoute, SiteVersion } from "@tenphi/docs";
+import { versionLinks } from "../versioning.js";
+import { VersionSwitcherRoot } from "./LayoutComponents.js";
+
+interface Props {
+  versions: SiteVersion[];
+  routes: DocsRoute[];
+  currentPath: string;
+  base: string;
+}
+
+const { current, links } = versionLinks(
+  Astro.props.versions,
+  Astro.props.routes,
+  Astro.props.currentPath,
+  Astro.props.base,
+);
+---
+
+<VersionSwitcherRoot data-tasty-anatomy="VersionSwitcher">
+  <summary aria-label={`Documentation version: ${current?.label ?? "Versions"}`}
+    >{current?.label ?? "Versions"}</summary
+  >
+  <nav aria-label="Documentation versions">
+    {
+      links.map((version) => (
+        <a
+          href={version.href}
+          aria-current={
+            version.routeBase === current?.routeBase ? "page" : undefined
+          }
+        >
+          {version.label}
+        </a>
+      ))
+    }
+  </nav>
+</VersionSwitcherRoot>

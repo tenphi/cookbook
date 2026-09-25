@@ -15,6 +15,19 @@
         "version": {
           "type": "string"
         },
+        "versions": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "routeBase"],
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "routeBase": { "type": "string", "pattern": "^/(?!/)" }
+            }
+          }
+        },
         "description": {
           "type": "string"
         },
@@ -358,6 +371,14 @@
               }
             },
             "PackageVersion": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "VersionSwitcher": {
               "type": "object",
               "propertyNames": {
                 "not": {
@@ -931,6 +952,17 @@
               "type": "string",
               "format": "uri"
             }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["openapi"],
+          "properties": {
+            "openapi": { "type": "string", "minLength": 1 },
+            "id": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$" },
+            "root": { "type": "string" },
+            "routeBase": { "type": "string" }
           }
         }
       ]

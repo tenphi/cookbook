@@ -19,6 +19,8 @@ export interface SiteConfig {
   title?: string;
   /** Version of the documented package, rendered beside the site title. */
   version?: string;
+  /** Selectable documentation versions and their route roots. */
+  versions?: SiteVersion[];
   description?: string;
   url?: string;
   repository?: string;
@@ -26,6 +28,11 @@ export interface SiteConfig {
   headerLinks?: HeaderLink[];
   /** Source artwork used to generate browser, touch, and installable-app icons. */
   favicon?: string | SiteIconConfig;
+}
+
+export interface SiteVersion {
+  label: string;
+  routeBase: string;
 }
 
 export interface HeaderLink {
@@ -99,6 +106,12 @@ export type DocsSource = {
       index?: string;
       routeBase?: string;
       trust?: "markdown" | "mdx";
+    }
+  | {
+      /** Local OpenAPI 3.x JSON or YAML document. */
+      openapi: string;
+      root?: string;
+      routeBase?: string;
     }
 );
 
@@ -252,6 +265,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "MobileNavigationTabs",
   "MobileTableOfContents",
   "PackageVersion",
+  "VersionSwitcher",
   "Preview",
   "Sidebar",
   "SocialIcons",
@@ -380,6 +394,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CurrentIndicator",
   ],
   PackageVersion: [],
+  VersionSwitcher: ["Trigger", "Panel", "OpenPanel", "Link", "CurrentLink"],
   Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
   Sidebar: [
     "Backdrop",

@@ -45,6 +45,40 @@ const schema = JSON.parse(
 };
 
 describe("docs configuration", () => {
+  it("validates version roots and OpenAPI sources", () => {
+    expect(
+      normalizeDocsConfig({
+        site: {
+          versions: [
+            { label: "Latest", routeBase: "/" },
+            { label: "v1", routeBase: "/v1" },
+          ],
+        },
+        content: {
+          sources: [{ openapi: "api/openapi.yaml", routeBase: "/api" }],
+        },
+      }).site.versions,
+    ).toHaveLength(2);
+    expect(() =>
+      normalizeDocsConfig({
+        site: { versions: [{ label: "v1", routeBase: "/v1" }] },
+      }),
+    ).toThrow(/at least two/);
+    expect(() =>
+      normalizeDocsConfig({
+        site: {
+          versions: [
+            { label: "Latest", routeBase: "/" },
+            { label: "Bad", routeBase: "/bad/" },
+          ],
+        },
+      }),
+    ).toThrow(/trailing slash/);
+    expect(() =>
+      normalizeDocsConfig({ content: { sources: [{ openapi: "" }] } }),
+    ).toThrow(/openapi must be a non-empty string/);
+  });
+
   it("keeps defaults and rejects unknown keys", () => {
     const config = normalizeDocsConfig();
     expect(config.build).toMatchObject({ strict: true, base: "/" });

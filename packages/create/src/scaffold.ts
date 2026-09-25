@@ -15,6 +15,8 @@ import {
 } from "@tenphi/docs";
 
 export type PackageManager = "npm" | "pnpm" | "yarn";
+export type DeployPreset =
+  "github-pages" | "netlify" | "cloudflare-pages" | "vercel" | "none";
 
 export interface ScaffoldOptions {
   package?: string;
@@ -26,7 +28,7 @@ export interface ScaffoldOptions {
   brand?: string;
   site?: string;
   base?: string;
-  deploy?: "github-pages" | "none";
+  deploy?: DeployPreset;
   trustPackage?: boolean;
   vendor?: boolean;
   confirmNonEmpty?: (destination: string) => Promise<boolean>;
@@ -145,6 +147,22 @@ export async function scaffold(
   await writeAgentInstructions(destination, options, packageManager);
   if (options.deploy === "github-pages")
     await writeGithubWorkflow(destination, packageManager);
+  if (options.deploy === "netlify") {
+    await writeFile(
+      join(destination, "netlify.toml"),
+      `[build]\ncommand = "${packageManager} run build"\npublish = "dist"\n`,
+    );
+  }
+  if (
+    options.deploy &&
+    options.deploy !== "none" &&
+    options.deploy !== "github-pages"
+  ) {
+    await writeFile(
+      join(destination, "DEPLOYMENT.md"),
+      renderDeploymentGuide(options.deploy, packageManager),
+    );
+  }
   if (options.install !== false)
     await installDependencies(destination, packageManager);
   return {
@@ -153,6 +171,30 @@ export async function scaffold(
     ...(discovery ? { discovery } : {}),
     packageManager,
   };
+}
+
+function renderDeploymentGuide(
+  preset: Exclude<DeployPreset, "github-pages" | "none">,
+  manager: PackageManager,
+): string {
+  const details = {
+    netlify: [
+      "Netlify",
+      "Connect this repository in Netlify. `netlify.toml` sets the build command and publish directory. Pull requests receive preview deployments when the Git integration is enabled.",
+      "https://docs.netlify.com/build/configure-builds/overview/",
+    ],
+    "cloudflare-pages": [
+      "Cloudflare Pages",
+      `Connect this repository in Cloudflare Pages. Set the build command to \`${manager} run build\` and the output directory to \`dist\`. Set the project root to this directory when it is inside a monorepo. Git integration creates preview deployments for branches.`,
+      "https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/",
+    ],
+    vercel: [
+      "Vercel",
+      "Import this repository into Vercel. Static Astro projects are detected without an adapter. Set the root directory to this project when it is inside a monorepo. Git integration creates preview deployments for pull requests.",
+      "https://vercel.com/docs/frameworks/frontend/astro",
+    ],
+  }[preset];
+  return `# Deploy to ${details[0]}\n\n${details[1]}\n\nSet \`site.url\` in \`docs.config.ts\` to the production HTTPS origin before publishing, then run \`${manager} run doctor\` and \`${manager} run build\`. The static site is written to \`dist/\`. Preview URLs use the production canonical URL unless you override it for previews.\n\nPlatform guide: ${details[2]}\n`;
 }
 
 function renderAgentInstructions(
@@ -202,6 +244,7 @@ export function renderPackageJson(packageManager: PackageManager): string {
       version: "0.0.0",
       private: true,
       type: "module",
+      engines: { node: ">=22.19" },
       packageManager: packageManagerVersion,
       scripts: {
         dev: "astro dev",

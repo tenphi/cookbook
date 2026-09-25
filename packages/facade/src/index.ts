@@ -35,6 +35,7 @@ export type {
   SearchConfig,
   SiteConfig,
   SiteIconConfig,
+  SiteVersion,
   ThemeConfig,
   ThemeFont,
   ThemeFontFile,

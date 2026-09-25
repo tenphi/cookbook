@@ -70,6 +70,31 @@ match. It also lets Cookbook put absolute page URLs in `llms.txt` and a sitemap
 pointer in the origin-root `robots.txt`. `repository` adds a source link to the
 header.
 
+For multiple documentation versions, set `site.versions` and mount content at
+each version root. The header then shows a version selector. It links to the
+same route in another version when that page exists and falls back to the
+other version's root when it does not:
+
+```ts
+site: {
+  versions: [
+    { label: "Latest", routeBase: "/" },
+    { label: "v1", routeBase: "/v1" },
+  ],
+},
+content: {
+  sources: [
+    { file: "README.md", route: "/" },
+    { glob: "docs/**/*.md", base: "docs" },
+    { file: "versions/v1/README.md", routeBase: "/v1", route: "/" },
+    { glob: "versions/v1/docs/**/*.md", base: "versions/v1/docs", routeBase: "/v1" },
+  ],
+},
+```
+
+Each `routeBase` must have a page, and version roots must be distinct. A
+single-version site can continue using `site.version` for a simple label.
+
 ### Site icons
 
 Cookbook ships its book mark as the default favicon. Set `site.favicon` to a
@@ -406,6 +431,22 @@ requires an explicit `trust: "mdx"` source declaration.
 Configure renderer-level Markdown options such as custom remark or rehype
 plugins and Shiki languages through Astro's top-level `markdown` configuration.
 Cookbook preserves those settings while adding its own build-time transforms.
+
+Starlight content and behavior plugins can be supplied to the Astro integration:
+
+```ts
+import myStarlightPlugin from "./plugins/my-starlight-plugin.js";
+
+export default defineConfig({
+  integrations: [cookbook({ plugins: [myStarlightPlugin()] })],
+});
+```
+
+Cookbook forwards these plugins to Starlight. Plugins that add stylesheets or
+style tags fail the production build because Cookbook ships only Tasty styles.
+Plugins that replace
+Cookbook-owned components or change routes can conflict with the content graph.
+Use `theme.styles` for visual changes.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
 the static build. Flowcharts, state, sequence, class, and entity-relationship

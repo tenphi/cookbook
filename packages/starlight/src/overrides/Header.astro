@@ -13,6 +13,7 @@ import { activeNavigationTab, navigationPath } from "../navigation.js";
 import GlobalStyles from "../components/GlobalStyles.js";
 import Logo from "../components/Logo.astro";
 import PackageVersion from "../components/PackageVersion.astro";
+import VersionSwitcher from "../components/VersionSwitcher.astro";
 import {
   StarlightHeaderRoot,
   TopNavigationRoot,
@@ -47,8 +48,22 @@ function tabHref(link: string): string {
         <Logo class="td-header__logo" decorative />
       </a>
       <SiteTitle />
-      <PackageVersion version={content.site.version} />
+      {
+        !content.site.versions && (
+          <PackageVersion version={content.site.version} />
+        )
+      }
     </div>
+    {
+      content.site.versions && (
+        <VersionSwitcher
+          versions={content.site.versions}
+          routes={content.routes}
+          currentPath={currentPath}
+          base={base || "/"}
+        />
+      )
+    }
     <div class="td-header__search print:hidden">
       {shouldRenderSearch && <Search />}
     </div>

@@ -79,6 +79,61 @@ export const PackageVersionRoot = customizeComponent(
   }),
 );
 
+export const VersionSwitcherRoot = customizeComponent(
+  "VersionSwitcher",
+  tasty({
+    as: "details",
+    styles: {
+      display: "inline-flex",
+      position: "relative",
+      flexShrink: "0",
+      color: "#text-soft",
+      Trigger: {
+        $: "> summary",
+        display: "flex",
+        alignItems: "center",
+        blockSize: "min $control-height",
+        inlinePadding: "$gap",
+        fill: "#surface-2",
+        border: true,
+        radius: "$radius",
+        preset: "small / strong",
+        cursor: "pointer",
+        whiteSpace: "nowrap",
+      },
+      Panel: {
+        $: "> nav",
+        position: "absolute",
+        inset: { "": "100% auto auto 0", "@mobile": "100% 0 auto auto" },
+        zIndex: "10",
+        inlineSize: "min 8rem",
+        padding: "($gap * 0.5)",
+        fill: "#surface",
+        border: true,
+        radius: "$radius",
+        shadow: "0 0.75rem 2rem #shadow",
+      },
+      OpenPanel: {
+        $: "&[open] > nav",
+        display: "grid",
+      },
+      Link: {
+        $: "> nav > a",
+        display: "block",
+        padding: "($gap * 0.5) $gap",
+        color: "#text-soft",
+        preset: "small",
+        textDecoration: "none",
+      },
+      CurrentLink: {
+        $: '> nav > a[aria-current="page"]',
+        color: "#accent-text",
+        preset: "small / strong",
+      },
+    },
+  }),
+);
+
 export const TopNavigationRoot = customizeComponent(
   "TopNavigation",
   tasty({

@@ -24,7 +24,7 @@
     "test": "vitest run"
   },
   "engines": {
-    "node": ">=22.14"
+    "node": ">=22.19"
   },
   "publishConfig": {
     "access": "public"

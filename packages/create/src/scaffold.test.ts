@@ -54,6 +54,27 @@ async function localFixture(source = false) {
 }
 
 describe("creator defaults", () => {
+  it.each(["netlify", "cloudflare-pages", "vercel"] as const)(
+    "creates a %s deployment guide",
+    async (deploy) => {
+      const root = await mkdtemp(join(tmpdir(), "cookbook-deploy-"));
+      roots.push(root);
+      await scaffold({
+        destination: root,
+        deploy,
+        install: false,
+        confirmNonEmpty: async () => true,
+      });
+      const guide = await readFile(join(root, "DEPLOYMENT.md"), "utf8");
+      expect(guide).toContain("site.url");
+      expect(guide).toContain("dist");
+      if (deploy === "netlify")
+        expect(await readFile(join(root, "netlify.toml"), "utf8")).toContain(
+          'publish = "dist"',
+        );
+    },
+  );
+
   it("creates a local starter whose discovered config resolves its content", async () => {
     const { destination, project, graph } = await localFixture();
     expect(project.root).toBe(destination);

@@ -9,6 +9,7 @@ export default defineConfig({
     styling: "src/styling.ts",
     "eslint-plugin": "src/eslint-plugin.ts",
     navigation: "src/navigation.ts",
+    versioning: "src/versioning.ts",
     "client/appearance": "src/client/appearance.ts",
     "client/code-copy": "src/client/code-copy.ts",
     "client/heading-links": "src/client/heading-links.ts",

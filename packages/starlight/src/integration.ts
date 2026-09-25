@@ -26,6 +26,7 @@ import {
 } from "@tenphi/tasty/core";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
+import type { StarlightPlugin } from "@astrojs/starlight/types";
 import {
   resolveNavigationLayout,
   type ResolvedNavigationLayout,
@@ -75,6 +76,8 @@ export interface CookbookOptions {
   config?: DocsConfig;
   root?: string;
   configFile?: string | false;
+  /** Starlight content and behavior plugins. Styles must still use Tasty. */
+  plugins?: StarlightPlugin[];
 }
 
 export default function cookbook(
@@ -93,6 +96,7 @@ export default function cookbook(
         integration = configuredCookbook({
           config: project.config,
           root: project.root,
+          ...(options.plugins ? { plugins: options.plugins } : {}),
         });
         await callInner([integration], "astro:config:setup", context);
       },
@@ -296,6 +300,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         siteIcons = await loadSiteIcons();
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
+          ...(options.plugins ? { plugins: options.plugins } : {}),
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
           favicon: siteIcons.faviconPath,
@@ -641,6 +646,16 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               /(<dialog\b[^>]*)\sstyle="padding:\s*0;?"([^>]*>)/g,
               "$1$2",
             );
+          if (
+            /<style\b/.test(sanitized) ||
+            /<link\b(?=[^>]*\brel=["']stylesheet["'])(?![^>]*\bdata-tasty-ssr\b)[^>]*>/i.test(
+              sanitized,
+            )
+          ) {
+            throw new Error(
+              `Non-Tasty CSS found in ${relativePath}. Use theme.styles or Tasty components for visual changes.`,
+            );
+          }
           if (sanitized !== html) await writeFile(path, sanitized);
         }
         const pagefindOutput = join(output, "pagefind");
@@ -649,6 +664,18 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             if (extname(name) === ".css") {
               await unlink(join(pagefindOutput, name));
             }
+          }
+        }
+        for (const relativePath of await readdir(output, { recursive: true })) {
+          if (
+            extname(relativePath) === ".css" &&
+            !/^tasty\.[^/]+\.css$/.test(
+              relativePath.split(/[/\\]/).at(-1) ?? "",
+            )
+          ) {
+            throw new Error(
+              `Non-Tasty stylesheet found in ${relativePath}. Use theme.styles or Tasty components for visual changes.`,
+            );
           }
         }
         for (const asset of siteIcons?.assets ?? []) {

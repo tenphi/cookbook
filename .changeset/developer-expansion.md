@@ -1,0 +1,8 @@
+---
+"@tenphi/create-cookbook": minor
+"@tenphi/cookbook": minor
+"@tenphi/docs": minor
+"@tenphi/starlight": minor
+---
+
+Add static OpenAPI reference pages, documentation version navigation, Starlight plugin forwarding, and Netlify, Cloudflare Pages, and Vercel creator presets. Require Node.js 22.19 or newer and deploy the Cookbook reference site from its release tag.
