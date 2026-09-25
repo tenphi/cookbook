@@ -155,7 +155,7 @@ export async function scaffold(
   };
 }
 
-export function renderAgentInstructions(
+function renderAgentInstructions(
   options: ScaffoldOptions,
   packageManager: PackageManager,
 ): string {
