@@ -11,6 +11,7 @@ import searchIcon from "../icons/search.svg?raw";
 import { resolveComponentStyles } from "./component-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
 import { configureCookbookStates } from "./tasty-states.js";
+import { getDefaultFontUsage, getFontFaces } from "../theme/fonts.js";
 
 configureCookbookStates();
 
@@ -18,16 +19,20 @@ configureCookbookStates();
 // Glaze owns every color value. Cookbook-owned components use tasty() wrappers;
 // every global style object remains visible to the Tasty linter.
 export default function GlobalStyles() {
-  useFontFace("Onest Variable", {
-    src: `url("${onestLatin}") format("woff2-variations")`,
-    fontWeight: "100 900",
-    fontDisplay: "swap",
-  });
-  useFontFace("JetBrains Mono Variable", {
-    src: `url("${jetBrainsMonoLatin}") format("woff2-variations")`,
-    fontWeight: "100 800",
-    fontDisplay: "swap",
-  });
+  const defaultFonts = getDefaultFontUsage();
+  if (defaultFonts.onest)
+    useFontFace("Onest Variable", {
+      src: `url("${onestLatin}") format("woff2-variations")`,
+      fontWeight: "100 900",
+      fontDisplay: "swap",
+    });
+  if (defaultFonts.mono)
+    useFontFace("JetBrains Mono Variable", {
+      src: `url("${jetBrainsMonoLatin}") format("woff2-variations")`,
+      fontWeight: "100 800",
+      fontDisplay: "swap",
+    });
+  for (const face of getFontFaces()) useFontFace(face.family, face.descriptors);
 
   useGlobalStyles(
     ":root",

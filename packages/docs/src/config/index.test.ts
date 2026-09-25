@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   DocsConfigError,
+  mergeDocsConfig,
   normalizeDocsConfig,
   COOKBOOK_COMPONENT_NAMES,
 } from "./index.js";
@@ -30,6 +31,7 @@ const schema = JSON.parse(
     lastUpdated: { default?: boolean };
     theme: {
       properties: {
+        fonts: unknown;
         styles: {
           properties: Record<string, unknown>;
           additionalProperties: {
@@ -122,6 +124,77 @@ describe("docs configuration", () => {
       normalizeDocsConfig({ theme: { palette: { overlay: "#131025" } } }).theme
         .palette?.overlay,
     ).toBe("#131025");
+  });
+
+  it("accepts Google names and local font files, and rejects malformed definitions", () => {
+    expect(
+      normalizeDocsConfig({
+        theme: {
+          fonts: {
+            body: "Inter",
+            heading: { google: "Newsreader", weights: [400, 700] },
+            code: {
+              family: "Acme Mono",
+              files: [{ src: "/fonts/acme.woff2", weight: "100 900" }],
+            },
+          },
+        },
+      }).theme.fonts?.code,
+    ).toEqual({
+      family: "Acme Mono",
+      files: [{ src: "/fonts/acme.woff2", weight: "100 900" }],
+    });
+    expect(schema.properties.theme.properties.fonts).toBeDefined();
+    for (const fonts of [
+      { body: "" },
+      { body: { google: "Inter", weights: [] } },
+      { body: { family: "Acme", files: [{ src: "../outside.woff2" }] } },
+      {
+        code: {
+          family: "Acme",
+          files: [{ src: "/fonts/acme.woff2", weight: "900 100" }],
+        },
+      },
+      { typo: "Inter" },
+    ]) {
+      expect(() => normalizeDocsConfig({ theme: { fonts } } as never)).toThrow(
+        /theme\.fonts/,
+      );
+    }
+  });
+
+  it("replaces each font role when composing theme presets", () => {
+    expect(
+      mergeDocsConfig(
+        {
+          theme: {
+            fonts: {
+              body: { google: "Inter", weights: [400, 700] },
+              heading: "Newsreader",
+            },
+          },
+        },
+        {
+          theme: {
+            fonts: {
+              body: {
+                family: "Acme Sans",
+                files: [{ src: "/fonts/acme.woff2" }],
+              },
+            },
+          },
+        },
+      ).theme?.fonts,
+    ).toEqual({
+      body: { family: "Acme Sans", files: [{ src: "/fonts/acme.woff2" }] },
+      heading: "Newsreader",
+    });
+    expect(
+      mergeDocsConfig(
+        { theme: { fonts: { body: "Inter" } } },
+        { theme: { fonts: { body: undefined } } },
+      ).theme?.fonts?.body,
+    ).toBe("Inter");
   });
 
   it.each([

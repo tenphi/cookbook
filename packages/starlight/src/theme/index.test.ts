@@ -297,6 +297,31 @@ describe("Glaze theme adapter", () => {
     expect(tokens).not.toHaveProperty("--legacy-token");
   });
 
+  it("applies font roles before explicit preset overrides", () => {
+    const theme = resolveDocsTheme({
+      fonts: {
+        body: "Inter",
+        heading: "Newsreader",
+        code: { family: "Acme Mono", files: [{ src: "/fonts/acme.woff2" }] },
+      },
+      presets: {
+        heading: { fontFamily: "Georgia, serif", fontStyle: "italic" },
+      },
+    });
+    expect(theme.presets.body?.fontFamily).toBe(
+      "'Inter', system-ui, sans-serif",
+    );
+    expect(theme.presets.navigation?.fontFamily).toBe(
+      "var(--body-font-family)",
+    );
+    expect(theme.presets.heading?.fontFamily).toBe("Georgia, serif");
+    expect(theme.presets.heading?.fontStyle).toBe("italic");
+    expect(theme.presets.h1?.fontFamily).toBe("var(--heading-font-family)");
+    expect(theme.presets.code?.fontFamily).toBe(
+      "'Acme Mono', ui-monospace, monospace",
+    );
+  });
+
   it("builds restrained surface colors in two-tone steps", () => {
     const theme = resolveDocsTheme({
       palette: { surface: "#fcfcff" },

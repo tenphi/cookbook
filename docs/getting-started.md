@@ -86,9 +86,18 @@ export default defineDocsConfig({
     description: "Documentation for Example Project",
     repository: "https://github.com/example/project",
   },
-  theme: { brand: "#2f5bff" },
+  theme: {
+    brand: "#2f5bff",
+    fonts: { body: "Inter", heading: "Newsreader" },
+  },
 });
 ```
+
+Change `theme.fonts` to use [Google Fonts by name or your own font files](./theme-and-components.md#change-font-families).
+Use `theme.presets` for typography details, `theme.styles` for built-in elements,
+and `defineComponent()` with `theme.customStyles` to add a new element. The
+[theme guide](./theme-and-components.md) includes examples and the complete
+list of customizable sub-elements.
 
 The integration and CLI load the same configuration. Supported filenames are
 `docs.config.ts`, `.mts`, `.js`, and `.mjs`, in that order. An explicit integration

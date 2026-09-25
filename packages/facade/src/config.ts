@@ -8,5 +8,8 @@ export type {
   DocsConfig,
   DocsSource,
   ThemeConfig,
+  ThemeFont,
+  ThemeFontFile,
+  ThemeFonts,
   ComponentStylesConfig,
 } from "@tenphi/docs/config";

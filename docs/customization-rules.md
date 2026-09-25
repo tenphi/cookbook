@@ -24,6 +24,7 @@ before overriding a built-in component.
 | ----------------------------- | ------------------------------------------------------ |
 | Brand and semantic colors     | `theme.brand` and the supported `theme.palette` inputs |
 | Shared dimensions and spacing | `theme.tokens`                                         |
+| Font loading and family roles | `theme.fonts`                                          |
 | Typography                    | `theme.presets`                                        |
 | Responsive conditions         | `theme.states`                                         |
 | Existing component appearance | Partial Tasty objects in `theme.styles.<Name>`         |

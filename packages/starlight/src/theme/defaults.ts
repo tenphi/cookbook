@@ -77,6 +77,7 @@ export function resolveThemeTokens(tokens: ThemeTokens = {}): ThemeTokens {
 
 export function resolveTypographyPresets(
   presets: TypographyPresets = {},
+  fontFamilies: Partial<Record<"body" | "heading" | "code", string>> = {},
 ): Record<string, TypographyPreset> {
   const body = DEFAULT_TYPOGRAPHY_PRESETS.body;
   if (!body) throw new Error("The body typography preset is required.");
@@ -89,6 +90,9 @@ export function resolveTypographyPresets(
       name,
       {
         ...(DEFAULT_TYPOGRAPHY_PRESETS[name] ?? body),
+        ...(name in fontFamilies
+          ? { fontFamily: fontFamilies[name as keyof typeof fontFamilies] }
+          : {}),
         ...(presets[name] ?? {}),
       },
     ]),

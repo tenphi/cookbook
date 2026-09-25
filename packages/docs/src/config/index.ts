@@ -53,6 +53,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   theme: new Set([
     "brand",
     "palette",
+    "fonts",
     "states",
     "tokens",
     "presets",
@@ -551,12 +552,118 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     "styles",
     "customStyles",
     "palette",
+    "fonts",
     "tokens",
     "states",
     "presets",
   ] as const) {
     if (config.theme?.[field] !== undefined && !isRecord(config.theme[field]))
       invalid(diagnostics, `theme.${field} must be an object.`);
+  }
+  if (isRecord(config.theme?.fonts)) {
+    for (const [role, font] of Object.entries(config.theme.fonts)) {
+      const path = `theme.fonts.${role}`;
+      if (!["body", "heading", "code"].includes(role)) {
+        unknown(diagnostics, path);
+        continue;
+      }
+      if (font === undefined) continue;
+      if (typeof font === "string") {
+        if (!validFontFamily(font))
+          invalid(diagnostics, `${path} must name a Google Fonts family.`);
+        continue;
+      }
+      if (!isRecord(font)) {
+        invalid(
+          diagnostics,
+          `${path} must be a Google Fonts name or font definition.`,
+        );
+        continue;
+      }
+      if ("google" in font) {
+        for (const key of Object.keys(font))
+          if (!["google", "weights"].includes(key))
+            unknown(diagnostics, `${path}.${key}`);
+        if (!validFontFamily(font.google))
+          invalid(
+            diagnostics,
+            `${path}.google must name a Google Fonts family.`,
+          );
+        if (
+          font.weights !== undefined &&
+          (!Array.isArray(font.weights) ||
+            font.weights.length === 0 ||
+            font.weights.some(
+              (weight) =>
+                !Number.isInteger(weight) || weight < 1 || weight > 1000,
+            ))
+        )
+          invalid(
+            diagnostics,
+            `${path}.weights must be a non-empty array of font weights from 1 to 1000.`,
+          );
+      } else {
+        for (const key of Object.keys(font))
+          if (!["family", "files"].includes(key))
+            unknown(diagnostics, `${path}.${key}`);
+        if (!validFontFamily(font.family))
+          invalid(diagnostics, `${path}.family must be a font family name.`);
+        if (!Array.isArray(font.files) || font.files.length === 0) {
+          invalid(
+            diagnostics,
+            `${path}.files must contain at least one font file.`,
+          );
+          continue;
+        }
+        font.files.forEach((file, index) => {
+          const filePath = `${path}.files[${index}]`;
+          if (!isRecord(file)) {
+            invalid(diagnostics, `${filePath} must be an object.`);
+            return;
+          }
+          for (const key of Object.keys(file))
+            if (!["src", "weight", "style"].includes(key))
+              unknown(diagnostics, `${filePath}.${key}`);
+          if (
+            typeof file.src !== "string" ||
+            !/^\/(?!\/)[^\s"'()\\?#]+\.(?:woff2?|ttf|otf)$/.test(file.src) ||
+            file.src
+              .split("/")
+              .some((segment) => segment === "." || segment === "..")
+          )
+            invalid(
+              diagnostics,
+              `${filePath}.src must be a root-relative .woff2, .woff, .ttf, or .otf public path.`,
+            );
+          if (
+            file.weight !== undefined &&
+            !(
+              typeof file.weight === "number" &&
+              Number.isInteger(file.weight) &&
+              file.weight >= 1 &&
+              file.weight <= 1000
+            ) &&
+            !(
+              typeof file.weight === "string" &&
+              /^(?:[1-9]\d{0,2}|1000) (?:[1-9]\d{0,2}|1000)$/.test(
+                file.weight,
+              ) &&
+              Number(file.weight.split(" ")[0]) <
+                Number(file.weight.split(" ")[1])
+            )
+          )
+            invalid(
+              diagnostics,
+              `${filePath}.weight must be a weight from 1 to 1000 or an ascending range.`,
+            );
+          if (
+            file.style !== undefined &&
+            !["normal", "italic"].includes(file.style as string)
+          )
+            invalid(diagnostics, `${filePath}.style must be normal or italic.`);
+        });
+      }
+    }
   }
   for (const [name, entry] of Object.entries(config.theme?.styles ?? {})) {
     if (!(COOKBOOK_COMPONENT_NAMES as readonly string[]).includes(name)) {
@@ -694,6 +801,16 @@ function invalid(diagnostics: DocsDiagnostic[], message: string): void {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function validFontFamily(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.length <= 100 &&
+    /^[\p{L}\p{N} ._-]+$/u.test(value) &&
+    value.trim() === value &&
+    value.length > 0
+  );
 }
 
 function isHttpUrl(value: string): boolean {
@@ -834,6 +951,17 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
         base as Record<string, unknown>,
         next as Record<string, unknown>,
       ) as DocsConfig;
+      // Font definitions are alternatives, so a consumer can switch from a
+      // Google family to local files (or back) in a layered configuration.
+      if (next.theme?.fonts)
+        result.theme!.fonts = {
+          ...base.theme?.fonts,
+          ...Object.fromEntries(
+            Object.entries(next.theme.fonts).filter(
+              ([, font]) => font !== undefined,
+            ),
+          ),
+        };
       for (const field of ["styles", "customStyles"] as const) {
         if (!next.theme?.[field]) continue;
         const styles = { ...base.theme?.[field] } as Record<string, Styles>;
@@ -874,6 +1002,9 @@ export type {
   HeaderLink,
   SiteIconConfig,
   ThemeConfig,
+  ThemeFont,
+  ThemeFontFile,
+  ThemeFonts,
   ThemePaletteConfig,
   ThemeTokens,
   ThemeTokenValue,

@@ -29,8 +29,10 @@ and the lock live. `--root` chooses the CLI's configuration search directory;
 discovery and resolves its `root` relative to the integration root.
 
 Use `mergeDocsConfig(preset, overrides)` to compose shared configuration. Objects
-merge recursively and arrays replace; Tasty styles preserve default values when
-adding conditional overrides. Neither input is mutated. See
+merge recursively and arrays replace. Each `theme.fonts` role replaces its
+previous definition, so switching a role from Google to local files takes one
+override. Tasty styles preserve default values when adding conditional
+overrides. Neither input is mutated. See
 [working examples](./examples.md#share-configuration-and-themes).
 
 ## Redirects
@@ -322,6 +324,14 @@ theme: {
     text: "#20232a",
     textSoft: "#626875"
   },
+  fonts: {
+    body: "Inter",
+    heading: { google: "Newsreader", weights: [400, 700] },
+    code: {
+      family: "Project Mono",
+      files: [{ src: "/fonts/project-mono.woff2", weight: "100 900" }]
+    }
+  },
   tokens: {
     "$radius": "8px",
     "$card-radius": "16px",
@@ -332,9 +342,8 @@ theme: {
   },
   states: {},
   presets: {
-    body: { fontFamily: "Inter, sans-serif", boldFontWeight: 680 },
+    body: { boldFontWeight: 680 },
     heading: {
-      fontFamily: "Newsreader, serif",
       fontWeight: 650,
       boldFontWeight: 740
     }
@@ -351,7 +360,10 @@ theme: {
 
 The default brand is `okhsl(266 68% 48%)`, a blue with 68% saturation; controls
 use an `8px` radius and cards use `16px`. Onest is the default body and heading family, while JetBrains Mono is
-used for code. The default layout is capped at `87.5rem` (1400px), matching the
+used for code. `theme.fonts` loads Google families by name or local files from
+`public/`, and applies them to the body, heading, and code presets. See
+[Change font families](./theme-and-components.md#change-font-families) for both
+flows. The default layout is capped at `87.5rem` (1400px), matching the
 Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `palette`
 supplies semantic Glaze inputs rather than component colors,
 so the whole interface continues to adapt in dark and high-contrast modes. A requested APCA floor below 45 requires the explicit
