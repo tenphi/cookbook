@@ -76,3 +76,15 @@ Use the host's ordinary static-site settings:
 
 If the host serves the site below a path rather than at an origin root, set
 Astro's `base`; Cookbook derives it automatically.
+
+## Discovery and agent access
+
+Set `site.url` to the public HTTPS origin before building. This enables canonical
+page URLs and the sitemap. The build also emits `llms.txt` with links to
+published documentation pages. At an origin root, it emits `robots.txt` pointing
+to the sitemap. Host these files with the rest of `dist/`; custom files in
+`public/` take precedence. For path-hosted sites, manage the origin's
+`robots.txt` in the hosting configuration.
+
+Check the deployed HTML, `sitemap-index.xml`, and `llms.txt` through their public
+URLs. See [AI agents](./ai-agents.md) for the setup and reading workflow.

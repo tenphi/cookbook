@@ -44,6 +44,7 @@ export default defineDocsConfig({
         items: [
           "/",
           "/getting-started",
+          "/ai-agents",
           "/examples",
           {
             label: "Author content",

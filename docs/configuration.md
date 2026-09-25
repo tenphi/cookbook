@@ -66,7 +66,9 @@ with one locked npm package source infers its version automatically; set this
 field for local or multi-package documentation. Read it from the package
 manifest when possible so it remains current. `url` configures Astro's canonical
 site origin and sitemap metadata. If Astro also declares `site`, the values must
-match. `repository` adds a source link to the header.
+match. It also lets Cookbook put absolute page URLs in `llms.txt` and a sitemap
+pointer in the origin-root `robots.txt`. `repository` adds a source link to the
+header.
 
 ### Site icons
 

@@ -63,6 +63,13 @@ describe("creator defaults", () => {
     expect(
       await readFile(join(destination, "astro.config.ts"), "utf8"),
     ).toContain("cookbook()");
+    const agentInstructions = await readFile(
+      join(destination, "AGENTS.md"),
+      "utf8",
+    );
+    expect(agentInstructions).toContain("Edit `README.md` for the home page");
+    expect(agentInstructions).toContain("npm run doctor");
+    expect(agentInstructions).toContain("site.url");
   });
   it("keeps existing repository content outside the generated app", async () => {
     const { root, destination, project, graph } = await localFixture(true);
@@ -70,6 +77,21 @@ describe("creator defaults", () => {
     expect(graph.entryByRoute("/")?.title).toBe("Existing repository");
     expect(graph.diagnostics).toEqual([]);
     expect(await readdir(destination)).not.toContain("README.md");
+    expect(await readFile(join(destination, "AGENTS.md"), "utf8")).toContain(
+      "Edit the source repository's README.md",
+    );
+  });
+  it("preserves an existing agent instructions file", async () => {
+    const { destination } = await localFixture();
+    await writeFile(join(destination, "AGENTS.md"), "# Local rules\n");
+    await scaffold({
+      destination,
+      install: false,
+      confirmNonEmpty: async () => true,
+    });
+    expect(await readFile(join(destination, "AGENTS.md"), "utf8")).toBe(
+      "# Local rules\n",
+    );
   });
   it.each([
     ["pnpm/11.0.0 node/v22", "pnpm"],

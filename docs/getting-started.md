@@ -16,7 +16,8 @@ npm run dev
 ```
 
 The creator writes a README, Astro configuration, and `docs.config.ts`, then
-installs dependencies. Edit `README.md` to change the home page. Add
+installs dependencies. It also writes `AGENTS.md` with instructions for coding
+agents. Edit `README.md` to change the home page. Add
 `docs/guide.md` to create `/guide`. New and edited pages appear in the development
 server without a restart.
 
@@ -129,5 +130,5 @@ npm run preview
 ```
 
 See [working examples](./examples.md), [authoring components](./authoring.mdx),
-and [deployment](./deployment.md). Existing users should read the
+the [AI agent workflow](./ai-agents.md), and [deployment](./deployment.md). Existing users should read the
 [prerelease migration guide](./migration.md).

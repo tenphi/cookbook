@@ -8,6 +8,8 @@ npm create @tenphi/cookbook@latest my-docs
 
 Use `--source ../my-project` to document an existing repository without copying
 its content. The generated `docs.config.ts` is shared by Astro and `cookbook doctor`.
+The creator also writes `AGENTS.md` with setup and validation guidance for
+coding agents. Existing `AGENTS.md` files are preserved.
 Or create a site from the actual contents of a published package:
 
 ```sh

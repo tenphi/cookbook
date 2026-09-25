@@ -154,6 +154,15 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
   });
   await run("npm", ["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
   const html = await readFile(join(site, "dist", "index.html"), "utf8");
+  const agentIndex = await readFile(join(site, "dist", "llms.txt"), "utf8");
+  if (
+    !agentIndex.includes("[Packed site](/manual/)") ||
+    !agentIndex.includes("[Guide](/manual/guide/)")
+  ) {
+    throw new Error(
+      "Packed-package site did not index its published pages for agents.",
+    );
+  }
   if (!html.includes("Packed site") || !html.includes('href="/manual/guide"')) {
     throw new Error(
       "Packed-package site did not contain the expected generated content.",
@@ -167,6 +176,11 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     }
   }
   const outputEntries = await readdir(join(site, "dist"), { recursive: true });
+  if (outputEntries.includes("robots.txt")) {
+    throw new Error(
+      "A path-hosted site must not publish origin-level robots rules.",
+    );
+  }
   const cssEntries = outputEntries.filter((name) => extname(name) === ".css");
   if (
     cssEntries.length === 0 ||
