@@ -139,10 +139,7 @@ export async function resolveThemeFontFaces(
   ];
 }
 
-function parseGoogleFontCss(
-  css: string,
-  family: string,
-): ResolvedFontFace[] {
+function parseGoogleFontCss(css: string, family: string): ResolvedFontFace[] {
   const faces: ResolvedFontFace[] = [];
   for (const block of css.matchAll(/@font-face\s*\{([^}]*)\}/g)) {
     const declarations = Object.fromEntries(
