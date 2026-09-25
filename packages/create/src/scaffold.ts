@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { cp, mkdir, readdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { basename, join, relative, resolve } from "node:path";
 import creatorPackage from "../package.json" with { type: "json" };
 import {
@@ -145,6 +145,7 @@ export async function scaffold(
       : []),
   ]);
   await writeAgentInstructions(destination, options, packageManager);
+  await writeUpgradeSkill(destination);
   if (options.deploy === "github-pages")
     await writeGithubWorkflow(destination, packageManager);
   if (options.deploy === "netlify") {
@@ -206,7 +207,28 @@ function renderAgentInstructions(
     : options.package
       ? `Documentation comes from the package pinned in \`cookbook.lock.json\`. Use \`${packageManager} run update\` to refresh the lock; add local pages through \`content.sources\` in \`docs.config.ts\`.`
       : "Edit `README.md` for the home page and add Markdown or MDX pages under `docs/` for other pages.";
-  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run doctor\` and \`${packageManager} run build\` after changes. The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
+  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- For a Cookbook version upgrade, use \`.agents/skills/upgrade-cookbook/SKILL.md\`.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run doctor\` and \`${packageManager} run build\` after changes. The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
+}
+
+async function writeUpgradeSkill(destination: string): Promise<void> {
+  const directory = join(destination, ".agents", "skills", "upgrade-cookbook");
+  await mkdir(directory, { recursive: true });
+  const content = await readFile(
+    new URL("./skills/upgrade-cookbook/SKILL.md", import.meta.url),
+    "utf8",
+  );
+  try {
+    await writeFile(join(directory, "SKILL.md"), content, { flag: "wx" });
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "EEXIST"
+    )
+      return;
+    throw error;
+  }
 }
 
 async function writeAgentInstructions(

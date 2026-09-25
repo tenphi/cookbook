@@ -46,6 +46,14 @@ try {
       );
     }
     const manifest = JSON.parse(manifestText);
+    if (
+      manifest.name === "@tenphi/create-cookbook" &&
+      !files.has("package/dist/skills/upgrade-cookbook/SKILL.md")
+    ) {
+      throw new Error(
+        `${tarball} is missing the generated-site upgrade skill.`,
+      );
+    }
     if (manifest.name === "@tenphi/cookbook") {
       for (const required of [
         "docs/index.md",

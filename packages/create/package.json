@@ -18,7 +18,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown --config tsdown.config.ts",
+    "build": "tsdown --config tsdown.config.ts && mkdir -p dist/skills/upgrade-cookbook && cp src/skills/upgrade-cookbook/SKILL.md dist/skills/upgrade-cookbook/SKILL.md",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
