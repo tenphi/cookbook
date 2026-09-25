@@ -1,9 +1,37 @@
 import { defineDocsConfig } from "../dist/config.js";
+import type { ThemeFont } from "../dist/config.js";
 import type { ComponentProps } from "astro/types";
 import { Tab, Preview, Logo } from "../dist/components.js";
 
 defineDocsConfig({
   theme: { styles: { Sidebar: { LinkLabel: { whiteSpace: "normal" } } } },
+});
+const localFont: ThemeFont = {
+  family: "Project Mono",
+  files: [{ src: "/fonts/project-mono.woff2", weight: "100 900" }],
+};
+void localFont;
+defineDocsConfig({
+  theme: {
+    fonts: {
+      body: "Inter",
+      heading: { google: "Newsreader", weights: [400, 700] },
+      code: {
+        family: "Project Mono",
+        files: [{ src: "/fonts/project-mono.woff2", weight: "100 900" }],
+      },
+    },
+  },
+});
+// @ts-expect-error Font roles are fixed.
+defineDocsConfig({ theme: { fonts: { sidebar: "Inter" } } });
+defineDocsConfig({
+  theme: {
+    fonts: {
+      // @ts-expect-error Local fonts need a family name.
+      body: { files: [{ src: "/fonts/brand.woff2" }] },
+    },
+  },
 });
 // @ts-expect-error Unknown built-in component.
 defineDocsConfig({ theme: { styles: { Sidebaar: {} } } });

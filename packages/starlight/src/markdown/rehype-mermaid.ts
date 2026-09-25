@@ -106,7 +106,7 @@ function render(source: string): string {
     muted: "var(--text-soft-color)",
     surface: "var(--surface-color)",
     border: "var(--border-strong-color)",
-    font: "Onest Variable",
+    font: "var(--body-font-family)",
     transparent: true,
   }).replace(svgStyleBlock, "");
 }

@@ -16,6 +16,7 @@ import type {
   TypographyPreset,
 } from "@tenphi/docs";
 import { resolveThemeTokens, resolveTypographyPresets } from "./defaults.js";
+import { fontFamilies } from "./fonts.js";
 
 export interface ResolvedDocsTheme {
   colors: {
@@ -363,7 +364,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       ...syntaxTokens,
     },
     tokens: resolveThemeTokens(theme.tokens),
-    presets: resolveTypographyPresets(theme.presets),
+    presets: resolveTypographyPresets(theme.presets, fontFamilies(theme.fonts)),
     contrast: scores,
     diagnostics,
   };

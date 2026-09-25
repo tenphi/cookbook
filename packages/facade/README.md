@@ -25,6 +25,23 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({ site: { title: "My project" } });
 ```
 
+Set fonts, typography, and built-in element styles in the same file:
+
+```ts
+export default defineDocsConfig({
+  theme: {
+    fonts: { body: "Inter", heading: "Newsreader" },
+    presets: { h1: { fontSize: "3rem" } },
+    styles: { Sidebar: { LinkLabel: { whiteSpace: "normal" } } },
+  },
+});
+```
+
+For local fonts, place files in `public/fonts/` and use
+`fonts: { body: { family: "My Font", files: [{ src: "/fonts/my-font.woff2" }] } }`.
+See [Theme and components](./docs/theme-and-components.md) for all named
+sub-elements and the custom component flow.
+
 Without configuration, a root `README.md` becomes `/` and
 `docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes Starlight,
 generates only static output, and derives its URL base from Astro. Adding other

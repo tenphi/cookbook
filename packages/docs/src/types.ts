@@ -187,6 +187,27 @@ export interface TypographyPresets {
   [name: string]: TypographyPreset | undefined;
 }
 
+/** A font file served from the site's `public/` directory. */
+export interface ThemeFontFile {
+  /** Root-relative public URL, for example `/fonts/brand.woff2`. */
+  src: string;
+  /** A single weight or a variable-font range such as `"100 900"`. */
+  weight?: number | `${number} ${number}`;
+  style?: "normal" | "italic";
+}
+
+/** A Google Fonts family or a set of files hosted by the site. */
+export type ThemeFont =
+  | string
+  | { google: string; weights?: number[] }
+  | { family: string; files: ThemeFontFile[] };
+
+export interface ThemeFonts {
+  body?: ThemeFont;
+  heading?: ThemeFont;
+  code?: ThemeFont;
+}
+
 /** Semantic palette inputs. Glaze resolves every value for all appearance modes. */
 export interface ThemePaletteConfig {
   info?: GlazeColorValue;
@@ -480,6 +501,7 @@ export type ComponentStylesConfig = {
 export interface ThemeConfig {
   brand?: BrandConfig;
   palette?: ThemePaletteConfig;
+  fonts?: ThemeFonts;
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;

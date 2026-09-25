@@ -154,18 +154,74 @@ without one-off component overrides.
 The built-in [typography presets](https://tasty.style/docs/styles#preset) are
 `body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`. Onest
 is self-hosted and used for body and heading text by default; JetBrains Mono is
-self-hosted for code. Presets merge property-by-property, so changing a font
-does not require copying its size, weight, or line height:
+self-hosted for code.
+
+### Change font families
+
+Set `theme.fonts` to load fonts and apply them to the matching presets. A Google
+Fonts family needs only its name:
+
+```ts
+theme: {
+  fonts: {
+    body: "Inter",
+    heading: "Newsreader"
+  }
+}
+```
+
+The short form requests the family's default style. To use specific weights,
+list them explicitly. Google Fonts must support the requested weights; see the
+[Google Fonts CSS API](https://developers.google.com/fonts/docs/css2) for its
+available styles and weight syntax.
+
+```ts
+theme: {
+  fonts: {
+    body: { google: "Inter", weights: [400, 600, 700] }
+  }
+}
+```
+
+For a font you own, put its files in `public/fonts/` and give Cookbook their
+public paths. Cookbook checks that each file exists during the build and adjusts
+its URL for the Astro `base` path. A variable font can cover a weight range;
+use separate entries for regular and italic files when needed:
+
+```ts
+theme: {
+  fonts: {
+    body: {
+      family: "Acme Sans",
+      files: [
+        { src: "/fonts/acme-sans.woff2", weight: "100 900" },
+        { src: "/fonts/acme-sans-italic.woff2", weight: "100 900", style: "italic" }
+      ]
+    }
+  }
+}
+```
+
+The `body` role also feeds navigation and small text. `heading` feeds `h1`
+through `h6`, while `code` covers code text. Each role has a system fallback.
+Cookbook emits the font faces through Tasty. Google font names are resolved at
+build time, so those builds need network access; the generated site has no
+Google CSS stylesheet. Font files are requested from Google's font CDN when
+visitors open the site. Use local files if you need a self-hosted site.
+
+### Adjust presets
+
+Presets merge property-by-property, so changing size, weight, or line height
+does not require copying the rest of the preset. `theme.presets` takes precedence
+over `theme.fonts` for an explicitly set `fontFamily`:
 
 ```ts
 theme: {
   presets: {
     body: {
-      fontFamily: "Inter, system-ui, sans-serif",
       boldFontWeight: 680
     },
     heading: {
-      fontFamily: "Newsreader, Georgia, serif",
       fontWeight: 650,
       boldFontWeight: 740
     },
@@ -173,12 +229,14 @@ theme: {
       fontSize: "3rem",
       letterSpacing: "-0.02em"
     },
-    code: {
-      fontFamily: "Berkeley Mono, ui-monospace, monospace"
-    }
+    code: { fontSize: "0.9rem" }
   }
 }
 ```
+
+For a system or already loaded font, set its CSS family directly with
+`theme.presets.<role>.fontFamily`. This does not load a font file. Additional
+named presets are available to custom MDX components.
 
 Heading presets reference the `heading` family and weights; body, navigation,
 and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
@@ -207,8 +265,6 @@ disclosure icons with `Caret` and `ExpandedCaret`.
 Adjacent sidebar items have a `1bw` gap. Inline code scales to `0.875em` of its
 surrounding text, including smaller table text; code blocks keep the `code` preset
 size. Customize inline code through `theme.styles.MarkdownInlineCode`.
-Additional named presets are passed through to Tasty SSR for use in custom MDX
-components.
 Cookbook applies each semantic typography role through its complete Tasty
 `preset`, so configured fields such as `fontStyle` and `textTransform` are not
 silently omitted.

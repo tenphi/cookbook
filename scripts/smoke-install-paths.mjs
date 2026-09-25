@@ -57,12 +57,26 @@ try {
     join(site, "README.md"),
     "# Packed site\n\n[Read more](./docs/guide.md).\n\n## Example\n\n```js\nconst ready = true;\n```\n",
   );
+  await mkdir(join(site, "public", "fonts"), { recursive: true });
+  await cp(
+    join(
+      root,
+      "packages/starlight/node_modules/@fontsource-variable/onest/files/onest-latin-wght-normal.woff2",
+    ),
+    join(site, "public", "fonts", "consumer-mono.woff2"),
+  );
   await writeFile(
     join(site, "astro.config.mjs"),
     `import { defineConfig } from 'astro/config';
 import cookbook, { defineDocsConfig } from '@tenphi/cookbook';
 const config = defineDocsConfig({
   theme: {
+    fonts: {
+      code: {
+        family: 'Consumer Mono',
+        files: [{ src: '/fonts/consumer-mono.woff2', weight: '100 900' }],
+      },
+    },
     states: {
       '@mobile': '@media(w < 43rem)',
       '@consumer-narrow': '@media(w < 37rem)',
@@ -78,7 +92,7 @@ const config = defineDocsConfig({
   },
   components: { overrides: { SiteTitle: './docs/components/SiteTitle.astro' } },
 });
-export default defineConfig({ integrations: [cookbook({ config })] });
+export default defineConfig({ base: '/manual/', integrations: [cookbook({ config })] });
 `,
   );
   await cp(
@@ -140,7 +154,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
   });
   await run("npm", ["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
   const html = await readFile(join(site, "dist", "index.html"), "utf8");
-  if (!html.includes("Packed site") || !html.includes('href="/guide"')) {
+  if (!html.includes("Packed site") || !html.includes('href="/manual/guide"')) {
     throw new Error(
       "Packed-package site did not contain the expected generated content.",
     );
@@ -185,7 +199,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     /<a\b[^>]*class="[^"]*consumer-title[^"]*"[^>]*>[\s\S]*?<\/a>/,
   )?.[0];
   if (
-    !title?.includes('href="/"') ||
+    !title?.includes('href="/manual/"') ||
     !title.includes("<svg") ||
     !title.includes('translate="no"')
   ) {
@@ -209,12 +223,21 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     "var(--gap)",
     "var(--accent-text-color)",
     ".consumer-global",
+    "/manual/fonts/consumer-mono.woff2",
   ]) {
     if (!css.includes(value)) {
       throw new Error(
         `Consumer styling is missing extracted CSS for ${value}.`,
       );
     }
+  }
+  if (
+    !css.includes('font-family: "Consumer Mono"') ||
+    css.includes('font-family: "JetBrains Mono Variable"')
+  ) {
+    throw new Error(
+      "The packed site did not apply the local code font and remove the unused default.",
+    );
   }
   if (
     !/@media\s*\(width\s*<\s*43rem\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(

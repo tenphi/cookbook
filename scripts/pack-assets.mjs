@@ -13,6 +13,8 @@ for (const path of ["components", "icons", "overrides", "routes"]) {
     await cp(sourcePath, join(output, path), { recursive: true });
   }
 }
+await mkdir(join(output, "theme"), { recursive: true });
+await cp(join(source, "theme", "fonts.ts"), join(output, "theme", "fonts.ts"));
 await cp(
   join(source, "components-public.d.ts"),
   join(output, "components-public.d.ts"),

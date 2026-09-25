@@ -4,6 +4,7 @@ import {
   mkdir,
   readFile,
   readdir,
+  stat,
   unlink,
   writeFile,
 } from "node:fs/promises";
@@ -39,6 +40,7 @@ import {
   satteriPageAffordances,
 } from "./markdown/rehype-page-affordances.js";
 import { resolveDocsTheme } from "./theme/index.js";
+import { configureFontFaces, resolveThemeFontFaces } from "./theme/fonts.js";
 import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
@@ -239,6 +241,42 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         }
         projectRoot ??= fileURLToPath(context.config.root);
         const base = context.config.base;
+        for (const [role, font] of Object.entries(
+          options.config?.theme?.fonts ?? {},
+        )) {
+          if (!font || typeof font === "string" || "google" in font) continue;
+          for (const file of font.files) {
+            const path = join(
+              fileURLToPath(context.config.publicDir),
+              file.src.slice(1),
+            );
+            let isFile = false;
+            try {
+              isFile = (await stat(path)).isFile();
+            } catch {
+              // Report missing or unreadable files with the configuration path.
+            }
+            if (!isFile)
+              throw new Error(
+                `theme.fonts.${role}: ${file.src} must be a readable file in the site's public directory.`,
+              );
+          }
+        }
+        const fontFaces = await resolveThemeFontFaces(
+          options.config?.theme?.fonts,
+          base,
+        );
+        const usedFamilies = Object.values(docsTheme.presets).map(
+          (preset) => preset.fontFamily ?? "",
+        );
+        configureFontFaces(fontFaces, {
+          onest: usedFamilies.some((family) =>
+            family.includes("Onest Variable"),
+          ),
+          mono: usedFamilies.some((family) =>
+            family.includes("JetBrains Mono Variable"),
+          ),
+        });
         const configuredSite = options.config?.site?.url;
         const astroSite = context.config.site
           ? new URL(context.config.site).href
