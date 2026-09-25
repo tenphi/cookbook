@@ -142,6 +142,7 @@ export async function scaffold(
         ]
       : []),
   ]);
+  await writeAgentInstructions(destination, options, packageManager);
   if (options.deploy === "github-pages")
     await writeGithubWorkflow(destination, packageManager);
   if (options.install !== false)
@@ -152,6 +153,41 @@ export async function scaffold(
     ...(discovery ? { discovery } : {}),
     packageManager,
   };
+}
+
+export function renderAgentInstructions(
+  options: ScaffoldOptions,
+  packageManager: PackageManager,
+): string {
+  const contentLocation = options.source
+    ? "Edit the source repository's README.md and docs/ files. The `root` in `docs.config.ts` points there; this app reads them without copying."
+    : options.package
+      ? `Documentation comes from the package pinned in \`cookbook.lock.json\`. Use \`${packageManager} run update\` to refresh the lock; add local pages through \`content.sources\` in \`docs.config.ts\`.`
+      : "Edit `README.md` for the home page and add Markdown or MDX pages under `docs/` for other pages.";
+  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run doctor\` and \`${packageManager} run build\` after changes. The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
+}
+
+async function writeAgentInstructions(
+  destination: string,
+  options: ScaffoldOptions,
+  packageManager: PackageManager,
+): Promise<void> {
+  try {
+    await writeFile(
+      join(destination, "AGENTS.md"),
+      renderAgentInstructions(options, packageManager),
+      { flag: "wx" },
+    );
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "EEXIST"
+    )
+      return;
+    throw error;
+  }
 }
 
 export function renderPackageJson(packageManager: PackageManager): string {

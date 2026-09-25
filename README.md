@@ -7,6 +7,7 @@ Static, repository-native documentation built with Astro, Starlight,
 [repository-native source](docs/index.md).
 
 Before customizing a site, read the [customization rules](docs/customization-rules.md).
+For agent-assisted setup and publishing, see the [AI agent guide](docs/ai-agents.md).
 The published `@tenphi/cookbook` package includes these docs and versioned Tasty
 and Glaze references for local use by consumers and coding agents.
 

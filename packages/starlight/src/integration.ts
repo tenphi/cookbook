@@ -51,6 +51,7 @@ import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 import { outputPathForPublicAsset } from "./output-path.js";
+import { writeAgentDiscovery } from "./agent-discovery.js";
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = resolve(
@@ -665,6 +666,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           await mkdir(dirname(target), { recursive: true });
           await cp(asset.sourcePath, target);
         }
+        await writeAgentDiscovery(output, graph);
       },
     },
   };
