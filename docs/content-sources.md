@@ -1,6 +1,6 @@
 ---
 title: Content sources
-description: Collect local files, globs, and locked npm package documentation into one route graph.
+description: Collect local files, OpenAPI specs, and locked npm package documentation into one route graph.
 sidebar:
   order: 3
 ---
@@ -91,6 +91,34 @@ A frontmatter `slug` is relative to `routeBase`, including when it begins with
 `/`. For example, `slug: intro` under `/v2` creates `/v2/intro`. File sources also
 accept `routeBase`, which prefixes their explicit `route`. Empty `sources: []`
 means no sources; omit the property to enable conventions.
+
+## OpenAPI references
+
+Add a local OpenAPI 3.x JSON or YAML document to generate a searchable overview
+and one page per operation:
+
+```ts
+content: {
+  sources: [
+    { file: "README.md", route: "/" },
+    { openapi: "api/openapi.yaml", routeBase: "/api" },
+  ],
+}
+```
+
+The overview appears at `/api`. An operation with `operationId: getWidget`
+appears at `/api/get-widget`. Without an operation ID, Cookbook derives a route
+from its method and path. Operation IDs must create distinct routes. The pages
+include parameters, request bodies, responses, examples, and the document's
+schemas. Source links point back to the spec file. Use a navigation item such
+as `{ label: "API", link: "/api", items: [{ label: "Operations", autogenerate: { directory: "/api" } }] }`
+to show the operations in the sidebar.
+
+The source must stay within its declared `root` unless
+`content.allowOutsideRoot` is enabled. External `$ref` values require bundling
+into one local document before the build. Cookbook checks the spec size against
+`build.maxAssetBytes` and reports invalid or duplicate operation routes.
+Generated pages are static references; they do not make requests to the API.
 
 ## npm package sources
 

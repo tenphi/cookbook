@@ -65,14 +65,19 @@ not required.
 
 This site is deployed by the repository's Pages workflow to
 `cookbook.tenphi.me` with HTTPS enforcement enabled.
+The Cookbook repository deploys its own documentation only after a package
+release. The release workflow creates a version tag and then starts the Pages
+workflow from that tag, so the public reference matches the published code.
 
 ## Other static hosts
 
-Use the host's ordinary static-site settings:
+The creator supports `--deploy netlify`, `--deploy cloudflare-pages`, and
+`--deploy vercel`. It writes a `DEPLOYMENT.md` with host settings; Netlify also
+gets `netlify.toml`. You can also use the host's ordinary static-site settings:
 
 - build command: `npm run build`
 - publish directory: `dist`
-- Node.js: 22.14 or newer
+- Node.js: 22.19 or newer
 
 If the host serves the site below a path rather than at an origin root, set
 Astro's `base`; Cookbook derives it automatically.

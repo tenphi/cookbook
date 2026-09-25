@@ -16,6 +16,7 @@ import { glob } from "tinyglobby";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
 import { sanitizeMarkup } from "../html/index.js";
+import { openApiPages } from "./openapi.js";
 import { normalizeDocsConfig } from "../config/index.js";
 import {
   cloneAst,
@@ -57,6 +58,7 @@ interface CollectedSource {
   absolutePath: string;
   sourcePath: string;
   sourceRoot: string;
+  generatedBody?: string;
   editPath?: string;
   route?: string;
   title?: string;
@@ -120,8 +122,10 @@ export async function createDocsGraph(
       continue;
     }
     routeMap.set(entry.route, entry);
-    const absolute = normalizeFs(entry.absolutePath);
-    absoluteMap.set(absolute, [...(absoluteMap.get(absolute) ?? []), entry]);
+    if (source.generatedBody === undefined) {
+      const absolute = normalizeFs(entry.absolutePath);
+      absoluteMap.set(absolute, [...(absoluteMap.get(absolute) ?? []), entry]);
+    }
     sourceMap.set(entry.sourcePath, [
       ...(sourceMap.get(entry.sourcePath) ?? []),
       entry,
@@ -168,6 +172,15 @@ export async function createDocsGraph(
       diagnostics,
     );
     validateNavigation(tab.items ?? [], routeMap, diagnostics);
+  }
+  for (const version of config.site.versions ?? []) {
+    if (!routeMap.has(version.routeBase)) {
+      diagnostics.push({
+        code: "DOCS_VERSION_ROOT_MISSING",
+        severity: "error",
+        message: `Version ${version.label} needs a page at ${version.routeBase}.`,
+      });
+    }
   }
 
   entries.sort((left, right) => left.route.localeCompare(right.route));
@@ -296,7 +309,7 @@ async function collectSources(
         });
       }
       for (const source of found) {
-        const identity = `${sourceId}:${normalizeFs(source.absolutePath)}`;
+        const identity = `${sourceId}:${normalizeFs(source.absolutePath)}:${source.generatedBody === undefined ? "" : source.route}`;
         if (identities.has(identity)) continue;
         identities.add(identity);
         results.push(source);
@@ -306,7 +319,9 @@ async function collectSources(
         code:
           error instanceof OutsideRootError
             ? "DOCS_SOURCE_OUTSIDE_ROOT"
-            : "DOCS_SOURCE_NOT_FOUND",
+            : "openapi" in declaration
+              ? "DOCS_OPENAPI_INVALID"
+              : "DOCS_SOURCE_NOT_FOUND",
         severity: "error",
         message: errorMessage(error),
       });
@@ -333,6 +348,42 @@ async function collectDeclaration(
   lock: CreateDocsGraphOptions["lock"],
   sourceId: string,
 ): Promise<CollectedSource[]> {
+  if ("openapi" in declaration) {
+    const sourceRoot = resolve(root, declaration.root ?? ".");
+    const absolutePath = resolveSourcePath(
+      sourceRoot,
+      declaration.openapi,
+      config.content.allowOutsideRoot,
+    );
+    if (!(await isFile(absolutePath))) return [];
+    const info = await stat(absolutePath);
+    if (info.size > config.build.maxAssetBytes)
+      throw new Error(
+        `OpenAPI source ${declaration.openapi} exceeds ${config.build.maxAssetBytes} bytes.`,
+      );
+    const routeBase = normalizeRoute(declaration.routeBase ?? "/api");
+    const sourcePath = toPosix(relative(sourceRoot, absolutePath));
+    const pages = openApiPages(
+      sourcePath,
+      routeBase,
+      await readFile(absolutePath, "utf8"),
+    );
+    return pages.map((page) => ({
+      sourceId,
+      routeBase,
+      absolutePath,
+      sourcePath: page.sourcePath,
+      sourceRoot,
+      editPath: toPosix(
+        relative(inside(root, absolutePath) ? root : sourceRoot, absolutePath),
+      ),
+      route: page.route,
+      title: page.title,
+      ...(page.description ? { description: page.description } : {}),
+      generatedBody: page.body,
+      trust: "markdown" as const,
+    }));
+  }
   if ("package" in declaration) {
     const packageLock = lockForSource(lock, declaration.package);
     if (declaration.registry && packageLock.registry !== declaration.registry) {
@@ -487,7 +538,8 @@ async function readEntry(
     });
     return undefined;
   }
-  const original = await readFile(source.absolutePath, "utf8");
+  const original =
+    source.generatedBody ?? (await readFile(source.absolutePath, "utf8"));
   let parsedMatter: ReturnType<typeof parseFrontmatter>;
   try {
     parsedMatter = parseFrontmatter(original);
@@ -1437,6 +1489,7 @@ function sourceLabel(source: DocsSource): string {
   if ("file" in source) return source.file;
   if ("glob" in source)
     return Array.isArray(source.glob) ? source.glob.join(", ") : source.glob;
+  if ("openapi" in source) return source.openapi;
   return source.package;
 }
 

@@ -54,6 +54,27 @@ async function localFixture(source = false) {
 }
 
 describe("creator defaults", () => {
+  it.each(["netlify", "cloudflare-pages", "vercel"] as const)(
+    "creates a %s deployment guide",
+    async (deploy) => {
+      const root = await mkdtemp(join(tmpdir(), "cookbook-deploy-"));
+      roots.push(root);
+      await scaffold({
+        destination: root,
+        deploy,
+        install: false,
+        confirmNonEmpty: async () => true,
+      });
+      const guide = await readFile(join(root, "DEPLOYMENT.md"), "utf8");
+      expect(guide).toContain("site.url");
+      expect(guide).toContain("dist");
+      if (deploy === "netlify")
+        expect(await readFile(join(root, "netlify.toml"), "utf8")).toContain(
+          'publish = "dist"',
+        );
+    },
+  );
+
   it("creates a local starter whose discovered config resolves its content", async () => {
     const { destination, project, graph } = await localFixture();
     expect(project.root).toBe(destination);
@@ -70,6 +91,15 @@ describe("creator defaults", () => {
     expect(agentInstructions).toContain("Edit `README.md` for the home page");
     expect(agentInstructions).toContain("npm run doctor");
     expect(agentInstructions).toContain("site.url");
+    expect(agentInstructions).toContain(
+      ".agents/skills/upgrade-cookbook/SKILL.md",
+    );
+    expect(
+      await readFile(
+        join(destination, ".agents", "skills", "upgrade-cookbook", "SKILL.md"),
+        "utf8",
+      ),
+    ).toContain("cookbook.lock.json");
   });
   it("keeps existing repository content outside the generated app", async () => {
     const { root, destination, project, graph } = await localFixture(true);
@@ -84,6 +114,14 @@ describe("creator defaults", () => {
   it("preserves an existing agent instructions file", async () => {
     const { destination } = await localFixture();
     await writeFile(join(destination, "AGENTS.md"), "# Local rules\n");
+    const skillPath = join(
+      destination,
+      ".agents",
+      "skills",
+      "upgrade-cookbook",
+      "SKILL.md",
+    );
+    await writeFile(skillPath, "# Local upgrade workflow\n");
     await scaffold({
       destination,
       install: false,
@@ -91,6 +129,9 @@ describe("creator defaults", () => {
     });
     expect(await readFile(join(destination, "AGENTS.md"), "utf8")).toBe(
       "# Local rules\n",
+    );
+    expect(await readFile(skillPath, "utf8")).toBe(
+      "# Local upgrade workflow\n",
     );
   });
   it.each([

@@ -8,7 +8,7 @@ minimumReleaseAge: 4320
 # All other resolutions remain subject to the three-day maturity window.
 minimumReleaseAgeExclude:
   - astro@7.3.2
-  - "@astrojs/starlight@0.42.1"
+  - "@astrojs/starlight@0.42.4"
   - "@astrojs/language-server@2.16.15"
   - "@tenphi/tasty@3.8.0"
   - "@tenphi/eslint-plugin-tasty@1.1.0"
@@ -38,7 +38,7 @@ minimumReleaseAgeExclude:
 
 catalog:
   astro: ^7.3.2
-  "@astrojs/starlight": ^0.42.1
+  "@astrojs/starlight": ^0.42.4
   "@tenphi/tasty": 3.8.0
   "@tenphi/glaze": 2.0.0
   typescript: ^7.0.2

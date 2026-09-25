@@ -5,9 +5,11 @@ sidebar:
   order: 3
 ---
 
-Cookbook's project creator writes an `AGENTS.md` beside `docs.config.ts`. It tells
+Cookbook's project creator writes an `AGENTS.md` beside `docs.config.ts` and an
+`.agents/skills/upgrade-cookbook/SKILL.md` for dependency upgrades. They tell
 coding agents where content lives, where to find Cookbook's installed reference
-docs, and how to validate changes. Give an agent a concrete task, for example:
+docs, how to upgrade Cookbook, and how to validate changes. Give an agent a
+concrete task, for example:
 
 > Create a Cookbook site for this repository in `docs-site/`. Use the existing
 > README and `docs/` pages as sources. Set the public site URL to

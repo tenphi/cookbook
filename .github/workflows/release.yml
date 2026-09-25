@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
+      actions: write
       contents: write
       id-token: write
     steps:
@@ -103,3 +104,9 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "Cookbook $tag" \
             --notes-file "$notes"
+      - name: Deploy released documentation
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(node -p "require('./packages/facade/package.json').version")
+          gh workflow run pages.yml --ref "v${version}"

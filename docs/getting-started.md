@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-Cookbook requires Node.js 22.14 or newer.
+Cookbook requires Node.js 22.19 or newer.
 
 ## Create your first site
 

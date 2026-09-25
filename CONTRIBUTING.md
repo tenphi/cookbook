@@ -1,6 +1,6 @@
 # Contributing
 
-Use Node.js 22.14+ and pnpm 11. Run `pnpm install`, then `pnpm test`,
+Use Node.js 22.19+ and pnpm 11. Run `pnpm install`, then `pnpm test`,
 `pnpm typecheck`, and `pnpm build`. Public package changes require a Changeset.
 
 Keep consumer documentation in the root `docs/` directory. The facade build

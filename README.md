@@ -35,4 +35,4 @@ The workspace contains four fixed-version packages:
 - `@tenphi/docs` — configuration, package acquisition, content graph, and diagnostics.
 - `@tenphi/starlight` — the official static renderer and theme.
 
-Node.js 22.14 or newer is required.
+Node.js 22.19 or newer is required.

@@ -35,6 +35,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   site: new Set([
     "title",
     "version",
+    "versions",
     "description",
     "url",
     "repository",
@@ -104,6 +105,48 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
     for (const key of Object.keys(value)) {
       if (!keys.has(key)) unknown(diagnostics, `${section}.${key}`);
+    }
+  }
+
+  if (isRecord(config.site) && config.site.versions !== undefined) {
+    if (
+      !Array.isArray(config.site.versions) ||
+      config.site.versions.length < 2
+    ) {
+      invalid(diagnostics, "site.versions must contain at least two versions.");
+    } else {
+      const bases = new Set<string>();
+      for (const [index, version] of config.site.versions.entries()) {
+        const path = `site.versions[${index}]`;
+        if (!isRecord(version)) {
+          invalid(diagnostics, `${path} must be an object.`);
+          continue;
+        }
+        for (const key of Object.keys(version)) {
+          if (key !== "label" && key !== "routeBase")
+            unknown(diagnostics, `${path}.${key}`);
+        }
+        if (typeof version.label !== "string" || !version.label.trim())
+          invalid(diagnostics, `${path}.label must be a non-empty string.`);
+        const base = version.routeBase;
+        if (
+          typeof base !== "string" ||
+          !base.startsWith("/") ||
+          (base !== "/" && base.endsWith("/")) ||
+          base.includes("//") ||
+          /[?#\\\s]/.test(base) ||
+          base.split("/").some((segment) => segment === "." || segment === "..")
+        ) {
+          invalid(
+            diagnostics,
+            `${path}.routeBase must be a root-relative route without a trailing slash.`,
+          );
+        } else if (bases.has(base)) {
+          invalid(diagnostics, `${path}.routeBase duplicates ${base}.`);
+        } else {
+          bases.add(base);
+        }
+      }
     }
   }
 
@@ -366,16 +409,18 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       continue;
     }
     const sourceRecord = source as unknown as Record<string, unknown>;
-    const variants = ["file", "glob", "package"].filter((key) => key in source);
+    const variants = ["file", "glob", "package", "openapi"].filter(
+      (key) => key in source,
+    );
     if (variants.length !== 1) {
       diagnostics.push({
         code: "DOCS_CONFIG_INVALID",
         severity: "error",
-        message: `content.sources[${index}] must select exactly one of file, glob, or package.`,
+        message: `content.sources[${index}] must select exactly one of file, glob, package, or openapi.`,
       });
       continue;
     }
-    const variant = variants[0] as "file" | "glob" | "package";
+    const variant = variants[0] as "file" | "glob" | "package" | "openapi";
     const allowed = {
       file: new Set([
         "id",
@@ -406,6 +451,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
         "routeBase",
         "trust",
       ]),
+      openapi: new Set(["id", "root", "routeBase", "openapi"]),
     }[variant];
     for (const key of Object.keys(source)) {
       if (!allowed.has(key))

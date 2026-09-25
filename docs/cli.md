@@ -67,20 +67,20 @@ npm create @tenphi/cookbook@latest docs-site -- --source . --yes
 npm create @tenphi/cookbook@latest docs-site -- --package @scope/package --yes
 ```
 
-| Flag                                | Purpose                                           |
-| ----------------------------------- | ------------------------------------------------- |
-| `--source <directory>`              | Document an existing local repository             |
-| `--package <specifier>`             | Document a locked npm artifact                    |
-| `--yes`, `-y`                       | Use non-interactive defaults                      |
-| `--brand <color>`                   | Set the Glaze brand seed                          |
-| `--site <url>`                      | Set the canonical site URL                        |
-| `--base <path>`                     | Set Astro's hosting subpath                       |
-| `--deploy github-pages\|none`       | Add a deployment workflow                         |
-| `--package-manager npm\|pnpm\|yarn` | Select the project manager                        |
-| `--no-install`                      | Generate files without installing dependencies    |
-| `--vendor`                          | Vendor the npm artifact for offline builds        |
-| `--trust-package`                   | Permit MDX execution from the locked npm artifact |
-| `--open`                            | Start and open the development server             |
+| Flag                                                             | Purpose                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------- |
+| `--source <directory>`                                           | Document an existing local repository             |
+| `--package <specifier>`                                          | Document a locked npm artifact                    |
+| `--yes`, `-y`                                                    | Use non-interactive defaults                      |
+| `--brand <color>`                                                | Set the Glaze brand seed                          |
+| `--site <url>`                                                   | Set the canonical site URL                        |
+| `--base <path>`                                                  | Set Astro's hosting subpath                       |
+| `--deploy github-pages\|netlify\|cloudflare-pages\|vercel\|none` | Add deployment setup or a host guide              |
+| `--package-manager npm\|pnpm\|yarn`                              | Select the project manager                        |
+| `--no-install`                                                   | Generate files without installing dependencies    |
+| `--vendor`                                                       | Vendor the npm artifact for offline builds        |
+| `--trust-package`                                                | Permit MDX execution from the locked npm artifact |
+| `--open`                                                         | Start and open the development server             |
 
 `--source` and `--package` are mutually exclusive. With neither, the creator
 writes a local starter. `--vendor` and `--trust-package` require `--package`.

@@ -5,6 +5,121 @@ import { createDocsFixture } from "../testing/index.js";
 import { createDocsGraph } from "./index.js";
 
 describe("content graph", () => {
+  it("turns a local OpenAPI document into linked reference pages", async () => {
+    const root = await createDocsFixture({
+      "openapi.yaml": `openapi: 3.1.0
+info:
+  title: Widget API
+  version: 2.0.0
+paths:
+  /widgets/{id}:
+    get:
+      operationId: getWidget
+      summary: Get a widget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A widget
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+components:
+  schemas:
+    Widget:
+      type: object
+      properties:
+        id:
+          type: string
+`,
+    });
+    const graph = await createDocsGraph({
+      root,
+      base: "/manual",
+      config: {
+        content: { sources: [{ openapi: "openapi.yaml", routeBase: "/api" }] },
+        editLink: { baseUrl: "https://example.com/edit/" },
+      },
+    });
+
+    expect(graph.diagnostics).toEqual([]);
+    expect(graph.routes.map(({ route }) => route)).toEqual([
+      "/api",
+      "/api/get-widget",
+    ]);
+    expect(graph.entryByRoute("/api")?.transformedBody).toContain(
+      "/manual/api/get-widget",
+    );
+    expect(graph.entryByRoute("/api/get-widget")?.transformedBody).toContain(
+      "application/json",
+    );
+    expect(graph.entryByRoute("/api/get-widget")?.frontmatter.editUrl).toBe(
+      "https://example.com/edit/openapi.yaml",
+    );
+  });
+
+  it("rejects unresolved external OpenAPI references", async () => {
+    const root = await createDocsFixture({
+      "openapi.json": JSON.stringify({
+        openapi: "3.0.3",
+        info: { title: "API", version: "1" },
+        paths: {
+          "/items": {
+            get: {
+              responses: {
+                200: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "other.yaml#/Item" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+    });
+    const graph = await createDocsGraph({
+      root,
+      config: { content: { sources: [{ openapi: "openapi.json" }] } },
+    });
+    expect(graph.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_OPENAPI_INVALID",
+        message: expect.stringContaining("bundle references"),
+      }),
+    );
+  });
+
+  it("reports OpenAPI operation route collisions", async () => {
+    const root = await createDocsFixture({
+      "openapi.json": JSON.stringify({
+        openapi: "3.1.0",
+        info: { title: "API", version: "1" },
+        paths: {
+          "/one": { get: { operationId: "fetchThing", responses: {} } },
+          "/two": { get: { operationId: "fetch-thing", responses: {} } },
+        },
+      }),
+    });
+    const graph = await createDocsGraph({
+      root,
+      config: { content: { sources: [{ openapi: "openapi.json" }] } },
+    });
+    expect(graph.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_OPENAPI_INVALID",
+        message: expect.stringContaining("Duplicate OpenAPI operation route"),
+      }),
+    );
+  });
+
   it("reports an empty documentation graph", async () => {
     const root = await createDocsFixture({ "package.json": "{}" });
     const graph = await createDocsGraph({ root });
