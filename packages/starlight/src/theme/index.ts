@@ -63,6 +63,12 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       : {}),
   } as const;
   const surfaceInput = theme.palette?.surface;
+  const paletteUsesBrand = Object.entries(theme.palette ?? {}).some(
+    ([name, value]) =>
+      name !== "overlay" &&
+      isColorDeclaration(value) &&
+      usesRelativeColor(value),
+  );
   const declaredSurface =
     isColorDeclaration(surfaceInput) && usesRelativeColor(surfaceInput);
   const surfaceFrom = isColorDeclaration(surfaceInput)
@@ -77,16 +83,22 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     darkSaturation: 0.35,
   });
   const resolvedSurfaceSeed = surfaceSeed.resolve();
-  const lightSurface = variantToOkhsl(resolvedSurfaceSeed.light);
-  const darkSurface = variantToOkhsl(resolvedSurfaceSeed.dark);
+  const resolvedThemeSeed = paletteUsesBrand
+    ? glaze
+        .color({ from: brand.from, mode: "auto", darkSaturation: 0.35 })
+        .resolve()
+    : resolvedSurfaceSeed;
+  const lightThemeSeed = variantToOkhsl(resolvedThemeSeed.light);
+  const darkThemeSeed = variantToOkhsl(resolvedThemeSeed.dark);
+  const darkThemeSaturation = Math.min(100, (darkThemeSeed.s * 100) / 0.35);
   const colorTheme = glaze(
     {
-      hue: lightSurface.h,
-      saturation: lightSurface.s * 100,
-      darkHue: darkSurface.h,
-      // The surface definition applies its 0.35 factor again. Normalize the
-      // seed so dependent dark colors retain the authored surface chroma.
-      darkSaturation: Math.min(100, (darkSurface.s * 100) / 0.35),
+      hue: lightThemeSeed.h,
+      saturation: lightThemeSeed.s * 100,
+      darkHue: darkThemeSeed.h,
+      // Seed extraction applies a 0.35 dark saturation factor. Restore its
+      // original saturation before Glaze resolves relative declarations.
+      darkSaturation: darkThemeSaturation,
     },
     undefined,
     glazeOptions,
@@ -97,6 +109,35 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
   const darkSurfaceSaturation = declaredSurface
     ? (surfaceInput.darkSaturation ?? surfaceSaturation * 0.7)
     : 0.35;
+  const surfaceRampSaturation = (factor: number): number =>
+    declaredSurface
+      ? surfaceSaturation * factor
+      : paletteUsesBrand
+        ? saturationFactor(
+            resolvedSurfaceSeed.light.s * factor,
+            lightThemeSeed.s,
+          )
+        : factor;
+  const darkSurfaceRampSaturation = (factor: number): number =>
+    declaredSurface
+      ? darkSurfaceSaturation * factor
+      : paletteUsesBrand
+        ? saturationFactor(
+            (resolvedSurfaceSeed.dark.s * factor) / 0.35,
+            darkThemeSaturation / 100,
+          )
+        : factor;
+  const surfaceRampHue = declaredSurface
+    ? {
+        hue: surfaceInput.hue ?? lightThemeSeed.h,
+        darkHue: surfaceInput.darkHue ?? surfaceInput.hue ?? darkThemeSeed.h,
+      }
+    : paletteUsesBrand
+      ? {
+          hue: variantToOkhsl(resolvedSurfaceSeed.light).h,
+          darkHue: variantToOkhsl(resolvedSurfaceSeed.dark).h,
+        }
+      : {};
   const surfaceDefinition = paletteDefinition(
     surfaceInput,
     declaredSurface
@@ -123,17 +164,19 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     ),
     "surface-2": {
       base: "surface",
+      ...surfaceRampHue,
       tone: "-2",
       mode: "auto",
-      saturation: declaredSurface ? surfaceSaturation * 0.75 : 0.75,
-      darkSaturation: declaredSurface ? darkSurfaceSaturation * 0.75 : 0.275,
+      saturation: surfaceRampSaturation(0.75),
+      darkSaturation: darkSurfaceRampSaturation(declaredSurface ? 0.75 : 0.275),
     },
     "surface-3": {
       base: "surface-2",
+      ...surfaceRampHue,
       tone: "-2",
       mode: "auto",
-      saturation: declaredSurface ? surfaceSaturation * 0.65 : 0.65,
-      darkSaturation: declaredSurface ? darkSurfaceSaturation * 0.65 : 0.25,
+      saturation: surfaceRampSaturation(0.65),
+      darkSaturation: darkSurfaceRampSaturation(declaredSurface ? 0.65 : 0.25),
     },
     text: paletteDefinition(theme.palette?.text, {
       from: "#20232a",
@@ -466,6 +509,12 @@ function usesRelativeColor(value: RegularColorDef): boolean {
       value.darkSaturation !== undefined ||
       value.base !== undefined)
   );
+}
+
+function saturationFactor(colorSaturation: number, themeSaturation: number) {
+  return themeSaturation > 0
+    ? Math.min(1, colorSaturation / themeSaturation)
+    : 0;
 }
 
 function requiredResolvedColor(

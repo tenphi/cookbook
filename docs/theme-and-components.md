@@ -29,27 +29,23 @@ cover the configuration language accepted by `theme.styles`:
 
 ## Brand color
 
-The default brand is a calm blue with 68% OKHSL saturation. Specify its Glaze
-hue, saturation, tone, and contrast requirement directly:
+The default brand is a calm blue with 68% OKHSL saturation. Set a brand color
+with Glaze's `from` declaration:
 
 ```ts
 theme: {
   brand: {
-    hue: 266,
-    saturation: 68,
-    tone: 48,
-    contrast: { apca: [45, 60] }
+    from: "#2f5bff";
   }
 }
 ```
 
-The short form accepts a literal color; `from` can combine one with a contrast
-target when matching an existing brand asset matters:
+Add a contrast target when the brand appears as text or focus color:
 
 ```ts
 theme: {
   brand: {
-    from: "oklch(58% 0.22 265)",
+    from: "#2f5bff",
     contrast: { apca: [45, 60] }
   }
 }
@@ -61,7 +57,8 @@ floor requires. Dark and high-contrast schemes resolve independently.
 
 Cookbook rejects a normal APCA target below 45 unless
 `unsafeContrast: true` is present. That escape hatch is intentionally visible
-in configuration reviews.
+in configuration reviews. Literal color shorthand and structured
+`hue`/`saturation`/`tone` input also remain supported for the brand.
 
 ## Semantic palette
 
@@ -71,7 +68,7 @@ relationships with Glaze's `tone`, `base`, and `contrast` properties:
 
 ```ts
 theme: {
-  brand: { hue: 266, saturation: 68, tone: 48 },
+  brand: { from: "#2f5bff" },
   palette: {
     surface: { tone: 98, saturation: 0.05 },
     text: {
@@ -93,12 +90,12 @@ theme: {
 
 Glaze resolves each declaration for light, dark, normal, and high-contrast
 modes. The first contrast value applies to normal mode; the second applies to
-high contrast. The brand uses Glaze's structured color input, where
-`saturation` is 0–100; palette declarations use a 0–1 saturation factor of
-that seed. `tone` is 0–100 in both. A literal color or a `from` declaration remains available when
-an exact light-scheme seed matters. For deeper customization, prefer relative
-declarations: they retain their relationship to the surface when the scheme or
-contrast changes. `info`, `success`, `warning`, and `danger` also accept Glaze
+high contrast. Palette declarations inherit the brand hue and saturation:
+`saturation` is a 0–1 factor of that seed, and `tone` is 0–100. They can set
+an absolute tone or a tone relative to `base`. Use `from` on a palette role
+when it needs its own color seed; otherwise relative declarations keep its
+relationship to the brand and surrounding surface as the scheme or contrast
+changes. `info`, `success`, `warning`, and `danger` also accept Glaze
 declarations and expose border, `-text`, and `-surface` semantic tokens.
 Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.

@@ -88,7 +88,7 @@ export default defineDocsConfig({
     repository: "https://github.com/example/project",
   },
   theme: {
-    brand: { hue: 266, saturation: 68, tone: 48 },
+    brand: { from: "#2f5bff" },
     fonts: { body: "Inter", heading: "Newsreader" },
   },
 });

@@ -640,7 +640,7 @@
   },
   "$defs": {
     "brandColor": {
-      "description": "A Glaze hue, saturation, and tone seed with APCA targets; literal colors and from remain supported.",
+      "description": "A Glaze from declaration for the brand seed, optionally with APCA targets. Literal shorthand and structured hue, saturation, and tone are also supported.",
       "oneOf": [
         { "$ref": "#/$defs/glazeColorValue" },
         {

@@ -80,7 +80,7 @@ import { defineDocsConfig, mergeDocsConfig } from "@tenphi/cookbook/config";
 
 const company = defineDocsConfig({
   theme: {
-    brand: { hue: 266, saturation: 68, tone: 48 },
+    brand: { from: "#315efb" },
     tokens: { $radius: "8px" },
   },
   markdown: { rawHtml: "sanitize" },

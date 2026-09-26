@@ -343,9 +343,7 @@ fallback. Every internal route named anywhere in navigation must exist.
 ```ts
 theme: {
   brand: {
-    hue: 266,
-    saturation: 68,
-    tone: 48,
+    from: "#2f5bff",
     contrast: { apca: [45, 60] }
   },
   palette: {
@@ -403,12 +401,13 @@ used for code. `theme.fonts` loads Google families by name or local files from
 `public/`, and applies them to the body, heading, and code presets. See
 [Change font families](./theme-and-components.md#change-font-families) for both
 flows. The default layout is capped at `87.5rem` (1400px), matching the
-Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `palette`
-supplies semantic Glaze declarations rather than component colors. `tone` and
-`saturation` set the surface; `base` and `contrast` express reading-color
+Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `brand.from`
+supplies the color seed. `palette` supplies semantic Glaze declarations that
+inherit its hue and saturation unless a role supplies its own `from`. `tone` and
+a saturation factor set the surface; `base` and `contrast` express reading-color
 requirements against that surface. Glaze resolves light, dark, and both
-high-contrast modes independently. Literal colors and `from` remain supported
-as seeds, while declarations give more control over adaptation. A requested APCA floor below 45 requires the explicit
+high-contrast modes independently. Literal color shorthand and structured
+brand hue/saturation/tone remain supported. A requested APCA floor below 45 requires the explicit
 `unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).
 

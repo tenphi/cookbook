@@ -82,7 +82,7 @@ export default defineDocsConfig({
     ],
   },
   theme: {
-    brand: { hue: 266, saturation: 68, tone: 48 },
+    brand: { from: "okhsl(266 68% 48%)" },
     palette: {
       surface: { tone: 98, saturation: 0.05 },
       text: {
