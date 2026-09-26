@@ -1,5 +1,19 @@
 # @tenphi/create-cookbook
 
+## 0.17.0
+
+### Minor Changes
+
+- [#75](https://github.com/tenphi/cookbook/pull/75) [`f4f5f13`](https://github.com/tenphi/cookbook/commit/f4f5f132e83e6e5c60dedd91a5e7dcfc4a0673ac) Thanks [@tenphi](https://github.com/tenphi)! - Generate project instructions for coding agents and publish a documentation index and sitemap-aware robots file with static Cookbook sites. Add a guide for agent-assisted setup and checking deployed documentation.
+
+- [#76](https://github.com/tenphi/cookbook/pull/76) [`c4589b8`](https://github.com/tenphi/cookbook/commit/c4589b824ff6404863d30f388e8f56a9c6b86a19) Thanks [@tenphi](https://github.com/tenphi)! - Add static OpenAPI reference pages, documentation version navigation, Starlight plugin forwarding, and Netlify, Cloudflare Pages, and Vercel creator presets. Require Node.js 22.19 or newer and deploy the Cookbook reference site from its release tag.
+  Upgrade Starlight to 0.42.4 and add agent skills for Starlight upgrades in Cookbook and Cookbook upgrades in generated sites.
+
+### Patch Changes
+
+- Updated dependencies [[`f4f5f13`](https://github.com/tenphi/cookbook/commit/f4f5f132e83e6e5c60dedd91a5e7dcfc4a0673ac), [`c4589b8`](https://github.com/tenphi/cookbook/commit/c4589b824ff6404863d30f388e8f56a9c6b86a19), [`09d7152`](https://github.com/tenphi/cookbook/commit/09d7152c8bfffba01d76bf28f51b7bac047b3941), [`0af1bdc`](https://github.com/tenphi/cookbook/commit/0af1bdc295671d4384736ae8c4f0cd056614c416)]:
+  - @tenphi/docs@0.17.0
+
 ## 0.16.0
 
 ### Patch Changes
