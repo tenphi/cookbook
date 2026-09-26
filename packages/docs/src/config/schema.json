@@ -192,20 +192,20 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "brand": {},
+        "brand": { "$ref": "#/$defs/brandColor" },
         "palette": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "surface": {},
-            "text": {},
-            "textSoft": {},
-            "info": {},
-            "success": {},
-            "warning": {},
-            "danger": {},
-            "header": {},
-            "overlay": {}
+            "surface": { "$ref": "#/$defs/paletteColor" },
+            "text": { "$ref": "#/$defs/paletteColor" },
+            "textSoft": { "$ref": "#/$defs/paletteColor" },
+            "info": { "$ref": "#/$defs/paletteColor" },
+            "success": { "$ref": "#/$defs/paletteColor" },
+            "warning": { "$ref": "#/$defs/paletteColor" },
+            "danger": { "$ref": "#/$defs/paletteColor" },
+            "header": { "$ref": "#/$defs/paletteColor" },
+            "overlay": { "$ref": "#/$defs/paletteColor" }
           }
         },
         "fonts": {
@@ -639,6 +639,156 @@
     }
   },
   "$defs": {
+    "brandColor": {
+      "description": "A Glaze hue, saturation, and tone seed with APCA targets; literal colors and from remain supported.",
+      "oneOf": [
+        { "$ref": "#/$defs/glazeColorValue" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from"],
+          "properties": {
+            "from": { "$ref": "#/$defs/glazeColorValue" },
+            "contrast": { "$ref": "#/$defs/brandContrast" },
+            "unsafeContrast": { "type": "boolean" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hue", "saturation", "tone"],
+          "properties": {
+            "hue": { "type": "number", "minimum": 0, "maximum": 360 },
+            "saturation": { "type": "number", "minimum": 0, "maximum": 100 },
+            "tone": { "type": "number", "minimum": 0, "maximum": 100 },
+            "contrast": { "$ref": "#/$defs/brandContrast" },
+            "unsafeContrast": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "brandContrast": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apca"],
+      "properties": {
+        "apca": {
+          "oneOf": [
+            { "type": "number" },
+            {
+              "type": "array",
+              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        }
+      }
+    },
+    "paletteColor": {
+      "description": "A Glaze color declaration; literal colors are convenient seed shorthands.",
+      "oneOf": [
+        { "$ref": "#/$defs/glazeColorValue" },
+        { "$ref": "#/$defs/glazeDeclaration" }
+      ]
+    },
+    "glazeColorValue": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["h", "s", "l"],
+          "properties": {
+            "h": { "type": "number" },
+            "s": { "type": "number" },
+            "l": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["h", "s", "t"],
+          "properties": {
+            "h": { "type": "number" },
+            "s": { "type": "number" },
+            "t": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["r", "g", "b"],
+          "properties": {
+            "r": { "type": "number" },
+            "g": { "type": "number" },
+            "b": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["l", "c", "h"],
+          "properties": {
+            "l": { "type": "number" },
+            "c": { "type": "number" },
+            "h": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "glazeDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": { "$ref": "#/$defs/glazeColorValue" },
+        "tone": {
+          "oneOf": [
+            { "type": "number", "minimum": 0, "maximum": 100 },
+            { "type": "string" },
+            {
+              "type": "array",
+              "prefixItems": [
+                { "oneOf": [{ "type": "number" }, { "type": "string" }] },
+                { "oneOf": [{ "type": "number" }, { "type": "string" }] }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "saturation": { "type": "number", "minimum": 0, "maximum": 1 },
+        "hue": { "oneOf": [{ "type": "number" }, { "type": "string" }] },
+        "darkHue": { "oneOf": [{ "type": "number" }, { "type": "string" }] },
+        "darkSaturation": { "type": "number", "minimum": 0, "maximum": 1 },
+        "base": { "type": "string" },
+        "contrast": {
+          "oneOf": [
+            { "type": "number" },
+            { "type": "string" },
+            {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "apca": {},
+                "wcag": {}
+              }
+            }
+          ]
+        },
+        "mode": { "enum": ["auto", "fixed", "static"] },
+        "autoFlip": { "type": "boolean" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "pastel": { "type": "boolean" },
+        "role": { "type": "string" },
+        "inherit": { "type": "boolean" }
+      }
+    },
     "themeFont": {
       "oneOf": [
         { "type": "string", "minLength": 1 },

@@ -1,18 +1,36 @@
-import { glaze } from "@tenphi/glaze";
+import { glaze, type RegularColorDef } from "@tenphi/glaze";
 import { mergeStyles, type Styles } from "@tenphi/tasty/core";
 import {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "../types.js";
 import type {
+  BrandDeclaration,
   DocsConfig,
   DocsDiagnostic,
   NormalizedDocsConfig,
+  ThemePaletteColor,
 } from "../types.js";
 
 const DEFAULT_BRAND = "okhsl(266 68% 48%)";
 const HEAD_KEYS = new Set(["tag", "attrs", "content"]);
 const SITE_ICON_KEYS = new Set(["source", "background"]);
+const COLOR_DECLARATION_KEYS = new Set([
+  "from",
+  "tone",
+  "saturation",
+  "hue",
+  "darkHue",
+  "darkSaturation",
+  "base",
+  "contrast",
+  "mode",
+  "autoFlip",
+  "opacity",
+  "pastel",
+  "role",
+  "inherit",
+]);
 const ROOT_KEYS = new Set([
   "root",
   "redirects",
@@ -773,25 +791,28 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       ].includes(name)
     )
       unknown(diagnostics, `theme.palette.${name}`);
-    try {
-      glaze.color({ from: value }).resolve();
-    } catch (error) {
-      invalid(
-        diagnostics,
-        `theme.palette.${name}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    validatePaletteColor(name, value, diagnostics);
   }
   if (brand !== undefined) {
     try {
-      glaze
-        .color({
-          from:
-            typeof brand === "object" && brand !== null && "from" in brand
-              ? brand.from
-              : brand,
-        })
-        .resolve();
+      if (isBrandDeclaration(brand)) {
+        glaze
+          .color({
+            hue: brand.hue,
+            saturation: brand.saturation,
+            tone: brand.tone,
+          })
+          .resolve();
+      } else {
+        glaze
+          .color({
+            from:
+              typeof brand === "object" && brand !== null && "from" in brand
+                ? brand.from
+                : brand,
+          })
+          .resolve();
+      }
     } catch (error) {
       invalid(
         diagnostics,
@@ -827,6 +848,58 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
   return diagnostics;
+}
+
+function validatePaletteColor(
+  name: string,
+  value: ThemePaletteColor,
+  diagnostics: DocsDiagnostic[],
+): void {
+  try {
+    if (!isPaletteDeclaration(value)) {
+      glaze.color({ from: value }).resolve();
+      return;
+    }
+    for (const key of Object.keys(value)) {
+      if (!COLOR_DECLARATION_KEYS.has(key))
+        unknown(diagnostics, `theme.palette.${name}.${key}`);
+    }
+    const colorName = name === "textSoft" ? "text-soft" : name;
+    const theme = glaze(266, 68);
+    theme.colors({
+      surface: { tone: 98 },
+      "surface-2": { base: "surface", tone: "-2" },
+      "accent-surface": { tone: 48 },
+      text: { base: "surface", contrast: { apca: 75 } },
+      "text-soft": { base: "surface", contrast: { apca: 60 } },
+      [colorName]: { tone: colorName === "surface" ? 98 : 50, ...value },
+    });
+    theme.resolve();
+  } catch (error) {
+    invalid(
+      diagnostics,
+      `theme.palette.${name}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+function isPaletteDeclaration(
+  value: ThemePaletteColor,
+): value is RegularColorDef {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !("h" in value || "r" in value || "c" in value)
+  );
+}
+
+function isBrandDeclaration(value: unknown): value is BrandDeclaration {
+  return (
+    isRecord(value) &&
+    "hue" in value &&
+    "saturation" in value &&
+    "tone" in value
+  );
 }
 
 function unknown(diagnostics: DocsDiagnostic[], path: string): void {
@@ -972,7 +1045,7 @@ export function defineDocsConfig(config: DocsConfig): DocsConfig {
   return config;
 }
 
-/** Compose presets. Objects merge, arrays replace, and styles use Tasty semantics. */
+/** Compose presets. Color roles and fonts replace, other objects merge, and styles use Tasty semantics. */
 export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
   const merge = (
     base: Record<string, unknown>,
@@ -997,6 +1070,19 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
         base as Record<string, unknown>,
         next as Record<string, unknown>,
       ) as DocsConfig;
+      // A color declaration is one value. Merging its fields could retain an
+      // obsolete `from` seed when a consumer switches to tone relationships.
+      if (next.theme?.brand !== undefined)
+        result.theme!.brand = next.theme.brand;
+      if (next.theme?.palette)
+        result.theme!.palette = {
+          ...base.theme?.palette,
+          ...Object.fromEntries(
+            Object.entries(next.theme.palette).filter(
+              ([, color]) => color !== undefined,
+            ),
+          ),
+        };
       // Font definitions are alternatives, so a consumer can switch from a
       // Google family to local files (or back) in a layered configuration.
       if (next.theme?.fonts)
@@ -1025,6 +1111,7 @@ export { COOKBOOK_COMPONENT_NAMES, COOKBOOK_COMPONENT_SUB_ELEMENTS };
 
 export type {
   BrandConfig,
+  BrandDeclaration,
   BuildConfig,
   ComponentStyleConfig,
   ComponentStyles,
@@ -1051,6 +1138,7 @@ export type {
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,
+  ThemePaletteColor,
   ThemePaletteConfig,
   ThemeTokens,
   ThemeTokenValue,

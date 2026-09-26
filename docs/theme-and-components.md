@@ -29,22 +29,28 @@ cover the configuration language accepted by `theme.styles`:
 
 ## Brand color
 
-The default brand is a calm blue with 68% OKHSL saturation. The short form
-accepts any color value supported by Glaze:
+The default brand is a calm blue with 68% OKHSL saturation. Specify its Glaze
+hue, saturation, tone, and contrast requirement directly:
 
 ```ts
 theme: {
-  brand: "okhsl(266 68% 48%)",
+  brand: {
+    hue: 266,
+    saturation: 68,
+    tone: 48,
+    contrast: { apca: [45, 60] }
+  }
 }
 ```
 
-Use the object form to set an explicit contrast target:
+The short form accepts a literal color; `from` can combine one with a contrast
+target when matching an existing brand asset matters:
 
 ```ts
 theme: {
   brand: {
     from: "oklch(58% 0.22 265)",
-    contrast: { apca: [60, 75] }
+    contrast: { apca: [45, 60] }
   }
 }
 ```
@@ -59,26 +65,43 @@ in configuration reviews.
 
 ## Semantic palette
 
-`brand` controls accent text, fills, and focus. The optional palette inputs
-control the neutral reading surface. `info`, `success`, `warning`, and `danger`
-configure callout status seeds; each exposes a border role, `-text`, and
-`-surface` semantic tokens for all schemes and contrast modes. The authored surface is preserved in the
-light scheme; its dark counterpart is deliberately desaturated so a nearly
-white tint cannot turn into vivid dark chrome when its tone is inverted. Glaze
-resolves all values independently for light, dark, normal, and high-contrast
-modes:
+`brand` controls accent text, fills, and focus. The optional palette roles
+control the reading surface, text, and callout colors. Declare color
+relationships with Glaze's `tone`, `base`, and `contrast` properties:
 
 ```ts
 theme: {
-  brand: "okhsl(266 68% 48%)",
+  brand: { hue: 266, saturation: 68, tone: 48 },
   palette: {
-    surface: "#fffdf8",
-    text: "#211f1c",
-    textSoft: "#66615a"
+    surface: { tone: 98, saturation: 0.05 },
+    text: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0,
+      contrast: { wcag: [7, 10] }
+    },
+    textSoft: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0.05,
+      contrast: { wcag: [4.5, 7] }
+    }
   },
   contrastLevel: "auto"
 }
 ```
+
+Glaze resolves each declaration for light, dark, normal, and high-contrast
+modes. The first contrast value applies to normal mode; the second applies to
+high contrast. The brand uses Glaze's structured color input, where
+`saturation` is 0–100; palette declarations use a 0–1 saturation factor of
+that seed. `tone` is 0–100 in both. A literal color or a `from` declaration remains available when
+an exact light-scheme seed matters. For deeper customization, prefer relative
+declarations: they retain their relationship to the surface when the scheme or
+contrast changes. `info`, `success`, `warning`, and `danger` also accept Glaze
+declarations and expose border, `-text`, and `-surface` semantic tokens.
+Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
+white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
@@ -711,7 +734,7 @@ selector, and a close button. The drawer slides in and out over 120ms and
 disables motion when the reader prefers reduced motion. Its mobile shadow uses
 the Glaze `shadow`-typed `#shadow` token. Customize the movement and shadow through
 `theme.styles.Sidebar`, and the underlay through `Sidebar.Backdrop` and
-`OpenBackdrop`. `theme.palette.overlay` supplies the underlay seed, which defaults
+`OpenBackdrop`. `theme.palette.overlay` supplies the underlay declaration, which defaults
 to black at 50% opacity. Glaze resolves it in fixed mode with tone remapping
 disabled, so it stays black in dark and high-contrast schemes.
 Icon buttons retain their plain desktop appearance on mobile. More uses

@@ -10,6 +10,70 @@ import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
 describe("Glaze theme adapter", () => {
+  it("resolves Glaze declarations and contrast floors in every appearance mode", () => {
+    const theme = resolveDocsTheme({
+      brand: {
+        hue: 266,
+        saturation: 68,
+        tone: 48,
+        contrast: { apca: [45, 60] },
+      },
+      palette: {
+        surface: { tone: 98, saturation: 0.05 },
+        text: {
+          base: "surface",
+          tone: "-10",
+          saturation: 0,
+          contrast: { wcag: [7, 10] },
+        },
+        textSoft: {
+          base: "surface",
+          tone: "-10",
+          saturation: 0.05,
+          contrast: { wcag: [4.5, 7] },
+        },
+      },
+    });
+    expect(theme.diagnostics).toEqual([]);
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      const minimum = mode.includes("Contrast") ? 60 : 45;
+      expect(theme.contrast[mode]).toBeGreaterThanOrEqual(minimum - 0.05);
+      const surface = colorLuminance(theme.colors.surface[mode]!);
+      const text = colorLuminance(theme.colors.text[mode]!);
+      const textSoft = colorLuminance(theme.colors.textSoft[mode]!);
+      expect(contrastRatioFromLuminance(text, surface)).toBeGreaterThanOrEqual(
+        (mode.includes("Contrast") ? 10 : 7) - 0.01,
+      );
+      expect(
+        contrastRatioFromLuminance(textSoft, surface),
+      ).toBeGreaterThanOrEqual((mode.includes("Contrast") ? 7 : 4.5) - 0.01);
+    }
+  });
+  it("accepts declarations for header, underlay, and status roles", () => {
+    const theme = resolveDocsTheme({
+      brand: { hue: 266, saturation: 68, tone: 48 },
+      palette: {
+        surface: { tone: 98, saturation: 0.05 },
+        header: { base: "surface", tone: "+0", opacity: 0.7 },
+        overlay: { tone: 0, saturation: 0, opacity: 0.5 },
+        info: { hue: 230, tone: 55, saturation: 1 },
+      },
+    });
+    for (const role of ["#header", "#overlay", "#info", "#info-text"]) {
+      expect(Object.values(theme.colorTokens[role]!)).toHaveLength(4);
+    }
+    expect(Object.values(theme.colorTokens["#header"]!)).toEqual(
+      Array(4).fill(expect.stringMatching(/ \/ 0\.7\)$/)),
+    );
+    expect(Object.values(theme.colorTokens["#overlay"]!)).toEqual(
+      Array(4).fill("oklch(0 0 0 / 0.5)"),
+    );
+  });
   it("resolves customized status palettes in all four appearance modes", () => {
     const defaults = resolveDocsTheme();
     const custom = resolveDocsTheme({
@@ -43,6 +107,30 @@ describe("Glaze theme adapter", () => {
     );
     expect(colors).not.toEqual(defaults.colorTokens["#header"]);
     expect(colors).toEqual(inherited.colorTokens["#header"]);
+  });
+
+  it("keeps the existing color seed for attribute-only declarations", () => {
+    const base = resolveDocsTheme({ palette: { surface: "#f3eaff" } });
+    const custom = resolveDocsTheme({
+      palette: {
+        surface: "#f3eaff",
+        header: { opacity: 0.8 },
+        text: { contrast: { apca: [75, 90] } },
+      },
+    });
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      expect(custom.colors.text[mode]).toBe(base.colors.text[mode]);
+    }
+    expect(Object.values(custom.colorTokens["#header"]!)).toEqual(
+      Object.values(base.colorTokens["#header"]!).map((color) =>
+        color.replace("/ 0.7)", "/ 0.8)"),
+      ),
+    );
   });
 
   it("keeps underlays black in all modes and honors a custom fixed seed", () => {

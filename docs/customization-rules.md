@@ -65,8 +65,8 @@ belong in `docs.config.ts`.
   owning style object. Keep their selectors and base styles together instead
   of spreading component anatomy across unrelated global rules.
 - Use semantic color tokens such as `#text`, `#surface`, and `#accent-text`
-  in component styles. Configure color seeds through `theme.brand` and the
-  supported `theme.palette` roles so Glaze can resolve every scheme and
+  in component styles. Configure Glaze color declarations through `theme.brand`
+  and the supported `theme.palette` roles so Glaze can resolve every scheme and
   contrast mode. Do not hard-code component colors or invent palette keys.
 - Apply semantic typography with `preset`, for example `"small"` or
   `"h2 / strong"`. Do not reconstruct presets from individual font tokens or

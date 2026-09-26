@@ -82,11 +82,21 @@ export default defineDocsConfig({
     ],
   },
   theme: {
-    brand: { from: "okhsl(266 68% 48%)" },
+    brand: { hue: 266, saturation: 68, tone: 48 },
     palette: {
-      surface: "#fcfcff",
-      text: "#20232a",
-      textSoft: "#626875",
+      surface: { tone: 98, saturation: 0.05 },
+      text: {
+        base: "surface",
+        tone: "-10",
+        saturation: 0,
+        contrast: { wcag: [7, 10] },
+      },
+      textSoft: {
+        base: "surface",
+        tone: "-10",
+        saturation: 0.05,
+        contrast: { wcag: [4.5, 7] },
+      },
     },
     tokens: {
       "$border-width": "1px",

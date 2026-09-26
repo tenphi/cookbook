@@ -343,13 +343,25 @@ fallback. Every internal route named anywhere in navigation must exist.
 ```ts
 theme: {
   brand: {
-    from: "#2f5bff",
-    contrast: { apca: 45 }
+    hue: 266,
+    saturation: 68,
+    tone: 48,
+    contrast: { apca: [45, 60] }
   },
   palette: {
-    surface: "#fcfcff",
-    text: "#20232a",
-    textSoft: "#626875"
+    surface: { tone: 98, saturation: 0.05 },
+    text: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0,
+      contrast: { wcag: [7, 10] }
+    },
+    textSoft: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0.05,
+      contrast: { wcag: [4.5, 7] }
+    }
   },
   fonts: {
     body: "Inter",
@@ -392,8 +404,11 @@ used for code. `theme.fonts` loads Google families by name or local files from
 [Change font families](./theme-and-components.md#change-font-families) for both
 flows. The default layout is capped at `87.5rem` (1400px), matching the
 Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `palette`
-supplies semantic Glaze inputs rather than component colors,
-so the whole interface continues to adapt in dark and high-contrast modes. A requested APCA floor below 45 requires the explicit
+supplies semantic Glaze declarations rather than component colors. `tone` and
+`saturation` set the surface; `base` and `contrast` express reading-color
+requirements against that surface. Glaze resolves light, dark, and both
+high-contrast modes independently. Literal colors and `from` remain supported
+as seeds, while declarations give more control over adaptation. A requested APCA floor below 45 requires the explicit
 `unsafeContrast: true` escape hatch. Learn more in
 [Theme and components](./theme-and-components.md).
 
@@ -565,7 +580,7 @@ the Astro base. `variant` is `default` or `primary` and applies on desktop;
 and adds safe new-window attributes when enabled. Customize the complete
 button and popover style tree through `theme.styles.HeaderLinks`.
 
-`theme.palette.header` sets the translucent header's color seed. It defaults
+`theme.palette.header` sets the translucent header's color declaration. It defaults
 to `theme.palette.surface`; Glaze resolves it for light, dark, and both high
 contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFrame`.
 `theme.palette.overlay` controls the fixed underlay color, defaulting to black at

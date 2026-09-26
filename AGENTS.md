@@ -8,6 +8,7 @@
 - Every styled Cookbook component and every new or modified owned global/vendor bridge must support user customization through `theme.styles.<ComponentName>`. Accept only a partial Tasty style object from the user and merge it into the complete base style object inside the engine with `mergeStyles(baseStyles, configuredStyles)`. Use `customizeComponent()` for component roots and `resolveComponentStyles()` for global style trees. Register new names in `COOKBOOK_COMPONENT_NAMES`, publish every named Tasty sub-element in `COOKBOOK_COMPONENT_SUB_ELEMENTS`, and document the complete sub-element list for every configurable surface.
 - Apply registered semantic typography roles with Tasty's `preset` property. Do not reproduce a preset by referencing its individual `$*-font-*` tokens or wire modifier internals such as `$bold-font-weight` by hand; use modifier syntax such as `preset: "strong"` or `preset: "h2 / strong"`.
 - All component colors must use semantic theme color tokens. Expose every new color role through `theme.palette`, resolve it through Glaze for every supported scheme and contrast mode, and update the public types, schema, documentation, and tests. Do not hard-code presentational color values in components.
+- Show Glaze declarations with `hue`, `saturation`, `tone`, `base`, and `contrast` in theme configuration examples. Literal colors and `from` remain compatible seed inputs, but avoid presenting them as the preferred path for deep customization.
 
 ## Dependency upgrades
 
