@@ -29,22 +29,24 @@ cover the configuration language accepted by `theme.styles`:
 
 ## Brand color
 
-The default brand is a calm blue with 68% OKHSL saturation. The short form
-accepts any color value supported by Glaze:
-
-```ts
-theme: {
-  brand: "okhsl(266 68% 48%)",
-}
-```
-
-Use the object form to set an explicit contrast target:
+The default brand is a calm blue with 68% OKHSL saturation. Set a brand color
+with Glaze's `from` declaration:
 
 ```ts
 theme: {
   brand: {
-    from: "oklch(58% 0.22 265)",
-    contrast: { apca: [60, 75] }
+    from: "#2f5bff";
+  }
+}
+```
+
+Add a contrast target when the brand appears as text or focus color:
+
+```ts
+theme: {
+  brand: {
+    from: "#2f5bff",
+    contrast: { apca: [45, 60] }
   }
 }
 ```
@@ -55,30 +57,48 @@ floor requires. Dark and high-contrast schemes resolve independently.
 
 Cookbook rejects a normal APCA target below 45 unless
 `unsafeContrast: true` is present. That escape hatch is intentionally visible
-in configuration reviews.
+in configuration reviews. Literal color shorthand and structured
+`hue`/`saturation`/`tone` input also remain supported for the brand.
 
 ## Semantic palette
 
-`brand` controls accent text, fills, and focus. The optional palette inputs
-control the neutral reading surface. `info`, `success`, `warning`, and `danger`
-configure callout status seeds; each exposes a border role, `-text`, and
-`-surface` semantic tokens for all schemes and contrast modes. The authored surface is preserved in the
-light scheme; its dark counterpart is deliberately desaturated so a nearly
-white tint cannot turn into vivid dark chrome when its tone is inverted. Glaze
-resolves all values independently for light, dark, normal, and high-contrast
-modes:
+`brand` controls accent text, fills, and focus. The optional palette roles
+control the reading surface, text, and callout colors. Declare color
+relationships with Glaze's `tone`, `base`, and `contrast` properties:
 
 ```ts
 theme: {
-  brand: "okhsl(266 68% 48%)",
+  brand: { from: "#2f5bff" },
   palette: {
-    surface: "#fffdf8",
-    text: "#211f1c",
-    textSoft: "#66615a"
+    surface: { tone: 98, saturation: 0.05 },
+    text: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0,
+      contrast: { wcag: [7, 10] }
+    },
+    textSoft: {
+      base: "surface",
+      tone: "-10",
+      saturation: 0.05,
+      contrast: { wcag: [4.5, 7] }
+    }
   },
   contrastLevel: "auto"
 }
 ```
+
+Glaze resolves each declaration for light, dark, normal, and high-contrast
+modes. The first contrast value applies to normal mode; the second applies to
+high contrast. Palette declarations inherit the brand hue and saturation:
+`saturation` is a 0–1 factor of that seed, and `tone` is 0–100. They can set
+an absolute tone or a tone relative to `base`. Use `from` on a palette role
+when it needs its own color seed; otherwise relative declarations keep its
+relationship to the brand and surrounding surface as the scheme or contrast
+changes. `info`, `success`, `warning`, and `danger` also accept Glaze
+declarations and expose border, `-text`, and `-surface` semantic tokens.
+Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
+white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
 `surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
@@ -711,7 +731,7 @@ selector, and a close button. The drawer slides in and out over 120ms and
 disables motion when the reader prefers reduced motion. Its mobile shadow uses
 the Glaze `shadow`-typed `#shadow` token. Customize the movement and shadow through
 `theme.styles.Sidebar`, and the underlay through `Sidebar.Backdrop` and
-`OpenBackdrop`. `theme.palette.overlay` supplies the underlay seed, which defaults
+`OpenBackdrop`. `theme.palette.overlay` supplies the underlay declaration, which defaults
 to black at 50% opacity. Glaze resolves it in fixed mode with tone remapping
 disabled, so it stays black in dark and high-contrast schemes.
 Icon buttons retain their plain desktop appearance on mobile. More uses

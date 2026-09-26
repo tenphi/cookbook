@@ -6,12 +6,15 @@ import {
   variantToOkhsl,
   type ColorMap,
   type GlazeColorValue,
+  type RegularColorDef,
   type ResolvedColorVariant,
 } from "@tenphi/glaze";
 import type {
   BrandConfig,
+  BrandDeclaration,
   DocsDiagnostic,
   ThemeConfig,
+  ThemePaletteColor,
   ThemeTokens,
   TypographyPreset,
 } from "@tenphi/docs";
@@ -59,7 +62,18 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       ? { contrastLevel: theme.contrastLevel }
       : {}),
   } as const;
-  const surfaceFrom = theme.palette?.surface ?? "#ffffff";
+  const surfaceInput = theme.palette?.surface;
+  const paletteUsesBrand = Object.entries(theme.palette ?? {}).some(
+    ([name, value]) =>
+      name !== "overlay" &&
+      isColorDeclaration(value) &&
+      usesRelativeColor(value),
+  );
+  const declaredSurface =
+    isColorDeclaration(surfaceInput) && usesRelativeColor(surfaceInput);
+  const surfaceFrom = isColorDeclaration(surfaceInput)
+    ? (surfaceInput.from ?? brand.from)
+    : (surfaceInput ?? "#ffffff");
   const surfaceSeed = glaze.color({
     from: surfaceFrom,
     mode: "auto",
@@ -69,60 +83,115 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     darkSaturation: 0.35,
   });
   const resolvedSurfaceSeed = surfaceSeed.resolve();
-  const lightSurface = variantToOkhsl(resolvedSurfaceSeed.light);
-  const darkSurface = variantToOkhsl(resolvedSurfaceSeed.dark);
+  const resolvedThemeSeed = paletteUsesBrand
+    ? glaze
+        .color({ from: brand.from, mode: "auto", darkSaturation: 0.35 })
+        .resolve()
+    : resolvedSurfaceSeed;
+  const lightThemeSeed = variantToOkhsl(resolvedThemeSeed.light);
+  const darkThemeSeed = variantToOkhsl(resolvedThemeSeed.dark);
+  const darkThemeSaturation = Math.min(100, (darkThemeSeed.s * 100) / 0.35);
   const colorTheme = glaze(
     {
-      hue: lightSurface.h,
-      saturation: lightSurface.s * 100,
-      darkHue: darkSurface.h,
-      // The surface definition applies its 0.35 factor again. Normalize the
-      // seed so dependent dark colors retain the authored surface chroma.
-      darkSaturation: Math.min(100, (darkSurface.s * 100) / 0.35),
+      hue: lightThemeSeed.h,
+      saturation: lightThemeSeed.s * 100,
+      darkHue: darkThemeSeed.h,
+      // Seed extraction applies a 0.35 dark saturation factor. Restore its
+      // original saturation before Glaze resolves relative declarations.
+      darkSaturation: darkThemeSaturation,
     },
     undefined,
     glazeOptions,
   );
+  const surfaceSaturation = declaredSurface
+    ? (surfaceInput.saturation ?? 0.05)
+    : 1;
+  const darkSurfaceSaturation = declaredSurface
+    ? (surfaceInput.darkSaturation ?? surfaceSaturation * 0.7)
+    : 0.35;
+  const surfaceRampSaturation = (factor: number): number =>
+    declaredSurface
+      ? surfaceSaturation * factor
+      : paletteUsesBrand
+        ? saturationFactor(
+            resolvedSurfaceSeed.light.s * factor,
+            lightThemeSeed.s,
+          )
+        : factor;
+  const darkSurfaceRampSaturation = (factor: number): number =>
+    declaredSurface
+      ? darkSurfaceSaturation * factor
+      : paletteUsesBrand
+        ? saturationFactor(
+            (resolvedSurfaceSeed.dark.s * factor) / 0.35,
+            darkThemeSaturation / 100,
+          )
+        : factor;
+  const surfaceRampHue = declaredSurface
+    ? {
+        hue: surfaceInput.hue ?? lightThemeSeed.h,
+        darkHue: surfaceInput.darkHue ?? surfaceInput.hue ?? darkThemeSeed.h,
+      }
+    : paletteUsesBrand
+      ? {
+          hue: variantToOkhsl(resolvedSurfaceSeed.light).h,
+          darkHue: variantToOkhsl(resolvedSurfaceSeed.dark).h,
+        }
+      : {};
+  const surfaceDefinition = paletteDefinition(
+    surfaceInput,
+    declaredSurface
+      ? {
+          tone: 98,
+          saturation: surfaceSaturation,
+          darkSaturation: darkSurfaceSaturation,
+          mode: "auto",
+        }
+      : { from: surfaceFrom, mode: "auto", darkSaturation: 0.35 },
+  );
   colorTheme.colors({
-    surface: {
-      from: surfaceFrom,
-      mode: "auto",
-      darkSaturation: 0.35,
-    },
-    header: {
-      from: theme.palette?.header ?? surfaceFrom,
-      mode: "auto",
-      darkSaturation: 0.35,
-      opacity: 0.7,
-    },
+    surface: surfaceDefinition,
+    header: paletteDefinition(
+      theme.palette?.header,
+      declaredSurface
+        ? { ...surfaceDefinition, opacity: 0.7 }
+        : {
+            from: surfaceFrom,
+            mode: "auto",
+            darkSaturation: 0.35,
+            opacity: 0.7,
+          },
+    ),
     "surface-2": {
       base: "surface",
+      ...surfaceRampHue,
       tone: "-2",
       mode: "auto",
-      saturation: 0.75,
-      darkSaturation: 0.275,
+      saturation: surfaceRampSaturation(0.75),
+      darkSaturation: darkSurfaceRampSaturation(declaredSurface ? 0.75 : 0.275),
     },
     "surface-3": {
       base: "surface-2",
+      ...surfaceRampHue,
       tone: "-2",
       mode: "auto",
-      saturation: 0.65,
-      darkSaturation: 0.25,
+      saturation: surfaceRampSaturation(0.65),
+      darkSaturation: darkSurfaceRampSaturation(declaredSurface ? 0.65 : 0.25),
     },
-    text: {
-      from: theme.palette?.text ?? "#20232a",
+    text: paletteDefinition(theme.palette?.text, {
+      from: "#20232a",
       base: "surface",
       role: "text",
       contrast: { apca: [75, 90] },
       mode: "auto",
-    },
-    "text-soft": {
-      from: theme.palette?.textSoft ?? "#626875",
+    }),
+    "text-soft": paletteDefinition(theme.palette?.textSoft, {
+      from: "#626875",
       base: "surface",
       role: "text",
       contrast: { apca: [60, 75] },
       mode: "auto",
-    },
+    }),
     "text-muted": mix("surface", "text", 66),
     "surface-2-hover": mix("surface-2", "text", [3, 6]),
     "surface-2-pressed": mix("surface-2", "text", [9, 14]),
@@ -160,30 +229,39 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       tuning: { alphaMax: 0.28 },
     },
     clear: { from: "#ffffff", mode: "fixed", opacity: 0 },
-    ...statusColors("info", theme.palette?.info ?? "#2563eb"),
-    ...statusColors("success", theme.palette?.success ?? "#16a34a"),
-    ...statusColors("warning", theme.palette?.warning ?? "#d97706"),
-    ...statusColors("danger", theme.palette?.danger ?? "#dc2626"),
-    ...statusColors("orange", "#d97706"),
-    ...statusColors("green", "#16a34a"),
-    ...statusColors("blue", "#2563eb"),
-    ...statusColors("purple", "#9333ea"),
-    ...statusColors("red", "#dc2626"),
+    ...statusColors("info", theme.palette?.info, "#2563eb"),
+    ...statusColors("success", theme.palette?.success, "#16a34a"),
+    ...statusColors("warning", theme.palette?.warning, "#d97706"),
+    ...statusColors("danger", theme.palette?.danger, "#dc2626"),
+    ...statusColors("orange", undefined, "#d97706"),
+    ...statusColors("green", undefined, "#16a34a"),
+    ...statusColors("blue", undefined, "#2563eb"),
+    ...statusColors("purple", undefined, "#9333ea"),
+    ...statusColors("red", undefined, "#dc2626"),
   } satisfies ColorMap);
 
   // Underlays retain their authored dark tone instead of following text or
   // being lifted into the dark scheme's surface tone window.
-  const overlayTheme = glaze(0, 0, {
-    ...glazeOptions,
-    lightTone: false,
-    darkTone: false,
-  });
+  const overlaySeed =
+    isColorDeclaration(theme.palette?.overlay) &&
+    usesRelativeColor(theme.palette.overlay)
+      ? glaze.color({ from: brand.from, mode: "fixed" }).resolve().light
+      : undefined;
+  const overlayTheme = glaze(
+    overlaySeed?.h ?? 0,
+    overlaySeed ? overlaySeed.s * 100 : 0,
+    {
+      ...glazeOptions,
+      lightTone: false,
+      darkTone: false,
+    },
+  );
   overlayTheme.colors({
-    overlay: {
-      from: theme.palette?.overlay ?? "#000000",
+    overlay: paletteDefinition(theme.palette?.overlay, {
+      from: "#000000",
       mode: "fixed",
       opacity: 0.5,
-    },
+    }),
   });
 
   const resolvedBrandSeed = glaze
@@ -202,11 +280,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     glazeOptions,
   );
   borderTheme.colors({
-    surface: {
-      from: surfaceFrom,
-      mode: "auto",
-      darkSaturation: 0.35,
-    },
+    surface: surfaceDefinition,
     border: {
       base: "surface",
       tone: ["-9", "-22"],
@@ -379,17 +453,22 @@ function mix(
   return { type: "mix", base, target, value, space };
 }
 
-function statusColors(name: string, from: GlazeColorValue): ColorMap {
+function statusColors(
+  name: string,
+  input: ThemePaletteColor | undefined,
+  fallback: GlazeColorValue,
+): ColorMap {
+  const declaration = paletteDefinition(input, { from: fallback });
   return {
     [name]: {
-      from,
       base: "surface",
       role: "border",
       contrast: { apca: [30, 45] },
       mode: "auto",
+      ...declaration,
     },
     [`${name}-text`]: {
-      from,
+      ...declaration,
       base: "surface",
       role: "text",
       contrast: { apca: [60, 75] },
@@ -397,6 +476,45 @@ function statusColors(name: string, from: GlazeColorValue): ColorMap {
     },
     [`${name}-surface`]: mix("surface", name, [12, 18], "srgb"),
   };
+}
+
+function isColorDeclaration(
+  value: ThemePaletteColor | undefined,
+): value is RegularColorDef {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !("h" in value || "r" in value || "c" in value)
+  );
+}
+
+function paletteDefinition(
+  value: ThemePaletteColor | undefined,
+  defaults: RegularColorDef,
+): RegularColorDef {
+  if (value === undefined) return defaults;
+  if (!isColorDeclaration(value)) return { ...defaults, from: value };
+  if (!usesRelativeColor(value)) return { ...defaults, ...value };
+  const { from: _ignored, ...relativeDefaults } = defaults;
+  return { ...relativeDefaults, ...value };
+}
+
+function usesRelativeColor(value: RegularColorDef): boolean {
+  return (
+    value.from === undefined &&
+    (value.tone !== undefined ||
+      value.hue !== undefined ||
+      value.darkHue !== undefined ||
+      value.saturation !== undefined ||
+      value.darkSaturation !== undefined ||
+      value.base !== undefined)
+  );
+}
+
+function saturationFactor(colorSaturation: number, themeSaturation: number) {
+  return themeSaturation > 0
+    ? Math.min(1, colorSaturation / themeSaturation)
+    : 0;
 }
 
 function requiredResolvedColor(
@@ -422,7 +540,34 @@ function normalizeBrand(
 ): Exclude<BrandConfig, GlazeColorValue> & { from: GlazeColorValue } {
   if (typeof brand === "object" && brand !== null && "from" in brand)
     return brand;
+  if (isBrandDeclaration(brand)) {
+    const seed = glaze
+      .color({
+        hue: brand.hue,
+        saturation: brand.saturation,
+        tone: brand.tone,
+        mode: "fixed",
+      })
+      .resolve().light;
+    return {
+      from: { h: seed.h, s: seed.s, t: seed.t },
+      ...(brand.contrast && { contrast: brand.contrast }),
+      ...(brand.unsafeContrast && { unsafeContrast: true }),
+    };
+  }
   return { from: brand ?? "okhsl(266 68% 48%)" };
+}
+
+function isBrandDeclaration(
+  brand: BrandConfig | undefined,
+): brand is BrandDeclaration {
+  return (
+    typeof brand === "object" &&
+    brand !== null &&
+    "hue" in brand &&
+    "saturation" in brand &&
+    "tone" in brand
+  );
 }
 
 function score(

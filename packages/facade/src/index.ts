@@ -7,6 +7,7 @@ export {
 } from "@tenphi/docs";
 export type {
   BrandConfig,
+  BrandDeclaration,
   BuildConfig,
   ComponentStyleConfig,
   ComponentStyles,
@@ -40,6 +41,7 @@ export type {
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,
+  ThemePaletteColor,
   ThemePaletteConfig,
   ThemeTokens,
   ThemeTokenValue,

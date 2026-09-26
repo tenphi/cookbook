@@ -79,7 +79,10 @@ A preset is an ordinary exported `DocsConfig` object:
 import { defineDocsConfig, mergeDocsConfig } from "@tenphi/cookbook/config";
 
 const company = defineDocsConfig({
-  theme: { brand: "#315efb", tokens: { $radius: "8px" } },
+  theme: {
+    brand: { from: "#315efb" },
+    tokens: { $radius: "8px" },
+  },
   markdown: { rawHtml: "sanitize" },
 });
 
@@ -88,6 +91,9 @@ export default mergeDocsConfig(company, {
   theme: { tokens: { "$content-width": "52rem" } },
 });
 ```
+
+Each `theme.brand` or `theme.palette` color replaces the corresponding color in
+the preset. Supply the complete Glaze declaration for a color you override.
 
 Objects merge recursively, arrays replace, and inputs are not mutated. Tasty
 styles preserve their default values when adding conditional overrides. A preset

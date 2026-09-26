@@ -13,6 +13,16 @@ const localFont: ThemeFont = {
 void localFont;
 defineDocsConfig({
   theme: {
+    brand: {
+      hue: 266,
+      saturation: 68,
+      tone: 48,
+      contrast: { apca: [45, 60] },
+    },
+    palette: {
+      surface: { tone: 98, saturation: 0.05 },
+      text: { base: "surface", contrast: { wcag: [7, 10] } },
+    },
     fonts: {
       body: "Inter",
       heading: { google: "Newsreader", weights: [400, 700] },

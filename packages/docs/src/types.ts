@@ -1,5 +1,9 @@
 import type { Styles, StylesWithoutSelectors } from "@tenphi/tasty/core";
-import type { GlazeColorValue } from "@tenphi/glaze";
+import type {
+  GlazeColorInput,
+  GlazeColorValue,
+  RegularColorDef,
+} from "@tenphi/glaze";
 import type { Root } from "mdast";
 
 export type DiagnosticSeverity = "warning" | "error";
@@ -143,13 +147,21 @@ export interface NavigationConfig {
   tabs?: NavigationTab[];
 }
 
+export type BrandDeclaration = Pick<GlazeColorInput, "hue" | "saturation"> & {
+  /** Single tone for the brand seed; contrast targets adapt it per mode. */
+  tone: number;
+  contrast?: { apca: number | [number, number] };
+  unsafeContrast?: boolean;
+};
+
 export type BrandConfig =
   | GlazeColorValue
   | {
       from: GlazeColorValue;
       contrast?: { apca: number | [number, number] };
       unsafeContrast?: boolean;
-    };
+    }
+  | BrandDeclaration;
 
 export type ThemeTokenValue = string | number;
 
@@ -221,22 +233,25 @@ export interface ThemeFonts {
   code?: ThemeFont;
 }
 
-/** Semantic palette inputs. Glaze resolves every value for all appearance modes. */
+/** A Glaze declaration, or a literal color retained as a convenient seed shorthand. */
+export type ThemePaletteColor = GlazeColorValue | RegularColorDef;
+
+/** Semantic palette declarations resolved for every appearance mode. */
 export interface ThemePaletteConfig {
-  info?: GlazeColorValue;
-  success?: GlazeColorValue;
-  warning?: GlazeColorValue;
-  danger?: GlazeColorValue;
+  info?: ThemePaletteColor;
+  success?: ThemePaletteColor;
+  warning?: ThemePaletteColor;
+  danger?: ThemePaletteColor;
   /** Light-scheme page surface; dark and high-contrast values adapt. */
-  surface?: GlazeColorValue;
-  /** Translucent header surface seed; defaults to the page surface. */
-  header?: GlazeColorValue;
-  /** Fixed underlay seed; defaults to black at 50% opacity in every scheme. */
-  overlay?: GlazeColorValue;
-  /** Primary reading text seed, resolved against `surface`. */
-  text?: GlazeColorValue;
-  /** Secondary text seed, resolved against `surface`. */
-  textSoft?: GlazeColorValue;
+  surface?: ThemePaletteColor;
+  /** Translucent header surface; defaults to the page surface declaration. */
+  header?: ThemePaletteColor;
+  /** Fixed underlay; defaults to black at 50% opacity in every scheme. */
+  overlay?: ThemePaletteColor;
+  /** Primary reading text, resolved against `surface`. */
+  text?: ThemePaletteColor;
+  /** Secondary reading text, resolved against `surface`. */
+  textSoft?: ThemePaletteColor;
 }
 
 /** Cookbook UI surfaces whose default Tasty styles can be customized. */

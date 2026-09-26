@@ -10,6 +10,157 @@ import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
 describe("Glaze theme adapter", () => {
+  it("resolves Glaze declarations and contrast floors in every appearance mode", () => {
+    const theme = resolveDocsTheme({
+      brand: {
+        from: "#315efb",
+        contrast: { apca: [45, 60] },
+      },
+      palette: {
+        surface: { tone: 98, saturation: 0.05 },
+        text: {
+          base: "surface",
+          tone: "-10",
+          saturation: 0,
+          contrast: { wcag: [7, 10] },
+        },
+        textSoft: {
+          base: "surface",
+          tone: "-10",
+          saturation: 0.05,
+          contrast: { wcag: [4.5, 7] },
+        },
+      },
+    });
+    expect(theme.diagnostics).toEqual([]);
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      const minimum = mode.includes("Contrast") ? 60 : 45;
+      expect(theme.contrast[mode]).toBeGreaterThanOrEqual(minimum - 0.05);
+      const surface = colorLuminance(theme.colors.surface[mode]!);
+      const text = colorLuminance(theme.colors.text[mode]!);
+      const textSoft = colorLuminance(theme.colors.textSoft[mode]!);
+      expect(contrastRatioFromLuminance(text, surface)).toBeGreaterThanOrEqual(
+        (mode.includes("Contrast") ? 10 : 7) - 0.01,
+      );
+      expect(
+        contrastRatioFromLuminance(textSoft, surface),
+      ).toBeGreaterThanOrEqual((mode.includes("Contrast") ? 7 : 4.5) - 0.01);
+    }
+    const alternate = resolveDocsTheme({
+      brand: { from: "#d97706" },
+      palette: { surface: { tone: 98, saturation: 0.05 } },
+    });
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      expect(alternate.colors.surface[mode]).not.toBe(
+        theme.colors.surface[mode],
+      );
+    }
+  });
+  it("inherits the brand for relative palette roles without a surface declaration", () => {
+    const palette = {
+      text: {
+        base: "surface",
+        tone: "-10",
+        saturation: 0.5,
+        contrast: { wcag: [7, 10] },
+      },
+      info: { tone: 55, saturation: 1 },
+    } as const;
+    const blue = resolveDocsTheme({
+      brand: { from: "#315efb" },
+      palette,
+    });
+    const orange = resolveDocsTheme({
+      brand: { from: "#d97706" },
+      palette,
+    });
+    const defaults = resolveDocsTheme();
+    const literalSurface = resolveDocsTheme({
+      brand: { from: "#315efb" },
+      palette: { surface: "#f3eaff" },
+    });
+    const literalSurfaceWithRelativeText = resolveDocsTheme({
+      brand: { from: "#315efb" },
+      palette: { surface: "#f3eaff", text: palette.text },
+    });
+    expect(blue.diagnostics).toEqual([]);
+    expect(Object.keys(blue.colorTokens["#info"]!)).toHaveLength(4);
+    for (const [index, mode] of (
+      ["light", "dark", "lightContrast", "darkContrast"] as const
+    ).entries()) {
+      expect(blue.colors.surface[mode]).toBe(defaults.colors.surface[mode]);
+      expect(orange.colors.surface[mode]).toBe(defaults.colors.surface[mode]);
+      expect(literalSurfaceWithRelativeText.colors.surface[mode]).toBe(
+        literalSurface.colors.surface[mode],
+      );
+      expect(literalSurfaceWithRelativeText.colors.surface2[mode]).toBe(
+        literalSurface.colors.surface2[mode],
+      );
+      expect(literalSurfaceWithRelativeText.colors.surface3[mode]).toBe(
+        literalSurface.colors.surface3[mode],
+      );
+      expect(blue.colors.text[mode]).not.toBe(orange.colors.text[mode]);
+      expect(Object.values(blue.colorTokens["#info"]!)[index]).not.toBe(
+        Object.values(orange.colorTokens["#info"]!)[index],
+      );
+      const minimum = mode.includes("Contrast") ? 10 : 7;
+      expect(
+        contrastRatioFromLuminance(
+          colorLuminance(blue.colors.text[mode]!),
+          colorLuminance(blue.colors.surface[mode]!),
+        ),
+      ).toBeGreaterThanOrEqual(minimum - 0.01);
+    }
+  });
+  it("keeps an absolute surface hue across its elevation ramp", () => {
+    const theme = resolveDocsTheme({
+      brand: { from: "#d97706" },
+      palette: {
+        surface: { hue: 210, tone: 98, saturation: 0.5 },
+        text: { base: "surface", tone: "-10", saturation: 0.5 },
+      },
+    });
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      const surfaceHue = colorHue(theme.colors.surface[mode]!);
+      expect(colorHue(theme.colors.surface2[mode]!)).toBeCloseTo(surfaceHue);
+      expect(colorHue(theme.colors.surface3[mode]!)).toBeCloseTo(surfaceHue);
+    }
+  });
+  it("accepts declarations for header, underlay, and status roles", () => {
+    const theme = resolveDocsTheme({
+      brand: { hue: 266, saturation: 68, tone: 48 },
+      palette: {
+        surface: { tone: 98, saturation: 0.05 },
+        header: { base: "surface", tone: "+0", opacity: 0.7 },
+        overlay: { tone: 0, saturation: 0, opacity: 0.5 },
+        info: { hue: 230, tone: 55, saturation: 1 },
+      },
+    });
+    for (const role of ["#header", "#overlay", "#info", "#info-text"]) {
+      expect(Object.values(theme.colorTokens[role]!)).toHaveLength(4);
+    }
+    expect(Object.values(theme.colorTokens["#header"]!)).toEqual(
+      Array(4).fill(expect.stringMatching(/ \/ 0\.7\)$/)),
+    );
+    expect(Object.values(theme.colorTokens["#overlay"]!)).toEqual(
+      Array(4).fill("oklch(0 0 0 / 0.5)"),
+    );
+  });
   it("resolves customized status palettes in all four appearance modes", () => {
     const defaults = resolveDocsTheme();
     const custom = resolveDocsTheme({
@@ -43,6 +194,30 @@ describe("Glaze theme adapter", () => {
     );
     expect(colors).not.toEqual(defaults.colorTokens["#header"]);
     expect(colors).toEqual(inherited.colorTokens["#header"]);
+  });
+
+  it("keeps the existing color seed for attribute-only declarations", () => {
+    const base = resolveDocsTheme({ palette: { surface: "#f3eaff" } });
+    const custom = resolveDocsTheme({
+      palette: {
+        surface: "#f3eaff",
+        header: { opacity: 0.8 },
+        text: { contrast: { apca: [75, 90] } },
+      },
+    });
+    for (const mode of [
+      "light",
+      "dark",
+      "lightContrast",
+      "darkContrast",
+    ] as const) {
+      expect(custom.colors.text[mode]).toBe(base.colors.text[mode]);
+    }
+    expect(Object.values(custom.colorTokens["#header"]!)).toEqual(
+      Object.values(base.colorTokens["#header"]!).map((color) =>
+        color.replace("/ 0.7)", "/ 0.8)"),
+      ),
+    );
   });
 
   it("keeps underlays black in all modes and honors a custom fixed seed", () => {
@@ -343,6 +518,12 @@ function colorSaturation(color: string): number {
   return variantToOkhsl(
     glaze.color({ from: color, mode: "fixed" }).resolve().light,
   ).s;
+}
+
+function colorHue(color: string): number {
+  return variantToOkhsl(
+    glaze.color({ from: color, mode: "fixed" }).resolve().light,
+  ).h;
 }
 
 function colorLuminance(color: string): number {

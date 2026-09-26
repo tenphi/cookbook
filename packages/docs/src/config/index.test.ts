@@ -31,6 +31,8 @@ const schema = JSON.parse(
     lastUpdated: { default?: boolean };
     theme: {
       properties: {
+        brand: { $ref?: string };
+        palette: { properties: { surface: { $ref?: string } } };
         fonts: unknown;
         styles: {
           properties: Record<string, unknown>;
@@ -231,6 +233,44 @@ describe("docs configuration", () => {
     ).toBe("Inter");
   });
 
+  it("replaces literal color seeds with Glaze declarations in layered themes", () => {
+    const config = mergeDocsConfig(
+      {
+        theme: {
+          brand: { from: "#315efb", contrast: { apca: 45 } },
+          palette: {
+            surface: "#fcfcff",
+            text: { from: "#20232a", base: "surface" },
+          },
+        },
+      },
+      {
+        theme: {
+          brand: {
+            hue: 266,
+            saturation: 68,
+            tone: 48,
+            contrast: { apca: [45, 60] },
+          },
+          palette: {
+            surface: { tone: 98, saturation: 0.05 },
+            text: { base: "surface", contrast: { wcag: [7, 10] } },
+          },
+        },
+      },
+    );
+    expect(config.theme?.brand).toEqual({
+      hue: 266,
+      saturation: 68,
+      tone: 48,
+      contrast: { apca: [45, 60] },
+    });
+    expect(config.theme?.palette).toEqual({
+      surface: { tone: 98, saturation: 0.05 },
+      text: { base: "surface", contrast: { wcag: [7, 10] } },
+    });
+  });
+
   it.each([
     "not an array",
     [null],
@@ -354,6 +394,48 @@ describe("docs configuration", () => {
         theme: { brand: { from: "#fff", contrast: { apca: 44 } } },
       }),
     ).toThrow(/cannot be below 45/);
+    expect(() =>
+      normalizeDocsConfig({
+        theme: {
+          brand: {
+            hue: 266,
+            saturation: 68,
+            tone: 48,
+            contrast: { apca: [44, 60] },
+          },
+        },
+      }),
+    ).toThrow(/cannot be below 45/);
+  });
+
+  it("validates Glaze declarations in brand and palette roles", () => {
+    expect(
+      normalizeDocsConfig({
+        theme: {
+          brand: { hue: 266, saturation: 68, tone: 48 },
+          palette: {
+            surface: { tone: 98, saturation: 0.05 },
+            text: { base: "surface", contrast: { wcag: [7, 10] } },
+          },
+        },
+      }).theme.palette?.surface,
+    ).toEqual({ tone: 98, saturation: 0.05 });
+    expect(schema.properties.theme.properties.brand.$ref).toBe(
+      "#/$defs/brandColor",
+    );
+    expect(
+      schema.properties.theme.properties.palette.properties.surface.$ref,
+    ).toBe("#/$defs/paletteColor");
+    expect(() =>
+      normalizeDocsConfig({
+        theme: { palette: { surface: { tone: "invalid" } } },
+      } as never),
+    ).toThrow(/theme\.palette\.surface/);
+    expect(() =>
+      normalizeDocsConfig({
+        theme: { palette: { text: { ton: 50 } } },
+      } as never),
+    ).toThrow(/theme\.palette\.text\.ton/);
   });
 
   it("validates theme keys without rejecting public design tokens", () => {
