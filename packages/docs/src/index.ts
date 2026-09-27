@@ -37,3 +37,5 @@ export {
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "./types.js";
 export type * from "./types.js";
+
+export { resolveColorTheme } from "./theme/palette.js";

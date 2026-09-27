@@ -240,6 +240,8 @@ export type ThemePaletteColor = GlazeColorValue | RegularColorDef;
 
 /** Semantic palette declarations resolved for every appearance mode. */
 export interface ThemePaletteConfig {
+  /** Additional Glaze roles, exposed as Tasty #name tokens. Use lowercase hyphenated names. */
+  [name: string]: ThemePaletteColor | undefined;
   info?: ThemePaletteColor;
   success?: ThemePaletteColor;
   warning?: ThemePaletteColor;

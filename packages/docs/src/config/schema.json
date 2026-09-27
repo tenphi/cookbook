@@ -202,7 +202,10 @@
         "brand": { "$ref": "#/$defs/brandColor" },
         "palette": {
           "type": "object",
-          "additionalProperties": false,
+          "propertyNames": {
+            "pattern": "^(?:textSoft|[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+          },
+          "additionalProperties": { "$ref": "#/$defs/paletteColor" },
           "properties": {
             "surface": { "$ref": "#/$defs/paletteColor" },
             "text": { "$ref": "#/$defs/paletteColor" },

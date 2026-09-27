@@ -1,3 +1,4 @@
+import { resolveColorTheme } from "../theme/palette.js";
 import { glaze, type RegularColorDef } from "@tenphi/glaze";
 import { mergeStyles, type Styles } from "@tenphi/tasty/core";
 import {
@@ -792,22 +793,22 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       );
   }
   for (const [name, value] of Object.entries(config.theme?.palette ?? {})) {
-    if (
-      ![
-        "surface",
-        "header",
-        "overlay",
-        "text",
-        "heading",
-        "textSoft",
-        "info",
-        "success",
-        "warning",
-        "danger",
-      ].includes(name)
-    )
-      unknown(diagnostics, `theme.palette.${name}`);
-    validatePaletteColor(name, value, diagnostics);
+    if (value !== undefined) validatePaletteColor(name, value, diagnostics);
+  }
+  if (
+    config.theme?.palette &&
+    !diagnostics.some((item) => item.severity === "error")
+  ) {
+    try {
+      resolveColorTheme(config.theme);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const name = /color "([^"]+)"/.exec(message)?.[1];
+      invalid(
+        diagnostics,
+        `theme.palette${name ? `.${name}` : ""}: ${message}`,
+      );
+    }
   }
   if (brand !== undefined) {
     try {
@@ -880,18 +881,6 @@ function validatePaletteColor(
       if (!COLOR_DECLARATION_KEYS.has(key))
         unknown(diagnostics, `theme.palette.${name}.${key}`);
     }
-    const colorName = name === "textSoft" ? "text-soft" : name;
-    const theme = glaze(266, 68);
-    theme.colors({
-      surface: { tone: 98 },
-      "surface-2": { base: "surface", tone: "-2" },
-      "accent-surface": { tone: 48 },
-      text: { base: "surface", contrast: { apca: 75 } },
-      heading: { base: "surface", tone: 4 },
-      "text-soft": { base: "surface", contrast: { apca: 60 } },
-      [colorName]: { tone: colorName === "surface" ? 98 : 50, ...value },
-    });
-    theme.resolve();
   } catch (error) {
     invalid(
       diagnostics,
@@ -1082,7 +1071,11 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
   };
   return defineDocsConfig(
     configs.reduce<DocsConfig>((base, next) => {
-      const diagnostics = validateConfig(next);
+      const { palette: _palette, ...themeWithoutPalette } = next.theme ?? {};
+      const diagnostics = validateConfig({
+        ...next,
+        ...(next.theme ? { theme: themeWithoutPalette } : {}),
+      });
       if (diagnostics.length) throw new DocsConfigError(diagnostics);
       const result = merge(
         base as Record<string, unknown>,

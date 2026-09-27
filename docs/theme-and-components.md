@@ -779,3 +779,40 @@ theme: {
 content controls. Individual `theme.styles` overrides still take precedence.
 The mobile header divider spans the viewport while its content keeps the
 configured horizontal padding.
+
+### Add palette colors and reference other roles
+
+Every `theme.palette` entry participates in one Glaze color graph. Use lowercase
+names with hyphens; a role named `review-panel` becomes the Tasty token
+`#review-panel`. Declaration order does not matter. References can target custom
+colors or built-in roles, including header, border, overlay, and syntax colors.
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "review-ink": {
+      base: "review-panel",
+      tone: [4, 0],
+      saturation: 0.05,
+      contrast: { wcag: [7, 10] },
+    },
+    "review-panel": { base: "surface", tone: "-2", saturation: 0.05 },
+  },
+  styles: {
+    Callout: { fill: "#review-panel", color: "#review-ink" },
+  },
+},
+```
+
+Relative and absolute declarations inherit the brand's hue and saturation.
+Use saturation factors from `0` (neutral) to `1` (full seed saturation), and
+`hue` to choose a different hue. All roles resolve for light, dark, and both
+high-contrast modes. Configuration diagnostics and rendering use the same graph.
+Missing references and cycles fail with the color name; layered configurations
+resolve references after merging.
+
+`textSoft` remains an alias for `text-soft`. Use either spelling, but do not
+configure both. The names `current`, `constructor`, and `prototype` are reserved.
+Declaring a built-in name intentionally overrides that role; use a project
+prefix for additional roles to avoid future naming collisions.
