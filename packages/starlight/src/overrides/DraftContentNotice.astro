@@ -1,0 +1,8 @@
+---
+import Callout from "../components/Callout.astro";
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
+const ui = messages(Astro.locals.starlightRoute.lang, content);
+---
+
+<Callout title={ui.draftTitle}>{ui.draftNotice}</Callout>

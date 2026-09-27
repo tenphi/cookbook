@@ -146,7 +146,7 @@ export interface ContentConfig {
   allowOutsideRoot?: boolean;
   /** Rewrite absolute links into the current repository to matching Cookbook routes. */
   localizeRepositoryLinks?: boolean;
-  /** Keep unrelated metadata without exposing it as renderer frontmatter. */
+  /** Preserve custom metadata for content queries and renderer middleware, or reject unknown fields. */
   frontmatter?: "preserve" | "reject";
 }
 
@@ -475,7 +475,15 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "DescriptionAndIcon",
   ],
   StarlightCard: ["Title"],
-  StarlightAside: ["Title", "Icon", "FirstContent"],
+  StarlightAside: [
+    "Note",
+    "Tip",
+    "Caution",
+    "Danger",
+    "Title",
+    "Icon",
+    "FirstContent",
+  ],
   MermaidSource: [],
   Markdown: [
     "Block",

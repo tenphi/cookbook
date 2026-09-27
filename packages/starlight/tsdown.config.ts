@@ -4,6 +4,8 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     components: "src/components.ts",
+    content: "src/content.ts",
+    "route-middleware": "src/route-middleware.ts",
     "components/props": "src/components/props.ts",
     "client/tabs": "src/client/tabs.ts",
     styling: "src/styling.ts",
@@ -32,6 +34,7 @@ export default defineConfig({
       /^astro(?:\/|$)/,
       /^@astrojs\//,
       /^@pagefind\//,
+      /^virtual:/,
       /^@tenphi\//,
       /^react(?:\/|$)/,
       /\.astro$/,

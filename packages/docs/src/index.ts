@@ -10,6 +10,7 @@ export type { DocsProject, DocsProjectOptions } from "./project/index.js";
 export { createDocsLoader } from "./content/index.js";
 export {
   createDocsGraph,
+  DOCS_FRONTMATTER_KEYS,
   normalizeRoute,
   routeForPath,
 } from "./graph/index.js";

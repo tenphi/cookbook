@@ -1,3 +1,8 @@
+import {
+  compatiblePlugins,
+  validatePluginFrontmatter,
+  type FrontmatterSchema,
+} from "./plugin-contract.js";
 import { resolveSiteLogo, type SiteLogoSet } from "./site-logo.js";
 import { assertTastyOutput } from "./output-styles.js";
 import { adaptPagefindUI } from "./pagefind-adapter.js";
@@ -85,6 +90,8 @@ export interface CookbookOptions {
   configFile?: string | false;
   /** Starlight content and behavior plugins. Styles must still use Tasty. */
   plugins?: StarlightPlugin[];
+  /** Validate custom metadata only; reserved routing/frontmatter fields cannot be changed. */
+  frontmatterSchema?: FrontmatterSchema;
 }
 
 export default function cookbook(
@@ -104,6 +111,9 @@ export default function cookbook(
           config: project.config,
           root: project.root,
           ...(options.plugins ? { plugins: options.plugins } : {}),
+          ...(options.frontmatterSchema
+            ? { frontmatterSchema: options.frontmatterSchema }
+            : {}),
         });
         await callInner([integration], "astro:config:setup", context);
       },
@@ -170,6 +180,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   );
   const components = resolveComponentOverrides(
     {
+      DraftContentNotice: fileURLToPath(
+        new URL("./overrides/DraftContentNotice.astro", import.meta.url),
+      ),
       Search: fileURLToPath(
         new URL("./overrides/Search.astro", import.meta.url),
       ),
@@ -223,6 +236,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         base: graphBase,
       });
       assertValidDocs(graph);
+      await validatePluginFrontmatter(graph.entries, options.frontmatterSchema);
     }
     return graph;
   }
@@ -366,9 +380,29 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         );
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
-          ...(options.plugins ? { plugins: options.plugins } : {}),
+          plugins: [
+            {
+              name: "cookbook-content-bridge",
+              hooks: {
+                "config:setup"({
+                  addRouteMiddleware,
+                }: Parameters<
+                  NonNullable<StarlightPlugin["hooks"]["config:setup"]>
+                >[0]) {
+                  addRouteMiddleware({
+                    entrypoint: fileURLToPath(
+                      new URL("./route-middleware.js", import.meta.url),
+                    ),
+                    order: "pre",
+                  });
+                },
+              },
+            },
+            ...compatiblePlugins(options.plugins ?? []),
+          ],
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
+          markdown: { processedDirs: [projectRoot!] },
           favicon: siteIcons.faviconPath,
           head: [...siteIcons.head, ...(options.config?.head ?? [])],
           ...(options.config?.editLink
@@ -1091,8 +1125,18 @@ function virtualDocsPlugin(
         server.watcher.off("all", changed),
       );
     },
-    async resolveId(id: string) {
-      if (id === "virtual:cookbook/config") return configId;
+    async resolveId(
+      id: string,
+      _importer: string | undefined,
+      resolveOptions: { ssr?: boolean },
+    ) {
+      if (id === "virtual:cookbook/config") {
+        if (resolveOptions.ssr === false)
+          throw new Error(
+            "Cookbook content queries are build-time only. Pass selected public data to a client component as props instead.",
+          );
+        return configId;
+      }
       if (id === "virtual:cookbook/layout") return layoutId;
       if (id.startsWith(mdxPrefix)) {
         await loadContent();

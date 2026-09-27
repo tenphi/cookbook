@@ -8,6 +8,8 @@ export type {
   DocsConfig,
   DocsSource,
   ThemeConfig,
+  FontLoadingConfig,
+  SiteLogoConfig,
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,

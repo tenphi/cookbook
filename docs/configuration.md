@@ -489,11 +489,9 @@ export default defineConfig({
 });
 ```
 
-Cookbook forwards these plugins to Starlight. Plugins that add stylesheets or
-style tags fail the production build because Cookbook ships only Tasty styles.
-Plugins that replace
-Cookbook-owned components or change routes can conflict with the content graph.
-Use `theme.styles` for visual changes.
+Cookbook preserves custom metadata for route middleware and supports custom schemas.
+See the [plugin compatibility guide](./plugins.md) for the tested ecosystem matrix,
+content query API, Tasty adapters, and collection/style limitations.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
 the static build. Flowcharts, state, sequence, class, and entity-relationship

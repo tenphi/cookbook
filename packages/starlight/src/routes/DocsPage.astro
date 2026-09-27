@@ -47,6 +47,8 @@ const lastUpdated =
     : entry.frontmatter.lastUpdated;
 const hero = starlightHero(entry.frontmatter.hero);
 const frontmatter = {
+  ...entry.metadata,
+  ...entry.frontmatter,
   title: entry.title,
   ...(entry.description ? { description: entry.description } : {}),
   ...(entry.frontmatter.tableOfContents !== undefined

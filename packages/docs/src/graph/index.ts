@@ -71,7 +71,7 @@ interface CollectedSource {
 
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
 const execFileAsync = promisify(execFile);
-const FRONTMATTER_KEYS = new Set([
+export const DOCS_FRONTMATTER_KEYS = new Set([
   "aliases",
   "title",
   "description",
@@ -560,7 +560,7 @@ async function readEntry(
   const diagnosticCount = diagnostics.length;
   const metadata: Record<string, unknown> = {};
   for (const key of Object.keys(frontmatter)) {
-    if (!FRONTMATTER_KEYS.has(key)) {
+    if (!DOCS_FRONTMATTER_KEYS.has(key)) {
       if (config.content.frontmatter !== "reject") {
         metadata[key] = (frontmatter as Record<string, unknown>)[key];
         delete (frontmatter as Record<string, unknown>)[key];

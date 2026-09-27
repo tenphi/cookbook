@@ -163,6 +163,9 @@ export function localizedNavigation(
 }
 
 export const ENGLISH_MESSAGES = {
+  draftTitle: "Draft",
+  draftNotice:
+    "This page is available by direct link and excluded from navigation and indexes.",
   searchError: "Search could not load. Close and try again.",
   appearance: "Appearance",
   colorScheme: "Color scheme",
@@ -197,6 +200,9 @@ export const ENGLISH_MESSAGES = {
 } as const;
 export type MessageKey = keyof typeof ENGLISH_MESSAGES;
 const FRENCH_MESSAGES: Record<MessageKey, string> = {
+  draftTitle: "Brouillon",
+  draftNotice:
+    "Cette page est accessible par son lien direct et exclue de la navigation et des index.",
   searchError: "La recherche n’a pas pu se charger. Fermez et réessayez.",
   appearance: "Apparence",
   colorScheme: "Thème de couleur",
