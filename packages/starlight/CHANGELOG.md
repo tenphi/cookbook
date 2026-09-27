@@ -1,5 +1,16 @@
 # @tenphi/starlight
 
+## 0.18.1
+
+### Patch Changes
+
+- [#106](https://github.com/tenphi/cookbook/pull/106) [`a0265b4`](https://github.com/tenphi/cookbook/commit/a0265b4763b21ef015866c85b631947f0a2a3c1f) Thanks [@tenphi](https://github.com/tenphi)! - Repair the clean npm creator path, validate generated theme types, allow custom components before the first Markdown page, and report unused custom style names. Make the style surface reference easier to navigate.
+
+- [#108](https://github.com/tenphi/cookbook/pull/108) [`f10f85e`](https://github.com/tenphi/cookbook/commit/f10f85ebed69494d43b647ec13ec3125b4107aad) Thanks [@tenphi](https://github.com/tenphi)! - Explain how Cookbook combines Glaze palettes and Tasty design tokens, state maps, and direct style overrides in its static theme workflow.
+
+- Updated dependencies [[`a0265b4`](https://github.com/tenphi/cookbook/commit/a0265b4763b21ef015866c85b631947f0a2a3c1f), [`f10f85e`](https://github.com/tenphi/cookbook/commit/f10f85ebed69494d43b647ec13ec3125b4107aad)]:
+  - @tenphi/docs@0.18.1
+
 ## 0.18.0
 
 ### Minor Changes
