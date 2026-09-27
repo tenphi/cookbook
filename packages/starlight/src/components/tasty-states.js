@@ -13,10 +13,14 @@ export const cookbookStates = {
 };
 
 let configured = false;
+let configuredRuntime;
 
 /** Configure aliases in the renderer's Tasty module before styles are parsed. */
 export function configureCookbookStates() {
-  if (configured) return;
+  const runtime = globalThis.__tenphiCookbookTastyRuntime;
+  if (configured && configuredRuntime === runtime) return;
+  if (runtime) configure(runtime);
+  configuredRuntime = runtime;
   // The integration may have configured this runtime already, including
   // consumer overrides of built-in breakpoints. Only supply missing aliases.
   const existingStates = getGlobalPredefinedStates();

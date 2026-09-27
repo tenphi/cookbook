@@ -490,6 +490,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     locales: loaded.config.locales,
                     defaultLocale: loaded.config.defaultLocale,
                     translations: loaded.config.translations,
+                    tastyRuntime: {
+                      units: loaded.config.theme.units,
+                      recipes: loaded.config.theme.recipes,
+                      states: loaded.config.theme.states,
+                    },
                   };
                 },
                 navigation,
@@ -676,6 +681,10 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               "",
             )
             .replace(/\s*<style>\s*<\/style>/g, "")
+            .replace(
+              /<style>astro-island,astro-slot,astro-static-slot\{display:contents\}<\/style>/g,
+              "",
+            )
             .replace(
               /\sstyle="--sl-icon-size:\s*([^;\"]+);?"/g,
               ' width="$1" height="$1"',
@@ -885,12 +894,22 @@ function configureTastyTheme(
   const tokens = tastyTokens(resolved) as ConfigTokens;
   const globalStyles = resolveLegacyAnatomyStyles(theme?.customStyles);
 
+  // Recipes and custom parser units are module-local in Tasty. Astro evaluates
+  // renderer code in a separate module graph, so initialize that runtime too.
+  (
+    globalThis as typeof globalThis & { __tenphiCookbookTastyRuntime?: unknown }
+  ).__tenphiCookbookTastyRuntime = {
+    units: { ...TASTY_UNITS, ...theme?.units },
+    recipes: theme?.recipes ?? {},
+    states: theme?.states ?? {},
+  };
   configure({
     states: {
       ...cookbookStates,
       ...theme?.states,
     },
-    units: TASTY_UNITS,
+    units: { ...TASTY_UNITS, ...theme?.units },
+    recipes: theme?.recipes ?? {},
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,
     ...(globalStyles

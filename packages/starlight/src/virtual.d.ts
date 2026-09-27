@@ -22,6 +22,10 @@ declare module "virtual:cookbook/config" {
     locales: DocsConfig["locales"];
     defaultLocale: DocsConfig["defaultLocale"];
     translations: DocsConfig["translations"];
+    tastyRuntime: Pick<
+      NonNullable<DocsConfig["theme"]>,
+      "units" | "recipes" | "states"
+    >;
   };
   export const mdxLoaders: Record<
     string,

@@ -5,6 +5,9 @@ import {
   relativeLuminanceFromLinearRgb,
   variantToOkhsl,
   type ColorMap,
+  type ColorDef,
+  type MixColorDef,
+  type ShadowColorDef,
   type GlazeColorValue,
   type RegularColorDef,
   type ResolvedColorVariant,
@@ -53,6 +56,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     : normalTarget + 15;
   const glazeOptions = {
     autoFlip: true,
+    ...theme.glaze,
     ...(theme.contrastLevel !== undefined
       ? { contrastLevel: theme.contrastLevel }
       : {}),
@@ -62,7 +66,9 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     isColorDeclaration(surfaceInput) && usesRelativeColor(surfaceInput);
   const surfaceFrom = isColorDeclaration(surfaceInput)
     ? (surfaceInput.from ?? brand.from)
-    : (surfaceInput ?? "#ffffff");
+    : isSpecialDefinition(surfaceInput)
+      ? "#ffffff"
+      : (surfaceInput ?? "#ffffff");
   const surfaceSeed = glaze.color({
     from: surfaceFrom,
     mode: "auto",
@@ -73,7 +79,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
   });
   const resolvedSurfaceSeed = surfaceSeed.resolve();
   const resolvedThemeSeed = glaze
-    .color({ from: brand.from, mode: "auto" })
+    .color({ from: brand.from, mode: "auto" }, glazeOptions)
     .resolve();
   const lightThemeSeed = variantToOkhsl(resolvedThemeSeed.light);
   const darkThemeSeed = variantToOkhsl(resolvedThemeSeed.dark);
@@ -233,7 +239,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       bg: "surface",
       fg: "text",
       intensity: [12, 20],
-      tuning: { alphaMax: 0.28 },
+      tuning: { alphaMax: theme.glaze?.shadowTuning?.alphaMax ?? 0.28 },
     },
     clear: { from: "#ffffff", mode: "fixed", opacity: 0 },
     ...statusColors("info", theme.palette?.info, "#2563eb"),
@@ -321,12 +327,18 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     const defaults = definitions[canonical];
     definitions[canonical] = paletteDefinition(
       input,
-      defaults && !("type" in defaults) ? defaults : { mode: "auto" },
+      defaults ?? { mode: "auto" },
     );
   }
   for (const definition of Object.values(definitions)) {
     if ("base" in definition && definition.base === "textSoft")
       definition.base = "text-soft";
+    if ("target" in definition && definition.target === "textSoft")
+      definition.target = "text-soft";
+    if ("bg" in definition && definition.bg === "textSoft")
+      definition.bg = "text-soft";
+    if ("fg" in definition && definition.fg === "textSoft")
+      definition.fg = "text-soft";
   }
   colorTheme.colors(definitions);
 
@@ -427,21 +439,30 @@ function statusColors(
   };
 }
 
+function isSpecialDefinition(
+  value: ThemePaletteColor | undefined,
+): value is MixColorDef | ShadowColorDef {
+  return typeof value === "object" && value !== null && "type" in value;
+}
+
 function isColorDeclaration(
   value: ThemePaletteColor | undefined,
 ): value is RegularColorDef {
   return (
     typeof value === "object" &&
     value !== null &&
-    !("h" in value || "r" in value || "c" in value)
+    !("h" in value || "r" in value || "c" in value || "type" in value)
   );
 }
 
 function paletteDefinition(
   value: ThemePaletteColor | undefined,
-  defaults: RegularColorDef,
-): RegularColorDef {
-  if (value === undefined) return defaults;
+  baseDefaults: ColorDef,
+): ColorDef {
+  if (value === undefined) return baseDefaults;
+  if (isSpecialDefinition(value)) return { ...value };
+  const defaults =
+    "type" in baseDefaults ? { mode: "auto" as const } : baseDefaults;
   if (!isColorDeclaration(value) || value.from !== undefined) {
     // An explicit seed owns its tone and chroma; absolute defaults must not
     // override the user's literal color. Keep adaptation and contrast floors.

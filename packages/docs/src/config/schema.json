@@ -207,6 +207,59 @@
           },
           "additionalProperties": { "$ref": "#/$defs/paletteColor" },
           "properties": {
+            "surface-2": { "$ref": "#/$defs/paletteColor" },
+            "surface-3": { "$ref": "#/$defs/paletteColor" },
+            "text-soft": { "$ref": "#/$defs/paletteColor" },
+            "text-muted": { "$ref": "#/$defs/paletteColor" },
+            "surface-2-hover": { "$ref": "#/$defs/paletteColor" },
+            "surface-2-pressed": { "$ref": "#/$defs/paletteColor" },
+            "surface-3-hover": { "$ref": "#/$defs/paletteColor" },
+            "surface-3-pressed": { "$ref": "#/$defs/paletteColor" },
+            "accent-text": { "$ref": "#/$defs/paletteColor" },
+            "focus": { "$ref": "#/$defs/paletteColor" },
+            "accent-surface": { "$ref": "#/$defs/paletteColor" },
+            "accent-surface-text": { "$ref": "#/$defs/paletteColor" },
+            "accent-surface-subtle": { "$ref": "#/$defs/paletteColor" },
+            "accent-surface-2-subtle": { "$ref": "#/$defs/paletteColor" },
+            "shadow": { "$ref": "#/$defs/paletteColor" },
+            "clear": { "$ref": "#/$defs/paletteColor" },
+            "info-text": { "$ref": "#/$defs/paletteColor" },
+            "info-surface": { "$ref": "#/$defs/paletteColor" },
+            "success-text": { "$ref": "#/$defs/paletteColor" },
+            "success-surface": { "$ref": "#/$defs/paletteColor" },
+            "warning-text": { "$ref": "#/$defs/paletteColor" },
+            "warning-surface": { "$ref": "#/$defs/paletteColor" },
+            "danger-text": { "$ref": "#/$defs/paletteColor" },
+            "danger-surface": { "$ref": "#/$defs/paletteColor" },
+            "orange": { "$ref": "#/$defs/paletteColor" },
+            "orange-text": { "$ref": "#/$defs/paletteColor" },
+            "orange-surface": { "$ref": "#/$defs/paletteColor" },
+            "green": { "$ref": "#/$defs/paletteColor" },
+            "green-text": { "$ref": "#/$defs/paletteColor" },
+            "green-surface": { "$ref": "#/$defs/paletteColor" },
+            "blue": { "$ref": "#/$defs/paletteColor" },
+            "blue-text": { "$ref": "#/$defs/paletteColor" },
+            "blue-surface": { "$ref": "#/$defs/paletteColor" },
+            "purple": { "$ref": "#/$defs/paletteColor" },
+            "purple-text": { "$ref": "#/$defs/paletteColor" },
+            "purple-surface": { "$ref": "#/$defs/paletteColor" },
+            "red": { "$ref": "#/$defs/paletteColor" },
+            "red-text": { "$ref": "#/$defs/paletteColor" },
+            "red-surface": { "$ref": "#/$defs/paletteColor" },
+            "border": { "$ref": "#/$defs/paletteColor" },
+            "border-strong": { "$ref": "#/$defs/paletteColor" },
+            "syntax-bg": { "$ref": "#/$defs/paletteColor" },
+            "syntax-text": { "$ref": "#/$defs/paletteColor" },
+            "syntax-comment": { "$ref": "#/$defs/paletteColor" },
+            "syntax-punctuation": { "$ref": "#/$defs/paletteColor" },
+            "syntax-keyword": { "$ref": "#/$defs/paletteColor" },
+            "syntax-string": { "$ref": "#/$defs/paletteColor" },
+            "syntax-token": { "$ref": "#/$defs/paletteColor" },
+            "syntax-property": { "$ref": "#/$defs/paletteColor" },
+            "syntax-number": { "$ref": "#/$defs/paletteColor" },
+            "syntax-function": { "$ref": "#/$defs/paletteColor" },
+            "syntax-value": { "$ref": "#/$defs/paletteColor" },
+            "syntax-operator": { "$ref": "#/$defs/paletteColor" },
             "surface": { "$ref": "#/$defs/paletteColor" },
             "text": { "$ref": "#/$defs/paletteColor" },
             "heading": { "$ref": "#/$defs/paletteColor" },
@@ -217,6 +270,40 @@
             "danger": { "$ref": "#/$defs/paletteColor" },
             "header": { "$ref": "#/$defs/paletteColor" },
             "overlay": { "$ref": "#/$defs/paletteColor" }
+          }
+        },
+        "units": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z][a-z0-9]*$" },
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "recipes": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "not": { "const": "none" }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "propertyNames": { "not": { "pattern": "^[A-Z&.]" } },
+            "not": { "required": ["recipe"] }
+          }
+        },
+        "glaze": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "lightTone": { "$ref": "#/$defs/toneWindow" },
+            "darkTone": { "$ref": "#/$defs/toneWindow" },
+            "darkDesaturation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "autoFlip": { "type": "boolean" },
+            "pastel": { "type": "boolean" },
+            "inferRole": { "type": "boolean" },
+            "shadowTuning": { "type": "object" }
           }
         },
         "fonts": {
@@ -704,12 +791,86 @@
         }
       }
     },
+    "toneWindow": {
+      "oneOf": [
+        { "const": false },
+        {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0, "maximum": 100 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "object",
+          "required": ["lo", "hi", "eps"],
+          "additionalProperties": false,
+          "properties": {
+            "lo": { "type": "number", "minimum": 0, "maximum": 100 },
+            "hi": { "type": "number", "minimum": 0, "maximum": 100 },
+            "eps": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        }
+      ]
+    },
     "paletteColor": {
       "description": "A Glaze color declaration; literal colors are convenient seed shorthands.",
       "oneOf": [
         { "$ref": "#/$defs/glazeColorValue" },
-        { "$ref": "#/$defs/glazeDeclaration" }
+        { "$ref": "#/$defs/glazeDeclaration" },
+        { "$ref": "#/$defs/glazeMix" },
+        { "$ref": "#/$defs/glazeShadow" }
       ]
+    },
+    "glazeMix": {
+      "type": "object",
+      "required": ["type", "base", "target", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "mix" },
+        "base": { "type": "string" },
+        "target": { "type": "string" },
+        "value": {
+          "oneOf": [
+            { "type": "number", "minimum": 0, "maximum": 100 },
+            {
+              "type": "array",
+              "items": { "type": "number", "minimum": 0, "maximum": 100 },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "blend": { "enum": ["opaque", "transparent"] },
+        "space": { "enum": ["okhsl", "srgb"] },
+        "contrast": { "$ref": "#/$defs/glazeDeclaration/properties/contrast" },
+        "role": { "type": "string" },
+        "pastel": { "type": "boolean" },
+        "inherit": { "type": "boolean" }
+      }
+    },
+    "glazeShadow": {
+      "type": "object",
+      "required": ["type", "bg", "intensity"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "shadow" },
+        "bg": { "type": "string" },
+        "fg": { "type": "string" },
+        "intensity": {
+          "oneOf": [
+            { "type": "number", "minimum": 0, "maximum": 100 },
+            {
+              "type": "array",
+              "items": { "type": "number", "minimum": 0, "maximum": 100 },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "tuning": { "type": "object" },
+        "pastel": { "type": "boolean" },
+        "inherit": { "type": "boolean" }
+      }
     },
     "glazeColorValue": {
       "oneOf": [

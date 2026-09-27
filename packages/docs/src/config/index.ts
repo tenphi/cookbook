@@ -1,6 +1,10 @@
 import { resolveColorTheme } from "../theme/palette.js";
-import { glaze, type RegularColorDef } from "@tenphi/glaze";
-import { mergeStyles, type Styles } from "@tenphi/tasty/core";
+import { glaze, type ColorDef } from "@tenphi/glaze";
+import {
+  mergeStyles,
+  type RecipeStyles,
+  type Styles,
+} from "@tenphi/tasty/core";
 import {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
@@ -74,6 +78,9 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   theme: new Set([
     "brand",
     "palette",
+    "glaze",
+    "units",
+    "recipes",
     "fonts",
     "states",
     "tokens",
@@ -632,13 +639,140 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     "styles",
     "customStyles",
     "palette",
+    "glaze",
+    "units",
+    "recipes",
     "fonts",
     "tokens",
     "states",
     "presets",
+    "glaze",
+    "units",
+    "recipes",
   ] as const) {
     if (config.theme?.[field] !== undefined && !isRecord(config.theme[field]))
       invalid(diagnostics, `theme.${field} must be an object.`);
+  }
+  for (const [name, value] of Object.entries(config.theme?.units ?? {})) {
+    if (
+      !/^[a-z][a-z0-9]*$/.test(name) ||
+      typeof value !== "string" ||
+      !value.trim()
+    )
+      invalid(
+        diagnostics,
+        `theme.units.${name} must be a named non-empty CSS length expression.`,
+      );
+  }
+  for (const [name, recipe] of Object.entries(config.theme?.recipes ?? {})) {
+    if (!/^[a-z][a-z0-9-]*$/.test(name) || name === "none" || !isRecord(recipe))
+      invalid(
+        diagnostics,
+        `theme.recipes.${name} must be a named flat Tasty style object; none is reserved.`,
+      );
+    else
+      for (const key of Object.keys(recipe))
+        if (key === "recipe" || /^[A-Z]/.test(key) || /^[&.]/.test(key))
+          invalid(
+            diagnostics,
+            `theme.recipes.${name}.${key}: recipes are flat and cannot reference other recipes.`,
+          );
+  }
+  if (isRecord(config.theme?.glaze)) {
+    const settings = config.theme.glaze;
+    for (const key of Object.keys(settings))
+      if (
+        ![
+          "lightTone",
+          "darkTone",
+          "darkDesaturation",
+          "autoFlip",
+          "pastel",
+          "inferRole",
+          "shadowTuning",
+        ].includes(key)
+      )
+        unknown(diagnostics, `theme.glaze.${key}`);
+    for (const key of ["autoFlip", "pastel", "inferRole"] as const)
+      if (settings[key] !== undefined && typeof settings[key] !== "boolean")
+        invalid(diagnostics, `theme.glaze.${key} must be boolean.`);
+    if (
+      settings.darkDesaturation !== undefined &&
+      (typeof settings.darkDesaturation !== "number" ||
+        !Number.isFinite(settings.darkDesaturation) ||
+        settings.darkDesaturation < 0 ||
+        settings.darkDesaturation > 1)
+    )
+      invalid(
+        diagnostics,
+        "theme.glaze.darkDesaturation must be between 0 and 1.",
+      );
+    for (const key of ["lightTone", "darkTone"] as const) {
+      const window = settings[key];
+      if (window === undefined || window === false) continue;
+      const lo = Array.isArray(window) ? window[0] : window?.lo;
+      const hi = Array.isArray(window) ? window[1] : window?.hi;
+      if (
+        typeof lo !== "number" ||
+        typeof hi !== "number" ||
+        !Number.isFinite(lo) ||
+        !Number.isFinite(hi) ||
+        lo < 0 ||
+        hi > 100 ||
+        lo >= hi ||
+        (Array.isArray(window)
+          ? window.length !== 2
+          : !isRecord(window) ||
+            Object.keys(window).some(
+              (key) => !["lo", "hi", "eps"].includes(key),
+            ) ||
+            typeof window.eps !== "number" ||
+            !Number.isFinite(window.eps) ||
+            window.eps <= 0)
+      )
+        invalid(
+          diagnostics,
+          `theme.glaze.${key} must be false, [lo, hi], or {lo, hi, eps} with an ascending 0–100 range.`,
+        );
+    }
+    const tuning = settings.shadowTuning;
+    if (tuning !== undefined) {
+      if (!isRecord(tuning))
+        invalid(diagnostics, "theme.glaze.shadowTuning must be an object.");
+      else
+        for (const [key, value] of Object.entries(tuning)) {
+          if (
+            ![
+              "saturationFactor",
+              "maxSaturation",
+              "lightnessFactor",
+              "lightnessBounds",
+              "minGapTarget",
+              "alphaMax",
+              "bgHueBlend",
+            ].includes(key)
+          )
+            unknown(diagnostics, `theme.glaze.shadowTuning.${key}`);
+          const values = Array.isArray(value) ? value : [value];
+          if (
+            values.some(
+              (item) =>
+                typeof item !== "number" ||
+                !Number.isFinite(item) ||
+                item < 0 ||
+                item > 1,
+            ) ||
+            (key === "lightnessBounds" &&
+              (!Array.isArray(value) ||
+                value.length !== 2 ||
+                value[0] > value[1]))
+          )
+            invalid(
+              diagnostics,
+              `theme.glaze.shadowTuning.${key} must use values from 0 to 1.`,
+            );
+        }
+    }
   }
   if (isRecord(config.theme?.fonts)) {
     for (const [role, font] of Object.entries(config.theme.fonts)) {
@@ -796,7 +930,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     if (value !== undefined) validatePaletteColor(name, value, diagnostics);
   }
   if (
-    config.theme?.palette &&
+    (config.theme?.palette || config.theme?.glaze) &&
     !diagnostics.some((item) => item.severity === "error")
   ) {
     try {
@@ -877,9 +1011,37 @@ function validatePaletteColor(
       glaze.color({ from: value }).resolve();
       return;
     }
+    const keys =
+      "type" in value
+        ? new Set(
+            value.type === "mix"
+              ? [
+                  "type",
+                  "base",
+                  "target",
+                  "value",
+                  "blend",
+                  "space",
+                  "contrast",
+                  "pastel",
+                  "role",
+                  "inherit",
+                ]
+              : value.type === "shadow"
+                ? [
+                    "type",
+                    "bg",
+                    "fg",
+                    "intensity",
+                    "tuning",
+                    "pastel",
+                    "inherit",
+                  ]
+                : [],
+          )
+        : COLOR_DECLARATION_KEYS;
     for (const key of Object.keys(value)) {
-      if (!COLOR_DECLARATION_KEYS.has(key))
-        unknown(diagnostics, `theme.palette.${name}.${key}`);
+      if (!keys.has(key)) unknown(diagnostics, `theme.palette.${name}.${key}`);
     }
   } catch (error) {
     invalid(
@@ -889,9 +1051,7 @@ function validatePaletteColor(
   }
 }
 
-function isPaletteDeclaration(
-  value: ThemePaletteColor,
-): value is RegularColorDef {
+function isPaletteDeclaration(value: ThemePaletteColor): value is ColorDef {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -1105,13 +1265,15 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
             ),
           ),
         };
-      for (const field of ["styles", "customStyles"] as const) {
+      for (const field of ["styles", "customStyles", "recipes"] as const) {
         if (!next.theme?.[field]) continue;
         const styles = { ...base.theme?.[field] } as Record<string, Styles>;
         for (const [name, configured] of Object.entries(next.theme[field])) {
           styles[name] = mergeStyles(styles[name] ?? {}, configured);
         }
-        result.theme![field] = styles;
+        if (field === "recipes")
+          result.theme!.recipes = styles as Record<string, RecipeStyles>;
+        else result.theme![field] = styles;
       }
       return result;
     }, {}),

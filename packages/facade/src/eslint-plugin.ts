@@ -3,6 +3,7 @@ export {
   recommended,
   strict,
   validationConfig,
+  createValidationConfig,
 } from "@tenphi/starlight/eslint-plugin";
 export type {
   ResolvedConfig,

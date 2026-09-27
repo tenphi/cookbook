@@ -1,8 +1,13 @@
-import type { Styles, StylesWithoutSelectors } from "@tenphi/tasty/core";
+import type {
+  RecipeStyles,
+  Styles,
+  StylesWithoutSelectors,
+} from "@tenphi/tasty/core";
 import type {
   GlazeColorInput,
+  GlazeConfigOverride,
   GlazeColorValue,
-  RegularColorDef,
+  ColorDef,
 } from "@tenphi/glaze";
 import type { Root } from "mdast";
 
@@ -236,10 +241,78 @@ export interface ThemeFonts {
 }
 
 /** A Glaze declaration, or a literal color retained as a convenient seed shorthand. */
-export type ThemePaletteColor = GlazeColorValue | RegularColorDef;
+export type ThemePaletteColor = GlazeColorValue | ColorDef;
+
+export const COOKBOOK_PALETTE_NAMES = [
+  "surface",
+  "header",
+  "surface-2",
+  "surface-3",
+  "text",
+  "heading",
+  "text-soft",
+  "text-muted",
+  "surface-2-hover",
+  "surface-2-pressed",
+  "surface-3-hover",
+  "surface-3-pressed",
+  "accent-text",
+  "focus",
+  "accent-surface",
+  "accent-surface-text",
+  "accent-surface-subtle",
+  "accent-surface-2-subtle",
+  "shadow",
+  "clear",
+  "info",
+  "info-text",
+  "info-surface",
+  "success",
+  "success-text",
+  "success-surface",
+  "warning",
+  "warning-text",
+  "warning-surface",
+  "danger",
+  "danger-text",
+  "danger-surface",
+  "orange",
+  "orange-text",
+  "orange-surface",
+  "green",
+  "green-text",
+  "green-surface",
+  "blue",
+  "blue-text",
+  "blue-surface",
+  "purple",
+  "purple-text",
+  "purple-surface",
+  "red",
+  "red-text",
+  "red-surface",
+  "overlay",
+  "border",
+  "border-strong",
+  "syntax-bg",
+  "syntax-text",
+  "syntax-comment",
+  "syntax-punctuation",
+  "syntax-keyword",
+  "syntax-string",
+  "syntax-token",
+  "syntax-property",
+  "syntax-number",
+  "syntax-function",
+  "syntax-value",
+  "syntax-operator",
+] as const;
+export type CookbookPaletteName = (typeof COOKBOOK_PALETTE_NAMES)[number];
 
 /** Semantic palette declarations resolved for every appearance mode. */
-export interface ThemePaletteConfig {
+export interface ThemePaletteConfig extends Partial<
+  Record<CookbookPaletteName, ThemePaletteColor>
+> {
   /** Additional Glaze roles, exposed as Tasty #name tokens. Use lowercase hyphenated names. */
   [name: string]: ThemePaletteColor | undefined;
   info?: ThemePaletteColor;
@@ -330,7 +403,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Close",
     "HoverClose",
   ],
-  Layout: ["LockedPage"],
+  Layout: ["LockedPage", "Islands"],
   SearchButton: ["Label", "Shortcut", "Hover", "Active", "NativeIcon", "Icon"],
   TableOfContentsLayout: ["Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
@@ -548,6 +621,12 @@ export type ComponentStylesConfig = {
 export interface ThemeConfig {
   brand?: BrandConfig;
   palette?: ThemePaletteConfig;
+  /** Glaze tone windows and adaptation settings; contrastLevel remains a top-level theme option. */
+  glaze?: Omit<GlazeConfigOverride, "contrastLevel">;
+  /** Named CSS length expressions used as custom Tasty units. */
+  units?: Record<string, string>;
+  /** Flat reusable Tasty style bundles. Recipes cannot reference other recipes. */
+  recipes?: Record<string, RecipeStyles>;
   fonts?: ThemeFonts;
   states?: Record<string, string>;
   tokens?: ThemeTokens;

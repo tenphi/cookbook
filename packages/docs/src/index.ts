@@ -33,6 +33,7 @@ export {
   validateDocs,
 } from "./validation/index.js";
 export {
+  COOKBOOK_PALETTE_NAMES,
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "./types.js";

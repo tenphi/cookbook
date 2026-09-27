@@ -38,6 +38,10 @@ export default function GlobalStyles() {
     ":root",
     resolveComponentStyles("Layout", {
       colorScheme: "dark",
+      Islands: {
+        $: "astro-island, astro-slot, astro-static-slot",
+        display: "contents",
+      },
       "$docs-nav-height": {
         "": "4.5rem",
         ":has(.td-top-tabs)": "7rem",
@@ -272,7 +276,7 @@ export default function GlobalStyles() {
       Level4: { $: "&:is(h4)", preset: "h4" },
       Level5: { $: "&:is(h5)", preset: "h5" },
       Level6: { $: "&:is(h6)", preset: "h6" },
-      PageTitle: { $: "&#_top", marginBlockStart: "($gap * 2)" },
+      PageTitle: { $: '&[id="_top"]', marginBlockStart: "($gap * 2)" },
     }),
   );
 

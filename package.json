@@ -28,6 +28,7 @@
     "version:packages": "changeset version && node scripts/sync-root-changelog.mjs",
     "sync:changelog": "node scripts/sync-root-changelog.mjs",
     "release": "changeset publish",
+    "check:theming": "node scripts/smoke-theming.mjs",
     "check:locales": "node scripts/smoke-locales.mjs",
     "check:development": "node scripts/smoke-development.mjs",
     "check:types": "tsc -p packages/facade/type-tests/tsconfig.json"

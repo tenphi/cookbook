@@ -386,7 +386,7 @@ sub-elements:
 | `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                                                                                                                                                                                                                                                                  |
 | `TableOfContentsLayout` | `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `SearchButton`          | `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `Layout`                | `LockedPage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `Layout`                | `LockedPage`, `Islands`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `HeaderLinks`           | `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                   |
 | `Heading`               | `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -816,3 +816,105 @@ resolve references after merging.
 configure both. The names `current`, `constructor`, and `prototype` are reserved.
 Declaring a built-in name intentionally overrides that role; use a project
 prefix for additional roles to avoid future naming collisions.
+
+### Register units and recipes
+
+Register custom units and flat recipes in `theme`; Cookbook configures Tasty
+before evaluating your components:
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "review-panel": { base: "surface", tone: "-2", saturation: 0.05 },
+    "review-ink": { base: "review-panel", tone: 0, contrast: { wcag: [7, 10] } },
+  },
+  units: { rh: "6px" },
+  recipes: {
+    "review-panel": {
+      fill: "#review-panel",
+      color: "#review-ink",
+      padding: "2rh",
+      radius: "3px",
+    },
+  },
+  customStyles: { DemoBadge: { Label: { color: "#review-ink" } } },
+},
+```
+
+```ts
+import { defineComponent } from "@tenphi/cookbook/styling";
+
+export const DemoBadge = defineComponent("DemoBadge", {
+  as: "aside",
+  elements: { Label: "strong" },
+  styles: {
+    display: "block",
+    recipe: "review-panel",
+    Label: { $: "> strong", preset: "h4" },
+  },
+});
+```
+
+Use `<DemoBadge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>` in
+MDX. This recipe produces 12px padding. Units merge by name, with the later
+configuration winning. Recipes merge using Tasty `mergeStyles`, including state
+maps. Recipes are flat: define named sub-elements on the owning component, and
+compose recipes with `recipe: "base elevated"` rather than referencing a recipe
+inside another recipe. `none` is a reserved recipe name. Cookbook's built-in
+units are `x`, `r`, `cr`, and `bw`; overriding one changes its meaning globally.
+
+Keep editor and linter validation synchronized with your configuration:
+
+```ts
+// tasty.config.ts
+import { createValidationConfig } from "@tenphi/cookbook/eslint-plugin";
+import docs from "./docs.config";
+export default createValidationConfig(docs.theme);
+```
+
+### Configure Glaze adaptation
+
+`theme.glaze` accepts `lightTone`, `darkTone`, `darkDesaturation`, `autoFlip`,
+`pastel`, `inferRole`, and `shadowTuning`. Tone windows accept `[lo, hi]`, `false`
+for the full range, or the advanced `{ lo, hi, eps }` form. Continue to use
+`theme.contrastLevel` for manual contrast interpolation. Cookbook always emits
+all four appearance variants.
+
+```ts
+theme: {
+  glaze: { lightTone: [10, 100], darkTone: [15, 95] },
+  palette: {
+    "accent-surface-subtle": {
+      type: "mix", base: "surface", target: "accent-surface", value: [12, 20],
+    },
+    shadow: {
+      type: "shadow", bg: "surface", fg: "text", intensity: [12, 24],
+      tuning: { alphaMax: 0.3 },
+    },
+  },
+},
+```
+
+Palette roles accept Glaze's regular, mix, and shadow declarations. Mix and
+shadow references use the same graph as other roles. Native Glaze restrictions
+still apply, including the requirement for shadow backgrounds and foregrounds
+to reference non-shadow colors. `shadowTuning` exposes `saturationFactor`,
+`maxSaturation`, `lightnessFactor`, `lightnessBounds`, `minGapTarget`, `alphaMax`,
+and `bgHueBlend`; a role's own `tuning` takes precedence.
+
+### Built-in palette inventory
+
+Every generated role below can be overridden in `theme.palette`. Names map
+directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
+`@tenphi/docs`, lists the same roles for tooling.
+
+| Area                | Roles                                                                                                                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
+| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
+| Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `focus`                                                                                             |
+| Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
+| Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
+| Additional hues     | `orange`, `green`, `blue`, `purple`, `red`, each with `-text` and `-surface` variants                                                                                                                           |
+| Syntax              | `syntax-bg`, `syntax-text`, `syntax-comment`, `syntax-punctuation`, `syntax-keyword`, `syntax-string`, `syntax-token`, `syntax-property`, `syntax-number`, `syntax-function`, `syntax-value`, `syntax-operator` |
