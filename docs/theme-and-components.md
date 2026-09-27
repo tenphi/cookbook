@@ -40,7 +40,7 @@ theme: {
 }
 ```
 
-Add a contrast target when the brand appears as text or focus color:
+Add a contrast target when the brand appears as text:
 
 ```ts
 theme: {
@@ -918,3 +918,31 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
 | Additional hues     | `orange`, `green`, `blue`, `purple`, `red`, each with `-text` and `-surface` variants                                                                                                                           |
 | Syntax              | `syntax-bg`, `syntax-text`, `syntax-comment`, `syntax-punctuation`, `syntax-keyword`, `syntax-string`, `syntax-token`, `syntax-property`, `syntax-number`, `syntax-function`, `syntax-value`, `syntax-operator` |
+
+## Contrast checks and troubleshooting
+
+Cookbook checks text, headings, muted reading text, brand links, filled-control
+labels, status text on its tinted surface, focus rings on each elevated
+surface, and every palette declaration with a contrast floor. The same Glaze
+resolution powers rendering and `cookbook doctor`, in light, dark, and both
+high-contrast modes. Manual `theme.contrastLevel` targets interpolate with
+Glaze's contrast level.
+
+`resolveDocsTheme(theme).contrastChecks` lists each foreground/background pair,
+mode, metric, target, measured value, and pass result. APCA uses display-channel
+luminance; WCAG ratios use the sRGB transfer function. Transparent foregrounds
+are composited onto their background before measuring. These checks cover
+Cookbook's semantic pairs; test actual pages after changing component styles,
+backgrounds, typography, or layout.
+
+A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
+pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
+use an absolute tone for reading text, reduce saturation when needed, and keep
+`autoFlip` enabled when the solver needs to cross its base. A fixed middle-tone
+button fill may make its label's contrast impossible. Cookbook's default
+brand fill adapts to avoid this, including for orange, yellow, and pale brands.
+Focus uses a WCAG 3:1 floor (4.5:1 in high contrast) against the surface ramp.
+
+Keep contrast requirements when adjusting colors. Extreme custom tone windows,
+fixed colors, or opacity can prevent a requested floor from being met. A palette
+check does not replace keyboard, screen-reader, and rendered-page testing.

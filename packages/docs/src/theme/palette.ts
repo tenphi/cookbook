@@ -1,8 +1,10 @@
 import {
-  apcaContrast,
+  checkColorContrast,
+  measureColorContrast,
+  type ColorContrastCheck,
+} from "./contrast.js";
+import {
   glaze,
-  okhslToLinearSrgb,
-  relativeLuminanceFromLinearRgb,
   variantToOkhsl,
   type ColorMap,
   type ColorDef,
@@ -10,7 +12,6 @@ import {
   type ShadowColorDef,
   type GlazeColorValue,
   type RegularColorDef,
-  type ResolvedColorVariant,
 } from "@tenphi/glaze";
 import type {
   BrandConfig,
@@ -42,6 +43,7 @@ export interface ResolvedColorTheme {
     lightContrast: number;
     darkContrast: number;
   };
+  contrastChecks: ColorContrastCheck[];
   diagnostics: DocsDiagnostic[];
 }
 
@@ -202,7 +204,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       from: "#626875",
       base: "surface",
       role: "text",
-      contrast: { apca: [60, 75] },
+      contrast: { apca: [60, 85] },
       mode: "auto",
     }),
     "text-muted": mix("surface", "text", 66),
@@ -219,12 +221,18 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     },
     focus: {
       from: brand.from,
-      base: "surface",
+      base: "surface-3",
       role: "border",
-      contrast: { apca: [normalTarget, highTarget] },
+      contrast: { wcag: [3, 4.5] },
       mode: "auto",
     },
-    "accent-surface": { from: brand.from, mode: "fixed" },
+    "accent-surface": {
+      from: brand.from,
+      base: "surface",
+      role: "text",
+      contrast: { apca: [60, 75] },
+      mode: "auto",
+    },
     "accent-surface-text": {
       from: "#ffffff",
       base: "accent-surface",
@@ -347,29 +355,24 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
   const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
 
   const scores = {
-    light: score(resolvedAccent.light, resolvedSurface.light),
-    dark: score(resolvedAccent.dark, resolvedSurface.dark),
-    lightContrast: score(
+    light: measureColorContrast(resolvedAccent.light, resolvedSurface.light),
+    dark: measureColorContrast(resolvedAccent.dark, resolvedSurface.dark),
+    lightContrast: measureColorContrast(
       resolvedAccent.lightContrast,
       resolvedSurface.lightContrast,
     ),
-    darkContrast: score(
+    darkContrast: measureColorContrast(
       resolvedAccent.darkContrast,
       resolvedSurface.darkContrast,
     ),
   };
-  const diagnostics: DocsDiagnostic[] = [];
-  for (const [scheme, measured] of Object.entries(scores)) {
-    const required = scheme.includes("Contrast") ? highTarget : normalTarget;
-    if (measured + 0.05 < required) {
-      diagnostics.push({
-        code: "DOCS_BRAND_CONTRAST_UNMET",
-        severity: "error",
-        message: `Brand contrast in ${scheme} is Lc ${measured.toFixed(1)}; required Lc ${required}.`,
-        hint: `Authored color: ${String(brand.from)}.`,
-      });
-    }
-  }
+  const { checks: contrastChecks, diagnostics } = checkColorContrast(
+    resolvedColors,
+    definitions,
+    theme.contrastLevel,
+    [normalTarget, highTarget],
+    theme.glaze?.inferRole,
+  );
   const outputOptions = { modes: { highContrast: true } } as const;
   const tastyOptions = {
     ...outputOptions,
@@ -401,6 +404,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     colors,
     colorTokens,
     contrast: scores,
+    contrastChecks,
     diagnostics,
   };
 }
@@ -430,7 +434,7 @@ function statusColors(
     },
     [`${name}-text`]: {
       ...declaration,
-      base: "surface",
+      base: `${name}-surface`,
       role: "text",
       contrast: { apca: [60, 75] },
       mode: "auto",
@@ -545,19 +549,5 @@ function isBrandDeclaration(
     "hue" in brand &&
     "saturation" in brand &&
     "tone" in brand
-  );
-}
-
-function score(
-  foreground: ResolvedColorVariant,
-  background: ResolvedColorVariant,
-): number {
-  return Math.abs(apcaContrast(luminance(foreground), luminance(background)));
-}
-
-function luminance(variant: ResolvedColorVariant): number {
-  const { h, s, l } = variantToOkhsl(variant);
-  return relativeLuminanceFromLinearRgb(
-    okhslToLinearSrgb(h, s, l, variant.pastel),
   );
 }
