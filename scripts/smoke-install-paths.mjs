@@ -9,8 +9,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { extname, join, sep } from "node:path";
-import { pathToFileURL } from "node:url";
+import { basename, extname, join, sep } from "node:path";
 import { checkStyleLinting } from "./smoke-style-linting.mjs";
 
 // cross-spawn handles Windows .cmd launchers and argument quoting without
@@ -72,6 +71,9 @@ try {
   const tarballs = await readdir(packed);
   const byPrefix = (prefix) =>
     join(packed, tarballs.find((name) => name.startsWith(prefix)) ?? "missing");
+  // Relative file specs avoid Windows short-path URL escaping (RUNNER~1).
+  const fileDependency = (prefix) =>
+    `file:../packed/${basename(byPrefix(prefix))}`;
   let astro = JSON.parse(
     await readFile(
       join(root, "apps/convention/node_modules/astro/package.json"),
@@ -112,10 +114,10 @@ try {
           : "npm@11.10.0",
     scripts: { build: "astro build", "check-build": "cookbook check-build" },
     dependencies: {
-      "@tenphi/docs": pathToFileURL(byPrefix("tenphi-docs-")).href,
-      "@tenphi/starlight": pathToFileURL(byPrefix("tenphi-starlight-")).href,
+      "@tenphi/docs": fileDependency("tenphi-docs-"),
+      "@tenphi/starlight": fileDependency("tenphi-starlight-"),
       astro,
-      "@tenphi/cookbook": pathToFileURL(byPrefix("tenphi-cookbook-")).href,
+      "@tenphi/cookbook": fileDependency("tenphi-cookbook-"),
     },
     devDependencies: {
       "@types/react": "^19.0.0",
