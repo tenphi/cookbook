@@ -137,3 +137,37 @@ test("locale/version navigation keeps prefixes and drafts remain direct-only", a
     await page.locator('cookbook-sidebar a[href="/manual/draft"]').count(),
   ).toBe(0);
 });
+
+test("footer credit keeps its space and pagination uses heading weight", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const credit = page.locator(".td-footer__credit");
+  await expect(credit).toHaveText("Generated with Cookbook.");
+  const gap = await credit.evaluate((element) => {
+    const label = element.firstChild!;
+    const range = document.createRange();
+    range.setStart(label, 0);
+    range.setEnd(label, label.textContent!.trimEnd().length);
+    return (
+      element.querySelector("a")!.getBoundingClientRect().left -
+      range.getBoundingClientRect().right
+    );
+  });
+  expect(gap).toBeGreaterThan(2);
+  const heading = await page
+    .locator(".sl-markdown-content h2")
+    .first()
+    .evaluate((e) => ({
+      weight: getComputedStyle(e).fontWeight,
+      color: getComputedStyle(e).color,
+    }));
+  const title = await page
+    .locator(".pagination-links .link-title")
+    .first()
+    .evaluate((e) => ({
+      weight: getComputedStyle(e).fontWeight,
+      color: getComputedStyle(e).color,
+    }));
+  expect(title).toEqual(heading);
+});

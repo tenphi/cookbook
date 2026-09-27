@@ -447,7 +447,7 @@ export default function GlobalStyles() {
         fill: "#surface-2-hover",
       },
       ActiveLink: { $: "a:active", fill: "#surface-2-pressed" },
-      Title: { $: ".link-title", color: "#text", preset: "h5 / strong" },
+      Title: { $: ".link-title", color: "#heading", preset: "h5" },
       LoneNextLink: {
         $: 'a[rel="next"]:first-child',
         gridColumn: {
