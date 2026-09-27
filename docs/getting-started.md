@@ -72,9 +72,10 @@ With no documentation configuration, it uses README/docs conventions.
 
 ## Configure the site
 
-Read the [customization rules](./customization-rules.md) before changing the
-theme or adding custom components. These rules and their upstream references
-are also included in the installed Cookbook package.
+Start with the complete [brand, logo, and font recipes](./recipes.md).
+For deeper style changes or new components, read the
+[customization rules](./customization-rules.md). These rules and upstream
+references are also included in the installed Cookbook package.
 
 Create `docs.config.ts` next to `astro.config.ts`:
 

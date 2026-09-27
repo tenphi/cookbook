@@ -20,6 +20,10 @@ export default defineDocsConfig({
 Cookbook validates the configuration when it loads. Unknown top-level and
 section keys are errors.
 
+Start with a complete [configuration recipe](./recipes.md) for common tasks.
+This page documents the available options; [working examples](./examples.md)
+covers repository layouts and shared presets.
+
 ## Project resolution and presets
 
 `cookbook()` and CLI commands discover the same `docs.config.ts`. Set `root`

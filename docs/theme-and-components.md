@@ -1,5 +1,5 @@
 ---
-title: Theme and components
+title: Theme reference
 description: Build an accessible Glaze palette, customize Tasty tokens, and use the supported Astro components.
 sidebar:
   order: 5
@@ -26,6 +26,11 @@ cover the configuration language accepted by `theme.styles`:
   for the component anatomy model used by Cookbook's named style trees.
 - [Tasty methodology](https://tasty.style/docs/methodology) for the design-system
   patterns behind roots, sub-elements, and controlled overrides.
+
+For the short brand, logo, and font path, start with the
+[configuration recipes](./recipes.md). This reference covers semantic colors,
+typography, tokens, every configurable style tree, and custom components. Read
+the [customization rules](./customization-rules.md) before adding styles.
 
 ## Brand color
 

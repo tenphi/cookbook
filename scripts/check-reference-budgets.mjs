@@ -202,30 +202,57 @@ if ((guide.match(/data-variant="primary"/g) ?? []).length !== 1) {
 const initialSidebar = sidebarHtml(
   await readFile(join(output, "getting-started/index.html"), "utf8"),
 );
-if (
-  !/<h2 class="sidebar-section-label group-label">\s*<span>Author content<\/span>/.test(
-    initialSidebar,
-  ) ||
-  /<summary>\s*<span class="group-label">\s*<span>Author content<\/span>/.test(
-    initialSidebar,
-  ) ||
-  /<details\b[^>]*\bopen(?:\s|>|=)/.test(initialSidebar) ||
-  (initialSidebar.match(/<details\b/g) || []).length !== 2
-) {
-  throw new Error(
-    "Sidebar sections must stay flat and nested groups must start collapsed.",
-  );
+for (const section of [
+  "Start",
+  "Author",
+  "Customize",
+  "Extend",
+  "Publish",
+  "Maintain",
+]) {
+  if (
+    !initialSidebar.includes(
+      `<h2 class="sidebar-section-label group-label"><span>${section}</span>`,
+    ) ||
+    /<details\b/.test(initialSidebar)
+  ) {
+    throw new Error(
+      `Guide journey ${section} must be a visible, flat section.`,
+    );
+  }
+}
+for (const route of [
+  "getting-started",
+  "ai-agents",
+  "recipes",
+  "plugins",
+  "deployment",
+  "migration",
+  "quality-checks",
+  "troubleshooting",
+]) {
+  if (!initialSidebar.includes(`href="/${route}"`))
+    throw new Error(`Missing guide journey: ${route}`);
 }
 const themeSidebar = sidebarHtml(
   await readFile(join(output, "theme-and-components/index.html"), "utf8"),
 );
 if (
-  (themeSidebar.match(/<details\b[^>]*\bopen(?:\s|>|=)/g) || []).length !== 2 ||
-  !/<a\b[^>]*aria-current="page"[^>]*>\s*<span class="group-label">\s*<span>Presentation<\/span>/.test(
+  !/<a\b[^>]*href="\/theme-and-components"[^>]*aria-current="page"/.test(
     themeSidebar,
   )
 ) {
-  throw new Error("The sidebar must open every ancestor of the current page.");
+  throw new Error("The theme reference must be current in the Reference tab.");
+}
+for (const route of [
+  "configuration",
+  "theme-and-components",
+  "publishing",
+  "cli",
+  "architecture",
+]) {
+  if (!themeSidebar.includes(`href="/${route}"`))
+    throw new Error(`Missing reference page: ${route}`);
 }
 for (const [pattern, label] of [
   [
