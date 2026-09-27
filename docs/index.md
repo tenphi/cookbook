@@ -41,6 +41,18 @@ Broken links, missing assets, duplicate routes, invalid navigation, and unsafe
 paths fail with source locations. The result is prerendered HTML and CSS ready
 for GitHub Pages or any static host.
 
+### Styling that fits your product
+
+Glaze turns a brand and semantic palette into light, dark, and high-contrast
+colors with contrast targets. Tasty applies those color roles alongside shared
+tokens and typography presets, so the docs can follow your design system.
+State maps keep hover, focus, and responsive values beside the styles they
+change. Partial `theme.styles` overrides merge before CSS extraction, letting
+you adjust supported components without selector chains or `!important`.
+The browser receives static CSS, with no Tasty or Glaze styling runtime.
+See the [theme reference](./theme-and-components.md) for the palette, presets,
+states, and named component styles.
+
 ## Choose a path
 
 | I want to…                           | Start here                              | Then read                                                             |

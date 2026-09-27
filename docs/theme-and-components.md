@@ -358,6 +358,12 @@ bridge. Customize either kind by name under `theme.styles`; the configuration
 is resolved before CSS generation, so this is not a selector-based CSS
 override.
 
+> **Direct styles, without a specificity battle.** Cookbook merges your partial
+> style object with the component's base styles before Tasty extracts CSS. The
+> generated stylesheet reflects that result; changing a supported property
+> does not add a competing rule just to beat the original. You can customize
+> existing elements without long selectors or `!important`.
+
 Start with the area you want to change, then use the complete sub-element table
 below to find its exact anatomy:
 
@@ -379,10 +385,20 @@ copying a component's full style tree:
 theme: {
   presets: { h2: { fontSize: "1.75rem" } },
   styles: {
-    Sidebar: { LinkLabel: { preset: "body" } }
+    Sidebar: {
+      LinkLabel: {
+        preset: "body",
+        whiteSpace: { "": "nowrap", "@mobile": "normal" }
+      }
+    }
   }
 }
 ```
+
+The `@mobile` value sits with the default value in one Tasty state map. Shared
+tokens and presets keep the component aligned with the rest of the site, while
+Glaze resolves semantic colors across the configured schemes and contrast
+modes.
 
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,

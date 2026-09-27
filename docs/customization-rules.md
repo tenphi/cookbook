@@ -37,6 +37,9 @@ its complete base styles using Tasty's `mergeStyles`. Do not copy the entire
 default style tree or rebuild it in user configuration. Built-in names belong
 in `theme.styles`; custom names belong in `theme.customStyles`.
 
+This merge happens before CSS extraction, so built-in appearance changes do not
+need a second stylesheet or `!important` rules to override default declarations.
+
 ```ts
 import { defineDocsConfig } from "@tenphi/cookbook/config";
 
