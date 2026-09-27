@@ -161,10 +161,16 @@ export function openApiPages(
         "",
       );
     const pathItem = resolveReference(document.paths[path], document) as Data;
-    const parameters = [
-      ...(Array.isArray(pathItem.parameters) ? pathItem.parameters : []),
-      ...(Array.isArray(operation.parameters) ? operation.parameters : []),
-    ];
+    const parameters = mergeParameters(
+      pathItem.parameters,
+      operation.parameters,
+      document,
+    );
+    renderSecurity(
+      body,
+      operation.security !== undefined ? operation.security : document.security,
+      document,
+    );
     if (parameters.length) {
       body.push(
         "## Parameters",
@@ -172,9 +178,7 @@ export function openApiPages(
         "| Name | In | Required | Description |",
         "| --- | --- | --- | --- |",
       );
-      for (const parameter of parameters) {
-        const item = resolveReference(parameter, document);
-        if (!record(item)) continue;
+      for (const item of parameters) {
         const schema = record(item.schema)
           ? ` (${schemaLabel(item.schema)})`
           : "";
@@ -183,6 +187,16 @@ export function openApiPages(
         );
       }
       body.push("");
+      for (const item of parameters) {
+        if ("example" in item || "examples" in item || "content" in item) {
+          body.push(
+            `### ${escapeText(String(item.name))} (${escapeText(String(item.in))})`,
+            "",
+          );
+          renderExamples(body, item, document);
+          renderContent(body, item.content, document);
+        }
+      }
     }
     if (operation.requestBody !== undefined) {
       const request = resolveReference(operation.requestBody, document);
@@ -194,7 +208,7 @@ export function openApiPages(
           `**Required:** ${request.required === true ? "Yes" : "No"}`,
           "",
         );
-        renderContent(body, request.content);
+        renderContent(body, request.content, document);
       }
     }
     if (record(operation.responses)) {
@@ -206,12 +220,12 @@ export function openApiPages(
           `### ${escapeText(status)}${string(response.description) ? ` — ${escapeText(response.description as string)}` : ""}`,
           "",
         );
-        renderContent(body, response.content);
+        renderContent(body, response.content, document);
       }
     }
     pages.push({
       route,
-      sourcePath: `${source}#${route.slice(routeBase.length + 1)}.md`,
+      sourcePath: `${source}#${route.split("/").at(-1)}.md`,
       title: operationTitle,
       ...(string(operation.description)
         ? { description: operation.description as string }
@@ -222,24 +236,133 @@ export function openApiPages(
   return pages;
 }
 
-function renderContent(lines: string[], content: unknown): void {
+function mergeParameters(
+  path: unknown,
+  operation: unknown,
+  document: Data,
+): Data[] {
+  const merged = new Map<string, Data>();
+  for (const list of [path, operation]) {
+    if (list === undefined) continue;
+    if (!Array.isArray(list))
+      throw new Error("OpenAPI parameters must be an array.");
+    const seen = new Set<string>();
+    for (const value of list) {
+      const item = resolveReference(value, document);
+      if (
+        !record(item) ||
+        !string(item.name) ||
+        !["query", "header", "path", "cookie"].includes(String(item.in))
+      )
+        throw new Error(
+          "OpenAPI parameters need a name and a valid in location.",
+        );
+      const identity = JSON.stringify([item.name, item.in]);
+      if (seen.has(identity))
+        throw new Error(
+          `Duplicate OpenAPI parameter ${item.name} in ${item.in}.`,
+        );
+      seen.add(identity);
+      merged.set(identity, item);
+    }
+  }
+  return [...merged.values()];
+}
+
+function renderContent(
+  lines: string[],
+  content: unknown,
+  document: Data,
+): void {
   if (!record(content)) return;
   for (const [mediaType, media] of Object.entries(content)) {
     lines.push(`#### ${escapeText(mediaType)}`, "");
     if (record(media) && media.schema !== undefined)
       lines.push(jsonBlock(media.schema), "");
-    if (record(media) && record(media.examples)) {
-      for (const [name, example] of Object.entries(media.examples)) {
-        const value =
-          record(example) && "value" in example ? example.value : example;
-        lines.push(
-          `**Example: ${escapeText(name)}**`,
-          "",
-          jsonBlock(value),
-          "",
-        );
-      }
+    if (record(media)) renderExamples(lines, media, document);
+  }
+}
+
+function renderExamples(lines: string[], owner: Data, document: Data): void {
+  if ("example" in owner)
+    lines.push("**Example**", "", jsonBlock(owner.example), "");
+  if (!record(owner.examples)) return;
+  for (const [name, raw] of Object.entries(owner.examples)) {
+    const example = resolveReference(raw, document);
+    if (!record(example))
+      throw new Error(`OpenAPI example ${name} must be an Example Object.`);
+    lines.push(`**Example: ${escapeText(name)}**`, "");
+    if (string(example.summary))
+      lines.push(escapeText(example.summary as string), "");
+    if (string(example.description))
+      lines.push(example.description as string, "");
+    if ("value" in example) lines.push(jsonBlock(example.value), "");
+    if (string(example.externalValue)) {
+      const url = example.externalValue as string;
+      // External examples are linked, never downloaded during a build.
+      lines.push(
+        /^https?:\/\/[^\s<>]+$/i.test(url)
+          ? `[External example](<${url}>)`
+          : `External example: ${escapeText(url)}`,
+        "",
+      );
     }
+  }
+}
+
+function renderSecurity(
+  lines: string[],
+  security: unknown,
+  document: Data,
+): void {
+  lines.push("## Authentication", "");
+  if (security === undefined || (Array.isArray(security) && !security.length)) {
+    lines.push("No authentication required.", "");
+    return;
+  }
+  if (!Array.isArray(security))
+    throw new Error("OpenAPI security must be an array.");
+  const schemes =
+    record(document.components) && record(document.components.securitySchemes)
+      ? document.components.securitySchemes
+      : {};
+  if (security.length > 1) lines.push("Use any one of these alternatives:", "");
+  for (const [index, requirement] of security.entries()) {
+    if (!record(requirement))
+      throw new Error("OpenAPI security requirements must be objects.");
+    if (security.length > 1) lines.push(`### Alternative ${index + 1}`, "");
+    const names = Object.keys(requirement);
+    if (!names.length) {
+      lines.push("No authentication required (anonymous access).", "");
+      continue;
+    }
+    if (names.length > 1)
+      lines.push("All of the following are required together:", "");
+    for (const name of names) {
+      const scheme = resolveReference(schemes[name], document);
+      if (!record(scheme))
+        throw new Error(`Unknown OpenAPI security scheme: ${name}.`);
+      const scopes = requirement[name];
+      if (
+        !Array.isArray(scopes) ||
+        scopes.some((scope) => typeof scope !== "string")
+      )
+        throw new Error(`OpenAPI security scopes for ${name} must be strings.`);
+      let detail = string(scheme.type) ?? "security scheme";
+      if (scheme.type === "http")
+        detail = `HTTP ${string(scheme.scheme) ?? "authentication"}${string(scheme.bearerFormat) ? ` (${scheme.bearerFormat})` : ""}`;
+      else if (scheme.type === "apiKey")
+        detail = `API key ${string(scheme.name) ?? name} in ${string(scheme.in) ?? "request"}`;
+      else if (scheme.type === "oauth2") detail = "OAuth 2.0";
+      else if (scheme.type === "openIdConnect") detail = "OpenID Connect";
+      else if (scheme.type === "mutualTLS") detail = "Mutual TLS";
+      lines.push(
+        `- **${escapeText(name)}:** ${escapeText(detail)}${scopes.length ? `. Required scopes: ${scopes.map((scope) => escapeText(String(scope))).join(", ")}` : ""}`,
+      );
+      if (string(scheme.description))
+        lines.push("", scheme.description as string, "");
+    }
+    lines.push("");
   }
 }
 
@@ -271,6 +394,22 @@ function assertLocalReferences(
         throw new Error(
           `OpenAPI source ${source} has an unresolved reference: ${item}.`,
         );
+      if (["example", "default", "const", "enum"].includes(key)) continue;
+      if (key === "examples") {
+        if (record(item))
+          for (const example of Object.values(item)) {
+            if (record(example)) {
+              const { value: _payload, ...metadata } = example;
+              assertLocalReferences(metadata, document, source, seen);
+            }
+          }
+        continue;
+      }
+      if (key === "properties" && record(item)) {
+        for (const schema of Object.values(item))
+          assertLocalReferences(schema, document, source, seen);
+        continue;
+      }
       assertLocalReferences(item, document, source, seen);
     }
   }
@@ -278,7 +417,11 @@ function assertLocalReferences(
 
 function resolveReference(value: unknown, document: Data): unknown {
   const visited = new Set<string>();
+  const overrides: Data = {};
   while (record(value) && typeof value.$ref === "string") {
+    for (const key of ["summary", "description"])
+      if (!(key in overrides) && typeof value[key] === "string")
+        overrides[key] = value[key];
     const ref = value.$ref;
     if (visited.has(ref))
       throw new Error(`Circular OpenAPI reference: ${ref}.`);
@@ -287,17 +430,18 @@ function resolveReference(value: unknown, document: Data): unknown {
     if (value === undefined)
       throw new Error(`Unresolved OpenAPI reference: ${ref}.`);
   }
-  return value;
+  return record(value) ? { ...value, ...overrides } : value;
 }
 
 function lookupReference(ref: string, document: Data): unknown {
-  return ref
-    .slice(2)
+  return decodeURIComponent(ref.slice(2))
     .split("/")
     .reduce<unknown>(
       (current, part) =>
-        record(current)
-          ? current[part.replace(/~1/g, "/").replace(/~0/g, "~")]
+        record(current) || Array.isArray(current)
+          ? (current as Record<string, unknown>)[
+              part.replace(/~1/g, "/").replace(/~0/g, "~")
+            ]
           : undefined,
       document,
     );
@@ -339,7 +483,7 @@ function schemaLabel(schema: Data): string {
 }
 
 function jsonBlock(value: unknown): string {
-  const body = JSON.stringify(value, null, 2);
+  const body = JSON.stringify(value, null, 2) ?? "null";
   let longest = 0;
   for (const [run] of body.matchAll(/`+/g))
     longest = Math.max(longest, run.length);

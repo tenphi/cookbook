@@ -27,7 +27,12 @@ try {
   const config = {
     site: { title: "Authoring" },
     tableOfContents: { mobile: true },
-    content: { sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }] },
+    content: {
+      sources: [
+        { glob: "docs/**/*.{md,mdx}", base: "docs" },
+        { openapi: "api.json", routeBase: "/api" },
+      ],
+    },
   };
   const writeConfig = () =>
     writeFile(
@@ -47,6 +52,49 @@ try {
   await writeFile(
     join(fixture, "docs/quiet.md"),
     "---\ntitle: Quiet\ntableOfContents:\n  mobile: false\n---\n## First\n\nWords.\n\n## Second\n",
+  );
+  await writeFile(
+    join(fixture, "api.json"),
+    JSON.stringify({
+      openapi: "3.1.0",
+      info: { title: "Acme API", version: "1" },
+      security: [{ Token: [] }],
+      components: {
+        securitySchemes: { Token: { type: "http", scheme: "bearer" } },
+        examples: { Result: { value: { id: 0 } } },
+      },
+      paths: {
+        "/items/{id}": {
+          parameters: [
+            { name: "id", in: "path", required: true, description: "Default" },
+          ],
+          get: {
+            operationId: "getItem",
+            parameters: [
+              {
+                name: "id",
+                in: "path",
+                required: true,
+                description: "Override",
+                example: 0,
+              },
+            ],
+            responses: {
+              200: {
+                description: "OK",
+                content: {
+                  "application/json": {
+                    examples: {
+                      result: { $ref: "#/components/examples/Result" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
   );
   const build = () =>
     promisify(execFile)(
@@ -80,6 +128,18 @@ try {
       'data-tasty-anatomy="MobileTableOfContents"',
     ),
   );
+  const apiWindow = new Window();
+  apiWindow.document.write(
+    await readFile(join(fixture, "dist/api/get-item/index.html"), "utf8"),
+  );
+  const api = apiWindow.document;
+  const article = api.querySelector(".sl-markdown-content").textContent;
+  for (const text of ["HTTP bearer", "Override", "Example: result"])
+    assert.ok(article.includes(text));
+  assert.equal(api.querySelectorAll("tbody tr").length, 1);
+  assert.ok(api.querySelector('a[href="/manual/api"]'));
+  assert.ok(!api.querySelector("[style]"));
+  await apiWindow.happyDOM.close();
   config.tableOfContents = false;
   await writeConfig();
   await build();
