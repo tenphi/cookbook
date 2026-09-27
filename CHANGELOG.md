@@ -2,6 +2,16 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.17.1
+
+### Patch Changes
+
+- [#95](https://github.com/tenphi/cookbook/pull/95) [`3f65be3`](https://github.com/tenphi/cookbook/commit/3f65be36efa0db2125bfa2af7646d218d80e0016) Thanks [@tenphi](https://github.com/tenphi)! - Restore strong heading and body colors with absolute Glaze tones: body text
+  starts at 0 and headings at 4, with normal-mode tone boundaries applied by Glaze.
+  Expose the heading palette role and configurable Heading style tree. Update the packaged palette examples to preserve dark
+  reading text, adapt it for dark and high-contrast modes, and use contrast
+  requirements as minimum safeguards.
+
 ## 0.17.0
 
 ### Minor Changes
