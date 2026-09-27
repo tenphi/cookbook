@@ -4,6 +4,7 @@ import {
   resolveLegacyAnatomyStyles,
   resolveComponentStyleOverride,
   resolveComponentStyles,
+  unusedCustomStyleNames,
 } from "./component-styles.js";
 
 const defaults = {
@@ -106,5 +107,23 @@ describe("component style configuration", () => {
     ).toEqual({
       '[data-tasty-anatomy="ProductBadge"]': { color: "#accent-text" },
     });
+  });
+
+  it("reports only custom style names without a component or anatomy match", () => {
+    const styles = {
+      ProjectBadge: { color: "#accent-text" },
+      ProjectNote: { color: "#text" },
+      ProjectBadg: { color: "#text-muted" },
+    };
+    configureComponentStyles(styles);
+    resolveComponentStyles("ProjectBadge", { color: "#text" });
+
+    expect(unusedCustomStyleNames(styles, new Set(["ProjectNote"]))).toEqual([
+      "ProjectBadg",
+    ]);
+    configureComponentStyles(styles);
+    expect(unusedCustomStyleNames(styles, new Set())).toEqual(
+      Object.keys(styles),
+    );
   });
 });

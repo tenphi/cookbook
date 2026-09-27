@@ -185,6 +185,9 @@ importers:
       pacote:
         specifier: ^21.5.1
         version: 21.5.1(supports-color@10.2.2)
+      react:
+        specifier: ^18.3.1 || ^19.0.0
+        version: 19.2.8
       tinyglobby:
         specifier: ^0.2.15
         version: 0.2.17

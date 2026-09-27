@@ -358,6 +358,37 @@ bridge. Customize either kind by name under `theme.styles`; the configuration
 is resolved before CSS generation, so this is not a selector-based CSS
 override.
 
+Start with the area you want to change, then use the complete sub-element table
+below to find its exact anatomy:
+
+| Page area                     | Style names to inspect                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| Header, title, and navigation | `HeaderFrame`, `StarlightHeader`, `SiteLogo`, `HeaderLinks`, `TopNavigation`         |
+| Sidebar and mobile menu       | `Sidebar`, `MobileMenuToggle`, `MobileNavigationTabs`, `MobileMenuFooter`            |
+| Article text and headings     | `Markdown`, `MarkdownHeading`, `Heading`, `MainContent`                              |
+| Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid` |
+| Search                        | `SearchButton`, `Search`, `SearchResults`                                            |
+| Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                  |
+| Cards, notes, and tabs        | `Card`, `StarlightCard`, `StarlightAside`, `Tabs`                                    |
+| Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                 |
+
+For example, this changes a typography role and one named element without
+copying a component's full style tree:
+
+```ts
+theme: {
+  presets: { h2: { fontSize: "1.75rem" } },
+  styles: {
+    Sidebar: { LinkLabel: { preset: "body" } }
+  }
+}
+```
+
+In a generated site, run `npm run validate` (or the matching package manager's
+command) after editing `docs.config.ts`. It checks TypeScript theme properties,
+then runs Cookbook's preflight and production output checks. A misspelled
+preset or built-in sub-element property fails type checking.
+
 Provide only the root and named
 [sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
 override. Cookbook deep-merges that partial style object into the complete
@@ -492,6 +523,10 @@ same.
 Register custom names and their partial Tasty objects in `theme.customStyles`.
 Built-in names belong in `theme.styles` and reject misspelled sub-elements.
 Custom names can also target a matching user-authored `data-tasty-anatomy` attribute.
+The name must match the string passed to `defineComponent()` or
+`resolveComponentStyles()`, or the `data-tasty-anatomy` value. A production
+build warns when a configured custom name has no matching component style
+resolver or rendered anatomy attribute.
 
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
