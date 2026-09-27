@@ -30,6 +30,7 @@ jobs:
       - run: pnpm check:plugins
       - run: pnpm check:publishing-site
       - run: pnpm check:authoring
+      - run: pnpm check:recipes
       - run: pnpm check:benchmark
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm check:browser

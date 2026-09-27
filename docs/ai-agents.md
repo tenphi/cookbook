@@ -14,15 +14,14 @@ concrete task, for example:
 > Create a Cookbook site for this repository in `docs-site/`. Use the existing
 > README and `docs/` pages as sources. Set the public site URL to
 > `https://docs.example.com`, add a getting started page if one is missing,
-> and run the doctor and production build.
+> and run the complete validation command.
 
 From the repository root, the agent can run:
 
 ```sh
 npm create @tenphi/cookbook@latest docs-site -- --source . --site https://docs.example.com --yes
 cd docs-site
-npm run doctor
-npm run build
+npm run validate
 ```
 
 For a new project without existing documentation, omit `--source .`. To document
@@ -53,7 +52,7 @@ The HTML pages remain the primary source of information. Their text, headings,
 links, and page metadata are present in the static response, so an agent can
 read them without running client JavaScript. Write descriptive headings and
 link text, keep instructions current, and verify the production output with
-`npm run build` and `npm run preview`.
+`npm run validate` and `npm run preview`.
 
 Google's [AI Search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 prioritizes ordinary crawlability and useful content. It says `llms.txt` is
@@ -66,3 +65,8 @@ Follow the page’s `rel="alternate" type="text/markdown"` link or its **Downloa
 control for a clean reading representation with canonical/source/language/version
 metadata. Use the HTML for interactive component output omitted from Markdown.
 See [Publishing metadata](./publishing.md) for discovery and indexing controls.
+
+For maintenance, follow the [upgrade guide](./migration.md), then check the
+[deployed output](./deployment.md#validate-the-published-result). The
+[recipes](./recipes.md) provide complete starting configurations;
+[troubleshooting](./troubleshooting.md) explains common failures.

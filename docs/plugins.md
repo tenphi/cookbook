@@ -4,7 +4,7 @@ title: Starlight plugins
 
 Cookbook accepts Starlight content and behavior plugins in `astro.config.mjs`:
 
-```js
+```js cookbook-verify=github-alerts
 import cookbook from "@tenphi/cookbook";
 import githubAlerts from "starlight-github-alerts";
 import { unified } from "@astrojs/markdown-remark";

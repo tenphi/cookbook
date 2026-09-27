@@ -124,11 +124,13 @@ also declare their own roots for multi-package sites.
 ## Validate and publish
 
 ```sh
-npm run doctor
-npm run build
+npm run validate
 npm run preview
 ```
 
 See [working examples](./examples.md), [authoring components](./authoring.mdx),
 the [AI agent workflow](./ai-agents.md), and [deployment](./deployment.md). Existing users should read the
-[prerelease migration guide](./migration.md).
+[version-specific upgrade guide](./migration.md).
+
+For a complete configuration to adapt, start with the [recipes](./recipes.md).
+If validation fails, see [troubleshooting](./troubleshooting.md).

@@ -92,7 +92,7 @@ content: {
 },
 ```
 
-Each `routeBase` must have a page, and version roots must be distinct. A
+Each `routeBase` must have a home page (a localized home also qualifies), and version roots must be distinct. A
 single-version site can continue using `site.version` for a simple label.
 
 ### Site logo

@@ -12,12 +12,13 @@ plain file server.
 ## Build locally
 
 ```sh
-npm run build
+npm run validate
 npm run preview
 ```
 
-Run [`cookbook doctor`](./cli.md#validate-with-doctor) in CI before building
-when you want a focused content diagnostic step.
+New projects include `validate`: preflight, production build, then built-output
+checks. Existing projects can add this script using the [upgrade guide](./migration.md).
+Run [`cookbook doctor`](./cli.md#validate-with-doctor) for a focused preflight.
 
 ## GitHub Pages
 

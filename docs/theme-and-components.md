@@ -33,11 +33,11 @@ The default brand is a calm blue with 68% OKHSL saturation. Set a brand color
 with Glaze's `from` declaration:
 
 ```ts
-theme: {
-  brand: {
-    from: "#2f5bff";
-  }
-}
+import { defineDocsConfig } from "@tenphi/cookbook/config";
+
+export default defineDocsConfig({
+  theme: { brand: { from: "#2f5bff" } },
+});
 ```
 
 Add a contrast target when the brand appears as text:

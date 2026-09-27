@@ -27,6 +27,7 @@ Repository contributors can run these checks after `pnpm build`:
 | `pnpm check:theming`         | Consumer components, colors, units, recipes, presets, overrides, and logos                   |
 | `pnpm check:fonts`           | Real Google variable/italic fonts, local fonts, and offline cache rebuild                    |
 | `pnpm check:plugins`         | Tested plugin contracts and actionable incompatibility failures                              |
+| `pnpm check:recipes`         | Extract, type-check, build, and validate documented configurations verbatim                  |
 | `pnpm check:authoring`       | Custom highlighting, code groups, mobile contents, hero images, and OpenAPI                  |
 | `pnpm check:browser`         | Chromium keyboard/focus, search, copy actions, appearance, mobile navigation, and axe checks |
 | `pnpm check:install`         | Clean installation and build from packed artifacts, including lint/type exports              |
