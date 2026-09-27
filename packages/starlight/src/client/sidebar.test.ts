@@ -128,8 +128,15 @@ describe("sidebar persistence", () => {
   );
 
   it("removes listeners when disconnected and attaches them once on reconnection", () => {
+    const storage = sessionStorage;
+    const save = vi.fn((key: string, value: string) =>
+      storage.setItem(key, value),
+    );
+    vi.stubGlobal("sessionStorage", {
+      getItem: (key: string) => storage.getItem(key),
+      setItem: save,
+    });
     const { root, groups, scroller } = mount();
-    const save = vi.spyOn(sessionStorage, "setItem");
     root.remove();
     scroller.dispatchEvent(new Event("scroll"));
     groups[0].dispatchEvent(new Event("toggle"));
@@ -138,6 +145,7 @@ describe("sidebar persistence", () => {
     save.mockClear();
     groups[0].open = true;
     groups[0].dispatchEvent(new Event("toggle"));
+    expect(storage.getItem(key)).toContain('"parent":true');
     expect(save).toHaveBeenCalledTimes(1);
   });
 });

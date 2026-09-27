@@ -94,8 +94,9 @@ describe("creator defaults", () => {
       await readFile(join(destination, "package.json"), "utf8"),
     ).scripts;
     expect(scripts.validate).toBe(
-      "cookbook doctor && astro build && cookbook check-build",
+      "tsc --noEmit && cookbook doctor && astro build && cookbook check-build",
     );
+    expect(scripts.typecheck).toBe("tsc --noEmit");
     expect(agentInstructions).toContain("site.url");
     expect(agentInstructions).toContain(
       ".agents/skills/upgrade-cookbook/SKILL.md",

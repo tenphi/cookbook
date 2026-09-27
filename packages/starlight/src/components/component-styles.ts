@@ -5,6 +5,7 @@ import { COOKBOOK_COMPONENT_NAMES } from "@tenphi/docs";
 // Keep their component configuration on the shared process global.
 const sharedConfiguration = globalThis as typeof globalThis & {
   __tenphiCookbookComponentStyles?: Record<string, Styles | undefined>;
+  __tenphiCookbookUsedComponentStyles?: Set<string>;
 };
 const cookbookComponentNames = new Set<string>(COOKBOOK_COMPONENT_NAMES);
 
@@ -12,6 +13,7 @@ export function configureComponentStyles(
   styles: Record<string, Styles | undefined> | undefined,
 ): void {
   sharedConfiguration.__tenphiCookbookComponentStyles = styles ?? {};
+  sharedConfiguration.__tenphiCookbookUsedComponentStyles = new Set();
 }
 
 /** Merge a partial theme override into a built-in or consumer style tree. */
@@ -19,11 +21,24 @@ export function resolveComponentStyles(
   name: string,
   baseStyles: Styles,
 ): Styles {
+  sharedConfiguration.__tenphiCookbookUsedComponentStyles?.add(name);
   const configuredStyles = sharedConfiguration
     .__tenphiCookbookComponentStyles?.[name] as Styles | undefined;
   return configuredStyles
     ? mergeStyles(baseStyles, configuredStyles as Styles)
     : baseStyles;
+}
+
+/** Find custom names without a component style resolver or rendered anatomy. */
+export function unusedCustomStyleNames(
+  styles: Record<string, Styles> | undefined,
+  anatomyNames: ReadonlySet<string>,
+): string[] {
+  return Object.keys(styles ?? {}).filter(
+    (name) =>
+      !sharedConfiguration.__tenphiCookbookUsedComponentStyles?.has(name) &&
+      !anatomyNames.has(name),
+  );
 }
 
 export function resolveComponentStyleOverride(
