@@ -1097,6 +1097,12 @@ runtime, theme configuration, or style hydration setup. Browser scripts and
 rejects these imports. Attach small interaction scripts to server-rendered markup
 or pass already-styled static markup into a client island.
 
+Code fences and `CodeGroup` use the same `MarkdownCodeBlock` style tree. Its
+root `$copy-button-size` defaults to `2rem`; the copy control and vertical
+padding share it, keeping equal top, right, and bottom insets on one-line
+snippets. The padding follows the `code` preset's line height. Override it with
+`theme.styles.MarkdownCodeBlock` when changing the control size or code layout.
+
 ### Syntax highlighting and isolated previews
 
 Shiki classifies code; Tasty renders every token using Glaze's semantic syntax

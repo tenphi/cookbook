@@ -171,3 +171,31 @@ test("footer credit keeps its space and pagination uses heading weight", async (
     }));
   expect(title).toEqual(heading);
 });
+
+for (const width of [390, 1440]) {
+  test(`single-line code copy has equal card insets at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/manual/");
+    const block = page
+      .getByRole("tabpanel", { name: "npm", exact: true })
+      .locator(".td-code-block");
+    const pre = (await block.locator("pre").boundingBox())!;
+    const button = (await block
+      .getByRole("button", { name: "Copy code", exact: true })
+      .boundingBox())!;
+    const top = button.y - pre.y;
+    const right = pre.x + pre.width - button.x - button.width;
+    const bottom = pre.y + pre.height - button.y - button.height;
+    expect(Math.abs(top - right)).toBeLessThan(0.1);
+    expect(Math.abs(top - bottom)).toBeLessThan(0.1);
+    await page.goto("/manual/guide/");
+    const fence = page.locator(".td-code-block").last();
+    const card = (await fence.locator("pre").boundingBox())!;
+    const copy = (await fence.locator("[data-copy-code]").boundingBox())!;
+    expect(
+      Math.abs(copy.y - card.y - (card.y + card.height - copy.y - copy.height)),
+    ).toBeLessThan(0.1);
+  });
+}

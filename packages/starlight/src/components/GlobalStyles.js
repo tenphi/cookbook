@@ -1063,13 +1063,17 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".sl-markdown-content .td-code-block",
     resolveComponentStyles("MarkdownCodeBlock", {
+      "$copy-button-size": "2rem",
       display: "block",
       position: "relative",
       minInlineSize: "0",
       Pre: {
         $: "> pre",
         margin: "0",
-        padding: "0.875rem 3.75rem 0.875rem 1rem",
+        padding: "0 3.75rem 0 1rem",
+        // Balance a single code line around the copy control, including the border.
+        blockPadding:
+          "max(0px, ($copy-button-size - 1lh) / 2 + $gap - $border-width)",
         overflowX: "auto",
         color: "#syntax-text",
         border: true,
@@ -1086,10 +1090,10 @@ export default function GlobalStyles() {
         margin: "0",
         display: "grid",
         placeItems: "center",
-        inlineSize: "2rem",
-        minInlineSize: "2rem",
-        blockSize: "2rem",
-        minBlockSize: "2rem",
+        inlineSize: "$copy-button-size",
+        minInlineSize: "$copy-button-size",
+        blockSize: "$copy-button-size",
+        minBlockSize: "$copy-button-size",
         padding: "0",
         color: "#text-soft",
         border: true,
