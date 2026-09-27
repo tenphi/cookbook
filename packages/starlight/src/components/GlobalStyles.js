@@ -430,6 +430,7 @@ export default function GlobalStyles() {
         $: 'a[rel="next"]',
         justifyContent: "flex-start",
         textAlign: "end",
+        order: { "@small": "-1" },
       },
       NextIcon: {
         $: 'a[rel="next"]::before',

@@ -18,6 +18,7 @@ export default defineConfig({
     "client/appearance": "src/client/appearance.ts",
     "client/mobile-toc": "src/client/mobile-toc.ts",
     "client/page-copy": "src/client/page-copy.ts",
+    "client/pagination": "src/client/pagination.ts",
     "client/code-copy": "src/client/code-copy.ts",
     "client/heading-links": "src/client/heading-links.ts",
     "client/search": "src/client/search.ts",

@@ -5,3 +5,4 @@
 ---
 
 Keep primary button and hero logo fills brand-colored in dark mode with fixed Glaze palette roles. Link Glaze and Tasty from their first mentions in the styling overview.
+Put Next before Previous in mobile page navigation, including keyboard order.

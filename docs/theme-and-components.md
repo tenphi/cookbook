@@ -165,6 +165,10 @@ boundary. Primary buttons and selected navigation use the fixed-mode
 keeps its polarity in dark mode while Glaze adjusts it to preserve label
 contrast.
 
+On narrow screens, page navigation shows Next above Previous and follows the
+same order for keyboard navigation. Wider layouts retain Previous on the left
+and Next on the right.
+
 ## Design tokens
 
 Token names follow Tasty's
