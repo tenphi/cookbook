@@ -230,17 +230,14 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     },
     "accent-surface": {
       from: brand.from,
-      base: "surface",
-      role: "text",
-      contrast: { apca: [75, 90] },
-      mode: "auto",
+      base: "accent-surface-text",
+      role: "surface",
+      contrast: { apca: [80, 95] },
+      mode: "fixed",
     },
     "accent-surface-text": {
       from: "#ffffff",
-      base: "accent-surface",
-      role: "text",
-      contrast: { apca: [75, 90] },
-      mode: "auto",
+      mode: "fixed",
     },
     "logo-surface": {
       from: brand.from,

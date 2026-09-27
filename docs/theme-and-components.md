@@ -160,9 +160,10 @@ Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
 pressed states build on that elevated surface without changing the border.
 Inputs stay on their surrounding surface so their border remains the visual
-boundary. Selected navigation uses the fixed-mode `accent-surface` and its
-paired `accent-surface-text`, so the brand fill does not drift toward the
-adaptive link color in dark mode.
+boundary. Primary buttons and selected navigation use the fixed-mode
+`accent-surface` and its paired light `accent-surface-text`. The brand fill
+keeps its polarity in dark mode while Glaze adjusts it to preserve label
+contrast.
 
 ## Design tokens
 
@@ -666,6 +667,7 @@ separately for square artwork; the default Cookbook icon set remains in place
 until changed. `Logo` remains available as the standalone Cookbook book mark.
 
 The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+The default homepage hero artwork also uses `logo-surface` for its brand fill.
 Both default to Glaze `mode: "fixed"`: the brand background and light book keep
 their polarity in dark mode while respecting Glaze's tone boundaries and
 high-contrast settings. The mark-to-background contrast floor is 3:1 normally
@@ -1135,9 +1137,10 @@ backgrounds, typography, or layout.
 A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
 pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
 use an absolute tone for reading text, reduce saturation when needed, and keep
-`autoFlip` enabled when the solver needs to cross its base. A fixed middle-tone
-button fill may make its label's contrast impossible. Cookbook's default
-brand fill adapts to avoid this, including for orange, yellow, and pale brands.
+`autoFlip` enabled when the solver needs to cross its base. Cookbook's default
+fixed brand fill is anchored to a light label and darkens when needed to meet
+contrast, including for orange, yellow, and pale brands. A custom fixed
+middle-tone fill can make its label's contrast impossible.
 Focus uses a WCAG 3:1 floor (4.5:1 in high contrast) against the surface ramp.
 
 Keep contrast requirements when adjusting colors. Extreme custom tone windows,

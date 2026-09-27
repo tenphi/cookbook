@@ -26,14 +26,19 @@ describe("semantic contrast diagnostics", () => {
       theme.colorTokens["#logo-mark"]!,
     )) {
       const surface = theme.colorTokens["#logo-surface"]![state]!;
-      const markLightness = variantToOkhsl(
-        glaze.color({ from: mark, mode: "static" }).resolve().light,
-      ).l;
-      const surfaceLightness = variantToOkhsl(
-        glaze.color({ from: surface, mode: "static" }).resolve().light,
-      ).l;
-      expect(markLightness).toBeGreaterThan(surfaceLightness);
+      expect(colorLightness(mark)).toBeGreaterThan(colorLightness(surface));
     }
+    const darkState = Object.keys(theme.colorTokens["#accent-surface"]!).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    )!;
+    for (const fill of ["#logo-surface", "#accent-surface"])
+      expect(colorLightness(theme.colorTokens[fill]![darkState]!)).toBeLessThan(
+        0.7,
+      );
+    expect(
+      colorLightness(theme.colorTokens["#accent-surface-text"]![darkState]!),
+    ).toBeGreaterThan(0.9);
     for (const mode of [
       "light",
       "dark",
@@ -138,3 +143,9 @@ describe("semantic contrast diagnostics", () => {
     ).toBe(true);
   });
 });
+
+function colorLightness(color: string): number {
+  return variantToOkhsl(
+    glaze.color({ from: color, mode: "static" }).resolve().light,
+  ).l;
+}

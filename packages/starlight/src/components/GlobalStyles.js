@@ -804,7 +804,7 @@ export default function GlobalStyles() {
         objectFit: "contain",
         marginInlineStart: "auto",
         marginInlineEnd: "auto",
-        color: "#accent-surface",
+        color: "#logo-surface",
       },
       Stack: {
         $: "> .stack",
