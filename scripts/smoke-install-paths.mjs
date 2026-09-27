@@ -139,7 +139,9 @@ try {
     packageJson.resolutions = local;
     await writeFile(
       join(site, ".yarnrc.yml"),
-      "nodeLinker: node-modules\nenableScripts: false\n",
+      // This fresh consumer deliberately has no lockfile yet. Keep the repo
+      // install frozen; allow only this generated fixture to create its lock.
+      "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\n",
     );
   } else
     packageJson.overrides = Object.fromEntries(
