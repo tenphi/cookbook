@@ -9,7 +9,7 @@ interface LogoImage {
   width: number;
   height: number;
 }
-export interface ResolvedSiteLogo {
+interface ResolvedSiteLogo {
   light: LogoImage;
   dark?: LogoImage;
   alt: string;

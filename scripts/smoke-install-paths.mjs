@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import spawn from "cross-spawn";
 import {
   cp,
   mkdir,
@@ -10,10 +10,52 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
-import { promisify } from "node:util";
+import { pathToFileURL } from "node:url";
 import { checkStyleLinting } from "./smoke-style-linting.mjs";
 
-const run = promisify(execFile);
+// cross-spawn handles Windows .cmd launchers and argument quoting without
+// executing arbitrary test arguments through a shell.
+const run = (command, args, options = {}) =>
+  new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      cwd: options.cwd,
+      env: options.env ?? process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "",
+      stderr = "";
+    const collect = (target, chunk) => {
+      if (target === "stdout") stdout += chunk;
+      else stderr += chunk;
+      if (
+        stdout.length + stderr.length >
+        (options.maxBuffer ?? 8 * 1024 * 1024)
+      )
+        child.kill();
+    };
+    child.stdout.on("data", (chunk) => collect("stdout", chunk));
+    child.stderr.on("data", (chunk) => collect("stderr", chunk));
+    child.on("error", reject);
+    child.on("close", (code) =>
+      code === 0
+        ? resolve({ stdout, stderr })
+        : reject(
+            Object.assign(new Error(`${command} exited ${code}: ${stderr}`), {
+              stdout,
+              stderr,
+              code,
+            }),
+          ),
+    );
+  });
+const manager = process.env.COOKBOOK_TEST_MANAGER ?? "npm";
+if (!["npm", "pnpm", "yarn"].includes(manager))
+  throw Error(`Unsupported test manager ${manager}`);
+const runManager = (args, options) =>
+  manager === "yarn"
+    ? run("corepack", ["yarn", ...args], options)
+    : run(manager, args, options);
+
 const root = process.cwd();
 const temporary = await mkdtemp(join(tmpdir(), "cookbook-install-"));
 const packed = join(temporary, "packed");
@@ -30,25 +72,79 @@ try {
   const tarballs = await readdir(packed);
   const byPrefix = (prefix) =>
     join(packed, tarballs.find((name) => name.startsWith(prefix)) ?? "missing");
+  let astro = JSON.parse(
+    await readFile(
+      join(root, "apps/convention/node_modules/astro/package.json"),
+      "utf8",
+    ),
+  ).version;
+  if (process.env.COOKBOOK_TEST_UPSTREAM === "1") {
+    const packedManifest = JSON.parse(
+      (
+        await run("tar", [
+          "-xOf",
+          byPrefix("tenphi-cookbook-"),
+          "package/package.json",
+        ])
+      ).stdout,
+    );
+    const { stdout } = await run("npm", [
+      "view",
+      `astro@${packedManifest.peerDependencies.astro}`,
+      "version",
+      "--json",
+    ]);
+    const versions = JSON.parse(stdout);
+    astro = (Array.isArray(versions) ? versions : [versions])
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .at(-1);
+  }
   const packageJson = {
     name: "cookbook-clean-install-smoke",
     version: "0.0.0",
     private: true,
     type: "module",
-    scripts: { build: "astro build" },
+    packageManager:
+      manager === "yarn"
+        ? "yarn@4.18.1"
+        : manager === "pnpm"
+          ? "pnpm@11.24.0"
+          : "npm@11.10.0",
+    scripts: { build: "astro build", "check-build": "cookbook check-build" },
     dependencies: {
-      "@tenphi/docs": `file:${byPrefix("tenphi-docs-")}`,
-      "@tenphi/starlight": `file:${byPrefix("tenphi-starlight-")}`,
-      astro: "7.3.2",
-      "@tenphi/cookbook": `file:${byPrefix("tenphi-cookbook-")}`,
+      "@tenphi/docs": pathToFileURL(byPrefix("tenphi-docs-")).href,
+      "@tenphi/starlight": pathToFileURL(byPrefix("tenphi-starlight-")).href,
+      astro,
+      "@tenphi/cookbook": pathToFileURL(byPrefix("tenphi-cookbook-")).href,
     },
     devDependencies: {
       "@types/react": "^19.0.0",
+      typescript: "6.0.3",
       "@typescript-eslint/parser": "8.70.0",
       eslint: "10.9.1",
       oxlint: "1.83.0",
     },
   };
+  const local = Object.fromEntries(
+    Object.entries(packageJson.dependencies).filter(([name]) =>
+      name.startsWith("@tenphi/"),
+    ),
+  );
+  if (manager === "pnpm")
+    await writeFile(
+      join(site, "pnpm-workspace.yaml"),
+      JSON.stringify({ overrides: local }),
+    );
+  else if (manager === "yarn") {
+    packageJson.resolutions = local;
+    await writeFile(
+      join(site, ".yarnrc.yml"),
+      "nodeLinker: node-modules\nenableScripts: false\n",
+    );
+  } else
+    packageJson.overrides = Object.fromEntries(
+      Object.keys(local).map((name) => [name, `$${name}`]),
+    );
   await writeFile(
     join(site, "package.json"),
     `${JSON.stringify(packageJson, null, 2)}\n`,
@@ -105,12 +201,23 @@ export default defineConfig({ base: '/manual/', integrations: [cookbook({ config
     join(site, "docs", "guide.md"),
     "# Guide\n\nBuilt only from packed package artifacts.\n",
   );
-  await run("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund"], {
-    cwd: site,
-    maxBuffer: 8 * 1024 * 1024,
-  });
+  await runManager(
+    manager === "npm"
+      ? ["install", "--ignore-scripts", "--no-audit", "--no-fund"]
+      : manager === "pnpm"
+        ? [
+            "install",
+            "--ignore-scripts",
+            "--config.manage-package-manager-versions=false",
+          ]
+        : ["install"],
+    {
+      cwd: site,
+      maxBuffer: 8 * 1024 * 1024,
+    },
+  );
   await run(
-    "node",
+    process.execPath,
     [
       "--input-type=module",
       "-e",
@@ -152,7 +259,11 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     cwd: root,
     maxBuffer: 8 * 1024 * 1024,
   });
-  await run("npm", ["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
+  await runManager(["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
+  await runManager(["run", "check-build"], {
+    cwd: site,
+    maxBuffer: 8 * 1024 * 1024,
+  });
   const html = await readFile(join(site, "dist", "index.html"), "utf8");
   const agentIndex = await readFile(join(site, "dist", "llms.txt"), "utf8");
   if (
@@ -263,7 +374,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     );
   }
   console.log(
-    "Clean npm installation, custom styling, and Astro build passed using only packed workspace artifacts.",
+    `Clean ${manager} installation, custom styling, Astro ${astro} build and output check passed using only packed workspace artifacts.`,
   );
 } finally {
   await rm(temporary, { recursive: true, force: true });

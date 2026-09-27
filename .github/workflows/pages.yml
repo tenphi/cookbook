@@ -26,6 +26,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter reference... run build
+      - run: node packages/facade/dist/cli.js check-build --root apps/reference
+      - uses: actions/upload-artifact@v6
+        with:
+          name: deployed-output
+          path: apps/reference/dist
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -41,3 +46,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  verify-deployment:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter './packages/**' build
+      - uses: actions/download-artifact@v6
+        with:
+          name: deployed-output
+          path: apps/reference/dist
+      - name: Verify published routes and assets
+        run: node packages/facade/dist/cli.js check-build --root apps/reference --url https://cookbook.tenphi.me/

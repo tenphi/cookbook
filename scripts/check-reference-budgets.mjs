@@ -1,5 +1,5 @@
 import { readFile, readdir, stat } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, join, posix } from "node:path";
 
 const output = join(process.cwd(), "apps/reference/dist");
 const assets = join(output, "_astro");
@@ -42,7 +42,10 @@ for (const name of entries) {
 // add another 1 KiB of Tasty-generated CSS.
 // Customizable heading-link copy feedback adds another 1 KiB.
 // The heading color's four modes and configurable Heading style tree add 1 KiB.
-const cssBudget = 163 * 1024;
+// The full customization registry, semantic syntax classes, owned search,
+// page actions, and mobile contents add ~23 KiB to the previous 163 KiB limit.
+// Current measured maximum: 189,666 bytes; keep a small explicit growth margin.
+const cssBudget = 192 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -347,6 +350,64 @@ for (const name of conventionEntries.filter(
 if (conventionHeadingWrappers === 0) {
   throw new Error("The convention build did not render heading permalinks.");
 }
+await checkAssetBudgets();
 console.log(
   `Reference budgets: ${cssEntries.length} Tasty stylesheets; largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,
 );
+
+async function checkAssetBudgets() {
+  const sizes = new Map(
+    await Promise.all(
+      outputEntries.map(async (file) => [
+        file,
+        (await stat(join(output, file))).size,
+      ]),
+    ),
+  );
+  const total = (extensions) =>
+    [...sizes]
+      .filter(([file]) => extensions.includes(extname(file)))
+      .reduce((sum, [, bytes]) => sum + bytes, 0);
+  const budgets = [
+    [
+      "all JavaScript including lazy Pagefind assets",
+      total([".js", ".mjs"]),
+      800 * 1024,
+    ],
+    ["font files", total([".woff2", ".woff", ".ttf"]), 100 * 1024],
+    [
+      "images and icons",
+      total([".png", ".jpg", ".jpeg", ".svg", ".avif", ".webp"]),
+      100 * 1024,
+    ],
+  ];
+  const guide = await readFile(
+    join(output, "getting-started/index.html"),
+    "utf8",
+  );
+  const scripts = [
+    ...guide.matchAll(/<script\b[^>]*src="(\/_astro\/[^"?#]+)"/g),
+  ].map((match) => match[1].slice(1));
+  const initial = new Set();
+  const visit = async (file) => {
+    if (initial.has(file)) return;
+    initial.add(file);
+    const source = await readFile(join(output, file), "utf8");
+    // Only static imports load eagerly. Search uses dynamic import().
+    for (const match of source.matchAll(
+      /(?:\bfrom\s*|\bimport\s*)["'](\.[^"']+)["']/g,
+    ))
+      await visit(posix.normalize(posix.join(posix.dirname(file), match[1])));
+  };
+  for (const script of scripts) await visit(script);
+  budgets.push([
+    "initial page JavaScript",
+    [...initial].reduce((sum, file) => sum + (sizes.get(file) ?? 0), 0),
+    20 * 1024,
+  ]);
+  for (const [label, bytes, budget] of budgets) {
+    if (bytes > budget)
+      throw Error(`${label}: ${bytes} bytes exceeds ${budget}.`);
+    console.log(`${label}: ${bytes} / ${budget} bytes.`);
+  }
+}

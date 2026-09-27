@@ -10,3 +10,5 @@ test-results/
 *.tsbuildinfo
 /packages/facade/docs/
 .DS_Store
+
+.cookbook-*/

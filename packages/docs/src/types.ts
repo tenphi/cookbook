@@ -749,6 +749,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CloseIcon",
     "CurrentLink",
     "OpenPane",
+    "EnteredPane",
     "Content",
     "Tree",
     "List",

@@ -582,9 +582,9 @@ export default function GlobalStyles() {
         fill: "#accent-surface-subtle",
         preset: "navigation / strong",
       },
-      OpenPane: {
+      OpenPane: { $: "&:popover-open", visibility: { "@mobile": "visible" } },
+      EnteredPane: {
         $: "&:popover-open[data-open]",
-        visibility: { "@mobile": "visible" },
         translate: { "@mobile": "0" },
       },
       Content: {

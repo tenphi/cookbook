@@ -16,12 +16,7 @@ import {
 } from "@tenphi/glaze";
 import type { DocsDiagnostic } from "../types.js";
 
-export const COLOR_MODES = [
-  "light",
-  "dark",
-  "lightContrast",
-  "darkContrast",
-] as const;
+const COLOR_MODES = ["light", "dark", "lightContrast", "darkContrast"] as const;
 export interface ColorContrastCheck {
   foreground: string;
   background: string;
@@ -137,6 +132,15 @@ export function checkColorContrast(
   for (const role of ["text", "heading", "text-soft"])
     add(role, "surface", { wcag: [4.5, 7] });
   add("accent-text", "surface", { apca: brandTargets });
+  for (const background of [
+    "surface",
+    "surface-2",
+    "surface-3",
+    "accent-surface-subtle",
+    "accent-surface-2-subtle",
+  ])
+    add("accent-text", background, { wcag: [4.5, 7] });
+  add("accent-surface-text", "accent-surface", { wcag: [4.5, 7] });
   add("accent-surface-text", "accent-surface", { apca: [60, 75] });
   for (const background of ["surface", "surface-2", "surface-3"])
     add("focus", background, { wcag: [3, 4.5] });
@@ -150,8 +154,10 @@ export function checkColorContrast(
     "blue",
     "purple",
     "red",
-  ])
+  ]) {
     add(`${role}-text`, `${role}-surface`, { apca: [60, 75] });
+    add(`${role}-text`, `${role}-surface`, { wcag: [4.5, 7] });
+  }
 
   const checks: ColorContrastCheck[] = [];
   const diagnostics: DocsDiagnostic[] = [];
