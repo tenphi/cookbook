@@ -49,6 +49,14 @@ export default defineDocsConfig({
 });
 ```
 
+## Keep styling on the server
+
+Tasty and Glaze run during build/server rendering. The browser receives extracted
+CSS; never initialize their configuration or ship their runtime in client scripts
+or hydrated islands. Use server-rendered styled components with small client
+scripts for behavior. Cookbook rejects browser imports of its styling API,
+Tasty, and Glaze, including transitive dependencies.
+
 ## Write styles through Cookbook
 
 Import `defineComponent`, `tasty`, `useGlobalStyles`, `resolveComponentStyles`,

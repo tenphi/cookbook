@@ -972,9 +972,9 @@ export const DemoBadge = defineComponent("DemoBadge", {
 ```
 
 Use `<DemoBadge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>` in
-MDX. The default named-element selector also works with Astro hydration slots;
-prefer it over direct-child selectors when passing children to a `client:*`
-component. This recipe produces 12px padding. Units merge by name, with the later
+MDX. Keep these styled components server-rendered: their CSS is extracted at
+build time. Add behavior with a small client script targeting the rendered
+markup. This recipe produces 12px padding. Units merge by name, with the later
 configuration winning. Recipes merge using Tasty `mergeStyles`, including state
 maps. Recipes are flat: define named sub-elements on the owning component, and
 compose recipes with `recipe: "base elevated"` rather than referencing a recipe
@@ -1089,10 +1089,13 @@ anatomy. `Search` owns the dialog; `SearchResults` owns the Pagefind UI.
 The `Starlight*` trees style compatible upstream component markup; Cookbook's
 own `Card`, `Callout`, and `Steps` use their respective trees.
 
-Custom components created with `defineComponent()` receive the same
-`theme.customStyles` overrides during server rendering and hydration. Custom
-units, recipes, states, and typography presets are initialized before their
-styles are evaluated in either runtime.
+Custom components created with `defineComponent()` receive `theme.customStyles`
+overrides during server rendering. Units, recipes, states, and presets are
+resolved there and emitted as static CSS. Cookbook ships no Tasty/Glaze browser
+runtime, theme configuration, or style hydration setup. Browser scripts and
+`client:*` islands must not import Cookbook styling, Tasty, or Glaze; the build
+rejects these imports. Attach small interaction scripts to server-rendered markup
+or pass already-styled static markup into a client island.
 
 ### Syntax highlighting and isolated previews
 

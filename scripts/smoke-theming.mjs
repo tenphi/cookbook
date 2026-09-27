@@ -44,7 +44,7 @@ try {
   );
   await writeFile(
     join(fixture, "docs/showcase.mdx"),
-    `# Component showcase\n\nimport {Preview} from '@tenphi/cookbook/components';\n\nimport {DemoBadge} from './badge.js';\n\n<DemoBadge client:load data-demo-badge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>\n\n> Custom quotation.\n\n\`\`\`ts\nconst example = true;\n\`\`\`\n\n<Preview title="Isolated example" html="<strong>Example</strong>" css="strong { color: rebeccapurple; }" />\n`,
+    `# Component showcase\n\nimport {Preview} from '@tenphi/cookbook/components';\n\nimport {DemoBadge} from './badge.js';\n\n<DemoBadge data-demo-badge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>\n\n> Custom quotation.\n\n\`\`\`ts\nconst example = true;\n\`\`\`\n\n<Preview title="Isolated example" html="<strong>Example</strong>" css="strong { color: rebeccapurple; }" />\n`,
   );
   const buildSite = () =>
     promisify(execFile)(
@@ -81,8 +81,8 @@ try {
   assert.ok(css.includes("--review-ink-color"));
   assert.match(css, /padding:\s*(?:calc\(2\s*\*\s*6px\)|12px)/);
   assert.match(css, /border-radius:\s*3px/);
-  for (const tag of ["astro-island", "astro-slot", "astro-static-slot"])
-    assert.match(css, new RegExp(`${tag}[^{}]*\\{[^{}]*display:\\s*contents`));
+  assert.doesNotMatch(html, /<astro-island\b|__tenphiCookbook|__TASTY__/);
+
   assert.doesNotMatch(html, /<style\b/);
   assert.doesNotMatch(html, /<[a-z][^>]*\sstyle\s*=/i);
   assert.ok(html.includes("td-syntax-keyword"));
@@ -90,7 +90,10 @@ try {
   assert.match(css, /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/);
   assert.match(css, /\.pagination-links a[^{}]*\{[^{}]*border-radius:\s*13px/);
   assert.match(css, /site-search dialog[^{}]*\{[^{}]*max-inline-size:\s*31rem/);
-  assert.ok(html.includes("__tenphiCookbookComponentStyles"));
+  assert.doesNotMatch(
+    html,
+    /__tenphiCookbookComponentStyles|__tenphiCookbookTastyRuntime/,
+  );
   assert.match(css, /--review-label-font-size:\s*19px/);
   const originalConfig = await readFile(
     join(fixture, "docs.config.ts"),
@@ -114,6 +117,33 @@ try {
     disabledHtml,
     /data-tasty-anatomy="(?:SiteLogo|Logo)"|data-open-modal|td-header__logo-link/,
   );
+  const showcasePath = join(fixture, "docs/showcase.mdx");
+  const showcase = await readFile(showcasePath, "utf8");
+  await writeFile(
+    join(fixture, "docs/counter.js"),
+    `import {createElement, useState} from 'react'; export function Counter() { const [count, setCount] = useState(0); return createElement('button', {onClick: () => setCount(count + 1)}, 'Count: ' + count); }`,
+  );
+  await writeFile(
+    showcasePath,
+    showcase +
+      "\nimport {Counter} from './counter.js';\n\n<Counter client:load />\n",
+  );
+  await buildSite();
+  const islandHtml = await readFile(
+    join(fixture, "dist/showcase/index.html"),
+    "utf8",
+  );
+  assert.match(islandHtml, /<astro-island\b/);
+  assert.doesNotMatch(islandHtml, /__tenphiCookbook|__TASTY__/);
+  await writeFile(
+    showcasePath,
+    showcase.replace(
+      "<DemoBadge data-demo-badge>",
+      "<DemoBadge client:load data-demo-badge>",
+    ),
+  );
+  await assert.rejects(buildSite(), /Cookbook styles are build\/server-only/);
+  await writeFile(showcasePath, showcase);
   if (process.env.COOKBOOK_KEEP_FIXTURE) {
     await writeFile(join(fixture, "docs.config.ts"), originalConfig);
     await buildSite();

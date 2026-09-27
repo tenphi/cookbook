@@ -27,11 +27,6 @@ declare module "virtual:cookbook/config" {
     locales: DocsConfig["locales"];
     defaultLocale: DocsConfig["defaultLocale"];
     translations: DocsConfig["translations"];
-    componentStyles: Record<string, import("@tenphi/tasty").Styles>;
-    tastyRuntime: Pick<
-      NonNullable<DocsConfig["theme"]>,
-      "units" | "recipes" | "states" | "presets"
-    >;
   };
   export const mdxLoaders: Record<
     string,

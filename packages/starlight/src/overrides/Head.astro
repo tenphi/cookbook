@@ -47,21 +47,3 @@ const ui = messages(Astro.locals.starlightRoute.lang, content);
   ))
 }
 <meta name="cookbook-messages" content={JSON.stringify(ui)} />
-
-{
-  (Object.keys(content.componentStyles).length > 0 ||
-    Object.values(content.tastyRuntime).some(
-      (value) => value && Object.keys(value).length > 0,
-    )) && (
-    <script
-      is:inline
-      define:vars={{
-        cookbookRuntime: content.tastyRuntime,
-        cookbookComponentStyles: content.componentStyles,
-      }}
-    >
-      globalThis.__tenphiCookbookTastyRuntime = cookbookRuntime;
-      globalThis.__tenphiCookbookComponentStyles = cookbookComponentStyles;
-    </script>
-  )
-}

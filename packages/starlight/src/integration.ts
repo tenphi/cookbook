@@ -72,6 +72,17 @@ import { agentPagePath } from "./page-metadata.js";
 import { renderAgentMarkdown } from "@tenphi/docs";
 import { writeAgentDiscovery } from "./agent-discovery.js";
 
+const stylingRuntimeError =
+  "Cookbook styles are build/server-only. Do not import @tenphi/cookbook/styling, Tasty, or Glaze in browser scripts or client:* islands. Render styled markup on the server and attach a small client script for interactions.";
+function isStylingRuntime(id: string): boolean {
+  const path = id.replaceAll("\\", "/");
+  return (
+    /^@tenphi\/(?:tasty|glaze)(?:\/|$)/.test(path) ||
+    /^@tenphi\/(?:cookbook|starlight)\/styling$/.test(path) ||
+    /(?:^|\/)node_modules\/@tenphi\/(?:tasty|glaze)(?:\/|$)/.test(path)
+  );
+}
+
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = resolve(
   dirname(fileURLToPath(import.meta.resolve("@astrojs/starlight"))),
@@ -489,6 +500,23 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             },
             plugins: [
               {
+                name: "cookbook-server-only-styling",
+                enforce: "pre",
+                resolveId(id, _importer, settings) {
+                  if (
+                    settings?.ssr ||
+                    this.environment.config.consumer === "server"
+                  )
+                    return;
+                  if (isStylingRuntime(id)) this.error(stylingRuntimeError);
+                },
+                generateBundle() {
+                  if (this.environment.config.consumer === "server") return;
+                  for (const id of this.getModuleIds())
+                    if (isStylingRuntime(id)) this.error(stylingRuntimeError);
+                },
+              },
+              {
                 name: "cookbook-react-runtime",
                 enforce: "post",
                 configResolved(config) {
@@ -575,19 +603,6 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     locales: loaded.config.locales,
                     defaultLocale: loaded.config.defaultLocale,
                     translations: loaded.config.translations,
-                    componentStyles: {
-                      ...loaded.config.theme.customStyles,
-                      ...loaded.config.theme.styles,
-                    },
-                    tastyRuntime: {
-                      units: loaded.config.theme.units,
-                      recipes: loaded.config.theme.recipes,
-                      states: loaded.config.theme.states,
-                      ...(loaded.config.theme.presets ||
-                      loaded.config.theme.fonts
-                        ? { presets: docsTheme.presets }
-                        : {}),
-                    },
                   };
                 },
                 navigation,
