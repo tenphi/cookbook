@@ -340,6 +340,66 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "Document": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "MainPane": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "MainContent": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "Banner": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "SkipLink": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "Search": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "Pagination": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "Markdown": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "MermaidSource": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "StarlightAside": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "StarlightCard": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "StarlightLinkCard": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "StarlightBadge": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "StarlightSteps": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
+            "SearchResults": {
+              "type": "object",
+              "propertyNames": { "not": { "const": "mode" } }
+            },
             "Card": {
               "type": "object",
               "propertyNames": {

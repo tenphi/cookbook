@@ -1,4 +1,6 @@
 import { configure, getGlobalPredefinedStates } from "@tenphi/tasty";
+import { resolveTypographyPresets } from "../theme/defaults.js";
+import { TASTY_UNITS } from "../theme/tasty-config.js";
 
 export const cookbookStates = {
   "@mobile": "@media(w < 50rem)",
@@ -19,7 +21,11 @@ let configuredRuntime;
 export function configureCookbookStates() {
   const runtime = globalThis.__tenphiCookbookTastyRuntime;
   if (configured && configuredRuntime === runtime) return;
-  if (runtime) configure(runtime);
+  configure({
+    presets: resolveTypographyPresets(),
+    ...runtime,
+    units: { ...TASTY_UNITS, ...runtime?.units },
+  });
   configuredRuntime = runtime;
   // The integration may have configured this runtime already, including
   // consumer overrides of built-in breakpoints. Only supply missing aliases.

@@ -490,10 +490,18 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     locales: loaded.config.locales,
                     defaultLocale: loaded.config.defaultLocale,
                     translations: loaded.config.translations,
+                    componentStyles: {
+                      ...loaded.config.theme.customStyles,
+                      ...loaded.config.theme.styles,
+                    },
                     tastyRuntime: {
                       units: loaded.config.theme.units,
                       recipes: loaded.config.theme.recipes,
                       states: loaded.config.theme.states,
+                      ...(loaded.config.theme.presets ||
+                      loaded.config.theme.fonts
+                        ? { presets: docsTheme.presets }
+                        : {}),
                     },
                   };
                 },
@@ -902,6 +910,8 @@ function configureTastyTheme(
     units: { ...TASTY_UNITS, ...theme?.units },
     recipes: theme?.recipes ?? {},
     states: theme?.states ?? {},
+    presets: resolved.presets,
+    tokens,
   };
   configure({
     states: {

@@ -1,3 +1,5 @@
+import { Linter } from "eslint";
+import { COOKBOOK_COMPONENT_SUB_ELEMENTS } from "@tenphi/docs";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 
@@ -52,13 +54,12 @@ describe("navigation global style architecture", () => {
 
 describe("typography global style architecture", () => {
   it.each([
-    ["body", "body"],
-    [":where(code, kbd, samp, pre)", "code"],
-  ])("applies the %s typography through its preset", (selector, preset) => {
+    ["Body", "body"],
+    ["Code", "code"],
+    ["Strong", "strong"],
+  ])("applies Document.%s through its semantic preset", (element, preset) => {
     expect(source).toMatch(
-      new RegExp(
-        `useGlobalStyles\\("${escapeRegExp(selector)}", \\{[^}]*preset: "${preset}"`,
-      ),
+      new RegExp(`${element}: \\{[^}]*preset: "${preset}"`),
     );
   });
 
@@ -71,31 +72,75 @@ describe("typography global style architecture", () => {
     },
   );
 
-  it("uses the inherited strong modifier for semantic bold text", () => {
-    expect(source).toMatch(
-      /useGlobalStyles\(":where\(strong, b\)", \{\s+preset: "strong",\s+\}\);/,
-    );
-  });
-
   it("does not wire preset internals through custom properties", () => {
     expect(source).not.toContain('"$bold-font-weight"');
     expect(source).not.toContain('fontWeight: "$body-bold-font-weight"');
   });
 });
 
-describe("media global style architecture", () => {
-  it("preserves explicit width attributes when constraining responsive media", () => {
-    expect(source).toContain(
-      '":where(img:not([width]), picture, video:not([width]), canvas:not([width]), svg:not([width]), iframe:not([width]))"',
-    );
-    expect(source).toContain(
-      '":where(img:not([height]), picture, video:not([height]), canvas:not([height]), svg:not([height]))"',
-    );
-    expect(source).not.toContain(
-      'useGlobalStyles(":where(img, picture, video, canvas, svg, iframe)"',
-    );
-    expect(source).not.toContain(
-      'useGlobalStyles(":where(img, picture, video, canvas, svg)"',
-    );
+describe("global style customization contract", () => {
+  it("registers every style tree and every named sub-element exactly once", () => {
+    const linter = new Linter();
+    const names = new Set<string>();
+    const selectors = new Set<string>();
+    const failures: string[] = [];
+    linter.verify(source, [
+      {
+        plugins: {
+          inventory: {
+            rules: {
+              check: {
+                create() {
+                  return {
+                    CallExpression(node: any) {
+                      if (node.callee.name !== "useGlobalStyles") return;
+                      const [selector, resolver] = node.arguments;
+                      if (resolver?.callee?.name !== "resolveComponentStyles") {
+                        failures.push(`Unregistered styles: ${selector.value}`);
+                        return;
+                      }
+                      const [nameNode, styles] = resolver.arguments;
+                      const name =
+                        nameNode.value as keyof typeof COOKBOOK_COMPONENT_SUB_ELEMENTS;
+                      if (names.has(name))
+                        failures.push(`Split component: ${name}`);
+                      if (selectors.has(selector.value))
+                        failures.push(
+                          `Duplicate global slot: ${selector.value}`,
+                        );
+                      names.add(name);
+                      selectors.add(selector.value);
+                      const actual = styles.properties
+                        .map(
+                          (property: any) =>
+                            property.key.name ?? property.key.value,
+                        )
+                        .filter((key: string) => /^[A-Z]/.test(key))
+                        .sort();
+                      expect(actual, name).toEqual(
+                        [...COOKBOOK_COMPONENT_SUB_ELEMENTS[name]].sort(),
+                      );
+                    },
+                  };
+                },
+              },
+            },
+          },
+        },
+        rules: { "inventory/check": "error" },
+      },
+    ]);
+    expect(failures).toEqual([]);
+    expect(names.has("Search")).toBe(true);
+    expect(names.has("SearchResults")).toBe(true);
+    expect(names.has("Markdown")).toBe(true);
+    expect(names.has("Pagination")).toBe(true);
+  });
+  it("keeps explicit media dimensions and generic media rules configurable", () => {
+    expect(source).toContain("ResponsiveWidth: {");
+    expect(source).toContain("img:not([width])");
+    expect(source).toContain("video:not([width])");
+    expect(source).toContain("ResponsiveHeight: {");
+    expect(source).toContain("img:not([height])");
   });
 });

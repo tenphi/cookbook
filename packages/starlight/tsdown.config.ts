@@ -18,6 +18,8 @@ export default defineConfig({
     "client/navigation": "src/client/navigation.ts",
     "client/sidebar": "src/client/sidebar.ts",
     "markdown/rendered-content": "src/markdown/rendered-content.ts",
+    "theme/defaults": "src/theme/defaults.ts",
+    "theme/tasty-config": "src/theme/tasty-config.ts",
   },
   format: "esm",
   fixedExtension: false,
