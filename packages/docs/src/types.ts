@@ -542,6 +542,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   Pagination: [
     "Link",
+    "PreviousLink",
     "NextLink",
     "NextIcon",
     "NextLabel",
@@ -549,7 +550,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ActiveLink",
     "Title",
     "LoneNextLink",
-    "NativeIcon",
     "Icon",
     "PreviousIconRtl",
     "NextIconRtl",

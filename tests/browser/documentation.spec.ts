@@ -182,7 +182,7 @@ test("footer credit keeps its space and pagination uses heading weight", async (
   expect(title).toEqual(heading);
 });
 
-test("mobile pagination offers the next page first in visual and keyboard order", async ({
+test("pagination keeps Next first in keyboard order across layouts", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -198,11 +198,17 @@ test("mobile pagination offers the next page first in visual and keyboard order"
   await page.keyboard.press("Tab");
   await expect(links.nth(1)).toBeFocused();
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(links.nth(0)).toHaveAttribute("rel", "prev");
-  await expect(links.nth(1)).toHaveAttribute("rel", "next");
+  await expect(links.nth(0)).toHaveAttribute("rel", "next");
+  await expect(links.nth(1)).toHaveAttribute("rel", "prev");
+  const next = (await links.nth(0).boundingBox())!;
+  const previous = (await links.nth(1).boundingBox())!;
+  expect(previous.x).toBeLessThan(next.x);
+  expect(previous.y).toBe(next.y);
   await links.nth(0).focus();
   await page.keyboard.press("Tab");
   await expect(links.nth(1)).toBeFocused();
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".pagination-links")).toBeHidden();
 });
 
 for (const width of [390, 1440]) {

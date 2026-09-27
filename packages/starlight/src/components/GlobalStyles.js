@@ -403,7 +403,7 @@ export default function GlobalStyles() {
   useGlobalStyles(
     ".pagination-links",
     resolveComponentStyles("Pagination", {
-      display: "grid",
+      display: { "": "grid", "@media:print": "none" },
       gap: "($gap * 2)",
       gridTemplateColumns: {
         "": "repeat(2, minmax(0, 1fr))",
@@ -426,11 +426,17 @@ export default function GlobalStyles() {
         textDecoration: "none",
         overflowWrap: "anywhere",
       },
+      PreviousLink: {
+        $: 'a[rel="prev"]',
+        gridColumn: { "": "1", "@small": "auto" },
+        gridRow: { "": "1", "@small": "auto" },
+      },
       NextLink: {
         $: 'a[rel="next"]',
         justifyContent: "flex-start",
         textAlign: "end",
-        order: { "@small": "-1" },
+        gridColumn: { "": "2", "@small": "auto" },
+        gridRow: { "": "1", "@small": "auto" },
       },
       NextIcon: {
         $: 'a[rel="next"]::before',
@@ -450,13 +456,8 @@ export default function GlobalStyles() {
       ActiveLink: { $: "a:active", fill: "#surface-2-pressed" },
       Title: { $: ".link-title", color: "#heading", preset: "h5" },
       LoneNextLink: {
-        $: 'a[rel="next"]:first-child',
-        gridColumn: {
-          "": "2",
-          "@small": "1",
-        },
+        $: 'a[rel="next"]:only-child',
       },
-      NativeIcon: { $: "a > svg", hide: true },
       Icon: {
         $: "a::before",
         content: '""',
