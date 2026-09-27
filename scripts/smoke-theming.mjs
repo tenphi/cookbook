@@ -14,12 +14,31 @@ import { promisify } from "node:util";
 const root = process.cwd();
 const fixture = await mkdtemp(join(root, ".cookbook-theme-"));
 try {
-  await symlink(
-    join(root, "apps/convention/node_modules"),
-    join(fixture, "node_modules"),
-    "dir",
+  await mkdir(join(fixture, "node_modules/@tenphi"), { recursive: true });
+  // Declare the fixture's own dependencies, including the optional React island.
+  for (const [name, source] of [
+    ["@tenphi/cookbook", "packages/facade"],
+    ["astro", "apps/convention/node_modules/astro"],
+    ["react", "packages/starlight/node_modules/react"],
+    ["react-dom", "packages/starlight/node_modules/react-dom"],
+  ])
+    await symlink(
+      join(root, source),
+      join(fixture, "node_modules", name),
+      process.platform === "win32" ? "junction" : "dir",
+    );
+  await writeFile(
+    join(fixture, "package.json"),
+    JSON.stringify({
+      type: "module",
+      dependencies: {
+        "@tenphi/cookbook": "*",
+        astro: "*",
+        react: "*",
+        "react-dom": "*",
+      },
+    }),
   );
-  await writeFile(join(fixture, "package.json"), '{"type":"module"}');
   await writeFile(
     join(fixture, "astro.config.mjs"),
     'import cookbook from "@tenphi/cookbook"; export default {integrations:[cookbook()]};',
