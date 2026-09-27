@@ -10,6 +10,61 @@ import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
 
 describe("Glaze theme adapter", () => {
+  it("keeps reading text near the tone boundary with only slightly softer headings", () => {
+    for (const theme of [
+      resolveDocsTheme(),
+      resolveDocsTheme({
+        brand: { from: "#2f5bff" },
+        palette: {
+          surface: { tone: 98, saturation: 0.05 },
+          text: { base: "surface", tone: 0, saturation: 0 },
+          heading: { base: "surface", tone: [4, 0], saturation: 0 },
+        },
+      }),
+    ]) {
+      const lightText = readingLuminance(theme.colors.text.light!);
+      const lightHeading = readingLuminance(theme.colors.heading.light!);
+      const darkText = readingLuminance(theme.colors.text.dark!);
+      const darkHeading = readingLuminance(theme.colors.heading.dark!);
+      expect(lightText).toBeGreaterThan(0);
+      expect(lightText).toBeLessThan(0.015);
+      expect(lightHeading).toBeGreaterThan(lightText);
+      expect(lightHeading - lightText).toBeLessThan(0.01);
+      expect(darkText).toBeLessThan(1);
+      expect(darkText).toBeGreaterThan(0.85);
+      expect(darkHeading).toBeLessThan(darkText);
+      expect(darkText - darkHeading).toBeLessThan(0.12);
+      for (const role of ["text", "heading"] as const) {
+        expect(readingLuminance(theme.colors[role].lightContrast!)).toBe(0);
+        expect(readingLuminance(theme.colors[role].darkContrast!)).toBeCloseTo(
+          1,
+        );
+      }
+      expect(theme.colorTokens["#heading"]).toBeDefined();
+    }
+  });
+
+  it("preserves custom text seeds and lets headings inherit or override them", () => {
+    const text = "#303845";
+    const literal = resolveDocsTheme({ palette: { text } });
+    const declaration = resolveDocsTheme({ palette: { text: { from: text } } });
+    const customized = resolveDocsTheme({
+      palette: { text, heading: { from: "#202532" } },
+    });
+    expect(literal.colors.text).toEqual(declaration.colors.text);
+    expect(literal.colors.heading).toEqual(literal.colors.text);
+    expect(readingLuminance(literal.colors.text.light!)).toBeCloseTo(
+      readingLuminance(text),
+      4,
+    );
+    expect(customized.colors.text).toEqual(literal.colors.text);
+    expect(customized.colors.heading).not.toEqual(literal.colors.heading);
+    expect(readingLuminance(customized.colors.heading.light!)).toBeCloseTo(
+      readingLuminance("#202532"),
+      4,
+    );
+  });
+
   it("resolves Glaze declarations and contrast floors in every appearance mode", () => {
     const theme = resolveDocsTheme({
       brand: {
@@ -528,6 +583,20 @@ function colorHue(color: string): number {
 
 function colorLuminance(color: string): number {
   const variant = glaze.color({ from: color, mode: "fixed" }).resolve().light;
+  const { h, s, l } = variantToOkhsl(variant);
+  return relativeLuminanceFromLinearRgb(
+    okhslToLinearSrgb(h, s, l, variant.pastel),
+  );
+}
+
+function readingLuminance(color: string): number {
+  // Measure the exported color without applying Glaze's tone windows again.
+  const variant = glaze
+    .color(
+      { from: color, mode: "static" },
+      { lightTone: false, darkTone: false },
+    )
+    .resolve().light;
   const { h, s, l } = variantToOkhsl(variant);
   return relativeLuminanceFromLinearRgb(
     okhslToLinearSrgb(h, s, l, variant.pastel),

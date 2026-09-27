@@ -87,13 +87,19 @@ export default defineDocsConfig({
       surface: { tone: 98, saturation: 0.05 },
       text: {
         base: "surface",
-        tone: "-10",
+        tone: 0,
+        saturation: 0,
+        contrast: { wcag: [7, 10] },
+      },
+      heading: {
+        base: "surface",
+        tone: [4, 0],
         saturation: 0,
         contrast: { wcag: [7, 10] },
       },
       textSoft: {
         base: "surface",
-        tone: "-10",
+        tone: [25, 10],
         saturation: 0.05,
         contrast: { wcag: [4.5, 7] },
       },

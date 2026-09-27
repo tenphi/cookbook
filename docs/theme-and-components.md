@@ -73,13 +73,19 @@ theme: {
     surface: { tone: 98, saturation: 0.05 },
     text: {
       base: "surface",
-      tone: "-10",
+      tone: 0,
+      saturation: 0,
+      contrast: { wcag: [7, 10] }
+    },
+    heading: {
+      base: "surface",
+      tone: [4, 0],
       saturation: 0,
       contrast: { wcag: [7, 10] }
     },
     textSoft: {
       base: "surface",
-      tone: "-10",
+      tone: [25, 10],
       saturation: 0.05,
       contrast: { wcag: [4.5, 7] }
     }
@@ -89,8 +95,19 @@ theme: {
 ```
 
 Glaze resolves each declaration for light, dark, normal, and high-contrast
-modes. The first contrast value applies to normal mode; the second applies to
-high contrast. Palette declarations inherit the brand hue and saturation:
+modes. In a tone or contrast pair, the first value applies to normal mode;
+the second applies to high contrast. Use absolute tones for reading text:
+`text` starts at tone 0 and `heading` at tone 4, giving headings only a slight
+reduction in contrast. Glaze applies its tone boundaries in normal mode, so
+body text is not pure black, then inverts the tones for dark mode. High-contrast
+mode uses the full range. `textSoft` is reserved for secondary text.
+`heading` follows an explicitly configured `text` declaration unless it has
+its own declaration, preserving existing custom palettes.
+Contrast requirements are minimum safeguards: Glaze preserves the authored
+tone when it already meets the floor. A small relative tone step from the
+surface would instead leave the solver to produce text at that minimum.
+
+Palette declarations inherit the brand hue and saturation:
 `saturation` is a 0–1 factor of that seed, and `tone` is 0–100. They can set
 an absolute tone or a tone relative to `base`. Use `from` on a palette role
 when it needs its own color seed; otherwise relative declarations keep its
@@ -101,7 +118,7 @@ Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
-`surface-3`, `text`, `text-soft`, `border`, `border-strong`, `accent-text`,
+`surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
@@ -371,6 +388,7 @@ sub-elements:
 | `SearchButton`          | `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `Layout`                | `LockedPage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `HeaderLinks`           | `Desktop`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                                  |
+| `Heading`               | `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `PageFrame`             | `MainFrame`, `SidebarFrame`, `Columns`                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |

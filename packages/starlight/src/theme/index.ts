@@ -27,6 +27,7 @@ export interface ResolvedDocsTheme {
     surface2: Record<string, string>;
     surface3: Record<string, string>;
     text: Record<string, string>;
+    heading: Record<string, string>;
     textSoft: Record<string, string>;
     accentText: Record<string, string>;
     accentSurface: Record<string, string>;
@@ -179,7 +180,16 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
       darkSaturation: darkSurfaceRampSaturation(declaredSurface ? 0.65 : 0.25),
     },
     text: paletteDefinition(theme.palette?.text, {
-      from: "#20232a",
+      tone: 0,
+      saturation: 0,
+      base: "surface",
+      role: "text",
+      contrast: { apca: [75, 90] },
+      mode: "auto",
+    }),
+    heading: paletteDefinition(theme.palette?.heading ?? theme.palette?.text, {
+      tone: [4, 0],
+      saturation: 0,
       base: "surface",
       role: "text",
       contrast: { apca: [75, 90] },
@@ -418,6 +428,7 @@ export function resolveDocsTheme(theme: ThemeConfig = {}): ResolvedDocsTheme {
     surface2: requiredJsonColor(resolvedPalette, "surface-2"),
     surface3: requiredJsonColor(resolvedPalette, "surface-3"),
     text: requiredJsonColor(resolvedPalette, "text"),
+    heading: requiredJsonColor(resolvedPalette, "heading"),
     textSoft: requiredJsonColor(resolvedPalette, "text-soft"),
     accentText: requiredJsonColor(resolvedPalette, "accent-text"),
     accentSurface: requiredJsonColor(resolvedPalette, "accent-surface"),
@@ -493,7 +504,15 @@ function paletteDefinition(
   defaults: RegularColorDef,
 ): RegularColorDef {
   if (value === undefined) return defaults;
-  if (!isColorDeclaration(value)) return { ...defaults, from: value };
+  if (!isColorDeclaration(value) || value.from !== undefined) {
+    // An explicit seed owns its tone and chroma; absolute defaults must not
+    // override the user's literal color. Keep adaptation and contrast floors.
+    const { tone: _tone, saturation: _saturation, ...seedDefaults } = defaults;
+    return {
+      ...seedDefaults,
+      ...(isColorDeclaration(value) ? value : { from: value }),
+    };
+  }
   if (!usesRelativeColor(value)) return { ...defaults, ...value };
   const { from: _ignored, ...relativeDefaults } = defaults;
   return { ...relativeDefaults, ...value };

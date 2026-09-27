@@ -41,7 +41,8 @@ for (const name of entries) {
 // Native drawer and appearance-popover motion, including reduced-motion rules,
 // add another 1 KiB of Tasty-generated CSS.
 // Customizable heading-link copy feedback adds another 1 KiB.
-const cssBudget = 162 * 1024;
+// The heading color's four modes and configurable Heading style tree add 1 KiB.
+const cssBudget = 163 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");

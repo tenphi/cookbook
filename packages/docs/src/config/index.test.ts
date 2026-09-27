@@ -32,7 +32,7 @@ const schema = JSON.parse(
     theme: {
       properties: {
         brand: { $ref?: string };
-        palette: { properties: { surface: { $ref?: string } } };
+        palette: { properties: Record<string, { $ref?: string }> };
         fonts: unknown;
         styles: {
           properties: Record<string, unknown>;
@@ -160,6 +160,23 @@ describe("docs configuration", () => {
       normalizeDocsConfig({ theme: { palette: { overlay: "#131025" } } }).theme
         .palette?.overlay,
     ).toBe("#131025");
+  });
+
+  it("accepts heading palette declarations and partial heading styles", () => {
+    const heading = {
+      base: "surface",
+      tone: [4, 0] as [number, number],
+      saturation: 0,
+    };
+    const styles = { Heading: { Level1: { textWrap: "pretty" } } };
+    const theme = normalizeDocsConfig({
+      theme: { palette: { heading }, styles },
+    }).theme;
+    expect(theme.palette?.heading).toEqual(heading);
+    expect(theme.styles).toEqual(styles);
+    expect(
+      schema.properties.theme.properties.palette.properties.heading?.$ref,
+    ).toBe("#/$defs/paletteColor");
   });
 
   it("accepts Google names and local font files, and rejects malformed definitions", () => {

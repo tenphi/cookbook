@@ -199,6 +199,7 @@
           "properties": {
             "surface": { "$ref": "#/$defs/paletteColor" },
             "text": { "$ref": "#/$defs/paletteColor" },
+            "heading": { "$ref": "#/$defs/paletteColor" },
             "textSoft": { "$ref": "#/$defs/paletteColor" },
             "info": { "$ref": "#/$defs/paletteColor" },
             "success": { "$ref": "#/$defs/paletteColor" },
@@ -283,6 +284,14 @@
               }
             },
             "Hero": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Heading": {
               "type": "object",
               "propertyNames": {
                 "not": {
