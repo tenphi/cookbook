@@ -260,35 +260,21 @@ export default function GlobalStyles() {
     textDecoration: "none",
   });
 
-  useGlobalStyles(":where(h1, h2, h3, h4, h5, h6), .site-title", {
-    color: "#text",
-    preset: "heading",
-    textWrap: "balance",
-  });
-
-  useGlobalStyles("h1", {
-    preset: "h1",
-  });
-
-  useGlobalStyles("h2", {
-    preset: "h2",
-  });
-
-  useGlobalStyles("h3", {
-    preset: "h3",
-  });
-
-  useGlobalStyles("h4", {
-    preset: "h4",
-  });
-
-  useGlobalStyles("h5", {
-    preset: "h5",
-  });
-
-  useGlobalStyles("h6", {
-    preset: "h6",
-  });
+  useGlobalStyles(
+    ":where(h1, h2, h3, h4, h5, h6, .site-title)",
+    resolveComponentStyles("Heading", {
+      color: "#heading",
+      preset: "heading",
+      textWrap: "balance",
+      Level1: { $: "&:is(h1)", preset: "h1" },
+      Level2: { $: "&:is(h2)", preset: "h2" },
+      Level3: { $: "&:is(h3)", preset: "h3" },
+      Level4: { $: "&:is(h4)", preset: "h4" },
+      Level5: { $: "&:is(h5)", preset: "h5" },
+      Level6: { $: "&:is(h6)", preset: "h6" },
+      PageTitle: { $: "&#_top", marginBlockStart: "($gap * 2)" },
+    }),
+  );
 
   useGlobalStyles(":where(code, kbd, samp, pre)", {
     preset: "code",
@@ -658,12 +644,6 @@ export default function GlobalStyles() {
     maxInlineSize: "$content-width",
   });
 
-  useGlobalStyles("main h1#_top", {
-    marginBlockStart: "($gap * 2)",
-    color: "#text",
-    preset: "h1",
-  });
-
   useGlobalStyles(
     ".hero",
     resolveComponentStyles("Hero", {
@@ -708,7 +688,7 @@ export default function GlobalStyles() {
         $: "h1",
         maxInlineSize: "16ch",
         margin: "0",
-        color: "#text",
+        color: "#heading",
         preset: "h1",
         fontSize: "clamp(2.75rem, 7vw, 4.75rem)",
         textWrap: "balance",
@@ -1083,9 +1063,11 @@ export default function GlobalStyles() {
     ".sl-markdown-content .sl-heading-wrapper",
     resolveComponentStyles("MarkdownHeading", {
       position: "relative",
+      color: "#heading",
       preset: "heading",
       Heading: {
         $: "> :first-child",
+        color: "inherit",
         display: "inline",
         paddingInlineEnd: { "": "0", "@mobile": "1.75rem" },
       },

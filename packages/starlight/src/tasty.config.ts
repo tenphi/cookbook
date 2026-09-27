@@ -27,6 +27,7 @@ export default {
     "#current",
     "#surface",
     "#header",
+    "#heading",
     "#surface-2",
     "#surface-3",
     "#surface-2-hover",

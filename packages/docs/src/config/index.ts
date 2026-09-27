@@ -783,6 +783,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
         "header",
         "overlay",
         "text",
+        "heading",
         "textSoft",
         "info",
         "success",
@@ -871,6 +872,7 @@ function validatePaletteColor(
       "surface-2": { base: "surface", tone: "-2" },
       "accent-surface": { tone: 48 },
       text: { base: "surface", contrast: { apca: 75 } },
+      heading: { base: "surface", tone: 4 },
       "text-soft": { base: "surface", contrast: { apca: 60 } },
       [colorName]: { tone: colorName === "surface" ? 98 : 50, ...value },
     });

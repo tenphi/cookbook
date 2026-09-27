@@ -15,6 +15,7 @@ describe("navigation global style architecture", () => {
     [".right-sidebar-container", "TableOfContentsLayout"],
     ["body > .page > .header", "HeaderFrame"],
     ["site-search button[data-open-modal]", "SearchButton"],
+    [":where(h1, h2, h3, h4, h5, h6, .site-title)", "Heading"],
   ])("customizes %s through theme.styles.%s", (selector, componentName) => {
     expect(source).toMatch(
       new RegExp(
@@ -52,13 +53,6 @@ describe("navigation global style architecture", () => {
 describe("typography global style architecture", () => {
   it.each([
     ["body", "body"],
-    [":where(h1, h2, h3, h4, h5, h6), .site-title", "heading"],
-    ["h1", "h1"],
-    ["h2", "h2"],
-    ["h3", "h3"],
-    ["h4", "h4"],
-    ["h5", "h5"],
-    ["h6", "h6"],
     [":where(code, kbd, samp, pre)", "code"],
   ])("applies the %s typography through its preset", (selector, preset) => {
     expect(source).toMatch(
@@ -67,6 +61,15 @@ describe("typography global style architecture", () => {
       ),
     );
   });
+
+  it.each([1, 2, 3, 4, 5, 6])(
+    "applies h%s through its named heading sub-element",
+    (level) => {
+      expect(source).toContain(
+        `Level${level}: { $: "&:is(h${level})", preset: "h${level}" }`,
+      );
+    },
+  );
 
   it("uses the inherited strong modifier for semantic bold text", () => {
     expect(source).toMatch(

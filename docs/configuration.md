@@ -350,13 +350,19 @@ theme: {
     surface: { tone: 98, saturation: 0.05 },
     text: {
       base: "surface",
-      tone: "-10",
+      tone: 0,
+      saturation: 0,
+      contrast: { wcag: [7, 10] }
+    },
+    heading: {
+      base: "surface",
+      tone: [4, 0],
       saturation: 0,
       contrast: { wcag: [7, 10] }
     },
     textSoft: {
       base: "surface",
-      tone: "-10",
+      tone: [25, 10],
       saturation: 0.05,
       contrast: { wcag: [4.5, 7] }
     }
@@ -404,8 +410,11 @@ flows. The default layout is capped at `87.5rem` (1400px), matching the
 Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `brand.from`
 supplies the color seed. `palette` supplies semantic Glaze declarations that
 inherit its hue and saturation unless a role supplies its own `from`. `tone` and
-a saturation factor set the surface; `base` and `contrast` express reading-color
-requirements against that surface. Glaze resolves light, dark, and both
+a saturation factor set the surface. Reading text uses absolute tones: body
+text starts at 0, and headings at 4. Glaze applies normal-mode tone boundaries
+and adapts the values for dark mode; `base` and `contrast` provide minimum
+contrast safeguards. `palette.heading` follows an explicit `palette.text`
+declaration unless customized separately. Glaze resolves light, dark, and both
 high-contrast modes independently. Literal color shorthand and structured
 brand hue/saturation/tone remain supported. A requested APCA floor below 45 requires the explicit
 `unsafeContrast: true` escape hatch. Learn more in

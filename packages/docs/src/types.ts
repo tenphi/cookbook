@@ -250,6 +250,8 @@ export interface ThemePaletteConfig {
   overlay?: ThemePaletteColor;
   /** Primary reading text, resolved against `surface`. */
   text?: ThemePaletteColor;
+  /** Heading text; follows an explicit `text` declaration unless configured. */
+  heading?: ThemePaletteColor;
   /** Secondary reading text, resolved against `surface`. */
   textSoft?: ThemePaletteColor;
 }
@@ -265,6 +267,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "PageFrame",
   "HeaderFrame",
   "HeaderLinks",
+  "Heading",
   "Layout",
   "SearchButton",
   "TableOfContentsLayout",
@@ -298,6 +301,15 @@ export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   PageFrame: ["MainFrame", "SidebarFrame", "Columns"],
   HeaderFrame: [],
+  Heading: [
+    "Level1",
+    "Level2",
+    "Level3",
+    "Level4",
+    "Level5",
+    "Level6",
+    "PageTitle",
+  ],
   HeaderLinks: [
     "Desktop",
     "Link",
