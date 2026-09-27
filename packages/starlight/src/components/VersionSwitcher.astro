@@ -17,6 +17,7 @@ const { current, links } = versionLinks(
   Astro.props.routes,
   Astro.props.currentPath,
   Astro.props.base,
+  content,
 );
 const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---

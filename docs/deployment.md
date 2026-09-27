@@ -93,3 +93,6 @@ to the sitemap. Host these files with the rest of `dist/`; custom files in
 
 Check the deployed HTML, `sitemap-index.xml`, and `llms.txt` through their public
 URLs. See [AI agents](./ai-agents.md) for the setup and reading workflow.
+
+For title templates, social images, preview noindex, older-version policies,
+breadcrumbs, and copy-page downloads, see [Publishing metadata](./publishing.md).

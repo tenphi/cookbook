@@ -59,3 +59,10 @@ Google's [AI Search guidance](https://developers.google.com/search/docs/fundamen
 prioritizes ordinary crawlability and useful content. It says `llms.txt` is
 not used by Google Search; Cookbook provides it for other agents that use the
 [llms.txt proposal](https://llmstxt.org/).
+
+## Read a published page
+
+Follow the page’s `rel="alternate" type="text/markdown"` link or its **Download Markdown**
+control for a clean reading representation with canonical/source/language/version
+metadata. Use the HTML for interactive component output omitted from Markdown.
+See [Publishing metadata](./publishing.md) for discovery and indexing controls.

@@ -1,4 +1,5 @@
 ---
+import PageActions from "../components/PageActions.astro";
 import { messages } from "../localization.js";
 import { content } from "virtual:cookbook/config";
 import EditLink from "virtual:starlight/components/EditLink";
@@ -13,9 +14,10 @@ const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
     <EditLink />
     <LastUpdated />
   </div>
+  <PageActions />
   <Pagination />
   <p class="td-footer__credit">
-    {ui.generatedWith}
+    {ui.generatedWith}{" "}
     <a href="https://cookbook.tenphi.me/">Cookbook</a>.
   </p>
 </FooterRoot>

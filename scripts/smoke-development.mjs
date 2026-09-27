@@ -159,6 +159,19 @@ try {
   await waitFor("/v2/live/", 'href="/v2/next"');
   await write("docs/live.mdx", "# Edited MDX\n\n[Next](./next.mdx)\n");
   await waitFor("/v2/live/", "Edited MDX");
+  await writeFile(
+    join(app, "astro.config.mjs"),
+    'import cookbook from "@tenphi/cookbook"; export default {base:"/manual/",integrations:[cookbook()]};',
+  );
+  const basePage = await waitFor("/manual/v2/live/", "Edited MDX");
+  const markdownPath = /data-copy-page="([^"]+)"/.exec(basePage)?.[1];
+  assert.ok(markdownPath?.startsWith("/manual/_cookbook/pages/"));
+  await waitFor(markdownPath, 'title: "Edited MDX"');
+  const icon = await globalThis.fetch(
+    `${origin}/manual/_cookbook/icons/favicon.svg`,
+  );
+  assert.equal(icon.status, 200);
+  assert.match(icon.headers.get("content-type"), /image\/svg/);
   assert.ok(!logs.includes("Failed to resolve dependency"), logs);
   const stopped = new Promise((done) => child.once("exit", done));
   child.kill("SIGTERM");

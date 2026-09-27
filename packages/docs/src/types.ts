@@ -24,7 +24,35 @@ export interface DocsDiagnostic {
   related?: Array<{ file: string; line?: number; message: string }>;
 }
 
+export interface SocialImage {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+export interface SiteSeoConfig {
+  titleTemplate?: string;
+  image?: SocialImage | false;
+  /** False on preview deployments; pages cannot override this restriction. */
+  index?: boolean;
+  breadcrumbs?: boolean;
+  /** Offer a clean Markdown download and copy control. Defaults to true. */
+  copyPage?: boolean;
+}
+export interface PageSeoConfig {
+  /** Complete document title, overriding the site template. */
+  title?: string;
+  canonical?: string;
+  image?: SocialImage | false;
+  index?: boolean;
+  breadcrumbs?: BreadcrumbItem[] | false;
+}
 export interface SiteConfig {
+  seo?: SiteSeoConfig;
   title?: string;
   /** Version of the documented package, rendered beside the site title. */
   version?: string;
@@ -42,6 +70,8 @@ export interface SiteConfig {
 }
 
 export interface SiteVersion {
+  /** Exclude this version from search engines, sitemaps, and agent indexes. */
+  index?: boolean;
   label: string;
   routeBase: string;
 }
@@ -371,6 +401,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "CodeGroup",
   "Tab",
   "Footer",
+  "PageActions",
   "Hero",
   "PageFrame",
   "HeaderFrame",
@@ -605,6 +636,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
   CodeGroup: ["Caption", "Pre", "Code"],
   Tab: ["Heading", "Hidden", "HiddenHeading"],
+  PageActions: ["Control", "Hover", "Focus", "Pending", "Status"],
   Footer: [
     "Meta",
     "LoneMetaItem",
@@ -918,6 +950,7 @@ export interface NormalizedDocsConfig {
 }
 
 export interface DocsFrontmatter {
+  seo?: PageSeoConfig;
   aliases?: string[];
   title?: string;
   description?: string;
@@ -1001,6 +1034,11 @@ export interface DocsRoute {
   title: string;
   /** False for public routes excluded from automatic navigation and indexes. */
   discoverable?: boolean;
+  /** Search-engine eligibility, independent from navigation visibility. */
+  indexable?: boolean;
+  /** False for a canonical alias or a noindex page. */
+  sitemap?: boolean;
+  canonical?: string;
   sidebar?: false | NavigationPlacement;
 }
 

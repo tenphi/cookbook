@@ -33,7 +33,8 @@
     "check:locales": "node scripts/smoke-locales.mjs",
     "check:development": "node scripts/smoke-development.mjs",
     "check:types": "tsc -p packages/facade/type-tests/tsconfig.json",
-    "check:plugins": "node scripts/smoke-plugins.mjs"
+    "check:plugins": "node scripts/smoke-plugins.mjs",
+    "check:publishing-site": "node scripts/smoke-publishing.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

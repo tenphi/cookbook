@@ -1,3 +1,4 @@
+import { pagePublishing, validateSeo } from "../publishing.js";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { readFile, stat } from "node:fs/promises";
@@ -72,6 +73,7 @@ interface CollectedSource {
 const MARKDOWN_EXTENSIONS = [".md", ".mdx"];
 const execFileAsync = promisify(execFile);
 export const DOCS_FRONTMATTER_KEYS = new Set([
+  "seo",
   "aliases",
   "title",
   "description",
@@ -174,11 +176,25 @@ export async function createDocsGraph(
     validateNavigation(tab.items ?? [], routeMap, diagnostics);
   }
   for (const version of config.site.versions ?? []) {
-    if (!routeMap.has(version.routeBase)) {
+    const homes = [
+      version.routeBase,
+      ...Object.keys(config.locales ?? {})
+        .filter((locale) => locale !== "root")
+        .map(
+          (locale) =>
+            `/${locale}${version.routeBase === "/" ? "" : version.routeBase}`,
+        ),
+    ];
+    if (
+      !homes.some(
+        (route) =>
+          routeMap.has(route) && !routeMap.get(route)!.frontmatter.draft,
+      )
+    ) {
       diagnostics.push({
         code: "DOCS_VERSION_ROOT_MISSING",
         severity: "error",
-        message: `Version ${version.label} needs a page at ${version.routeBase}.`,
+        message: `Version ${version.label} needs a non-draft page at ${version.routeBase} or a localized equivalent.`,
       });
     }
   }
@@ -190,6 +206,9 @@ export async function createDocsGraph(
     sourcePath: entry.sourcePath,
     title: entry.title,
     discoverable: !entry.frontmatter.draft,
+    indexable: pagePublishing(entry, config).index,
+    sitemap: pagePublishing(entry, config).sitemap,
+    canonical: pagePublishing(entry, config).canonical,
     ...(entry.frontmatter.sidebar !== undefined
       ? { sidebar: entry.frontmatter.sidebar }
       : {}),
@@ -1569,6 +1588,8 @@ function validateFrontmatter(
       message,
       file,
     });
+  if (value.seo !== undefined)
+    for (const message of validateSeo(value.seo, "page")) error(message);
   if (
     value.aliases !== undefined &&
     (!Array.isArray(value.aliases) ||

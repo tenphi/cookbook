@@ -1,16 +1,29 @@
 ---
+import { pageMetadata } from "../page-metadata.js";
 import { content } from "virtual:cookbook/config";
 import { localeAlternates, messages } from "../localization.js";
 import { navigationPath } from "../navigation.js";
 const current = navigationPath(Astro.url.pathname, content.base);
-const head = Astro.locals.starlightRoute.head.filter(
+const entry = content.entries.find((entry) => entry.route === current);
+const head = (
+  entry
+    ? pageMetadata(entry, content, Astro.locals.starlightRoute.head)
+    : Astro.locals.starlightRoute.head
+).filter(
   (tag) =>
-    !content.locales || tag.tag !== "link" || tag.attrs?.rel !== "alternate",
+    (tag.tag !== "link" ||
+      tag.attrs?.rel !== "sitemap" ||
+      content.routes.some((route) => route.sitemap !== false)) &&
+    (!content.locales ||
+      tag.tag !== "link" ||
+      tag.attrs?.rel !== "alternate" ||
+      !tag.attrs?.hreflang),
 );
-if (Astro.site) {
+const indexedRoutes = content.routes.filter((route) => route.sitemap !== false);
+if (Astro.site && indexedRoutes.some((route) => route.route === current)) {
   for (const { lang, route } of localeAlternates(
     current,
-    content.routes,
+    indexedRoutes,
     content,
   ))
     head.push({

@@ -64,6 +64,8 @@ import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 import { outputPathForPublicAsset } from "./output-path.js";
+import { agentPagePath } from "./page-metadata.js";
+import { renderAgentMarkdown } from "@tenphi/docs";
 import { writeAgentDiscovery } from "./agent-discovery.js";
 
 const packageRequire = createRequire(import.meta.url);
@@ -220,7 +222,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   }) as unknown as AstroIntegration;
   let inner: AstroIntegration[] = [tasty];
   let projectRoot = options.root;
-  const graphConfig = options.config;
+  let graphConfig = options.config;
   let graphBase = "/";
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
@@ -337,6 +339,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             `Cookbook site.url (${configuredSite}) conflicts with Astro site (${astroSite}).`,
           );
         }
+        if (configuredSite || astroSite)
+          graphConfig = {
+            ...graphConfig,
+            site: { ...graphConfig?.site, url: (configuredSite ?? astroSite)! },
+          };
         siteIconBase = base;
         graphBase = base;
         context.config.integrations.push(
@@ -349,15 +356,17 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               );
               return {
                 ...item,
-                links: localeAlternates(route, graph.routes, graph.config).map(
-                  ({ lang, route }) => ({
-                    lang,
-                    url: new URL(
-                      `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
-                      item.url,
-                    ).href,
-                  }),
-                ),
+                links: localeAlternates(
+                  route,
+                  graph.routes.filter((route) => route.sitemap !== false),
+                  graph.config,
+                ).map(({ lang, route }) => ({
+                  lang,
+                  url: new URL(
+                    `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+                    item.url,
+                  ).href,
+                })),
               };
             },
             filter: (url) => {
@@ -366,7 +375,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               return (
                 graph?.routes.some(
                   (entry) =>
-                    entry.route === route && entry.discoverable !== false,
+                    entry.route === route &&
+                    entry.discoverable !== false &&
+                    entry.sitemap !== false,
                 ) ?? false
               );
             },
@@ -699,7 +710,39 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             next();
             return;
           }
-          const pathname = requestPath(request.url);
+          const requestPathname = requestPath(request.url);
+          // Vite strips Astro's base before invoking development middleware.
+          const pathname =
+            graphBase !== "/" && !requestPathname.startsWith(graphBase)
+              ? `${graphBase.replace(/\/$/, "")}${requestPathname}`
+              : requestPathname;
+          if (pathname.includes("/_cookbook/pages/")) {
+            try {
+              const current = await loadGraph(true);
+              const entry = current.entries.find(
+                (entry) =>
+                  !entry.frontmatter.draft &&
+                  agentPagePath(entry.route, current.config.build.base) ===
+                    pathname,
+              );
+              if (entry && current.config.site.seo?.copyPage !== false) {
+                response.statusCode = 200;
+                response.setHeader(
+                  "Content-Type",
+                  "text/markdown; charset=utf-8",
+                );
+                response.setHeader("X-Robots-Tag", "noindex");
+                response.end(
+                  request.method === "HEAD"
+                    ? undefined
+                    : renderAgentMarkdown(entry, current.config),
+                );
+                return;
+              }
+            } catch (error) {
+              logger.error(errorMessage(error));
+            }
+          }
           const fontAsset = [...fontAssets, ...(siteLogo?.assets ?? [])].find(
             (asset) => asset.publicPath === pathname,
           );

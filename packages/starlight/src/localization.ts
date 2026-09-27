@@ -163,6 +163,10 @@ export function localizedNavigation(
 }
 
 export const ENGLISH_MESSAGES = {
+  copyPage: "Copy page",
+  viewMarkdown: "Download Markdown",
+  pageCopied: "Page copied",
+  pageCopyError: "Could not copy. Download Markdown to read or copy the text.",
   draftTitle: "Draft",
   draftNotice:
     "This page is available by direct link and excluded from navigation and indexes.",
@@ -200,6 +204,11 @@ export const ENGLISH_MESSAGES = {
 } as const;
 export type MessageKey = keyof typeof ENGLISH_MESSAGES;
 const FRENCH_MESSAGES: Record<MessageKey, string> = {
+  copyPage: "Copier la page",
+  viewMarkdown: "Télécharger le Markdown",
+  pageCopied: "Page copiée",
+  pageCopyError:
+    "Copie impossible. Téléchargez le Markdown pour lire ou copier le texte.",
   draftTitle: "Brouillon",
   draftNotice:
     "Cette page est accessible par son lien direct et exclue de la navigation et des index.",

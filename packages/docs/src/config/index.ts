@@ -1,3 +1,4 @@
+import { validateSeo } from "../publishing.js";
 import { resolveColorTheme } from "../theme/palette.js";
 import { glaze, type ColorDef } from "@tenphi/glaze";
 import {
@@ -57,6 +58,7 @@ const ROOT_KEYS = new Set([
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
   site: new Set([
+    "seo",
     "title",
     "version",
     "versions",
@@ -152,11 +154,13 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
           continue;
         }
         for (const key of Object.keys(version)) {
-          if (key !== "label" && key !== "routeBase")
+          if (key !== "label" && key !== "routeBase" && key !== "index")
             unknown(diagnostics, `${path}.${key}`);
         }
         if (typeof version.label !== "string" || !version.label.trim())
           invalid(diagnostics, `${path}.label must be a non-empty string.`);
+        if (version.index !== undefined && typeof version.index !== "boolean")
+          invalid(diagnostics, `${path}.index must be a boolean.`);
         const base = version.routeBase;
         if (
           typeof base !== "string" ||
@@ -314,6 +318,9 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  if (config.site?.seo !== undefined)
+    for (const message of validateSeo(config.site.seo, "site"))
+      invalid(diagnostics, `site.${message}`);
   const logo = config.site?.logo;
   if (logo !== undefined && logo !== false) {
     const value = typeof logo === "string" ? { src: logo } : logo;
@@ -1346,6 +1353,8 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
       ) as DocsConfig;
       // Logo definitions are alternatives, not fields to combine across variants.
       if (next.site?.logo !== undefined) result.site!.logo = next.site.logo;
+      if (next.site?.seo?.image !== undefined)
+        result.site!.seo!.image = next.site.seo.image;
       // A color declaration is one value. Merging its fields could retain an
       // obsolete `from` seed when a consumer switches to tone relationships.
       if (next.theme?.brand !== undefined)
