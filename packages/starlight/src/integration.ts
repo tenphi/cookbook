@@ -1054,7 +1054,8 @@ function configureTastyTheme(
   const globalStyles = resolveLegacyAnatomyStyles(theme?.customStyles);
 
   // Recipes and custom parser units are module-local in Tasty. Astro evaluates
-  // renderer code in a separate module graph, so initialize that runtime too.
+  // renderer code in a separate server module graph. Share configuration only
+  // inside the build process; never serialize this state into the page.
   (
     globalThis as typeof globalThis & { __tenphiCookbookTastyRuntime?: unknown }
   ).__tenphiCookbookTastyRuntime = {

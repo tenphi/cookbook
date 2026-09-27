@@ -19,6 +19,8 @@ let configuredRuntime;
 
 /** Configure aliases in the renderer's Tasty module before styles are parsed. */
 export function configureCookbookStates() {
+  // Process-local server configuration shared across Astro/Vite module graphs.
+  // The integration prevents this module from entering browser bundles.
   const runtime = globalThis.__tenphiCookbookTastyRuntime;
   if (configured && configuredRuntime === runtime) return;
   configure({

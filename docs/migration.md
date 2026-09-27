@@ -48,6 +48,8 @@ These changes are included in the next minor release:
   or select `theme.fontLoading.google: "remote"` for CDN delivery. See
   [fonts](./theme-and-components.md#change-font-families).
 - **Colors:** body tone 0 and heading tone 4 remain the reading defaults.
+  The default logo uses fixed Glaze colors (`logo-surface` and `logo-mark`), so
+  its book stays light in dark mode. Customize these independently of accents.
   Additional semantic-pair checks may reject custom colors that previously
   passed. Follow the named pair and mode in the diagnostic; see
   [contrast troubleshooting](./troubleshooting.md#contrast-failures).
@@ -63,7 +65,10 @@ These changes are included in the next minor release:
   inject their own CSS require adaptation. See the tested
   [plugin matrix](./plugins.md#verified-compatibility).
 - **Styles:** rendered inline styles are rejected. Move custom styling to Tasty
-  and registered theme style trees. Isolated, sandboxed `Preview` content is the
+  and registered theme style trees. Keep these components server-rendered;
+  browser scripts and `client:*` islands cannot import Cookbook styling, Tasty,
+  or Glaze. Attach interaction scripts to the static markup. Isolated,
+  sandboxed `Preview` content is the
   documented exception. The new surface inventory is in the
   [theme reference](./theme-and-components.md).
 - **Page text:** the footer offers copy/download Markdown by default. Set

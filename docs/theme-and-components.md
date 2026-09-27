@@ -127,8 +127,8 @@ white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
 `surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
-`accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`. Tasty components can use
-these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
+`accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
+Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
 accent fills, overlays, shadows, and the orange, green, blue, purple, and red
 roles used by Starlight content components. No browser color mixes or
