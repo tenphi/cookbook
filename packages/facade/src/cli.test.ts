@@ -43,6 +43,50 @@ describe("Cookbook CLI", () => {
     ]);
     expect(JSON.parse(stdout)).toMatchObject({ ok: true, pages: 1 });
   });
+  it("reports a missing configured font and distinguishes preflight from build verification", async () => {
+    const root = await fixture();
+    await writeFile(join(root, "README.md"), "# Guide");
+    await writeFile(
+      join(root, "docs.config.mjs"),
+      'export default {theme:{fonts:{body:{family:"Example",files:[{src:"/missing.woff2"}]}}}}',
+    );
+    let result;
+    try {
+      await execFileAsync(process.execPath, [
+        cli,
+        "doctor",
+        "--root",
+        root,
+        "--json",
+      ]);
+    } catch (error) {
+      result = JSON.parse((error as { stdout: string }).stdout);
+    }
+    expect(result).toMatchObject({
+      ok: false,
+      scope: "preflight",
+      buildVerified: false,
+      diagnostics: [
+        expect.objectContaining({ code: "DOCS_CONFIG_ASSET_MISSING" }),
+      ],
+    });
+    try {
+      await execFileAsync(process.execPath, [
+        cli,
+        "check-build",
+        "--root",
+        root,
+        "--json",
+      ]);
+    } catch (error) {
+      result = JSON.parse((error as { stdout: string }).stdout);
+    }
+    expect(result).toMatchObject({
+      ok: false,
+      scope: "built-output",
+      diagnostics: [expect.objectContaining({ code: "DOCS_BUILD_MISSING" })],
+    });
+  });
   it("creates, previews, updates, and prunes a lock against the configured registry", async () => {
     const root = await fixture();
     const server = createServer((_request, response) => {

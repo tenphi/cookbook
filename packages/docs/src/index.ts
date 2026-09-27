@@ -45,3 +45,7 @@ export { resolveColorTheme } from "./theme/palette.js";
 export { pagePublishing, routeUrl, routeVersion } from "./publishing.js";
 
 export { renderAgentMarkdown } from "./agent-markdown.js";
+
+export { validateProjectAssets } from "./validation/assets.js";
+export { validateBuiltDocs } from "./validation/build.js";
+export type { BuiltDocsOptions, BuiltDocsReport } from "./validation/build.js";

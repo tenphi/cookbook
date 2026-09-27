@@ -96,3 +96,16 @@ URLs. See [AI agents](./ai-agents.md) for the setup and reading workflow.
 
 For title templates, social images, preview noindex, older-version policies,
 breadcrumbs, and copy-page downloads, see [Publishing metadata](./publishing.md).
+
+## Validate the published result
+
+New projects include `npm run validate` for preflight, build, and output checks.
+After the host finishes deploying, run:
+
+```sh
+npx @tenphi/cookbook check-build --url https://docs.example.com/manual/
+```
+
+Use your actual deployment URL, including any base path, and the same local
+`dist/` output that was deployed. See [CLI checks](./cli.md#check-the-built-site-and-deployment)
+for the exact coverage, warnings, JSON output, and custom output directories.

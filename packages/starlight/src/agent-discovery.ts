@@ -100,7 +100,11 @@ export async function writeAgentDiscovery(
   }
   await writeFile(
     join(output, "_cookbook/publishing.json"),
-    JSON.stringify({ base: graph.config.build.base, pages }, null, 2) + "\n",
+    JSON.stringify(
+      { base: graph.config.build.base, site: graph.config.site.url, pages },
+      null,
+      2,
+    ) + "\n",
   );
   if (graph.config.build.base === "/" && graph.config.site.url) {
     await writeUnlessPresent(

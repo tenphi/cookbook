@@ -89,6 +89,21 @@ try {
       },
     );
   await build();
+  const checkBuild = async () => {
+    const { stdout } = await promisify(execFile)(
+      process.execPath,
+      [
+        join(root, "packages/facade/dist/cli.js"),
+        "check-build",
+        "--root",
+        fixture,
+        "--json",
+      ],
+      { cwd: fixture, maxBuffer: 8 * 1024 * 1024 },
+    );
+    assert.equal(JSON.parse(stdout).ok, true, stdout);
+  };
+  await checkBuild();
   const windows = [];
   const page = async (route) => {
     const w = new Window();
@@ -186,6 +201,7 @@ try {
   config.site.seo.titleTemplate = "{title} — {site}";
   await writeConfig();
   await build();
+  await checkBuild();
   const preview = await page("guide");
   assert.equal(preview.title, "Guide — Acme");
   assert.equal(
