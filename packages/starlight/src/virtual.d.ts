@@ -1,5 +1,6 @@
 declare module "virtual:cookbook/config" {
   import type {
+    DocsConfig,
     DocsEntry,
     DocsHeading,
     DocsRoute,
@@ -18,6 +19,9 @@ declare module "virtual:cookbook/config" {
     site: SiteConfig;
     base: string;
     search: boolean;
+    locales: DocsConfig["locales"];
+    defaultLocale: DocsConfig["defaultLocale"];
+    translations: DocsConfig["translations"];
   };
   export const mdxLoaders: Record<
     string,

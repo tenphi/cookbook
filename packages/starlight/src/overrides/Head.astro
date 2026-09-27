@@ -1,0 +1,36 @@
+---
+import { content } from "virtual:cookbook/config";
+import { localeAlternates, messages } from "../localization.js";
+import { navigationPath } from "../navigation.js";
+const current = navigationPath(Astro.url.pathname, content.base);
+const head = Astro.locals.starlightRoute.head.filter(
+  (tag) =>
+    !content.locales || tag.tag !== "link" || tag.attrs?.rel !== "alternate",
+);
+if (Astro.site) {
+  for (const { lang, route } of localeAlternates(
+    current,
+    content.routes,
+    content,
+  ))
+    head.push({
+      tag: "link",
+      attrs: {
+        rel: "alternate",
+        hreflang: lang,
+        href: new URL(
+          `${content.base.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+          Astro.site,
+        ).href,
+      },
+    });
+}
+const ui = messages(Astro.locals.starlightRoute.lang, content);
+---
+
+{
+  head.map(({ tag: Tag, attrs, content }) => (
+    <Tag {...attrs} set:html={content} />
+  ))
+}
+<meta name="cookbook-messages" content={JSON.stringify(ui)} />

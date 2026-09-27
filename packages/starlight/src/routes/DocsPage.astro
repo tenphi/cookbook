@@ -2,6 +2,7 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { content, mdxLoaders } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
+import { localizedNavigation } from "../localization.js";
 import { starlightPageSidebar } from "../navigation.js";
 
 export const prerender = true;
@@ -30,6 +31,7 @@ export function getStaticPaths() {
 const { entry, routes, redirect } = Astro.props;
 if (redirect)
   return Astro.redirect(`${content.base.replace(/\/$/, "")}${redirect}`, 301);
+const navigation = localizedNavigation(layout, routes, entry.route, content);
 const loadMdx = mdxLoaders[entry.route];
 if (!entry.rendered && !loadMdx) {
   throw new Error(`Cookbook did not render ${entry.sourcePath}.`);
@@ -115,7 +117,7 @@ function imageMetadata(src: string) {
 <StarlightPage
   frontmatter={frontmatter}
   headings={headings}
-  sidebar={starlightPageSidebar(layout, routes)}
+  sidebar={starlightPageSidebar(navigation.layout, navigation.routes)}
 >
   {MdxContent ? <MdxContent /> : <div set:html={entry.rendered?.html ?? ""} />}
 </StarlightPage>

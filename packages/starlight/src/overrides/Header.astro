@@ -1,4 +1,10 @@
 ---
+import {
+  localizedNavigation,
+  localePath,
+  localeHref,
+} from "../localization.js";
+import { messages } from "../localization.js";
 import config from "virtual:starlight/user-config";
 import LanguageSelect from "virtual:starlight/components/LanguageSelect";
 import Search from "virtual:starlight/components/Search";
@@ -8,7 +14,7 @@ import MobileMenuToggle from "virtual:starlight/components/MobileMenuToggle";
 import HeaderLinks from "../components/HeaderLinks.astro";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import { content } from "virtual:cookbook/config";
-import { layout } from "virtual:cookbook/layout";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import GlobalStyles from "../components/GlobalStyles.js";
 import Logo from "../components/Logo.astro";
@@ -24,12 +30,29 @@ const shouldRenderSearch =
   config.components.Search !== "@astrojs/starlight/components/Search.astro";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const currentPath = navigationPath(Astro.url.pathname, base || "/");
-const activeTab = activeNavigationTab(layout.tabs, currentPath);
-const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  currentPath,
+  content,
+);
+const activeTab = activeNavigationTab(
+  layout.tabs,
+  localePath(currentPath, content),
+);
+Astro.locals.starlightRoute.siteTitleHref = localeHref(
+  "/",
+  currentPath,
+  content.routes,
+  content,
+  base || "/",
+);
+const { siteTitle } = Astro.locals.starlightRoute;
 
 function tabHref(link: string): string {
-  return link.startsWith("/") ? `${base}${link}` || "/" : link;
+  return localeHref(link, currentPath, content.routes, content, base || "/");
 }
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---
 
 <GlobalStyles />
@@ -42,8 +65,14 @@ function tabHref(link: string): string {
     <div class="td-header__title">
       <a
         class="td-header__logo-link"
-        href={siteTitleHref}
-        aria-label={`${siteTitle} home`}
+        href={localeHref(
+          "/",
+          currentPath,
+          content.routes,
+          content,
+          base || "/",
+        )}
+        aria-label={`${siteTitle}: ${ui.home}`}
       >
         <Logo class="td-header__logo" decorative />
       </a>
@@ -81,7 +110,7 @@ function tabHref(link: string): string {
     layout.tabs.length > 0 && (
       <TopNavigationRoot
         className="td-top-tabs print:hidden"
-        aria-label="Primary"
+        aria-label={ui.primary}
         data-tasty-anatomy="TopNavigation"
       >
         {layout.tabs.map((tab, index) => (

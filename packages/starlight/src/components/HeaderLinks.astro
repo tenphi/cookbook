@@ -1,16 +1,18 @@
 ---
+import { messages } from "../localization.js";
 import { content } from "virtual:cookbook/config";
 import { HeaderLinksRoot } from "./LayoutComponents.js";
 
 const links = content.site.headerLinks ?? [];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---
 
 {
   links.length > 0 && (
     <HeaderLinksRoot data-tasty-anatomy="HeaderLinks">
-      <nav class="td-header-links__desktop" aria-label="Header links">
+      <nav class="td-header-links__desktop" aria-label={ui.headerLinks}>
         {links.map((link) => (
           <a
             href={href(link.link)}
@@ -26,8 +28,8 @@ const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
         type="button"
         class="td-header-links__trigger"
         popovertarget="cookbook-header-links"
-        aria-label="More"
-        title="More"
+        aria-label={ui.more}
+        title={ui.more}
       >
         <svg
           viewBox="0 0 24 24"
@@ -53,7 +55,7 @@ const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
           class="td-header-links__close"
           popovertarget="cookbook-header-links"
           popovertargetaction="hide"
-          aria-label="Close more menu"
+          aria-label={ui.closeMore}
         >
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path
@@ -65,7 +67,7 @@ const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
             />
           </svg>
         </button>
-        <nav aria-label="More links">
+        <nav aria-label={ui.moreLinks}>
           {links.map((link) => (
             <a
               href={href(link.link)}

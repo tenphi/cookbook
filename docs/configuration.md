@@ -226,10 +226,17 @@ defaultLocale: "root",
 ```
 
 Locale keys other than `root` are URL prefixes. A source routed to `/fr/guide`
-is the French counterpart of `/guide`; `defaultLocale` provides fallback
-content when a translated route is missing. See Starlight's
-[internationalization guide](https://starlight.astro.build/guides/i18n/) for
-the shared routing and fallback behavior.
+is the French counterpart of `/guide`. Navigation and pagination include the
+current locale's published routes. Locale prefixes are added once, after the
+site's deployment base.
+
+Cookbook does not create duplicate fallback pages. When the language picker
+cannot find a translation, it links to the equivalent page in `defaultLocale`,
+then an existing locale home or default-language home. The picker labels
+cross-language fallbacks. Locales with no usable target are omitted. Header home
+links use the same policy, so a missing `/fr/` never creates a broken home link.
+Alternate-language metadata lists only existing published translations. Drafts
+remain directly accessible but are excluded from locale discovery.
 
 ## Content
 
@@ -602,3 +609,30 @@ contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFra
 `theme.palette.overlay` controls the fixed underlay color, defaulting to black at
 50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
 a 120ms slide transition; customize these through `theme.styles.Sidebar`.
+
+### Translate Cookbook controls
+
+Cookbook includes English and French interface messages. Other languages use
+English for missing Cookbook messages while Starlight supplies its own built-in
+translations. Override messages by language code; regional codes fall back to the
+base language and then English:
+
+```ts
+translations: {
+  de: {
+    appearance: "Darstellung",
+    closeNavigation: "Navigation schließen",
+    "navigation.Guide": "Anleitung",
+  },
+},
+```
+
+`navigation.<configured label>` translates named tabs and navigation groups.
+Automatically generated links use the title from the translated page.
+Cookbook message keys are `appearance`, `colorScheme`, `contrast`,
+`normalContrast`, `highContrast`, `auto`, `closeNavigation`, `primary`, `sections`,
+`chooseSection`, `headerLinks`, `more`, `closeMore`, `moreLinks`, `versions`,
+`documentationVersion`, `documentationVersions`, `version`, `home`,
+`generatedWith`, `viewSource`, `copyCode`, `codeCopied`, `codeCopyError`,
+`copyHeading`, `linkCopied`, `linkCopyError`, `notFound`, `notFoundDescription`,
+and `fallback`. Preserve `{heading}` in the `copyHeading` message.

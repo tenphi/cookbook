@@ -13,6 +13,7 @@ import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import starlight from "./starlight-runtime.js";
 import sitemap from "@astrojs/sitemap";
+import { localeAlternates } from "./localization.js";
 import {
   createDocsGraph,
   assertValidDocs,
@@ -165,6 +166,10 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   );
   const components = resolveComponentOverrides(
     {
+      Head: fileURLToPath(new URL("./overrides/Head.astro", import.meta.url)),
+      LanguageSelect: fileURLToPath(
+        new URL("./overrides/LanguageSelect.astro", import.meta.url),
+      ),
       PageFrame: fileURLToPath(
         new URL("./overrides/PageFrame.astro", import.meta.url),
       ),
@@ -301,6 +306,25 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         graphBase = base;
         context.config.integrations.push(
           sitemap({
+            serialize: (item) => {
+              if (!graph?.config.locales) return item;
+              const route = navigationPath(
+                decodeURI(new URL(item.url).pathname),
+                graphBase,
+              );
+              return {
+                ...item,
+                links: localeAlternates(route, graph.routes, graph.config).map(
+                  ({ lang, route }) => ({
+                    lang,
+                    url: new URL(
+                      `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+                      item.url,
+                    ).href,
+                  }),
+                ),
+              };
+            },
             filter: (url) => {
               const pathname = decodeURI(new URL(url).pathname);
               const route = navigationPath(pathname, graphBase);
@@ -463,6 +487,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     site: documentedSite(loaded),
                     base: loaded.config.build.base,
                     search: loaded.config.search.enabled,
+                    locales: loaded.config.locales,
+                    defaultLocale: loaded.config.defaultLocale,
+                    translations: loaded.config.translations,
                   };
                 },
                 navigation,

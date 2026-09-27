@@ -1367,7 +1367,7 @@ export default function GlobalStyles() {
   });
 
   useGlobalStyles(
-    "starlight-lang-select",
+    "cookbook-language-select",
     resolveComponentStyles("LanguageSelect", {
       display: "block",
       Label: {

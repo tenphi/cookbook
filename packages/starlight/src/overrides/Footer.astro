@@ -1,8 +1,11 @@
 ---
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
 import EditLink from "virtual:starlight/components/EditLink";
 import LastUpdated from "virtual:starlight/components/LastUpdated";
 import Pagination from "virtual:starlight/components/Pagination";
 import { FooterRoot } from "../components/LayoutComponents.js";
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---
 
 <FooterRoot className="td-footer" data-tasty-anatomy="Footer">
@@ -12,6 +15,7 @@ import { FooterRoot } from "../components/LayoutComponents.js";
   </div>
   <Pagination />
   <p class="td-footer__credit">
-    Generated with <a href="https://cookbook.tenphi.me/">Cookbook</a>.
+    {ui.generatedWith}
+    <a href="https://cookbook.tenphi.me/">Cookbook</a>.
   </p>
 </FooterRoot>

@@ -596,6 +596,8 @@ export interface DocsConfig {
   lastUpdated?: boolean;
   /** Languages keyed by their URL segment, or `root` for `/`. */
   locales?: Record<string, LocaleConfig>;
+  /** Cookbook interface messages, keyed by language code. Missing keys use English. */
+  translations?: Record<string, Record<string, string>>;
   /** Locale key used for fallback content. */
   defaultLocale?: string;
   content?: ContentConfig;
@@ -614,6 +616,8 @@ export interface NormalizedDocsConfig {
   editLink?: EditLinkConfig;
   lastUpdated: boolean;
   locales?: Record<string, LocaleConfig>;
+  /** Cookbook interface messages, keyed by language code. Missing keys use English. */
+  translations?: Record<string, Record<string, string>>;
   defaultLocale?: string;
   content: Required<
     Pick<ContentConfig, "allowOutsideRoot" | "localizeRepositoryLinks">

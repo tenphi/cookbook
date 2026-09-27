@@ -8,6 +8,7 @@ export default defineConfig({
     "client/tabs": "src/client/tabs.ts",
     styling: "src/styling.ts",
     "eslint-plugin": "src/eslint-plugin.ts",
+    localization: "src/localization.ts",
     navigation: "src/navigation.ts",
     versioning: "src/versioning.ts",
     "client/appearance": "src/client/appearance.ts",

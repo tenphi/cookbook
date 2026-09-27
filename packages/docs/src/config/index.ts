@@ -39,6 +39,7 @@ const ROOT_KEYS = new Set([
   "editLink",
   "lastUpdated",
   "locales",
+  "translations",
   "defaultLocale",
   "content",
   "navigation",
@@ -363,6 +364,20 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     typeof config.lastUpdated !== "boolean"
   ) {
     invalid(diagnostics, "lastUpdated must be a boolean.");
+  }
+  if (
+    config.translations !== undefined &&
+    (!isRecord(config.translations) ||
+      Object.values(config.translations).some(
+        (messages) =>
+          !isRecord(messages) ||
+          Object.values(messages).some((value) => typeof value !== "string"),
+      ))
+  ) {
+    invalid(
+      diagnostics,
+      "translations must map language codes to string messages.",
+    );
   }
   if (config.locales !== undefined && !isRecord(config.locales)) {
     invalid(diagnostics, "locales must be an object.");
@@ -1010,6 +1025,7 @@ export function normalizeDocsConfig(
     head: [...(config.head ?? [])],
     ...(config.editLink ? { editLink: { ...config.editLink } } : {}),
     lastUpdated: config.lastUpdated ?? false,
+    ...(config.translations ? { translations: config.translations } : {}),
     ...(config.locales ? { locales: { ...config.locales } } : {}),
     ...(config.defaultLocale ? { defaultLocale: config.defaultLocale } : {}),
     content: {

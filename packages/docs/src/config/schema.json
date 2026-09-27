@@ -133,6 +133,13 @@
         "$ref": "#/$defs/locale"
       }
     },
+    "translations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      }
+    },
     "defaultLocale": {
       "type": "string"
     },
