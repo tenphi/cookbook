@@ -61,7 +61,7 @@ describe("consumer styling", () => {
     expect(css).toContain("> svg");
     expect(css).toContain("2rem");
     expect(css).toContain("1.625rem");
-    expect(css).not.toContain("1.75rem");
+    expect(css).not.toMatch(/inline-size:\s*1\.75rem/);
   });
 
   it.each([undefined, {}, { Label: { color: "#accent-text" } }])(

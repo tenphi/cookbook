@@ -110,6 +110,36 @@ describe("page head", () => {
     );
     expect(hidden.some((t) => t.attrs?.type === "text/markdown")).toBe(false);
   });
+  it("keeps automatic breadcrumbs in the current locale and ends at the actual page", () => {
+    const head = pageMetadata(
+      { ...page, route: "/fr/guide" },
+      {
+        ...content,
+        site: { ...content.site, seo: { breadcrumbs: true } },
+        locales: {
+          root: { label: "English", lang: "en" },
+          fr: { label: "Français" },
+        },
+        routes: [
+          ...content.routes,
+          { route: "/fr", title: "Accueil" },
+          { route: "/fr/guide", title: "Guide", discoverable: false },
+        ] as DocsRoute[],
+      },
+      [],
+    );
+    expect(
+      JSON.parse(
+        head.find((tag) => tag.tag === "script")!.content!,
+      ).itemListElement.map((item: { name: string; item: string }) => [
+        item.name,
+        item.item,
+      ]),
+    ).toEqual([
+      ["Accueil", "https://example.com/manual/fr/"],
+      ["Guide", "https://example.com/manual/fr/guide/"],
+    ]);
+  });
   it("uses stable distinct safe paths for root, index, non-ASCII and deep routes", () => {
     const paths = ["/", "/index", "/é", "/a/b", "/a%2Fb"].map((r) =>
       agentPagePath(r),

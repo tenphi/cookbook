@@ -9,7 +9,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { extname, join } from "node:path";
+import { extname, join, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { checkStyleLinting } from "./smoke-style-linting.mjs";
 
@@ -286,7 +286,9 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       );
     }
   }
-  const outputEntries = await readdir(join(site, "dist"), { recursive: true });
+  const outputEntries = (
+    await readdir(join(site, "dist"), { recursive: true })
+  ).map((name) => name.split(sep).join("/"));
   if (outputEntries.includes("robots.txt")) {
     throw new Error(
       "A path-hosted site must not publish origin-level robots rules.",

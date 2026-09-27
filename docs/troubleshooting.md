@@ -32,7 +32,7 @@ contrast. Browser checks complement the numeric diagnostics.
 ## Missing or wrong fonts
 
 - **Local file missing:** `/fonts/acme.woff2` means a file in the Astro public
-  directory. Relative paths resolve from the configured repository root. Run
+  directory. Font paths must be root-relative public URLs. Run
   `doctor --public-dir ./static` if your Astro app uses a custom public directory.
 - **Google request fails:** check the exact family name and supported weights and
   styles. Explicit requests reject missing styles; shorthand warns if italics

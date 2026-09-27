@@ -40,6 +40,34 @@ describe("theme extensions", () => {
     );
     expect(config.theme.palette?.shadow).toHaveProperty("fg", "textSoft");
   });
+  it("preserves status mix/shadow graphs and gives derived text its own contrast floor", () => {
+    for (const declaration of [
+      {
+        type: "mix",
+        base: "surface",
+        target: "accent-surface",
+        value: 30,
+        space: "srgb",
+      },
+      { type: "shadow", bg: "surface", fg: "text", intensity: 20 },
+    ] as const) {
+      const resolved = resolveColorTheme({
+        palette: { info: declaration, "custom-status": declaration },
+      });
+      expect(resolved.diagnostics).toEqual([]);
+      expect(resolved.colorTokens["#info"]).toEqual(
+        resolved.colorTokens["#custom-status"],
+      );
+      expect(
+        resolved.contrastChecks
+          .filter((check) => check.foreground === "info-text")
+          .every((check) => check.passed),
+      ).toBe(true);
+      expect(Object.values(resolved.colorTokens["#info-text"]!)).toHaveLength(
+        4,
+      );
+    }
+  });
   it("merges units and recipe state maps deterministically", () => {
     const config = mergeDocsConfig(
       {

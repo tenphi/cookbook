@@ -427,21 +427,31 @@ function statusColors(
 ): ColorMap {
   const declaration = paletteDefinition(input, { from: fallback });
   return {
-    [name]: {
-      base: "surface",
-      role: "border",
-      contrast: { apca: [30, 45] },
-      mode: "auto",
-      ...declaration,
-    },
+    [name]: isSpecialDefinition(declaration)
+      ? declaration
+      : {
+          base: "surface",
+          role: "border",
+          contrast: { apca: [30, 45] },
+          mode: "auto",
+          ...declaration,
+        },
     [`${name}-text`]: {
-      ...declaration,
+      // A mix/shadow owns its dependency fields. Reusing it as text would
+      // replace its base or silently ignore the text contrast floor. Give
+      // derived text a neutral absolute tone; consumers can override it.
+      ...(isSpecialDefinition(declaration)
+        ? { tone: 0, saturation: 0 }
+        : declaration),
       base: `${name}-surface`,
       role: "text",
       contrast: { apca: [75, 90] },
       mode: "auto",
     },
-    [`${name}-surface`]: mix("surface", name, [12, 18], "srgb"),
+    [`${name}-surface`]:
+      "type" in declaration && declaration.type === "shadow"
+        ? { base: "surface", tone: "-2", saturation: 0, mode: "auto" }
+        : mix("surface", name, [12, 18], "srgb"),
   };
 }
 

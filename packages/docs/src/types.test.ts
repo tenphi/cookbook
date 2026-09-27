@@ -26,6 +26,7 @@ describe("component style metadata", () => {
       "CloseIcon",
       "CurrentLink",
       "OpenPane",
+      "EnteredPane",
       "Content",
       "Tree",
       "List",
@@ -61,12 +62,13 @@ describe("component style metadata", () => {
       "CurrentLink",
     ]);
     expect(COOKBOOK_COMPONENT_SUB_ELEMENTS.MobileTableOfContents).toEqual([
+      "Summary",
+      "List",
+      "NestedList",
       "Item",
       "Link",
-      "LinkLabel",
       "HoverLink",
-      "CurrentLink",
-      "CurrentIndicator",
+      "Focus",
     ]);
   });
 

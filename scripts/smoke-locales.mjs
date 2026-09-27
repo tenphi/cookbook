@@ -62,7 +62,7 @@ try {
     ["/manual/fr/guide"],
   );
   const alternates = [
-    ...window.document.querySelectorAll('link[rel="alternate"]'),
+    ...window.document.querySelectorAll('link[rel="alternate"][hreflang]'),
   ].map((a) => [a.getAttribute("hreflang"), a.getAttribute("href")]);
   assert.deepEqual(alternates, [
     ["en", "https://docs.example.com/manual/guide/"],

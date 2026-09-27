@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { routeLocale } from "./localization.js";
 import {
   pagePublishing,
   routeUrl,
@@ -102,7 +103,9 @@ export function pageMetadata(
       content.routes
         .filter(
           (route) =>
-            route.discoverable !== false &&
+            (route.discoverable !== false || route.route === entry.route) &&
+            routeLocale(route.route, content) ===
+              routeLocale(entry.route, content) &&
             (route.route === "/" ||
               route.route === entry.route ||
               entry.route.startsWith(`${route.route}/`)),

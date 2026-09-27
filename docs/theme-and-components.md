@@ -926,6 +926,12 @@ configure both. The names `current`, `constructor`, and `prototype` are reserved
 Declaring a built-in name intentionally overrides that role; use a project
 prefix for additional roles to avoid future naming collisions.
 
+When a status role such as `info` uses a mix or shadow definition, its derived
+`info-text` defaults to neutral, contrast-corrected text. Override `info-text`
+explicitly for a colored label; the mix/shadow dependency graph stays intact.
+A shadow status also uses a neutral derived surface, because Glaze does not allow
+a shadow to be a mix target. Override the surface separately when needed.
+
 ### Register units and recipes
 
 Register custom units and flat recipes in `theme`; Cookbook configures Tasty
