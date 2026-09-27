@@ -10,6 +10,7 @@ export default {
   tokens: [
     "$gap",
     "$radius",
+    "$header-control-radius",
     "$card-radius",
     "$border-width",
     "$outline-width",

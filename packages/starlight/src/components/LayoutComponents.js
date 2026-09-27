@@ -96,7 +96,7 @@ export const VersionSwitcherRoot = customizeComponent(
         inlinePadding: "$gap",
         fill: "#surface-2",
         border: true,
-        radius: "$radius",
+        radius: "$header-control-radius",
         preset: "small / strong",
         cursor: "pointer",
         whiteSpace: "nowrap",
@@ -310,7 +310,7 @@ export const ThemeSelectRoot = customizeComponent(
         color: "#text-soft",
         fill: "#clear",
         border: "0",
-        radius: "$radius",
+        radius: "$header-control-radius",
         transition: "color $transition, fill $transition",
       },
       HoverTrigger: {
@@ -456,7 +456,7 @@ export const SocialIconsRoot = customizeComponent(
         blockSize: "$control-height",
         color: "#text-soft",
         fill: "#clear",
-        radius: "$radius",
+        radius: "$header-control-radius",
         textDecoration: "none",
       },
       HoverLink: {
@@ -657,6 +657,10 @@ export const HeaderLinksRoot = customizeComponent(
         textDecoration: "none",
         whiteSpace: "nowrap",
       },
+      DesktopLink: {
+        $: ".td-header-links__desktop a",
+        radius: "$header-control-radius",
+      },
       HoverLink: { $: "a:hover", color: "#text", fill: "#surface-2-hover" },
       PrimaryLink: {
         $: 'a[data-variant="primary"]',
@@ -676,7 +680,7 @@ export const HeaderLinksRoot = customizeComponent(
         blockSize: "$docs-menu-button-size",
         padding: "0",
         border: "0",
-        radius: "$radius",
+        radius: "$header-control-radius",
         color: "#text-soft",
         fill: "#clear",
       },
@@ -732,7 +736,7 @@ export const HeaderLinksRoot = customizeComponent(
         border: "0",
         color: "#text-soft",
         fill: "#clear",
-        radius: "$radius",
+        radius: "$header-control-radius",
       },
       HoverClose: {
         $: ".td-header-links__close:hover",

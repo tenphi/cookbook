@@ -172,6 +172,8 @@ export type ThemeTokenValue = string | number;
 export interface ThemeTokens {
   $gap?: ThemeTokenValue;
   $radius?: ThemeTokenValue;
+  /** Independent pill/circle radius for header controls and drawer close buttons. */
+  "$header-control-radius"?: ThemeTokenValue;
   "$card-radius"?: ThemeTokenValue;
   "$border-width"?: ThemeTokenValue;
   "$outline-width"?: ThemeTokenValue;
@@ -312,6 +314,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   HeaderLinks: [
     "Desktop",
+    "DesktopLink",
     "Link",
     "HoverLink",
     "PrimaryLink",

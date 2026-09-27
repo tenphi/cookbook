@@ -387,7 +387,7 @@ sub-elements:
 | `TableOfContentsLayout` | `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `SearchButton`          | `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `Layout`                | `LockedPage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `HeaderLinks`           | `Desktop`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                                  |
+| `HeaderLinks`           | `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                   |
 | `Heading`               | `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `PageFrame`             | `MainFrame`, `SidebarFrame`, `Columns`                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -762,3 +762,20 @@ The table of contents is hidden below 72rem through `TableOfContentsLayout`.
 default renderer no longer renders that component. `Layout` controls shared
 navigation dimensions and the drawer's scroll lock; `PageFrame` styles the
 page container and content columns.
+
+### Header control shape
+
+Header buttons and the mobile drawer close button use the independent
+`$header-control-radius` token, which defaults to `999px` for pill and circular
+shapes. Set it to `8px` for the same corners as the default content controls:
+
+```ts
+theme: {
+  tokens: { "$header-control-radius": "8px" }
+}
+```
+
+`$radius` continues to control code-copy buttons, navigation items, and other
+content controls. Individual `theme.styles` overrides still take precedence.
+The mobile header divider spans the viewport while its content keeps the
+configured horizontal padding.
