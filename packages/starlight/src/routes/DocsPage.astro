@@ -45,7 +45,7 @@ const lastUpdated =
   typeof entry.frontmatter.lastUpdated === "string"
     ? new Date(entry.frontmatter.lastUpdated)
     : entry.frontmatter.lastUpdated;
-const hero = starlightHero(entry.frontmatter.hero);
+const hero = entry.hero;
 const frontmatter = {
   ...entry.metadata,
   ...entry.frontmatter,
@@ -88,32 +88,6 @@ const frontmatter = {
   ...(entry.frontmatter.draft ? { pagefind: false } : {}),
   ...(entry.frontmatter.draft ? { draft: true } : {}),
 };
-
-function starlightHero(value: typeof entry.frontmatter.hero) {
-  const image = value?.image;
-  if (!value || !image || "html" in image) return value;
-  if ("file" in image) {
-    return {
-      ...value,
-      image: { ...image, file: imageMetadata(image.file) },
-    };
-  }
-  return {
-    ...value,
-    image: {
-      ...image,
-      dark: imageMetadata(image.dark),
-      light: imageMetadata(image.light),
-    },
-  };
-}
-
-function imageMetadata(src: string) {
-  const pathname = src.split(/[?#]/, 1)[0] ?? src;
-  const extension = /\.(avif|gif|jpe?g|png|svg|webp)$/i.exec(pathname)?.[1];
-  const format = extension?.toLowerCase().replace("jpg", "jpeg") ?? "png";
-  return { src, width: 400, height: 400, format };
-}
 ---
 
 <StarlightPage

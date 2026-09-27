@@ -1,3 +1,4 @@
+import { validateTableOfContents } from "../table-of-contents.js";
 import { validateSeo } from "../publishing.js";
 import { resolveColorTheme } from "../theme/palette.js";
 import { glaze, type ColorDef } from "@tenphi/glaze";
@@ -38,6 +39,7 @@ const COLOR_DECLARATION_KEYS = new Set([
   "inherit",
 ]);
 const ROOT_KEYS = new Set([
+  "tableOfContents",
   "root",
   "redirects",
   "site",
@@ -321,6 +323,9 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
   if (config.site?.seo !== undefined)
     for (const message of validateSeo(config.site.seo, "site"))
       invalid(diagnostics, `site.${message}`);
+  if (config.tableOfContents !== undefined)
+    for (const message of validateTableOfContents(config.tableOfContents))
+      invalid(diagnostics, message);
   const logo = config.site?.logo;
   if (logo !== undefined && logo !== false) {
     const value = typeof logo === "string" ? { src: logo } : logo;
@@ -1279,6 +1284,9 @@ export function normalizeDocsConfig(
     : (config.navigation ?? {});
 
   return {
+    ...(config.tableOfContents !== undefined
+      ? { tableOfContents: config.tableOfContents }
+      : {}),
     redirects: { ...config.redirects },
     site: { ...config.site },
     head: [...(config.head ?? [])],

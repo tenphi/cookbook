@@ -243,13 +243,19 @@ export const CodeGroupRoot = customizeComponent(
     styles: {
       Caption: { preset: "small", color: "#text-soft", margin: "0 0 1x" },
       Pre: {
+        $: "pre",
         margin: "0",
-        padding: "2x",
+        padding: "0.875rem 3.75rem 0.875rem 1rem",
         overflow: "auto",
-        fill: "#surface-2",
+        fill: "#syntax-bg",
         radius: "1r",
       },
-      Code: { preset: "code", color: "#text", whiteSpace: "pre" },
+      Code: {
+        $: "pre code",
+        preset: "code",
+        color: "#syntax-text",
+        whiteSpace: "pre",
+      },
     },
     elements: { Caption: "p", Pre: "pre", Code: "code" },
   }),

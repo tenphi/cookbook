@@ -1,3 +1,4 @@
+import { validateTableOfContents } from "../table-of-contents.js";
 import { pagePublishing, validateSeo } from "../publishing.js";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
@@ -1633,17 +1634,9 @@ function validateFrontmatter(
       error("sidebar.order must be a number.");
     }
   }
-  if (isPlainRecord(record.tableOfContents)) {
-    for (const key of ["minHeadingLevel", "maxHeadingLevel"] as const) {
-      const level = record.tableOfContents[key];
-      if (
-        level !== undefined &&
-        (!Number.isInteger(level) || Number(level) < 1 || Number(level) > 6)
-      ) {
-        error(`tableOfContents.${key} must be an integer from 1 to 6.`);
-      }
-    }
-  }
+  if (record.tableOfContents !== undefined)
+    for (const message of validateTableOfContents(record.tableOfContents))
+      error(message);
   if (
     record.editUrl !== undefined &&
     record.editUrl !== false &&
@@ -1703,6 +1696,16 @@ function validateHero(
       error("hero.image must be an object.");
     } else {
       const image = hero.image;
+      for (const key of ["width", "height"])
+        if (
+          image[key] !== undefined &&
+          (!Number.isInteger(image[key]) || Number(image[key]) <= 0)
+        )
+          error(`hero.image.${key} must be a positive integer.`);
+      if ((image.width === undefined) !== (image.height === undefined))
+        error(
+          "hero.image needs both width and height when dimensions are specified.",
+        );
       const shapes = ["html", "file", "dark"].filter(
         (key) => image[key] !== undefined,
       );

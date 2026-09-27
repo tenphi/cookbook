@@ -1,12 +1,15 @@
 ---
+import { Code } from "astro:components";
 import Tabs from "./Tabs.astro";
 import Tab from "./Tab.astro";
 import { CodeGroupRoot } from "./TastyComponents.js";
+import { codeGroupHighlighting } from "../theme/shiki-theme.js";
 import type { CodeGroupProps as Props } from "./props.js";
 const { label = "Code examples", items } = Astro.props;
+const highlight = codeGroupHighlighting();
 ---
 
-<CodeGroupRoot>
+<CodeGroupRoot data-tasty-anatomy="CodeGroup">
   <Tabs label={label}>
     {
       items.map((item) => (
@@ -14,11 +17,31 @@ const { label = "Code examples", items } = Astro.props;
           {item.language && (
             <CodeGroupRoot.Caption>{item.language}</CodeGroupRoot.Caption>
           )}
-          <CodeGroupRoot.Pre>
-            <CodeGroupRoot.Code>{item.code}</CodeGroupRoot.Code>
-          </CodeGroupRoot.Pre>
+          <cookbook-code-block
+            class="td-code-block"
+            data-tasty-anatomy="MarkdownCodeBlock"
+          >
+            <Code
+              code={item.code}
+              lang={item.language ?? "text"}
+              theme={highlight.theme}
+              transformers={highlight.transformers}
+              embeddedLangs={highlight.langs}
+            />
+            <button
+              type="button"
+              data-copy-code
+              aria-label="Copy code"
+              title="Copy code"
+            >
+              <span data-copy-icon aria-hidden="true" />
+            </button>
+          </cookbook-code-block>
         </Tab>
       ))
     }
   </Tabs>
 </CodeGroupRoot>
+<script>
+  import "../client/code-copy.js";
+</script>

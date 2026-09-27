@@ -378,3 +378,15 @@ const tastyCodeTheme = {
     },
   ],
 };
+
+// Astro executes integrations and page modules in separate module graphs.
+// Share server-only transformer functions without serializing them into pages.
+const sharedShiki = globalThis as typeof globalThis & {
+  __tenphiCookbookShiki?: Record<string, unknown>;
+};
+export function configureCodeHighlighting(config: Record<string, unknown>) {
+  sharedShiki.__tenphiCookbookShiki = config;
+}
+export function codeGroupHighlighting() {
+  return sharedShiki.__tenphiCookbookShiki ?? cookbookShikiConfig(undefined);
+}

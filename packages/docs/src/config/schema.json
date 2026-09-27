@@ -908,11 +908,7 @@
             },
             "MobileTableOfContents": {
               "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
+              "additionalProperties": true
             },
             "PackageVersion": {
               "type": "object",
@@ -1184,6 +1180,32 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "tableOfContents": {
+      "oneOf": [
+        {
+          "const": false
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minHeadingLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "maxHeadingLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "mobile": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
     }
   },
   "$defs": {

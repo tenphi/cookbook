@@ -39,6 +39,7 @@ export type {
   SiteIconConfig,
   SiteLogoConfig,
   SiteSeoConfig,
+  TableOfContentsConfig,
   PageSeoConfig,
   SocialImage,
   BreadcrumbItem,

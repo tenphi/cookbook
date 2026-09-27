@@ -11,6 +11,9 @@ declare module "virtual:cookbook/config" {
     entries: Array<
       DocsEntry & {
         mdx?: boolean;
+        hero?: Awaited<
+          ReturnType<typeof import("./hero-image.js").resolveHeroMetadata>
+        >;
         rendered?: { html: string; headings: DocsHeading[] };
       }
     >;
@@ -19,6 +22,7 @@ declare module "virtual:cookbook/config" {
     site: SiteConfig;
     base: string;
     search: boolean;
+    tableOfContents: DocsConfig["tableOfContents"];
     logo: import("./site-logo.js").ResolvedSiteLogo | false | undefined;
     locales: DocsConfig["locales"];
     defaultLocale: DocsConfig["defaultLocale"];

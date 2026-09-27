@@ -816,3 +816,49 @@ export const PageActionsRoot = customizeComponent(
     },
   }),
 );
+
+export const MobileTableOfContentsRoot = customizeComponent(
+  "MobileTableOfContents",
+  tasty({
+    as: "cookbook-mobile-toc",
+    styles: {
+      display: "block",
+      hide: { "": true, "@narrow-layout": false },
+      padding: "$gap $docs-sidebar-pad-x",
+      blockBorder: "$border-width solid #border end",
+      fill: "#surface",
+      Summary: {
+        $: "summary",
+        padding: "$gap",
+        color: "#text",
+        preset: "small / strong",
+        cursor: "pointer",
+        radius: "$radius",
+      },
+      List: {
+        $: "ul",
+        listStyle: "none",
+        padding: "0",
+        margin: "0",
+        display: "grid",
+        gap: "2px",
+      },
+      NestedList: { $: "ul ul", inlinePadding: "($gap * 2) start" },
+      Item: { $: "li", listStyle: "none", margin: "0", padding: "0" },
+      Link: {
+        $: "a",
+        display: "block",
+        padding: "$gap",
+        color: "#text-soft",
+        preset: "small",
+        radius: "$radius",
+        textDecoration: "none",
+      },
+      HoverLink: { $: "a:hover", fill: "#surface-2", color: "#text" },
+      Focus: {
+        $: "a:focus-visible, summary:focus-visible",
+        outline: "2px solid #focus / 2px",
+      },
+    },
+  }),
+);

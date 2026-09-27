@@ -199,7 +199,8 @@ export default function GlobalStyles() {
     ".right-sidebar-container",
     resolveComponentStyles("TableOfContentsLayout", {
       hide: { "": false, "@narrow-layout": true },
-      order: "2",
+      order: { "": "2", "@narrow-layout": "0" },
+      WithMobile: { $: "&:has(cookbook-mobile-toc)", display: "block" },
       position: "relative",
       inlineSize: {
         "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
@@ -207,10 +208,13 @@ export default function GlobalStyles() {
       },
       Content: {
         $: ".right-sidebar",
-        position: "sticky",
+        position: { "": "sticky", "@narrow-layout": "static" },
         insetBlockStart: "$docs-nav-height",
         inlineSize: "100%",
-        blockSize: "(100vh - $docs-nav-height)",
+        blockSize: {
+          "": "(100vh - $docs-nav-height)",
+          "@narrow-layout": "auto",
+        },
         overflowY: { "": "auto", "@narrow-layout": "visible" },
         scrollbarWidth: "none",
       },
@@ -796,6 +800,8 @@ export default function GlobalStyles() {
         display: "grid",
         placeItems: "center",
         inlineSize: "min(100%, 22rem)",
+        blockSize: "auto",
+        objectFit: "contain",
         marginInlineStart: "auto",
         marginInlineEnd: "auto",
         color: "#accent-surface",

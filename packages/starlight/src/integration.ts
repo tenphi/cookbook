@@ -1,3 +1,4 @@
+import { resolveHeroMetadata } from "./hero-image.js";
 import {
   compatiblePlugins,
   validatePluginFrontmatter,
@@ -54,7 +55,10 @@ import {
 import { resolveDocsTheme } from "./theme/index.js";
 import { configureFontFaces } from "./theme/fonts.js";
 import { resolveThemeFonts, type FontAsset } from "./theme/font-loading.js";
-import { cookbookShikiConfig } from "./theme/shiki-theme.js";
+import {
+  cookbookShikiConfig,
+  configureCodeHighlighting,
+} from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
@@ -445,6 +449,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           ...(options.config?.search?.enabled === false
             ? { pagefind: false }
             : {}),
+          ...(options.config?.tableOfContents !== undefined
+            ? { tableOfContents: options.config.tableOfContents }
+            : {}),
           disable404Route: true,
           components,
           sidebar: [],
@@ -518,11 +525,12 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                   const loaded = await loadGraph(true);
                   const entries = await Promise.all(
                     loaded.entries.map(async (entry) => {
+                      const hero = await resolveHeroMetadata(entry);
                       if (
                         entry.trust === "mdx" &&
                         entry.sourcePath.toLowerCase().endsWith(".mdx")
                       ) {
-                        return { ...entry, mdx: true };
+                        return { ...entry, hero, mdx: true };
                       }
                       const { image, markdown, srcDir } = markdownRuntime;
                       markdownRenderer ??= markdown.processor.createRenderer({
@@ -544,6 +552,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                       );
                       return {
                         ...entry,
+                        hero,
                         rendered: {
                           html: rendered.code,
                           headings: rendered.metadata.headings,
@@ -555,6 +564,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     entries,
                     routes: loaded.routes,
                     redirects: loaded.redirects,
+                    tableOfContents: loaded.config.tableOfContents,
                     site: documentedSite(loaded),
                     base: loaded.config.build.base,
                     search:
@@ -683,6 +693,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         });
       },
       "astro:config:done": async (context) => {
+        configureCodeHighlighting(
+          cookbookShikiConfig(context.config.markdown.shikiConfig),
+        );
         await callInner(inner, "astro:config:done", context);
       },
       "astro:server:setup": async ({ server, logger }) => {

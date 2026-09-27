@@ -402,6 +402,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Tab",
   "Footer",
   "PageActions",
+  "MobileTableOfContents",
   "Hero",
   "PageFrame",
   "HeaderFrame",
@@ -421,7 +422,6 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "MobileMenuFooter",
   "MobileMenuToggle",
   "MobileNavigationTabs",
-  "MobileTableOfContents",
   "PackageVersion",
   "VersionSwitcher",
   "Preview",
@@ -631,11 +631,20 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "NativeIcon",
     "Icon",
   ],
-  TableOfContentsLayout: ["Content"],
+  TableOfContentsLayout: ["WithMobile", "Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
   Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
   CodeGroup: ["Caption", "Pre", "Code"],
   Tab: ["Heading", "Hidden", "HiddenHeading"],
+  MobileTableOfContents: [
+    "Summary",
+    "List",
+    "NestedList",
+    "Item",
+    "Link",
+    "HoverLink",
+    "Focus",
+  ],
   PageActions: ["Control", "Hover", "Focus", "Pending", "Status"],
   Footer: [
     "Meta",
@@ -724,14 +733,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Link",
     "HoverLink",
     "CurrentLink",
-  ],
-  MobileTableOfContents: [
-    "Item",
-    "Link",
-    "LinkLabel",
-    "HoverLink",
-    "CurrentLink",
-    "CurrentIndicator",
   ],
   PackageVersion: [],
   VersionSwitcher: ["Trigger", "Panel", "OpenPanel", "Link", "CurrentLink"],
@@ -900,7 +901,14 @@ export interface BuildConfig {
   maxAssetBytes?: number;
 }
 
+export interface TableOfContentsConfig {
+  minHeadingLevel?: number;
+  maxHeadingLevel?: number;
+  mobile?: boolean;
+}
+
 export interface DocsConfig {
+  tableOfContents?: false | TableOfContentsConfig;
   /** Content and lock directory, relative to docs.config.ts (or the inline root). */
   root?: string;
   /** Old public routes mapped to current document routes. */
@@ -927,6 +935,7 @@ export interface DocsConfig {
 }
 
 export interface NormalizedDocsConfig {
+  tableOfContents?: false | TableOfContentsConfig;
   redirects: Record<string, string>;
   site: SiteConfig;
   head: HeadConfig[];
@@ -957,8 +966,7 @@ export interface DocsFrontmatter {
   slug?: string;
   draft?: boolean;
   sidebar?: false | { label?: string; order?: number; group?: string };
-  tableOfContents?:
-    false | { minHeadingLevel?: number; maxHeadingLevel?: number };
+  tableOfContents?: false | TableOfContentsConfig;
   editUrl?: false | string;
   /** Starlight page layout. */
   template?: "doc" | "splash";
@@ -967,8 +975,14 @@ export interface DocsFrontmatter {
     tagline?: string;
     image?:
       | { html: string }
-      | { file: string; alt?: string }
-      | { dark: string; light: string; alt?: string };
+      | { file: string; alt?: string; width?: number; height?: number }
+      | {
+          dark: string;
+          light: string;
+          alt?: string;
+          width?: number;
+          height?: number;
+        };
     actions?: Array<{
       text: string;
       link: string;

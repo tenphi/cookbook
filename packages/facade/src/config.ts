@@ -11,6 +11,7 @@ export type {
   FontLoadingConfig,
   SiteLogoConfig,
   SiteSeoConfig,
+  TableOfContentsConfig,
   PageSeoConfig,
   SocialImage,
   BreadcrumbItem,
