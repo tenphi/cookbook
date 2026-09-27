@@ -231,8 +231,22 @@ export interface ThemeFontFile {
 /** A Google Fonts family or a set of files hosted by the site. */
 export type ThemeFont =
   | string
-  | { google: string; weights?: number[] }
+  | {
+      google: string;
+      /** Individual weights or variable ranges, using the same syntax as local files. */
+      weights?: Array<number | `${number} ${number}`>;
+      /** Defaults to normal and italic; omit unavailable styles explicitly. */
+      styles?: Array<"normal" | "italic">;
+    }
   | { family: string; files: ThemeFontFile[] };
+
+export interface FontLoadingConfig {
+  /** Download Google font files into the site by default. */
+  google?: "self-hosted" | "remote";
+  /** Reuse verified cache entries by default. Offline never performs network requests. */
+  cache?: "reuse" | "refresh" | "offline";
+  display?: "auto" | "block" | "swap" | "fallback" | "optional";
+}
 
 export interface ThemeFonts {
   body?: ThemeFont;
@@ -790,6 +804,7 @@ export interface ThemeConfig {
   /** Flat reusable Tasty style bundles. Recipes cannot reference other recipes. */
   recipes?: Record<string, RecipeStyles>;
   fonts?: ThemeFonts;
+  fontLoading?: FontLoadingConfig;
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;

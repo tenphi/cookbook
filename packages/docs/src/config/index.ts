@@ -82,6 +82,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "units",
     "recipes",
     "fonts",
+    "fontLoading",
     "states",
     "tokens",
     "presets",
@@ -643,6 +644,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     "units",
     "recipes",
     "fonts",
+    "fontLoading",
     "tokens",
     "states",
     "presets",
@@ -774,6 +776,25 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
         }
     }
   }
+  if (isRecord(config.theme?.fontLoading)) {
+    const choices = {
+      google: ["self-hosted", "remote"],
+      cache: ["reuse", "refresh", "offline"],
+      display: ["auto", "block", "swap", "fallback", "optional"],
+    };
+    for (const [key, value] of Object.entries(config.theme.fontLoading)) {
+      const allowed = choices[key as keyof typeof choices];
+      if (!allowed) unknown(diagnostics, `theme.fontLoading.${key}`);
+      else if (
+        value !== undefined &&
+        (typeof value !== "string" || !allowed.includes(value))
+      )
+        invalid(
+          diagnostics,
+          `theme.fontLoading.${key} must be ${allowed.join(" or ")}.`,
+        );
+    }
+  }
   if (isRecord(config.theme?.fonts)) {
     for (const [role, font] of Object.entries(config.theme.fonts)) {
       const path = `theme.fonts.${role}`;
@@ -796,7 +817,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       }
       if ("google" in font) {
         for (const key of Object.keys(font))
-          if (!["google", "weights"].includes(key))
+          if (!["google", "weights", "styles"].includes(key))
             unknown(diagnostics, `${path}.${key}`);
         if (!validFontFamily(font.google))
           invalid(
@@ -807,14 +828,21 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
           font.weights !== undefined &&
           (!Array.isArray(font.weights) ||
             font.weights.length === 0 ||
-            font.weights.some(
-              (weight) =>
-                !Number.isInteger(weight) || weight < 1 || weight > 1000,
-            ))
+            font.weights.some((weight) => !validFontWeight(weight)))
         )
           invalid(
             diagnostics,
-            `${path}.weights must be a non-empty array of font weights from 1 to 1000.`,
+            `${path}.weights must be a non-empty array of weights from 1 to 1000 or ascending ranges such as "100 900".`,
+          );
+        if (
+          font.styles !== undefined &&
+          (!Array.isArray(font.styles) ||
+            font.styles.length === 0 ||
+            font.styles.some((style) => !["normal", "italic"].includes(style)))
+        )
+          invalid(
+            diagnostics,
+            `${path}.styles must contain normal and/or italic.`,
           );
       } else {
         for (const key of Object.keys(font))
@@ -1308,6 +1336,7 @@ export type {
   HeaderLink,
   SiteIconConfig,
   ThemeConfig,
+  FontLoadingConfig,
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,
@@ -1318,3 +1347,15 @@ export type {
   TypographyPreset,
   TypographyPresets,
 } from "../types.js";
+
+function validFontWeight(weight: unknown): boolean {
+  return (
+    (typeof weight === "number" &&
+      Number.isInteger(weight) &&
+      weight >= 1 &&
+      weight <= 1000) ||
+    (typeof weight === "string" &&
+      /^(?:[1-9]\d{0,2}|1000) (?:[1-9]\d{0,2}|1000)$/.test(weight) &&
+      Number(weight.split(" ")[0]) < Number(weight.split(" ")[1]))
+  );
+}

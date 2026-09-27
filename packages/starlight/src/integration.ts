@@ -46,7 +46,8 @@ import {
   satteriPageAffordances,
 } from "./markdown/rehype-page-affordances.js";
 import { resolveDocsTheme } from "./theme/index.js";
-import { configureFontFaces, resolveThemeFontFaces } from "./theme/fonts.js";
+import { configureFontFaces } from "./theme/fonts.js";
+import { resolveThemeFonts, type FontAsset } from "./theme/font-loading.js";
 import { cookbookShikiConfig } from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
@@ -210,6 +211,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
+  let fontAssets: FontAsset[] = [];
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
@@ -279,14 +281,26 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               );
           }
         }
-        const fontFaces = await resolveThemeFontFaces(
+        const resolvedFonts = await resolveThemeFonts(
           options.config?.theme?.fonts,
-          base,
+          {
+            base,
+            cacheDir: join(
+              fileURLToPath(context.config.cacheDir),
+              "cookbook-fonts",
+            ),
+            loading: options.config?.theme?.fontLoading ?? {},
+            presets: docsTheme.presets,
+            warn: (message) => context.logger.warn(message),
+          },
         );
+        const fontFaces = resolvedFonts.faces;
+        fontAssets = resolvedFonts.assets;
         const usedFamilies = Object.values(docsTheme.presets).map(
           (preset) => preset.fontFamily ?? "",
         );
         configureFontFaces(fontFaces, {
+          display: options.config?.theme?.fontLoading?.display ?? "swap",
           onest: usedFamilies.some((family) =>
             family.includes("Onest Variable"),
           ),
@@ -635,6 +649,22 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             return;
           }
           const pathname = requestPath(request.url);
+          const fontAsset = fontAssets.find(
+            (asset) => asset.publicPath === pathname,
+          );
+          if (fontAsset) {
+            response.statusCode = 200;
+            response.setHeader("Content-Type", fontAsset.contentType);
+            response.setHeader("Content-Length", fontAsset.body.byteLength);
+            response.setHeader(
+              "Cache-Control",
+              "public, max-age=31536000, immutable",
+            );
+            response.end(
+              request.method === "HEAD" ? undefined : fontAsset.body,
+            );
+            return;
+          }
           const siteIcon = siteIcons?.assets.find(
             (asset) => asset.publicPath === pathname,
           );
@@ -726,7 +756,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             );
           }
         }
-        for (const asset of siteIcons?.assets ?? []) {
+        for (const asset of [...(siteIcons?.assets ?? []), ...fontAssets]) {
           const target = join(output, asset.outputPath);
           await mkdir(dirname(target), { recursive: true });
           await writeFile(target, asset.body);

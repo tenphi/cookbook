@@ -24,13 +24,13 @@ export default function GlobalStyles() {
     useFontFace("Onest Variable", {
       src: `url("${onestLatin}") format("woff2-variations")`,
       fontWeight: "100 900",
-      fontDisplay: "swap",
+      fontDisplay: defaultFonts.display ?? "swap",
     });
   if (defaultFonts.mono)
     useFontFace("JetBrains Mono Variable", {
       src: `url("${jetBrainsMonoLatin}") format("woff2-variations")`,
       fontWeight: "100 800",
-      fontDisplay: "swap",
+      fontDisplay: defaultFonts.display ?? "swap",
     });
   for (const face of getFontFaces()) useFontFace(face.family, face.descriptors);
 

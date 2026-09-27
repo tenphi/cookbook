@@ -207,15 +207,20 @@ theme: {
 }
 ```
 
-The short form requests the family's default style. To use specific weights,
-list them explicitly. Google Fonts must support the requested weights; see the
+The short form follows the regular and strong weights in your configured
+presets, including heading and custom preset references. It requests normal and
+italic styles, prefers a variable range, and falls back to real static weights
+when ranges are unavailable. A font without italics produces a build warning;
+choose another family or select only its supported styles. To control the
+request exactly, list weights or ascending variable ranges and styles. Google
+Fonts must support them; see the
 [Google Fonts CSS API](https://developers.google.com/fonts/docs/css2) for its
 available styles and weight syntax.
 
 ```ts
 theme: {
   fonts: {
-    body: { google: "Inter", weights: [400, 600, 700] }
+    body: { google: "Inter", weights: ["400 750"], styles: ["normal", "italic"] }
   }
 }
 ```
@@ -241,10 +246,38 @@ theme: {
 
 The `body` role also feeds navigation and small text. `heading` feeds `h1`
 through `h6`, while `code` covers code text. Each role has a system fallback.
-Cookbook emits the font faces through Tasty. Google font names are resolved at
-build time, so those builds need network access; the generated site has no
-Google CSS stylesheet. Font files are requested from Google's font CDN when
-visitors open the site. Use local files if you need a self-hosted site.
+Cookbook emits font faces through Tasty with `font-display: swap`. Google CSS
+and font files are downloaded at build time and cached in
+`<Astro cacheDir>/cookbook-fonts`. Files are served from your own site's
+`_cookbook/fonts/` path by default, including the deployment base. Visitors make
+no Google Fonts requests. Existing local-file definitions keep working.
+
+```ts
+theme: {
+  fonts: { body: "Inter" },
+  fontLoading: {
+    google: "self-hosted", // or "remote" to keep Google's font CDN URLs
+    cache: "reuse",       // "refresh" to fetch again; "offline" to forbid network
+    display: "swap"       // also auto, block, fallback, optional
+  }
+}
+```
+
+The first build requires network access. Preserve the Astro cache between CI
+runs; `offline` fails with an actionable message when an entry is missing or
+corrupt. Cache entries are content-verified and keyed by the exact request.
+`refresh` deliberately updates them. For a fully checked-in font source, copy
+licensed files into `public/fonts/` and use the local form. Only `wght` and
+`ital` axes are requested; use local variable files and Tasty typography styles
+for other axes. Styles and weights that do not exist are rejected for explicit
+requests. For static fonts, browsers select their nearest real weight;
+intermediate weights require a variable font.
+
+Migration: name-only Google font configuration now downloads the required
+weights and italics and serves them locally. This increases the initial build's
+font downloads and removes visitors' external font dependency. Set
+`fontLoading.google: "remote"` to retain CDN delivery. Existing CSS-variable
+weights that cannot be resolved from presets require explicit `weights`.
 
 ### Adjust presets
 
