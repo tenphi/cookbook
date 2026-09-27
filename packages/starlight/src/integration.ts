@@ -1,3 +1,5 @@
+import { assertTastyOutput } from "./output-styles.js";
+import { adaptPagefindUI } from "./pagefind-adapter.js";
 import { existsSync } from "node:fs";
 import {
   cp,
@@ -166,6 +168,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   );
   const components = resolveComponentOverrides(
     {
+      Search: fileURLToPath(
+        new URL("./overrides/Search.astro", import.meta.url),
+      ),
       Head: fileURLToPath(new URL("./overrides/Head.astro", import.meta.url)),
       LanguageSelect: fileURLToPath(
         new URL("./overrides/LanguageSelect.astro", import.meta.url),
@@ -697,25 +702,8 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               /\sstyle="--sl-icon-size:\s*([^;\"]+);?"/g,
               ' width="$1" height="$1"',
             )
-            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"')
-            .replace(
-              /(<kbd\b[^>]*)\sstyle="display:\s*none;?"([^>]*>)/g,
-              "$1$2",
-            )
-            .replace(
-              /(<dialog\b[^>]*)\sstyle="padding:\s*0;?"([^>]*>)/g,
-              "$1$2",
-            );
-          if (
-            /<style\b/.test(sanitized) ||
-            /<link\b(?=[^>]*\brel=["']stylesheet["'])(?![^>]*\bdata-tasty-ssr\b)[^>]*>/i.test(
-              sanitized,
-            )
-          ) {
-            throw new Error(
-              `Non-Tasty CSS found in ${relativePath}. Use theme.styles or Tasty components for visual changes.`,
-            );
-          }
+            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"');
+          assertTastyOutput(sanitized, relativePath);
           if (sanitized !== html) await writeFile(path, sanitized);
         }
         const pagefindOutput = join(output, "pagefind");
@@ -794,6 +782,7 @@ function stripStarlightStylesPlugin(root: string) {
     name: "cookbook-strip-starlight-css",
     enforce: "pre" as const,
     resolveId(source: string, importer: string | undefined) {
+      if (source === "@pagefind/default-ui") return "\0cookbook:pagefind-ui";
       const normalized = source.replaceAll("\\", "/").replace(/^\/@fs/, "");
       const owned =
         normalized.startsWith(`${normalizedRoot}/`) ||
@@ -812,7 +801,13 @@ function stripStarlightStylesPlugin(root: string) {
         return emptyStyleId;
       return undefined;
     },
-    load(id: string) {
+    async load(id: string) {
+      if (id === "\0cookbook:pagefind-ui") {
+        const entry = packageRequire.resolve("@pagefind/default-ui");
+        return adaptPagefindUI(
+          await readFile(resolve(dirname(entry), "../mjs/ui-core.mjs"), "utf8"),
+        );
+      }
       if (id === emptyPrintId) return 'export default "data:text/css,";';
       if (id === emptyStyleId) return "";
       return undefined;

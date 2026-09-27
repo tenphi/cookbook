@@ -56,7 +56,75 @@ const bashPlaceholderTransformer = {
 };
 
 type HastElement = {
+  type?: string;
+  tagName?: string;
   properties: Record<string, unknown>;
+  children?: HastElement[];
+};
+
+const syntaxColors = new Map(
+  [
+    comment,
+    punctuation,
+    keyword,
+    string,
+    token,
+    property,
+    number,
+    func,
+    value,
+    operator,
+    foreground,
+    background,
+    inserted,
+    deleted,
+  ].map((color) => [color, `td-${color.slice(6, -7)}`]),
+);
+
+/** Keep grammar classification in Shiki and all presentation in Tasty. */
+const tastyClassesTransformer = {
+  name: "cookbook:tasty-classes",
+  enforce: "post" as const,
+  root(this: DiffTransformerContext, root: HastElement): void {
+    const visit = (node: HastElement) => {
+      const style = node.properties?.style;
+      if (typeof style === "string") {
+        for (const declaration of style.split(";")) {
+          if (!declaration.trim()) continue;
+          const separator = declaration.indexOf(":");
+          const key = declaration.slice(0, separator).trim();
+          const value = declaration.slice(separator + 1).trim();
+          let className: string | undefined;
+          if (key === "color") className = syntaxColors.get(value);
+          else if (key === "background-color" && value === background)
+            className = "td-syntax-bg";
+          else if (key === "font-style" && value === "italic")
+            className = "td-syntax-italic";
+          else if (key === "font-weight" && value === "bold")
+            className = "td-syntax-strong";
+          else if (key === "text-decoration" && value === "underline")
+            className = "td-syntax-underline";
+          else if (key === "overflow-x" && value === "auto")
+            className = "td-syntax-scroll";
+          else if (
+            (key === "white-space" && value === "pre-wrap") ||
+            (key === "word-wrap" && value === "break-word")
+          )
+            className = "td-syntax-wrap";
+          else if (key === "user-select" && value === "none")
+            className = "td-syntax-marker";
+          if (!className)
+            throw new Error(
+              `Unsupported Shiki style ${JSON.stringify(declaration)}. Use semantic classes and theme.styles.SyntaxHighlight for custom transformers.`,
+            );
+          this.addClassToHast(node, className);
+        }
+        delete node.properties.style;
+      }
+      node.children?.forEach(visit);
+    };
+    visit(root);
+  },
 };
 
 type DiffTransformerContext = {
@@ -122,6 +190,9 @@ export function cookbookShikiConfig(
   }
   if (!transformers.includes(diffLineTransformer)) {
     transformers.push(diffLineTransformer);
+  }
+  if (!transformers.includes(tastyClassesTransformer)) {
+    transformers.push(tastyClassesTransformer);
   }
 
   return {

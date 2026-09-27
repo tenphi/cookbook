@@ -1,77 +1,105 @@
-export {};
-
-const open = document.querySelector<HTMLButtonElement>(
-  "[data-docs-search-open]",
-);
-const dialog = document.querySelector<HTMLDialogElement>("[data-docs-search]");
-const input = document.querySelector<HTMLInputElement>(
-  "[data-docs-search-input]",
-);
-const status = document.querySelector<HTMLElement>("[data-docs-search-status]");
-const results = document.querySelector<HTMLUListElement>(
-  "[data-docs-search-results]",
-);
-const base =
-  document.querySelector<HTMLElement>("[data-docs-base]")?.dataset.docsBase ??
-  "/";
-const basePath = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
-
-const openDialog = () => {
-  dialog?.showModal();
-  input?.focus();
+type SearchResult = { url: string; sub_results?: SearchResult[] };
+type PagefindOptions = Record<string, unknown> & {
+  processResult?: (result: SearchResult) => SearchResult | void;
 };
 
-open?.addEventListener("click", openDialog);
-
-window.addEventListener("keydown", (event) => {
-  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-    if (dialog?.open) dialog.close();
-    else openDialog();
-    event.preventDefault();
+/** Own the dialog lifecycle; Pagefind owns indexing, filtering and result rendering. */
+export function initializeSearch(
+  element: HTMLElement,
+  options: PagefindOptions,
+  development: boolean,
+  base: string,
+): void {
+  if (element.dataset.initialized) return;
+  element.dataset.initialized = "true";
+  const open = element.querySelector<HTMLButtonElement>("[data-open-modal]")!;
+  const close = element.querySelector<HTMLButtonElement>("[data-close-modal]")!;
+  const dialog = element.querySelector("dialog")!;
+  const frame = element.querySelector(".dialog-frame")!;
+  const status = element.querySelector<HTMLElement>("[data-search-status]");
+  const shortcut = open.querySelector("kbd")!;
+  if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+    shortcut.querySelector("kbd")!.textContent = "⌘";
+    open.setAttribute("aria-keyshortcuts", "Meta+K");
   }
-});
-
-const shortcut = document.querySelector<HTMLElement>(
-  "[data-docs-search-shortcut]",
-);
-const shortcutKey = shortcut?.querySelector("kbd");
-if (shortcutKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
-  shortcutKey.textContent = "⌘";
-  open?.setAttribute("aria-keyshortcuts", "Meta+K");
+  delete shortcut.dataset.pending;
+  let initialized: Promise<void> | undefined;
+  let returnFocus: HTMLElement | null = null;
+  const initialize = () => {
+    if (development) return Promise.resolve();
+    return (initialized ??= (async () => {
+      // @ts-expect-error Pagefind publishes no declarations for its default UI.
+      const { PagefindUI } = await import("@pagefind/default-ui");
+      const translations = JSON.parse(element.dataset.translations ?? "{}");
+      const format = (url: string) =>
+        element.hasAttribute("data-strip-trailing-slash")
+          ? url.replace(/(.)\/(#.*)?$/, "$1$2")
+          : url;
+      new PagefindUI({
+        ...options,
+        element: "#starlight__search",
+        baseUrl: base,
+        bundlePath: `${base.replace(/\/$/, "")}/pagefind/`,
+        showImages: false,
+        showSubResults: true,
+        translations,
+        processResult(result: SearchResult) {
+          result = options.processResult?.(result) ?? result;
+          result.url = format(result.url);
+          result.sub_results?.forEach((child) => {
+            child.url = format(child.url);
+          });
+          return result;
+        },
+      });
+    })().catch((error: unknown) => {
+      initialized = undefined;
+      if (status) {
+        status.hidden = false;
+        // Reuse the localized Pagefind error, with a plain fallback.
+        const translations = JSON.parse(element.dataset.translations ?? "{}");
+        status.textContent =
+          translations.error ?? "Search could not load. Close and try again.";
+      }
+      throw error;
+    }));
+  };
+  const show = async () => {
+    if (dialog.open) return;
+    returnFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : open;
+    dialog.showModal();
+    document.body.setAttribute("data-search-modal-open", "");
+    if (!development && status) status.hidden = true;
+    try {
+      await initialize();
+      // Pagefind mounts synchronously. Only focus if the user has not closed it.
+      if (dialog.open) element.querySelector("input")?.focus();
+    } catch {
+      /* Keep the close control usable when the search bundle fails. */
+    }
+  };
+  open.addEventListener("click", () => {
+    void show();
+  });
+  open.disabled = false;
+  close.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest("a[href]") || !frame.contains(event.target))
+      dialog.close();
+  });
+  dialog.addEventListener("close", () => {
+    document.body.removeAttribute("data-search-modal-open");
+    returnFocus?.focus();
+  });
+  window.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      if (dialog.open) dialog.close();
+      else void show();
+    }
+  });
 }
-
-type Pagefind = {
-  search(query: string): Promise<{
-    results: Array<{
-      data(): Promise<{ url: string; meta: { title?: string } }>;
-    }>;
-  }>;
-};
-let pagefind: Promise<Pagefind> | undefined;
-input?.addEventListener("input", async () => {
-  const query = input.value.trim();
-  if (!status || !results) return;
-  if (!query) {
-    status.textContent = "";
-    results.replaceChildren();
-    return;
-  }
-  status.textContent = "Searching…";
-  const modulePath = `${basePath}/pagefind/pagefind.js`;
-  pagefind ??= import(/* @vite-ignore */ modulePath);
-  const response = await (await pagefind).search(query);
-  const records = await Promise.all(
-    response.results.slice(0, 12).map((result) => result.data()),
-  );
-  results.replaceChildren(
-    ...records.map((record) => {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = `${basePath}${record.url}`;
-      link.textContent = record.meta.title ?? record.url;
-      item.append(link);
-      return item;
-    }),
-  );
-  status.textContent = `${records.length} result${records.length === 1 ? "" : "s"}`;
-});

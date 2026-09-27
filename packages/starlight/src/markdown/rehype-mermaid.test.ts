@@ -21,7 +21,7 @@ describe("Mermaid Markdown rendering", () => {
       '<div class="td-mermaid" data-mermaid-state="ready"><svg role="img" aria-label="Dream cycle"',
     );
     expect(code).toContain("<title>Dream cycle</title>");
-    expect(code).toContain("--bg:var(--surface-2-color)");
+    expect(code).not.toMatch(/\sstyle=/);
     expect(code).not.toContain("<style>");
   });
 

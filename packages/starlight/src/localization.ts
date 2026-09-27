@@ -14,6 +14,21 @@ export function routeLocale(path: string, options: LocaleOptions): string {
   return first && first !== "root" && options.locales?.[first] ? first : "root";
 }
 
+/** Author components can render before Starlight initializes its route locals. */
+export function requestLanguage(
+  pathname: string,
+  base: string,
+  options: LocaleOptions,
+): string {
+  const prefix = base.replace(/\/$/, "");
+  const path =
+    prefix && (pathname === prefix || pathname.startsWith(`${prefix}/`))
+      ? pathname.slice(prefix.length)
+      : pathname;
+  const locale = routeLocale(path, options);
+  return options.locales?.[locale]?.lang ?? (locale === "root" ? "en" : locale);
+}
+
 export function localePath(path: string, options: LocaleOptions): string {
   const route = normalizeNavigationPath(path);
   const locale = routeLocale(route, options);
@@ -148,6 +163,7 @@ export function localizedNavigation(
 }
 
 export const ENGLISH_MESSAGES = {
+  searchError: "Search could not load. Close and try again.",
   appearance: "Appearance",
   colorScheme: "Color scheme",
   contrast: "Contrast",
@@ -181,6 +197,7 @@ export const ENGLISH_MESSAGES = {
 } as const;
 export type MessageKey = keyof typeof ENGLISH_MESSAGES;
 const FRENCH_MESSAGES: Record<MessageKey, string> = {
+  searchError: "La recherche n’a pas pu se charger. Fermez et réessayez.",
   appearance: "Apparence",
   colorScheme: "Thème de couleur",
   contrast: "Contraste",

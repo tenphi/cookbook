@@ -385,12 +385,35 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "StarlightBadge",
   "StarlightSteps",
   "SearchResults",
+  "SyntaxHighlight",
 ] as const;
 
 export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  SyntaxHighlight: [
+    "Scroll",
+    "Wrap",
+    "Marker",
+    "Comment",
+    "Punctuation",
+    "Keyword",
+    "String",
+    "Token",
+    "Property",
+    "Number",
+    "Function",
+    "Value",
+    "Operator",
+    "Text",
+    "Bg",
+    "Inserted",
+    "Deleted",
+    "Italic",
+    "Strong",
+    "Underline",
+  ],
   SearchResults: [
     "Form",
     "Input",
@@ -459,6 +482,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "NextIconRtl",
   ],
   Search: [
+    "Status",
     "Dialog",
     "CloseIcon",
     "OpenDialog",
@@ -527,7 +551,15 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "HoverClose",
   ],
   Layout: ["Islands", "LockedPage", "Light", "Auto"],
-  SearchButton: ["Label", "Shortcut", "Hover", "Active", "NativeIcon", "Icon"],
+  SearchButton: [
+    "PendingShortcut",
+    "Label",
+    "Shortcut",
+    "Hover",
+    "Active",
+    "NativeIcon",
+    "Icon",
+  ],
   TableOfContentsLayout: ["Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
   Callout: ["Title", "Body", "Tip", "Caution", "Danger"],

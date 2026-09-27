@@ -298,6 +298,9 @@ for (const name of outputEntries.filter(
   (entry) => extname(entry) === ".html",
 )) {
   const html = await readFile(join(output, name), "utf8");
+  if (/<[a-z][^>]*\sstyle\s*=/i.test(html)) {
+    throw new Error(`${name} contains an inline style attribute.`);
+  }
   if (/--sl-/i.test(html)) {
     throw new Error(`${name} contains an inline Starlight style token.`);
   }

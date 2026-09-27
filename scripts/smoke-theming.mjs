@@ -26,7 +26,7 @@ try {
   );
   await writeFile(
     join(fixture, "docs.config.ts"),
-    `export default ${JSON.stringify({ theme: { brand: { from: "#315efb" }, palette: { "review-panel": { base: "surface", tone: "-2", saturation: 0.05 }, "review-ink": { base: "review-panel", tone: 0, contrast: { wcag: [7, 10] } } }, units: { rh: "6px" }, recipes: { "review-panel": { fill: "#review-panel", color: "#review-ink", padding: "2rh", radius: "3px" } }, presets: { "review-label": { fontSize: "19px", fontWeight: 530 } }, styles: { Search: { Dialog: { inlineSize: "max 31rem" } }, SearchResults: { ResultLink: { color: "#review-ink" } }, Markdown: { Quote: { inlinePadding: "29px start" } }, Pagination: { Link: { radius: "13px" } } }, customStyles: { DemoBadge: { Label: { color: "#review-ink", textDecoration: "underline", preset: "review-label" } } } } })};`,
+    `export default ${JSON.stringify({ head: [{ tag: "meta", attrs: { "http-equiv": "Content-Security-Policy", content: "style-src-attr 'none'" } }], theme: { brand: { from: "#315efb" }, palette: { "review-panel": { base: "surface", tone: "-2", saturation: 0.05 }, "review-ink": { base: "review-panel", tone: 0, contrast: { wcag: [7, 10] } } }, units: { rh: "6px" }, recipes: { "review-panel": { fill: "#review-panel", color: "#review-ink", padding: "2rh", radius: "3px" } }, presets: { "review-label": { fontSize: "19px", fontWeight: 530 } }, styles: { Search: { Dialog: { inlineSize: "max 31rem" } }, SearchResults: { ResultLink: { color: "#review-ink" } }, Markdown: { Quote: { inlinePadding: "29px start" } }, Pagination: { Link: { radius: "13px" } } }, customStyles: { DemoBadge: { Label: { color: "#review-ink", textDecoration: "underline", preset: "review-label" } } } } })};`,
   );
   await mkdir(join(fixture, "docs"));
   await writeFile(join(fixture, "README.md"), "# Theming fixture");
@@ -36,7 +36,7 @@ try {
   );
   await writeFile(
     join(fixture, "docs/showcase.mdx"),
-    `# Component showcase\n\nimport {DemoBadge} from './badge.js';\n\n<DemoBadge client:load data-demo-badge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>\n\n> Custom quotation.\n`,
+    `# Component showcase\n\nimport {Preview} from '@tenphi/cookbook/components';\n\nimport {DemoBadge} from './badge.js';\n\n<DemoBadge client:load data-demo-badge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>\n\n> Custom quotation.\n\n\`\`\`ts\nconst example = true;\n\`\`\`\n\n<Preview title="Isolated example" html="<strong>Example</strong>" css="strong { color: rebeccapurple; }" />\n`,
   );
   const build = await promisify(execFile)(
     process.execPath,
@@ -68,6 +68,9 @@ try {
   for (const tag of ["astro-island", "astro-slot", "astro-static-slot"])
     assert.match(css, new RegExp(`${tag}[^{}]*\\{[^{}]*display:\\s*contents`));
   assert.doesNotMatch(html, /<style\b/);
+  assert.doesNotMatch(html, /<[a-z][^>]*\sstyle\s*=/i);
+  assert.ok(html.includes("td-syntax-keyword"));
+  assert.ok(html.includes('sandbox=""'));
   assert.match(css, /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/);
   assert.match(css, /\.pagination-links a[^{}]*\{[^{}]*border-radius:\s*13px/);
   assert.match(css, /site-search dialog[^{}]*\{[^{}]*max-inline-size:\s*31rem/);
