@@ -20,6 +20,7 @@ export function pageMetadata(
   },
   existing: HeadConfig[],
 ): HeadConfig[] {
+  const localeConfig = content.locales ? { locales: content.locales } : {};
   const publishing = pagePublishing(entry, {
     site: content.site,
     ...(content.locales ? { locales: content.locales } : {}),
@@ -104,8 +105,8 @@ export function pageMetadata(
         .filter(
           (route) =>
             (route.discoverable !== false || route.route === entry.route) &&
-            routeLocale(route.route, content) ===
-              routeLocale(entry.route, content) &&
+            routeLocale(route.route, localeConfig) ===
+              routeLocale(entry.route, localeConfig) &&
             (route.route === "/" ||
               route.route === entry.route ||
               entry.route.startsWith(`${route.route}/`)),
