@@ -24,8 +24,13 @@ export function renderLlmsTxt(graph: DocsGraph): string {
   const lines = [`# ${singleLine(site.title ?? "Documentation")}`, ""];
   if (site.description) lines.push(`> ${singleLine(site.description)}`, "");
   lines.push("## Documentation", "");
+  const discoverable = new Set(
+    graph.routes
+      .filter((route) => route.discoverable !== false)
+      .map((route) => route.route),
+  );
   for (const entry of graph.entries) {
-    if (entry.frontmatter.draft) continue;
+    if (!discoverable.has(entry.route)) continue;
     const url = pageUrl(site.url, sitePath(build.base, entry.route));
     lines.push(
       `- [${markdownLabel(entry.title)}](${url})${entry.description ? `: ${singleLine(entry.description)}` : ""}`,

@@ -59,7 +59,7 @@ export function starlightPageSidebar(
   routes: DocsRoute[],
 ): StarlightPageSidebarItem[] {
   const visibleRoutes = routes
-    .filter((route) => route.sidebar !== false)
+    .filter((route) => route.sidebar !== false && route.discoverable !== false)
     .toSorted((left, right) => {
       const leftOrder =
         typeof left.sidebar === "object" ? left.sidebar.order : undefined;
@@ -124,18 +124,21 @@ export function starlightPageSidebar(
   const fallback = layout.items?.length
     ? layout.items.map(convert)
     : groupedRoutes(visibleRoutes);
-  if (!layout.sectioned) return fallback;
-
-  return [
-    ...(layout.fallbackSidebarGroup !== undefined
-      ? [{ label: "Documentation", items: fallback }]
-      : []),
-    ...layout.tabs.flatMap((tab) =>
-      tab.items !== undefined
-        ? [{ label: tab.label, items: tab.items.map(convert) }]
-        : [],
-    ),
-  ];
+  const sidebar = !layout.sectioned
+    ? fallback
+    : [
+        ...(layout.fallbackSidebarGroup !== undefined
+          ? [{ label: "Documentation", items: fallback }]
+          : []),
+        ...layout.tabs.flatMap((tab) =>
+          tab.items !== undefined
+            ? [{ label: tab.label, items: tab.items.map(convert) }]
+            : [],
+        ),
+      ];
+  return routes
+    .filter((route) => route.discoverable === false)
+    .reduce((items, route) => withoutRoute(items, route.route), sidebar);
 }
 
 function withoutRoute(

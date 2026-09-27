@@ -12,6 +12,7 @@ import { createRequire } from "node:module";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import starlight from "./starlight-runtime.js";
+import sitemap from "@astrojs/sitemap";
 import {
   createDocsGraph,
   assertValidDocs,
@@ -28,6 +29,7 @@ import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
 import type { StarlightPlugin } from "@astrojs/starlight/types";
 import {
+  navigationPath,
   resolveNavigationLayout,
   type ResolvedNavigationLayout,
 } from "./navigation.js";
@@ -297,6 +299,20 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         }
         siteIconBase = base;
         graphBase = base;
+        context.config.integrations.push(
+          sitemap({
+            filter: (url) => {
+              const pathname = decodeURI(new URL(url).pathname);
+              const route = navigationPath(pathname, graphBase);
+              return (
+                graph?.routes.some(
+                  (entry) =>
+                    entry.route === route && entry.discoverable !== false,
+                ) ?? false
+              );
+            },
+          }),
+        );
         siteIcons = await loadSiteIcons();
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({

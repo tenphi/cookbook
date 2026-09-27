@@ -189,6 +189,7 @@ export async function createDocsGraph(
     entryId: entry.id,
     sourcePath: entry.sourcePath,
     title: entry.title,
+    discoverable: !entry.frontmatter.draft,
     ...(entry.frontmatter.sidebar !== undefined
       ? { sidebar: entry.frontmatter.sidebar }
       : {}),

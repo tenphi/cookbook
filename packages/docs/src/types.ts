@@ -710,6 +710,8 @@ export interface DocsRoute {
   entryId: string;
   sourcePath: string;
   title: string;
+  /** False for public routes excluded from automatic navigation and indexes. */
+  discoverable?: boolean;
   sidebar?: false | NavigationPlacement;
 }
 

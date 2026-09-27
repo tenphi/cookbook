@@ -7,10 +7,7 @@ import { starlightPageSidebar } from "../navigation.js";
 export const prerender = true;
 
 export function getStaticPaths() {
-  const entries = content.entries.filter(
-    (entry) =>
-      import.meta.env.MODE !== "production" || !entry.frontmatter.draft,
-  );
+  const entries = content.entries;
   return [
     ...entries.map((entry) => ({
       params: { route: entry.route === "/" ? undefined : entry.route.slice(1) },
@@ -73,7 +70,18 @@ const frontmatter = {
   ...(entry.frontmatter.pagefind !== undefined
     ? { pagefind: entry.frontmatter.pagefind }
     : {}),
-  ...(entry.frontmatter.head ? { head: entry.frontmatter.head } : {}),
+  head: [
+    ...(entry.frontmatter.head ?? []).filter(
+      (tag) =>
+        !entry.frontmatter.draft ||
+        tag.tag !== "meta" ||
+        tag.attrs?.name !== "robots",
+    ),
+    ...(entry.frontmatter.draft
+      ? [{ tag: "meta", attrs: { name: "robots", content: "noindex, follow" } }]
+      : []),
+  ],
+  ...(entry.frontmatter.draft ? { pagefind: false } : {}),
   ...(entry.frontmatter.draft ? { draft: true } : {}),
 };
 

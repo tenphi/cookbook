@@ -204,6 +204,14 @@ renderer frontmatter. Use `content.frontmatter: "reject"` to reject unrelated
 fields. Other supported fields include `aliases`, `template`, `hero`, `editUrl`,
 `lastUpdated`, `prev`, `next`, `head`, `draft`, and `slug`.
 
+### Draft pages
+
+Set `draft: true` to publish a page for review at its normal URL. Drafts remain
+available in development and production, and authored links to them are valid.
+They are excluded from automatic navigation, pagination, search, sitemaps, and
+`llms.txt`, and receive `noindex` metadata. Removing `draft` makes the page
+discoverable on the next build. A draft URL is public; this is not access control.
+
 ## Languages
 
 Expose Starlight's multilingual routing and language picker directly:

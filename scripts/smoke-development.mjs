@@ -64,6 +64,7 @@ try {
   await writeFile(join(app, "docs.config.ts"), config("Development fixture"));
   await write("README.md", "# Initial home\n\n[Guide](./docs/guide.md)\n");
   await write("docs/guide.md", "# Initial guide\n");
+  await write("docs/draft.md", "---\ndraft: true\n---\n# Draft preview\n");
   child = spawn(
     process.execPath,
     [
@@ -96,6 +97,20 @@ try {
   }
   if (!origin) throw new Error(`No development URL: ${logs}`);
   await waitFor("/", "Initial home");
+  const draft = await waitFor("/draft/", "Draft preview");
+  assert.match(draft, /name="robots" content="noindex, follow"/);
+  assert.ok(!draft.includes("data-pagefind-body"));
+  assert.ok(!(await waitFor("/", "Initial home")).includes('href="/draft/"'));
+  await write("docs/draft.md", "# Published preview\n");
+  assert.ok(
+    (await waitFor("/draft/", "Published preview")).includes(
+      "data-pagefind-body",
+    ),
+  );
+  await write("docs/draft.md", "---\ndraft: true\n---\n# Draft again\n");
+  assert.ok(
+    !(await waitFor("/draft/", "Draft again")).includes("data-pagefind-body"),
+  );
   await write("docs/guide.md", "# Edited guide\n");
   await waitFor("/guide/", "Edited guide");
   await write("docs/new.md", "# Added page\n");
@@ -153,6 +168,22 @@ try {
     "docs/live.mdx",
     "---\naliases: [previous]\n---\n# Published MDX\n",
   );
+  await write(
+    "docs/draft.mdx",
+    "---\ndraft: true\n---\n# PrivatePreviewPhrase\n",
+  );
+  await write(
+    "docs/next.mdx",
+    "# Next MDX\n\n[Explicit draft link](./draft.mdx)\n",
+  );
+  const productionConfig = await readFile(join(app, "docs.config.ts"), "utf8");
+  await writeFile(
+    join(app, "docs.config.ts"),
+    productionConfig.replace(
+      '"root":',
+      '"site":{"url":"https://docs.example.com"},"root":',
+    ),
+  );
   await writeFile(
     join(app, "astro.config.mjs"),
     'import cookbook from "@tenphi/cookbook"; export default { base: "/manual/", integrations: [cookbook()] };\n',
@@ -175,6 +206,27 @@ try {
   );
   assert.match(staticRedirect, /http-equiv="refresh"/);
   assert.ok(staticRedirect.includes("/manual/v2/live"));
+  const draftOutput = await readFile(
+    join(app, "dist/v2/draft/index.html"),
+    "utf8",
+  );
+  assert.match(draftOutput, /PrivatePreviewPhrase/);
+  assert.match(draftOutput, /name="robots" content="noindex, follow"/);
+  assert.ok(!draftOutput.includes("data-pagefind-body"));
+  const publishedOutput = await readFile(
+    join(app, "dist/v2/next/index.html"),
+    "utf8",
+  );
+  assert.ok(publishedOutput.includes('href="/manual/v2/draft"'));
+  assert.ok(!publishedOutput.includes('href="/manual/v2/draft/"'));
+  assert.ok(
+    !(await readFile(join(app, "dist/llms.txt"), "utf8")).includes(
+      "PrivatePreviewPhrase",
+    ),
+  );
+  const sitemap = await readFile(join(app, "dist/sitemap-0.xml"), "utf8");
+  assert.ok(!sitemap.includes("/draft/"));
+  assert.ok(sitemap.includes("/manual/v2/next/"));
   console.log(
     "Development smoke passed: startup, config discovery, external content root, edits, additions, removals, error recovery, config reload, live aliases, repeated MDX mounts, and static redirects under a URL base.",
   );
