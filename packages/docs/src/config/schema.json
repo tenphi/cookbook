@@ -39,6 +39,21 @@
           "type": "string",
           "format": "uri"
         },
+        "logo": {
+          "oneOf": [
+            { "const": false }, { "type": "string", "minLength": 1 },
+            { "type": "object", "additionalProperties": false,
+              "oneOf": [{ "required": ["src"], "not": { "anyOf": [{ "required": ["light"] }, { "required": ["dark"] }] } }, { "required": ["light", "dark"], "not": { "required": ["src"] } }],
+              "properties": {
+                "src": { "type": "string", "minLength": 1 },
+                "light": { "type": "string", "minLength": 1 }, "dark": { "type": "string", "minLength": 1 },
+                "alt": { "type": "string" }, "href": { "type": "string" },
+                "width": { "type": "number", "exclusiveMinimum": 0 }, "height": { "type": "number", "exclusiveMinimum": 0 },
+                "decorative": { "type": "boolean" }
+              }
+            }
+          ]
+        },
         "favicon": {
           "oneOf": [
             {
@@ -476,6 +491,7 @@
                 }
               }
             },
+            "SiteLogo": { "type": "object", "propertyNames": { "not": { "const": "mode" } } },
             "Logo": {
               "type": "object",
               "propertyNames": {

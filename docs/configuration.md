@@ -95,7 +95,16 @@ content: {
 Each `routeBase` must have a page, and version roots must be distinct. A
 single-version site can continue using `site.version` for a simple label.
 
-### Site icons
+### Site logo
+
+`site.logo` accepts a local image path, `false` to hide the mark, or an object
+with `src` (one image) or `light` and `dark` (appearance variants). Optional
+`alt`, `decorative`, `href`, `width`, and `height` control accessible text,
+destination, and intrinsic sizing. It applies to the header and mobile drawer.
+See the [shared logo guide](./theme-and-components.md#a-shared-site-logo).
+The logo and favicon are independent.
+
+## Site icons
 
 Cookbook ships its book mark as the default favicon. Set `site.favicon` to a
 local SVG, PNG, JPEG, WebP, AVIF, or GIF when the documentation should use the

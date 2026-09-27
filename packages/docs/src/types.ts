@@ -37,6 +37,8 @@ export interface SiteConfig {
   headerLinks?: HeaderLink[];
   /** Source artwork used to generate browser, touch, and installable-app icons. */
   favicon?: string | SiteIconConfig;
+  /** Shared header and mobile drawer artwork. Paths are relative to the project root. */
+  logo?: false | string | SiteLogoConfig;
 }
 
 export interface SiteVersion {
@@ -51,6 +53,21 @@ export interface HeaderLink {
   /** Desktop button variant; mobile More menus use uniform navigation links. */
   variant?: "default" | "primary";
   newTab?: boolean;
+}
+
+export interface SiteLogoConfig {
+  /** Use one image, or supply both light and dark images instead. */
+  src?: string;
+  light?: string;
+  dark?: string;
+  alt?: string;
+  /** Defaults to the localized documentation home. */
+  href?: string;
+  /** Intrinsic dimensions; normally inferred from the image. */
+  width?: number;
+  height?: number;
+  /** True by default because the site title labels the same destination. */
+  decorative?: boolean;
 }
 
 export interface SiteIconConfig {
@@ -364,6 +381,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "TableOfContentsLayout",
   "LanguageSelect",
   "Logo",
+  "SiteLogo",
   "MarkdownCodeBlock",
   "MarkdownHeading",
   "MarkdownInlineCode",
@@ -611,6 +629,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Option",
   ],
   Logo: ["Svg", "Mark"],
+  SiteLogo: ["Image", "Light", "Dark"],
   MarkdownCodeBlock: [
     "Pre",
     "CopyButton",

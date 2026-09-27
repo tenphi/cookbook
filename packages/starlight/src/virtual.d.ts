@@ -19,6 +19,7 @@ declare module "virtual:cookbook/config" {
     site: SiteConfig;
     base: string;
     search: boolean;
+    logo: import("./site-logo.js").ResolvedSiteLogo | false | undefined;
     locales: DocsConfig["locales"];
     defaultLocale: DocsConfig["defaultLocale"];
     translations: DocsConfig["translations"];

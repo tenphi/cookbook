@@ -402,6 +402,7 @@ sub-elements:
 | `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                                                                                                                                                                                                                                                                                            |
 | `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `SiteLogo`              | `Image`, `Light`, `Dark`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`, `Code`, `Diff`, `DiffCode`, `DiffLine`, `EmptyDiffLine`, `InsertedLine`, `DeletedLine`                                                                                                                                                                                                                                                                                                                        |
 | `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`                                                                                                                                                                                                                                                                                                                |
 | `MarkdownInlineCode`    | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -555,7 +556,55 @@ is needed for static components. Set shared tokens, presets, and states in
 `docs.config.ts` before rendering. Import the styling entry point in component
 modules; configuration files should use the main `@tenphi/cookbook` entry point.
 
-### A custom logo and site title
+### A shared site logo
+
+Set `site.logo` once to use your artwork in the header and mobile drawer:
+
+```ts
+site: {
+  title: "Acme",
+  logo: "./assets/acme.svg"
+}
+```
+
+Paths are local files relative to the resolved project root, just like
+`site.favicon`. Cookbook reads the intrinsic dimensions and copies the image to
+a content-hashed URL under the deployment base. SVG, PNG, JPEG, WebP, AVIF, and
+GIF are supported. Missing or invalid files fail during setup.
+
+```ts
+site: {
+  title: "Acme",
+  logo: {
+    light: "./assets/acme-light.svg",
+    dark: "./assets/acme-dark.svg",
+    alt: "Acme documentation",
+    href: "/",
+    decorative: true
+  },
+  favicon: "./assets/acme-icon.svg"
+}
+```
+
+Use `src` for one image, or both `light` and `dark`. Variants follow the
+appearance control and the system preference in Auto mode. They must share an
+aspect ratio to prevent layout shifts. Optional `width` and `height` describe
+intrinsic dimensions; Tasty controls display size. Customize
+`theme.styles.SiteLogo` and its complete anatomy: `Image`, `Light`, and `Dark`.
+Wide wordmarks retain their proportions within the header.
+
+The logo is decorative by default because the neighboring title labels the
+site. Set `decorative: false` and `alt` when the image itself carries meaningful
+text. The header logo link still has a name when the image is decorative.
+`href` defaults to the localized documentation home; it accepts a root-relative
+documentation route or HTTP(S) destination. The header title and drawer use the
+same destination. `site.logo: false` removes the mark from both locations.
+
+A logo does not change the favicon or touch icons. Configure `site.favicon`
+separately for square artwork; the default Cookbook icon set remains in place
+until changed. `Logo` remains available as the standalone Cookbook book mark.
+
+### Advanced site title markup
 
 To put your own logo and title in one home link, create
 `docs/components/site-title.ts`:
@@ -609,20 +658,20 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 </SiteTitleRoot>
 ```
 
-Register the replacement in `docs.config.ts` and hide the default header mark.
+Register the replacement in `docs.config.ts` and disable the shared mark.
+A `SiteTitle` override affects the header; use `site.logo` above for ordinary
+branding shared with the drawer. For custom drawer markup, override `Sidebar`.
 The custom component supports root styles plus its complete list of named
 sub-elements: `Logo` and `Label`.
 
 ```ts
+site: { logo: false },
 components: {
   overrides: {
     SiteTitle: "./docs/components/SiteTitle.astro"
   }
 },
 theme: {
-  styles: {
-    StarlightHeader: { LogoLink: { hide: true } }
-  },
   customStyles: {
     ProjectSiteTitle: { Logo: { color: "#text" } }
   }

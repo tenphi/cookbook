@@ -179,6 +179,39 @@ describe("docs configuration", () => {
     ).toBe("#/$defs/paletteColor");
   });
 
+  it("validates shared logo variants and replaces definitions across layers", () => {
+    expect(
+      normalizeDocsConfig({
+        site: {
+          logo: {
+            light: "light.svg",
+            dark: "dark.svg",
+            href: "https://example.com",
+            decorative: false,
+          },
+        },
+      }).site.logo,
+    ).toBeDefined();
+    for (const logo of [
+      true,
+      "https://example.com/logo.svg",
+      { src: "" },
+      { light: "light.svg" },
+      { src: "one.svg", dark: "dark.svg" },
+      { src: "one.svg", href: "javascript:alert(1)" },
+      { src: "one.svg", width: 0 },
+    ])
+      expect(() => normalizeDocsConfig({ site: { logo } } as never)).toThrow(
+        /site.logo/,
+      );
+    expect(
+      mergeDocsConfig(
+        { site: { logo: { src: "one.svg" } } },
+        { site: { logo: { light: "light.svg", dark: "dark.svg" } } },
+      ).site?.logo,
+    ).toEqual({ light: "light.svg", dark: "dark.svg" });
+  });
+
   it("validates font hosting, cache and display controls", () => {
     expect(
       normalizeDocsConfig({

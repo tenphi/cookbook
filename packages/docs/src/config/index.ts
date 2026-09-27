@@ -64,6 +64,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "url",
     "repository",
     "favicon",
+    "logo",
     "headerLinks",
   ]),
   content: new Set([
@@ -313,6 +314,80 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  const logo = config.site?.logo;
+  if (logo !== undefined && logo !== false) {
+    const value = typeof logo === "string" ? { src: logo } : logo;
+    if (!isRecord(value))
+      invalid(
+        diagnostics,
+        "site.logo must be false, a local image path, or a logo definition.",
+      );
+    else {
+      for (const key of Object.keys(value))
+        if (
+          ![
+            "src",
+            "light",
+            "dark",
+            "alt",
+            "href",
+            "width",
+            "height",
+            "decorative",
+          ].includes(key)
+        )
+          unknown(diagnostics, `site.logo.${key}`);
+      if (
+        (value.src !== undefined &&
+          (value.light !== undefined || value.dark !== undefined)) ||
+        (value.src === undefined &&
+          (value.light === undefined || value.dark === undefined))
+      )
+        invalid(
+          diagnostics,
+          "site.logo must provide src or both light and dark paths.",
+        );
+      for (const key of ["src", "light", "dark"])
+        if (
+          value[key] !== undefined &&
+          (typeof value[key] !== "string" ||
+            !value[key].trim() ||
+            /^[a-z][a-z\d+.-]*:|^\/\//i.test(value[key]))
+        )
+          invalid(
+            diagnostics,
+            `site.logo.${key} must be a non-empty local image path.`,
+          );
+      if (
+        value.href !== undefined &&
+        (typeof value.href !== "string" ||
+          /[\\\s]/.test(value.href) ||
+          !(/^(?:\/(?!\/)|#)/.test(value.href) || isHttpUrl(value.href)))
+      )
+        invalid(
+          diagnostics,
+          "site.logo.href must be an HTTP(S) URL, root-relative route, or fragment.",
+        );
+      if (value.alt !== undefined && typeof value.alt !== "string")
+        invalid(diagnostics, "site.logo.alt must be a string.");
+      if (
+        value.decorative !== undefined &&
+        typeof value.decorative !== "boolean"
+      )
+        invalid(diagnostics, "site.logo.decorative must be a boolean.");
+      for (const key of ["width", "height"])
+        if (
+          value[key] !== undefined &&
+          (typeof value[key] !== "number" ||
+            !Number.isFinite(value[key]) ||
+            value[key] <= 0)
+        )
+          invalid(
+            diagnostics,
+            `site.logo.${key} must be a positive dimension.`,
+          );
+    }
+  }
   const favicon = config.site?.favicon;
   if (favicon !== undefined) {
     if (typeof favicon === "string") {
@@ -1269,6 +1344,8 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
         base as Record<string, unknown>,
         next as Record<string, unknown>,
       ) as DocsConfig;
+      // Logo definitions are alternatives, not fields to combine across variants.
+      if (next.site?.logo !== undefined) result.site!.logo = next.site.logo;
       // A color declaration is one value. Merging its fields could retain an
       // obsolete `from` seed when a consumer switches to tone relationships.
       if (next.theme?.brand !== undefined)
@@ -1335,6 +1412,7 @@ export type {
   SiteConfig,
   HeaderLink,
   SiteIconConfig,
+  SiteLogoConfig,
   ThemeConfig,
   FontLoadingConfig,
   ThemeFont,

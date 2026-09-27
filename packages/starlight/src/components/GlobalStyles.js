@@ -539,12 +539,12 @@ export default function GlobalStyles() {
         preset: "h4",
       },
       HomeLogo: {
-        $: ".td-sidebar-heading__home > span:first-child",
+        $: '.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]',
         inlineSize: "2rem",
         blockSize: "2rem",
       },
       HomeLabel: {
-        $: ".td-sidebar-heading__home > span:last-child",
+        $: ".td-sidebar-heading__home > [data-site-title]",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",

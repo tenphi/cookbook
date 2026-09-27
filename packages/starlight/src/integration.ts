@@ -1,3 +1,4 @@
+import { resolveSiteLogo, type SiteLogoSet } from "./site-logo.js";
 import { assertTastyOutput } from "./output-styles.js";
 import { adaptPagefindUI } from "./pagefind-adapter.js";
 import { existsSync } from "node:fs";
@@ -212,6 +213,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
   let fontAssets: FontAsset[] = [];
+  let siteLogo: SiteLogoSet | undefined;
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
@@ -357,6 +359,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           }),
         );
         siteIcons = await loadSiteIcons();
+        siteLogo = await resolveSiteLogo(
+          projectRoot!,
+          base,
+          options.config?.site,
+        );
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
           ...(options.plugins ? { plugins: options.plugins } : {}),
@@ -505,7 +512,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     redirects: loaded.redirects,
                     site: documentedSite(loaded),
                     base: loaded.config.build.base,
-                    search: loaded.config.search.enabled,
+                    search:
+                      loaded.config.search.enabled ||
+                      typeof options.config?.components?.overrides?.Search ===
+                        "string",
+                    logo: siteLogo?.logo,
                     locales: loaded.config.locales,
                     defaultLocale: loaded.config.defaultLocale,
                     translations: loaded.config.translations,
@@ -631,6 +642,12 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
       },
       "astro:server:setup": async ({ server, logger }) => {
         let assets = docsAssetMap(await loadGraph());
+        if (siteLogo?.sourcePaths.length) {
+          server.watcher.add(siteLogo.sourcePaths);
+          server.watcher.on("change", (path) => {
+            if (siteLogo?.sourcePaths.includes(path)) void server.restart();
+          });
+        }
         if (options.config?.site?.favicon && siteIcons) {
           server.watcher.add(siteIcons.sourcePath);
           server.watcher.on("change", async (changedPath) => {
@@ -649,7 +666,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             return;
           }
           const pathname = requestPath(request.url);
-          const fontAsset = fontAssets.find(
+          const fontAsset = [...fontAssets, ...(siteLogo?.assets ?? [])].find(
             (asset) => asset.publicPath === pathname,
           );
           if (fontAsset) {
@@ -756,7 +773,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             );
           }
         }
-        for (const asset of [...(siteIcons?.assets ?? []), ...fontAssets]) {
+        for (const asset of [
+          ...(siteIcons?.assets ?? []),
+          ...fontAssets,
+          ...(siteLogo?.assets ?? []),
+        ]) {
           const target = join(output, asset.outputPath);
           await mkdir(dirname(target), { recursive: true });
           await writeFile(target, asset.body);

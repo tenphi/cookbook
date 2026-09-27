@@ -1,0 +1,40 @@
+---
+import { content } from "virtual:cookbook/config";
+import Logo from "./Logo.astro";
+import { SiteLogoRoot } from "./LayoutComponents.js";
+interface Props {
+  class?: string;
+}
+const logo = content.logo;
+---
+
+{
+  logo === false ? null : logo ? (
+    <SiteLogoRoot
+      className={Astro.props.class}
+      data-tasty-anatomy="SiteLogo"
+      aria-hidden={logo.decorative ? "true" : undefined}
+    >
+      <img
+        class={logo.dark ? "td-site-logo__light" : undefined}
+        src={logo.light.src}
+        width={logo.light.width}
+        height={logo.light.height}
+        alt={logo.decorative ? "" : logo.alt}
+        decoding="async"
+      />
+      {logo.dark && (
+        <img
+          class="td-site-logo__dark"
+          src={logo.dark.src}
+          width={logo.dark.width}
+          height={logo.dark.height}
+          alt={logo.decorative ? "" : logo.alt}
+          decoding="async"
+        />
+      )}
+    </SiteLogoRoot>
+  ) : (
+    <Logo class={Astro.props.class} decorative />
+  )
+}

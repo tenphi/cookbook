@@ -5,7 +5,6 @@ import {
   localeHref,
 } from "../localization.js";
 import { messages } from "../localization.js";
-import config from "virtual:starlight/user-config";
 import LanguageSelect from "virtual:starlight/components/LanguageSelect";
 import Search from "virtual:starlight/components/Search";
 import SiteTitle from "virtual:starlight/components/SiteTitle";
@@ -17,7 +16,7 @@ import { content } from "virtual:cookbook/config";
 import { layout as configuredLayout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import GlobalStyles from "../components/GlobalStyles.js";
-import Logo from "../components/Logo.astro";
+import Logo from "../components/SiteLogo.astro";
 import PackageVersion from "../components/PackageVersion.astro";
 import VersionSwitcher from "../components/VersionSwitcher.astro";
 import {
@@ -25,9 +24,7 @@ import {
   TopNavigationRoot,
 } from "../components/LayoutComponents.js";
 
-const shouldRenderSearch =
-  config.pagefind ||
-  config.components.Search !== "@astrojs/starlight/components/Search.astro";
+const shouldRenderSearch = content.search;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const currentPath = navigationPath(Astro.url.pathname, base || "/");
 const { layout } = localizedNavigation(
@@ -41,7 +38,7 @@ const activeTab = activeNavigationTab(
   localePath(currentPath, content),
 );
 Astro.locals.starlightRoute.siteTitleHref = localeHref(
-  "/",
+  content.logo ? (content.logo.href ?? "/") : "/",
   currentPath,
   content.routes,
   content,
@@ -63,19 +60,27 @@ const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 >
   <div class="td-header__primary">
     <div class="td-header__title">
-      <a
-        class="td-header__logo-link"
-        href={localeHref(
-          "/",
-          currentPath,
-          content.routes,
-          content,
-          base || "/",
-        )}
-        aria-label={`${siteTitle}: ${ui.home}`}
-      >
-        <Logo class="td-header__logo" decorative />
-      </a>
+      {
+        content.logo !== false && (
+          <a
+            class="td-header__logo-link"
+            href={localeHref(
+              content.logo ? (content.logo.href ?? "/") : "/",
+              currentPath,
+              content.routes,
+              content,
+              base || "/",
+            )}
+            aria-label={
+              content.logo && !content.logo.decorative
+                ? undefined
+                : `${siteTitle}: ${ui.home}`
+            }
+          >
+            <Logo class="td-header__logo" />
+          </a>
+        )
+      }
       <SiteTitle />
       {
         !content.site.versions && (

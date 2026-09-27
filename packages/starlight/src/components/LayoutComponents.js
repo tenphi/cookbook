@@ -58,6 +58,42 @@ export const LogoRoot = customizeComponent(
   }),
 );
 
+export const SiteLogoRoot = customizeComponent(
+  "SiteLogo",
+  tasty({
+    as: "span",
+    styles: {
+      display: "inline-flex",
+      flexShrink: 0,
+      inlineSize: { "": "auto max 12rem", "@mobile": "auto max 30vw" },
+      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      Image: {
+        $: "> img",
+        display: "block",
+        inlineSize: "auto max 100%",
+        blockSize: "100%",
+        objectFit: "contain",
+      },
+      Light: {
+        $: "> .td-site-logo__light",
+        hide: {
+          "": false,
+          "@parent(theme=dark)": true,
+          "!@parent(theme) & @media(prefers-color-scheme: dark)": true,
+        },
+      },
+      Dark: {
+        $: "> .td-site-logo__dark",
+        hide: {
+          "": true,
+          "@parent(theme=dark)": false,
+          "!@parent(theme) & @media(prefers-color-scheme: dark)": false,
+        },
+      },
+    },
+  }),
+);
+
 export const PackageVersionRoot = customizeComponent(
   "PackageVersion",
   tasty({
@@ -223,7 +259,7 @@ export const StarlightHeaderRoot = customizeComponent(
         textDecoration: "none",
       },
       Logo: {
-        $: ".td-header__logo",
+        $: '.td-header__logo[data-tasty-anatomy="Logo"]',
         inlineSize: {
           "": "2rem",
           "@mobile": "1.75rem",
