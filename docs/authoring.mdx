@@ -51,8 +51,9 @@ and contrast modes.
 ## Code groups
 
 Pass labeled source strings to create an accessible tabbed code group. `language`
-is an optional visible label; these programmatic snippets render as escaped plain
-text. Ordinary fenced Markdown provides syntax highlighting.
+selects the Shiki grammar (defaults to plain text). Groups share semantic syntax
+colors, configured grammars/transformers, and copy controls with Markdown fences.
+Each panel retains keyboard-accessible tabs and readable fallback content.
 
 ```mdx
 <CodeGroup
@@ -74,13 +75,46 @@ text. Ordinary fenced Markdown provides syntax highlighting.
 
 ## Other components
 
-| Component | Props and behavior                                                                                                |
-| --------- | ----------------------------------------------------------------------------------------------------------------- |
-| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                         |
-| `Steps`   | Ordered list container; supply `li` elements                                                                      |
-| `Logo`    | Optional `label`, `decorative`, and `class`; renders the Cookbook mark                                            |
-| `Preview` | Required `title`; optional `html`, `css`, and `javascript`; isolates examples in Shadow DOM or a sandboxed iframe |
+| Component | Props and behavior                                                                                  |
+| --------- | --------------------------------------------------------------------------------------------------- |
+| `Card`    | Optional `title` and `href`; renders an article or link with slot content                           |
+| `Steps`   | Ordered list container; supply `li` elements                                                        |
+| `Logo`    | Optional `label`, `decorative`, and `class`; renders the Cookbook mark                              |
+| `Preview` | Required `title`; optional `html`, `css`, and `javascript`; isolates examples in a sandboxed iframe |
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are
 listed in [Theme and components](./theme-and-components.md#style-customization).
+
+## On-page navigation
+
+Desktop pages show a table of contents. Opt into a compact disclosure below the
+header on smaller screens, globally in `docs.config.ts`:
+
+```ts
+tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
+```
+
+The same frontmatter field can change heading levels or set `mobile: false` on
+one page. `tableOfContents: false` disables both versions. Selecting a mobile
+contents link closes the disclosure and moves keyboard focus to the heading.
+Customize `theme.styles.MobileTableOfContents` and `TableOfContentsLayout`.
+
+## Hero images
+
+Use a relative local image in frontmatter. Cookbook reads its intrinsic dimensions
+and reserves the correct aspect ratio as the layout responds to screen width:
+
+```yaml
+hero:
+  tagline: Build something useful.
+  image:
+    file: ./assets/hero.png
+    alt: A preview of the documentation
+```
+
+Use `light` and `dark` instead of `file` for appearance variants; both must have
+the same aspect ratio. Remote or public-path images require explicit `width` and
+`height`. Hero images load eagerly with high fetch priority; use ordinary Markdown
+images for content farther down the page. `theme.styles.Hero.Visual` controls
+responsive sizing without changing the intrinsic dimensions.

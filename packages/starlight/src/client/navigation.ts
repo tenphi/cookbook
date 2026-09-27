@@ -46,7 +46,9 @@ class CookbookSidebarPane extends HTMLElement {
             this.#inert.set(element, element.inert);
             element.inert = true;
           }
-          this.querySelector<HTMLElement>("[autofocus]")?.focus();
+          this.querySelector<HTMLElement>("[autofocus]")?.focus({
+            preventScroll: true,
+          });
         } else {
           const restoreFocus =
             this.contains(document.activeElement) ||

@@ -1,5 +1,12 @@
-import { glaze, type RegularColorDef } from "@tenphi/glaze";
-import { mergeStyles, type Styles } from "@tenphi/tasty/core";
+import { validateTableOfContents } from "../table-of-contents.js";
+import { validateSeo } from "../publishing.js";
+import { resolveColorTheme } from "../theme/palette.js";
+import { glaze, type ColorDef } from "@tenphi/glaze";
+import {
+  mergeStyles,
+  type RecipeStyles,
+  type Styles,
+} from "@tenphi/tasty/core";
 import {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
@@ -32,6 +39,7 @@ const COLOR_DECLARATION_KEYS = new Set([
   "inherit",
 ]);
 const ROOT_KEYS = new Set([
+  "tableOfContents",
   "root",
   "redirects",
   "site",
@@ -39,6 +47,7 @@ const ROOT_KEYS = new Set([
   "editLink",
   "lastUpdated",
   "locales",
+  "translations",
   "defaultLocale",
   "content",
   "navigation",
@@ -51,6 +60,7 @@ const ROOT_KEYS = new Set([
 
 const OBJECT_KEYS: Record<string, Set<string>> = {
   site: new Set([
+    "seo",
     "title",
     "version",
     "versions",
@@ -58,6 +68,7 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
     "url",
     "repository",
     "favicon",
+    "logo",
     "headerLinks",
   ]),
   content: new Set([
@@ -72,7 +83,11 @@ const OBJECT_KEYS: Record<string, Set<string>> = {
   theme: new Set([
     "brand",
     "palette",
+    "glaze",
+    "units",
+    "recipes",
     "fonts",
+    "fontLoading",
     "states",
     "tokens",
     "presets",
@@ -141,11 +156,13 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
           continue;
         }
         for (const key of Object.keys(version)) {
-          if (key !== "label" && key !== "routeBase")
+          if (key !== "label" && key !== "routeBase" && key !== "index")
             unknown(diagnostics, `${path}.${key}`);
         }
         if (typeof version.label !== "string" || !version.label.trim())
           invalid(diagnostics, `${path}.label must be a non-empty string.`);
+        if (version.index !== undefined && typeof version.index !== "boolean")
+          invalid(diagnostics, `${path}.index must be a boolean.`);
         const base = version.routeBase;
         if (
           typeof base !== "string" ||
@@ -303,6 +320,86 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     }
   }
 
+  if (config.site?.seo !== undefined)
+    for (const message of validateSeo(config.site.seo, "site"))
+      invalid(diagnostics, `site.${message}`);
+  if (config.tableOfContents !== undefined)
+    for (const message of validateTableOfContents(config.tableOfContents))
+      invalid(diagnostics, message);
+  const logo = config.site?.logo;
+  if (logo !== undefined && logo !== false) {
+    const value = typeof logo === "string" ? { src: logo } : logo;
+    if (!isRecord(value))
+      invalid(
+        diagnostics,
+        "site.logo must be false, a local image path, or a logo definition.",
+      );
+    else {
+      for (const key of Object.keys(value))
+        if (
+          ![
+            "src",
+            "light",
+            "dark",
+            "alt",
+            "href",
+            "width",
+            "height",
+            "decorative",
+          ].includes(key)
+        )
+          unknown(diagnostics, `site.logo.${key}`);
+      if (
+        (value.src !== undefined &&
+          (value.light !== undefined || value.dark !== undefined)) ||
+        (value.src === undefined &&
+          (value.light === undefined || value.dark === undefined))
+      )
+        invalid(
+          diagnostics,
+          "site.logo must provide src or both light and dark paths.",
+        );
+      for (const key of ["src", "light", "dark"])
+        if (
+          value[key] !== undefined &&
+          (typeof value[key] !== "string" ||
+            !value[key].trim() ||
+            /^[a-z][a-z\d+.-]*:|^\/\//i.test(value[key]))
+        )
+          invalid(
+            diagnostics,
+            `site.logo.${key} must be a non-empty local image path.`,
+          );
+      if (
+        value.href !== undefined &&
+        (typeof value.href !== "string" ||
+          /[\\\s]/.test(value.href) ||
+          !(/^(?:\/(?!\/)|#)/.test(value.href) || isHttpUrl(value.href)))
+      )
+        invalid(
+          diagnostics,
+          "site.logo.href must be an HTTP(S) URL, root-relative route, or fragment.",
+        );
+      if (value.alt !== undefined && typeof value.alt !== "string")
+        invalid(diagnostics, "site.logo.alt must be a string.");
+      if (
+        value.decorative !== undefined &&
+        typeof value.decorative !== "boolean"
+      )
+        invalid(diagnostics, "site.logo.decorative must be a boolean.");
+      for (const key of ["width", "height"])
+        if (
+          value[key] !== undefined &&
+          (typeof value[key] !== "number" ||
+            !Number.isFinite(value[key]) ||
+            value[key] <= 0)
+        )
+          invalid(
+            diagnostics,
+            `site.logo.${key} must be a positive dimension.`,
+          );
+    }
+  }
   const favicon = config.site?.favicon;
   if (favicon !== undefined) {
     if (typeof favicon === "string") {
@@ -363,6 +460,20 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     typeof config.lastUpdated !== "boolean"
   ) {
     invalid(diagnostics, "lastUpdated must be a boolean.");
+  }
+  if (
+    config.translations !== undefined &&
+    (!isRecord(config.translations) ||
+      Object.values(config.translations).some(
+        (messages) =>
+          !isRecord(messages) ||
+          Object.values(messages).some((value) => typeof value !== "string"),
+      ))
+  ) {
+    invalid(
+      diagnostics,
+      "translations must map language codes to string messages.",
+    );
   }
   if (config.locales !== undefined && !isRecord(config.locales)) {
     invalid(diagnostics, "locales must be an object.");
@@ -616,13 +727,160 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     "styles",
     "customStyles",
     "palette",
+    "glaze",
+    "units",
+    "recipes",
     "fonts",
+    "fontLoading",
     "tokens",
     "states",
     "presets",
+    "glaze",
+    "units",
+    "recipes",
   ] as const) {
     if (config.theme?.[field] !== undefined && !isRecord(config.theme[field]))
       invalid(diagnostics, `theme.${field} must be an object.`);
+  }
+  for (const [name, value] of Object.entries(config.theme?.units ?? {})) {
+    if (
+      !/^[a-z][a-z0-9]*$/.test(name) ||
+      typeof value !== "string" ||
+      !value.trim()
+    )
+      invalid(
+        diagnostics,
+        `theme.units.${name} must be a named non-empty CSS length expression.`,
+      );
+  }
+  for (const [name, recipe] of Object.entries(config.theme?.recipes ?? {})) {
+    if (!/^[a-z][a-z0-9-]*$/.test(name) || name === "none" || !isRecord(recipe))
+      invalid(
+        diagnostics,
+        `theme.recipes.${name} must be a named flat Tasty style object; none is reserved.`,
+      );
+    else
+      for (const key of Object.keys(recipe))
+        if (key === "recipe" || /^[A-Z]/.test(key) || /^[&.]/.test(key))
+          invalid(
+            diagnostics,
+            `theme.recipes.${name}.${key}: recipes are flat and cannot reference other recipes.`,
+          );
+  }
+  if (isRecord(config.theme?.glaze)) {
+    const settings = config.theme.glaze;
+    for (const key of Object.keys(settings))
+      if (
+        ![
+          "lightTone",
+          "darkTone",
+          "darkDesaturation",
+          "autoFlip",
+          "pastel",
+          "inferRole",
+          "shadowTuning",
+        ].includes(key)
+      )
+        unknown(diagnostics, `theme.glaze.${key}`);
+    for (const key of ["autoFlip", "pastel", "inferRole"] as const)
+      if (settings[key] !== undefined && typeof settings[key] !== "boolean")
+        invalid(diagnostics, `theme.glaze.${key} must be boolean.`);
+    if (
+      settings.darkDesaturation !== undefined &&
+      (typeof settings.darkDesaturation !== "number" ||
+        !Number.isFinite(settings.darkDesaturation) ||
+        settings.darkDesaturation < 0 ||
+        settings.darkDesaturation > 1)
+    )
+      invalid(
+        diagnostics,
+        "theme.glaze.darkDesaturation must be between 0 and 1.",
+      );
+    for (const key of ["lightTone", "darkTone"] as const) {
+      const window = settings[key];
+      if (window === undefined || window === false) continue;
+      const lo = Array.isArray(window) ? window[0] : window?.lo;
+      const hi = Array.isArray(window) ? window[1] : window?.hi;
+      if (
+        typeof lo !== "number" ||
+        typeof hi !== "number" ||
+        !Number.isFinite(lo) ||
+        !Number.isFinite(hi) ||
+        lo < 0 ||
+        hi > 100 ||
+        lo >= hi ||
+        (Array.isArray(window)
+          ? window.length !== 2
+          : !isRecord(window) ||
+            Object.keys(window).some(
+              (key) => !["lo", "hi", "eps"].includes(key),
+            ) ||
+            typeof window.eps !== "number" ||
+            !Number.isFinite(window.eps) ||
+            window.eps <= 0)
+      )
+        invalid(
+          diagnostics,
+          `theme.glaze.${key} must be false, [lo, hi], or {lo, hi, eps} with an ascending 0–100 range.`,
+        );
+    }
+    const tuning = settings.shadowTuning;
+    if (tuning !== undefined) {
+      if (!isRecord(tuning))
+        invalid(diagnostics, "theme.glaze.shadowTuning must be an object.");
+      else
+        for (const [key, value] of Object.entries(tuning)) {
+          if (
+            ![
+              "saturationFactor",
+              "maxSaturation",
+              "lightnessFactor",
+              "lightnessBounds",
+              "minGapTarget",
+              "alphaMax",
+              "bgHueBlend",
+            ].includes(key)
+          )
+            unknown(diagnostics, `theme.glaze.shadowTuning.${key}`);
+          const values = Array.isArray(value) ? value : [value];
+          if (
+            values.some(
+              (item) =>
+                typeof item !== "number" ||
+                !Number.isFinite(item) ||
+                item < 0 ||
+                item > 1,
+            ) ||
+            (key === "lightnessBounds" &&
+              (!Array.isArray(value) ||
+                value.length !== 2 ||
+                value[0] > value[1]))
+          )
+            invalid(
+              diagnostics,
+              `theme.glaze.shadowTuning.${key} must use values from 0 to 1.`,
+            );
+        }
+    }
+  }
+  if (isRecord(config.theme?.fontLoading)) {
+    const choices = {
+      google: ["self-hosted", "remote"],
+      cache: ["reuse", "refresh", "offline"],
+      display: ["auto", "block", "swap", "fallback", "optional"],
+    };
+    for (const [key, value] of Object.entries(config.theme.fontLoading)) {
+      const allowed = choices[key as keyof typeof choices];
+      if (!allowed) unknown(diagnostics, `theme.fontLoading.${key}`);
+      else if (
+        value !== undefined &&
+        (typeof value !== "string" || !allowed.includes(value))
+      )
+        invalid(
+          diagnostics,
+          `theme.fontLoading.${key} must be ${allowed.join(" or ")}.`,
+        );
+    }
   }
   if (isRecord(config.theme?.fonts)) {
     for (const [role, font] of Object.entries(config.theme.fonts)) {
@@ -646,7 +904,7 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       }
       if ("google" in font) {
         for (const key of Object.keys(font))
-          if (!["google", "weights"].includes(key))
+          if (!["google", "weights", "styles"].includes(key))
             unknown(diagnostics, `${path}.${key}`);
         if (!validFontFamily(font.google))
           invalid(
@@ -657,14 +915,21 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
           font.weights !== undefined &&
           (!Array.isArray(font.weights) ||
             font.weights.length === 0 ||
-            font.weights.some(
-              (weight) =>
-                !Number.isInteger(weight) || weight < 1 || weight > 1000,
-            ))
+            font.weights.some((weight) => !validFontWeight(weight)))
         )
           invalid(
             diagnostics,
-            `${path}.weights must be a non-empty array of font weights from 1 to 1000.`,
+            `${path}.weights must be a non-empty array of weights from 1 to 1000 or ascending ranges such as "100 900".`,
+          );
+        if (
+          font.styles !== undefined &&
+          (!Array.isArray(font.styles) ||
+            font.styles.length === 0 ||
+            font.styles.some((style) => !["normal", "italic"].includes(style)))
+        )
+          invalid(
+            diagnostics,
+            `${path}.styles must contain normal and/or italic.`,
           );
       } else {
         for (const key of Object.keys(font))
@@ -777,22 +1042,22 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
       );
   }
   for (const [name, value] of Object.entries(config.theme?.palette ?? {})) {
-    if (
-      ![
-        "surface",
-        "header",
-        "overlay",
-        "text",
-        "heading",
-        "textSoft",
-        "info",
-        "success",
-        "warning",
-        "danger",
-      ].includes(name)
-    )
-      unknown(diagnostics, `theme.palette.${name}`);
-    validatePaletteColor(name, value, diagnostics);
+    if (value !== undefined) validatePaletteColor(name, value, diagnostics);
+  }
+  if (
+    (config.theme?.palette || config.theme?.glaze) &&
+    !diagnostics.some((item) => item.severity === "error")
+  ) {
+    try {
+      resolveColorTheme(config.theme);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const name = /color "([^"]+)"/.exec(message)?.[1];
+      invalid(
+        diagnostics,
+        `theme.palette${name ? `.${name}` : ""}: ${message}`,
+      );
+    }
   }
   if (brand !== undefined) {
     try {
@@ -861,22 +1126,38 @@ function validatePaletteColor(
       glaze.color({ from: value }).resolve();
       return;
     }
+    const keys =
+      "type" in value
+        ? new Set(
+            value.type === "mix"
+              ? [
+                  "type",
+                  "base",
+                  "target",
+                  "value",
+                  "blend",
+                  "space",
+                  "contrast",
+                  "pastel",
+                  "role",
+                  "inherit",
+                ]
+              : value.type === "shadow"
+                ? [
+                    "type",
+                    "bg",
+                    "fg",
+                    "intensity",
+                    "tuning",
+                    "pastel",
+                    "inherit",
+                  ]
+                : [],
+          )
+        : COLOR_DECLARATION_KEYS;
     for (const key of Object.keys(value)) {
-      if (!COLOR_DECLARATION_KEYS.has(key))
-        unknown(diagnostics, `theme.palette.${name}.${key}`);
+      if (!keys.has(key)) unknown(diagnostics, `theme.palette.${name}.${key}`);
     }
-    const colorName = name === "textSoft" ? "text-soft" : name;
-    const theme = glaze(266, 68);
-    theme.colors({
-      surface: { tone: 98 },
-      "surface-2": { base: "surface", tone: "-2" },
-      "accent-surface": { tone: 48 },
-      text: { base: "surface", contrast: { apca: 75 } },
-      heading: { base: "surface", tone: 4 },
-      "text-soft": { base: "surface", contrast: { apca: 60 } },
-      [colorName]: { tone: colorName === "surface" ? 98 : 50, ...value },
-    });
-    theme.resolve();
   } catch (error) {
     invalid(
       diagnostics,
@@ -885,9 +1166,7 @@ function validatePaletteColor(
   }
 }
 
-function isPaletteDeclaration(
-  value: ThemePaletteColor,
-): value is RegularColorDef {
+function isPaletteDeclaration(value: ThemePaletteColor): value is ColorDef {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -1005,11 +1284,15 @@ export function normalizeDocsConfig(
     : (config.navigation ?? {});
 
   return {
+    ...(config.tableOfContents !== undefined
+      ? { tableOfContents: config.tableOfContents }
+      : {}),
     redirects: { ...config.redirects },
     site: { ...config.site },
     head: [...(config.head ?? [])],
     ...(config.editLink ? { editLink: { ...config.editLink } } : {}),
     lastUpdated: config.lastUpdated ?? false,
+    ...(config.translations ? { translations: config.translations } : {}),
     ...(config.locales ? { locales: { ...config.locales } } : {}),
     ...(config.defaultLocale ? { defaultLocale: config.defaultLocale } : {}),
     content: {
@@ -1066,12 +1349,20 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
   };
   return defineDocsConfig(
     configs.reduce<DocsConfig>((base, next) => {
-      const diagnostics = validateConfig(next);
+      const { palette: _palette, ...themeWithoutPalette } = next.theme ?? {};
+      const diagnostics = validateConfig({
+        ...next,
+        ...(next.theme ? { theme: themeWithoutPalette } : {}),
+      });
       if (diagnostics.length) throw new DocsConfigError(diagnostics);
       const result = merge(
         base as Record<string, unknown>,
         next as Record<string, unknown>,
       ) as DocsConfig;
+      // Logo definitions are alternatives, not fields to combine across variants.
+      if (next.site?.logo !== undefined) result.site!.logo = next.site.logo;
+      if (next.site?.seo?.image !== undefined)
+        result.site!.seo!.image = next.site.seo.image;
       // A color declaration is one value. Merging its fields could retain an
       // obsolete `from` seed when a consumer switches to tone relationships.
       if (next.theme?.brand !== undefined)
@@ -1096,13 +1387,15 @@ export function mergeDocsConfig(...configs: DocsConfig[]): DocsConfig {
             ),
           ),
         };
-      for (const field of ["styles", "customStyles"] as const) {
+      for (const field of ["styles", "customStyles", "recipes"] as const) {
         if (!next.theme?.[field]) continue;
         const styles = { ...base.theme?.[field] } as Record<string, Styles>;
         for (const [name, configured] of Object.entries(next.theme[field])) {
           styles[name] = mergeStyles(styles[name] ?? {}, configured);
         }
-        result.theme![field] = styles;
+        if (field === "recipes")
+          result.theme!.recipes = styles as Record<string, RecipeStyles>;
+        else result.theme![field] = styles;
       }
       return result;
     }, {}),
@@ -1134,9 +1427,16 @@ export type {
   NormalizedDocsConfig,
   SearchConfig,
   SiteConfig,
+  SiteSeoConfig,
+  PageSeoConfig,
+  TableOfContentsConfig,
+  SocialImage,
+  BreadcrumbItem,
   HeaderLink,
   SiteIconConfig,
+  SiteLogoConfig,
   ThemeConfig,
+  FontLoadingConfig,
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,
@@ -1147,3 +1447,15 @@ export type {
   TypographyPreset,
   TypographyPresets,
 } from "../types.js";
+
+function validFontWeight(weight: unknown): boolean {
+  return (
+    (typeof weight === "number" &&
+      Number.isInteger(weight) &&
+      weight >= 1 &&
+      weight <= 1000) ||
+    (typeof weight === "string" &&
+      /^(?:[1-9]\d{0,2}|1000) (?:[1-9]\d{0,2}|1000)$/.test(weight) &&
+      Number(weight.split(" ")[0]) < Number(weight.split(" ")[1]))
+  );
+}

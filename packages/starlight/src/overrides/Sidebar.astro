@@ -1,8 +1,15 @@
 ---
+import {
+  localizedNavigation,
+  localePath,
+  localeHref,
+} from "../localization.js";
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
 import Icon from "@astrojs/starlight/user-components/Icon.astro";
-import Logo from "../components/Logo.astro";
+import Logo from "../components/SiteLogo.astro";
 import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
-import { layout } from "virtual:cookbook/layout";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
 import SidebarList from "../components/SidebarList.astro";
 import MobileNavigationTabs from "../components/MobileNavigationTabs.astro";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
@@ -12,7 +19,16 @@ const currentPath = navigationPath(
   Astro.url.pathname,
   import.meta.env.BASE_URL,
 );
-const activeTab = activeNavigationTab(layout.tabs, currentPath);
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  currentPath,
+  content,
+);
+const activeTab = activeNavigationTab(
+  layout.tabs,
+  localePath(currentPath, content),
+);
 const groupIndex =
   (activeTab >= 0 ? layout.tabs[activeTab]?.sidebarGroup : undefined) ??
   layout.fallbackSidebarGroup;
@@ -27,21 +43,28 @@ const sidebar =
     : layout.sectioned
       ? []
       : fullSidebar;
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---
 
 <div class="td-sidebar-heading">
   <a
     class="td-sidebar-heading__home"
-    href={Astro.locals.starlightRoute.siteTitleHref}
+    href={localeHref(
+      (content.logo && content.logo.href) || "/",
+      currentPath,
+      content.routes,
+      content,
+      content.base,
+    )}
   >
-    <Logo decorative />
-    <span>{Astro.locals.starlightRoute.siteTitle}</span>
+    <Logo />
+    <span data-site-title>{Astro.locals.starlightRoute.siteTitle}</span>
   </a>
   <button
     type="button"
     popovertarget="starlight__sidebar"
     popovertargetaction="hide"
-    aria-label="Close navigation"
+    aria-label={ui.closeNavigation}
     autofocus><Icon name="close" /></button
   >
 </div>

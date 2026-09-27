@@ -1,5 +1,5 @@
 import { readFile, readdir, stat } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, join, posix } from "node:path";
 
 const output = join(process.cwd(), "apps/reference/dist");
 const assets = join(output, "_astro");
@@ -42,7 +42,10 @@ for (const name of entries) {
 // add another 1 KiB of Tasty-generated CSS.
 // Customizable heading-link copy feedback adds another 1 KiB.
 // The heading color's four modes and configurable Heading style tree add 1 KiB.
-const cssBudget = 163 * 1024;
+// The full customization registry, semantic syntax classes, owned search,
+// page actions, and mobile contents add ~23 KiB to the previous 163 KiB limit.
+// Current measured maximum: 189,666 bytes; keep a small explicit growth margin.
+const cssBudget = 192 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -199,30 +202,57 @@ if ((guide.match(/data-variant="primary"/g) ?? []).length !== 1) {
 const initialSidebar = sidebarHtml(
   await readFile(join(output, "getting-started/index.html"), "utf8"),
 );
-if (
-  !/<h2 class="sidebar-section-label group-label">\s*<span>Author content<\/span>/.test(
-    initialSidebar,
-  ) ||
-  /<summary>\s*<span class="group-label">\s*<span>Author content<\/span>/.test(
-    initialSidebar,
-  ) ||
-  /<details\b[^>]*\bopen(?:\s|>|=)/.test(initialSidebar) ||
-  (initialSidebar.match(/<details\b/g) || []).length !== 2
-) {
-  throw new Error(
-    "Sidebar sections must stay flat and nested groups must start collapsed.",
-  );
+for (const section of [
+  "Start",
+  "Author",
+  "Customize",
+  "Extend",
+  "Publish",
+  "Maintain",
+]) {
+  if (
+    !initialSidebar.includes(
+      `<h2 class="sidebar-section-label group-label"><span>${section}</span>`,
+    ) ||
+    /<details\b/.test(initialSidebar)
+  ) {
+    throw new Error(
+      `Guide journey ${section} must be a visible, flat section.`,
+    );
+  }
+}
+for (const route of [
+  "getting-started",
+  "ai-agents",
+  "recipes",
+  "plugins",
+  "deployment",
+  "migration",
+  "quality-checks",
+  "troubleshooting",
+]) {
+  if (!initialSidebar.includes(`href="/${route}"`))
+    throw new Error(`Missing guide journey: ${route}`);
 }
 const themeSidebar = sidebarHtml(
   await readFile(join(output, "theme-and-components/index.html"), "utf8"),
 );
 if (
-  (themeSidebar.match(/<details\b[^>]*\bopen(?:\s|>|=)/g) || []).length !== 2 ||
-  !/<a\b[^>]*aria-current="page"[^>]*>\s*<span class="group-label">\s*<span>Presentation<\/span>/.test(
+  !/<a\b[^>]*href="\/theme-and-components"[^>]*aria-current="page"/.test(
     themeSidebar,
   )
 ) {
-  throw new Error("The sidebar must open every ancestor of the current page.");
+  throw new Error("The theme reference must be current in the Reference tab.");
+}
+for (const route of [
+  "configuration",
+  "theme-and-components",
+  "publishing",
+  "cli",
+  "architecture",
+]) {
+  if (!themeSidebar.includes(`href="/${route}"`))
+    throw new Error(`Missing reference page: ${route}`);
 }
 for (const [pattern, label] of [
   [
@@ -274,7 +304,7 @@ if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
   throw new Error("The project logo is missing from the documentation header.");
 }
 if (
-  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--accent-surface-text-color\)/.test(
+  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--logo-mark-color\)/.test(
     sharedCss,
   )
 ) {
@@ -298,6 +328,9 @@ for (const name of outputEntries.filter(
   (entry) => extname(entry) === ".html",
 )) {
   const html = await readFile(join(output, name), "utf8");
+  if (/<[a-z][^>]*\sstyle\s*=/i.test(html)) {
+    throw new Error(`${name} contains an inline style attribute.`);
+  }
   if (/--sl-/i.test(html)) {
     throw new Error(`${name} contains an inline Starlight style token.`);
   }
@@ -344,6 +377,64 @@ for (const name of conventionEntries.filter(
 if (conventionHeadingWrappers === 0) {
   throw new Error("The convention build did not render heading permalinks.");
 }
+await checkAssetBudgets();
 console.log(
   `Reference budgets: ${cssEntries.length} Tasty stylesheets; largest CSS ${largestCss} bytes; JavaScript assets ${javascript} bytes.`,
 );
+
+async function checkAssetBudgets() {
+  const sizes = new Map(
+    await Promise.all(
+      outputEntries.map(async (file) => [
+        file,
+        (await stat(join(output, file))).size,
+      ]),
+    ),
+  );
+  const total = (extensions) =>
+    [...sizes]
+      .filter(([file]) => extensions.includes(extname(file)))
+      .reduce((sum, [, bytes]) => sum + bytes, 0);
+  const budgets = [
+    [
+      "all JavaScript including lazy Pagefind assets",
+      total([".js", ".mjs"]),
+      800 * 1024,
+    ],
+    ["font files", total([".woff2", ".woff", ".ttf"]), 100 * 1024],
+    [
+      "images and icons",
+      total([".png", ".jpg", ".jpeg", ".svg", ".avif", ".webp"]),
+      100 * 1024,
+    ],
+  ];
+  const guide = await readFile(
+    join(output, "getting-started/index.html"),
+    "utf8",
+  );
+  const scripts = [
+    ...guide.matchAll(/<script\b[^>]*src="(\/_astro\/[^"?#]+)"/g),
+  ].map((match) => match[1].slice(1));
+  const initial = new Set();
+  const visit = async (file) => {
+    if (initial.has(file)) return;
+    initial.add(file);
+    const source = await readFile(join(output, file), "utf8");
+    // Only static imports load eagerly. Search uses dynamic import().
+    for (const match of source.matchAll(
+      /(?:\bfrom\s*|\bimport\s*)["'](\.[^"']+)["']/g,
+    ))
+      await visit(posix.normalize(posix.join(posix.dirname(file), match[1])));
+  };
+  for (const script of scripts) await visit(script);
+  budgets.push([
+    "initial page JavaScript",
+    [...initial].reduce((sum, file) => sum + (sizes.get(file) ?? 0), 0),
+    20 * 1024,
+  ]);
+  for (const [label, bytes, budget] of budgets) {
+    if (bytes > budget)
+      throw Error(`${label}: ${bytes} bytes exceeds ${budget}.`);
+    console.log(`${label}: ${bytes} / ${budget} bytes.`);
+  }
+}

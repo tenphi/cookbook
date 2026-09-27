@@ -10,6 +10,7 @@ export default {
   tokens: [
     "$gap",
     "$radius",
+    "$header-control-radius",
     "$card-radius",
     "$border-width",
     "$outline-width",
@@ -42,6 +43,8 @@ export default {
     "#accent-text",
     "#accent-surface",
     "#accent-surface-text",
+    "#logo-surface",
+    "#logo-mark",
     "#accent-surface-subtle",
     "#accent-surface-2-subtle",
     "#focus",

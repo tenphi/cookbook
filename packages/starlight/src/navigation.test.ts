@@ -8,6 +8,37 @@ import {
 } from "./navigation.js";
 
 describe("section navigation", () => {
+  it("excludes drafts from generated and explicit sidebar pagination while keeping published pages", () => {
+    const routes = [
+      {
+        route: "/guide",
+        entryId: "guide",
+        sourcePath: "guide.md",
+        title: "Guide",
+        discoverable: true,
+      },
+      {
+        route: "/draft",
+        entryId: "draft",
+        sourcePath: "draft.md",
+        title: "Draft",
+        discoverable: false,
+      },
+    ];
+    expect(
+      starlightPageSidebar(resolveNavigationLayout(undefined), routes),
+    ).toEqual([{ label: "Guide", link: "/guide" }]);
+    expect(
+      starlightPageSidebar(
+        resolveNavigationLayout([
+          { label: "Review", items: ["/draft"] },
+          "/guide",
+        ]),
+        routes,
+      ),
+    ).toEqual([{ label: "Guide", link: "/guide" }]);
+    expect(routes).toHaveLength(2);
+  });
   const layout = resolveNavigationLayout({
     items: ["/fallback"],
     tabs: [

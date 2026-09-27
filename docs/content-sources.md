@@ -120,6 +120,32 @@ into one local document before the build. Cookbook checks the spec size against
 `build.maxAssetBytes` and reports invalid or duplicate operation routes.
 Generated pages are static references; they do not make requests to the API.
 
+### Supported OpenAPI details
+
+Cookbook renders the core OpenAPI 3.0/3.1 operation model:
+
+- Operation parameters replace path parameters with the same **name and location**.
+  The same name in `query` and `path` remains two parameters.
+- Parameters and request/response media types render singular `example` values
+  (including `false`, `0`, and `null`) and named `examples`. Local Example Object
+  references resolve to their summaries, descriptions, and values. HTTP(S)
+  `externalValue` examples are linked and never fetched by the build.
+- Operations inherit document `security`. An explicit array replaces it;
+  `security: []` declares anonymous access. Empty objects allow an anonymous
+  alternative. Schemes within an object are required together; array entries
+  are alternatives. Scheme details and required scopes appear on each page.
+- Local JSON Pointer references support escaped names and reference chains.
+  Reference-only cycles and unknown security schemes produce diagnostics.
+  Recursive schema definitions remain visible as JSON references.
+
+These follow the [OpenAPI parameter and security rules](https://spec.openapis.org/oas/v3.1.1.html#operation-object).
+Cookbook is not a complete OpenAPI validator or an interactive API client.
+Callbacks, webhooks, link execution, OAuth login flows, multipart editors,
+request serialization, and interactive schema expansion are not implemented.
+Schema JSON is displayed as authored; externally split specs must be bundled
+first. Use an OpenAPI validator alongside `cookbook doctor` for specification
+validation beyond the rendered feature set.
+
 ## npm package sources
 
 Package sources read documentation from the actual npm artifact:

@@ -1,9 +1,14 @@
-export {};
+import { message } from "./messages.js";
 
 class CookbookCodeBlock extends HTMLElement {
   #resetTimer: number | undefined;
 
   connectedCallback() {
+    const button = this.querySelector<HTMLButtonElement>("[data-copy-code]");
+    if (button) {
+      button.setAttribute("aria-label", message("copyCode"));
+      button.title = message("copyCode");
+    }
     this.addEventListener("click", this.#copy);
   }
 
@@ -27,22 +32,22 @@ class CookbookCodeBlock extends HTMLElement {
       await writeClipboard(code);
     } catch {
       button.dataset.copyState = "error";
-      button.setAttribute("aria-label", "Could not copy code");
-      button.title = "Could not copy code";
+      button.setAttribute("aria-label", message("codeCopyError"));
+      button.title = message("codeCopyError");
       return;
     }
 
     button.dataset.copyState = "copied";
-    button.setAttribute("aria-label", "Code copied");
-    button.title = "Code copied";
+    button.setAttribute("aria-label", message("codeCopied"));
+    button.title = message("codeCopied");
 
     if (this.#resetTimer !== undefined) {
       window.clearTimeout(this.#resetTimer);
     }
     this.#resetTimer = window.setTimeout(() => {
       delete button.dataset.copyState;
-      button.setAttribute("aria-label", "Copy code");
-      button.title = "Copy code";
+      button.setAttribute("aria-label", message("copyCode"));
+      button.title = message("copyCode");
       this.#resetTimer = undefined;
     }, 2_000);
   };

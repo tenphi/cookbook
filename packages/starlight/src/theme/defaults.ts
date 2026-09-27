@@ -7,6 +7,7 @@ import type {
 export const DEFAULT_THEME_TOKENS = {
   $gap: "0.5rem",
   $radius: "8px",
+  "$header-control-radius": "999px",
   "$card-radius": "16px",
   "$border-width": "1px",
   "$outline-width": "2px",

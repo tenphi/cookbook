@@ -12,12 +12,13 @@ plain file server.
 ## Build locally
 
 ```sh
-npm run build
+npm run validate
 npm run preview
 ```
 
-Run [`cookbook doctor`](./cli.md#validate-with-doctor) in CI before building
-when you want a focused content diagnostic step.
+New projects include `validate`: preflight, production build, then built-output
+checks. Existing projects can add this script using the [upgrade guide](./migration.md).
+Run [`cookbook doctor`](./cli.md#validate-with-doctor) for a focused preflight.
 
 ## GitHub Pages
 
@@ -93,3 +94,19 @@ to the sitemap. Host these files with the rest of `dist/`; custom files in
 
 Check the deployed HTML, `sitemap-index.xml`, and `llms.txt` through their public
 URLs. See [AI agents](./ai-agents.md) for the setup and reading workflow.
+
+For title templates, social images, preview noindex, older-version policies,
+breadcrumbs, and copy-page downloads, see [Publishing metadata](./publishing.md).
+
+## Validate the published result
+
+New projects include `npm run validate` for preflight, build, and output checks.
+After the host finishes deploying, run:
+
+```sh
+npx @tenphi/cookbook check-build --url https://docs.example.com/manual/
+```
+
+Use your actual deployment URL, including any base path, and the same local
+`dist/` output that was deployed. See [CLI checks](./cli.md#check-the-built-site-and-deployment)
+for the exact coverage, warnings, JSON output, and custom output directories.

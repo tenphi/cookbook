@@ -1,3 +1,12 @@
+import { resolveHeroMetadata } from "./hero-image.js";
+import {
+  compatiblePlugins,
+  validatePluginFrontmatter,
+  type FrontmatterSchema,
+} from "./plugin-contract.js";
+import { resolveSiteLogo, type SiteLogoSet } from "./site-logo.js";
+import { assertTastyOutput } from "./output-styles.js";
+import { adaptPagefindUI } from "./pagefind-adapter.js";
 import { existsSync } from "node:fs";
 import {
   cp,
@@ -12,6 +21,8 @@ import { createRequire } from "node:module";
 import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import starlight from "./starlight-runtime.js";
+import sitemap from "@astrojs/sitemap";
+import { localeAlternates } from "./localization.js";
 import {
   createDocsGraph,
   assertValidDocs,
@@ -28,6 +39,7 @@ import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
 import type { StarlightPlugin } from "@astrojs/starlight/types";
 import {
+  navigationPath,
   resolveNavigationLayout,
   type ResolvedNavigationLayout,
 } from "./navigation.js";
@@ -41,8 +53,12 @@ import {
   satteriPageAffordances,
 } from "./markdown/rehype-page-affordances.js";
 import { resolveDocsTheme } from "./theme/index.js";
-import { configureFontFaces, resolveThemeFontFaces } from "./theme/fonts.js";
-import { cookbookShikiConfig } from "./theme/shiki-theme.js";
+import { configureFontFaces } from "./theme/fonts.js";
+import { resolveThemeFonts, type FontAsset } from "./theme/font-loading.js";
+import {
+  cookbookShikiConfig,
+  configureCodeHighlighting,
+} from "./theme/shiki-theme.js";
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
@@ -52,7 +68,20 @@ import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 import { outputPathForPublicAsset } from "./output-path.js";
+import { agentPagePath } from "./page-metadata.js";
+import { renderAgentMarkdown } from "@tenphi/docs";
 import { writeAgentDiscovery } from "./agent-discovery.js";
+
+const stylingRuntimeError =
+  "Cookbook styles are build/server-only. Do not import @tenphi/cookbook/styling, Tasty, or Glaze in browser scripts or client:* islands. Render styled markup on the server and attach a small client script for interactions.";
+function isStylingRuntime(id: string): boolean {
+  const path = id.replaceAll("\\", "/");
+  return (
+    /^@tenphi\/(?:tasty|glaze)(?:\/|$)/.test(path) ||
+    /^@tenphi\/(?:cookbook|starlight)\/styling$/.test(path) ||
+    /(?:^|\/)node_modules\/@tenphi\/(?:tasty|glaze)(?:\/|$)/.test(path)
+  );
+}
 
 const packageRequire = createRequire(import.meta.url);
 const starlightRoot = resolve(
@@ -78,6 +107,8 @@ export interface CookbookOptions {
   configFile?: string | false;
   /** Starlight content and behavior plugins. Styles must still use Tasty. */
   plugins?: StarlightPlugin[];
+  /** Validate custom metadata only; reserved routing/frontmatter fields cannot be changed. */
+  frontmatterSchema?: FrontmatterSchema;
 }
 
 export default function cookbook(
@@ -97,6 +128,9 @@ export default function cookbook(
           config: project.config,
           root: project.root,
           ...(options.plugins ? { plugins: options.plugins } : {}),
+          ...(options.frontmatterSchema
+            ? { frontmatterSchema: options.frontmatterSchema }
+            : {}),
         });
         await callInner([integration], "astro:config:setup", context);
       },
@@ -163,6 +197,16 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   );
   const components = resolveComponentOverrides(
     {
+      DraftContentNotice: fileURLToPath(
+        new URL("./overrides/DraftContentNotice.astro", import.meta.url),
+      ),
+      Search: fileURLToPath(
+        new URL("./overrides/Search.astro", import.meta.url),
+      ),
+      Head: fileURLToPath(new URL("./overrides/Head.astro", import.meta.url)),
+      LanguageSelect: fileURLToPath(
+        new URL("./overrides/LanguageSelect.astro", import.meta.url),
+      ),
       PageFrame: fileURLToPath(
         new URL("./overrides/PageFrame.astro", import.meta.url),
       ),
@@ -193,11 +237,13 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   }) as unknown as AstroIntegration;
   let inner: AstroIntegration[] = [tasty];
   let projectRoot = options.root;
-  const graphConfig = options.config;
+  let graphConfig = options.config;
   let graphBase = "/";
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
+  let fontAssets: FontAsset[] = [];
+  let siteLogo: SiteLogoSet | undefined;
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
@@ -207,6 +253,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         base: graphBase,
       });
       assertValidDocs(graph);
+      await validatePluginFrontmatter(graph.entries, options.frontmatterSchema);
     }
     return graph;
   }
@@ -267,14 +314,26 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               );
           }
         }
-        const fontFaces = await resolveThemeFontFaces(
+        const resolvedFonts = await resolveThemeFonts(
           options.config?.theme?.fonts,
-          base,
+          {
+            base,
+            cacheDir: join(
+              fileURLToPath(context.config.cacheDir),
+              "cookbook-fonts",
+            ),
+            loading: options.config?.theme?.fontLoading ?? {},
+            presets: docsTheme.presets,
+            warn: (message) => context.logger.warn(message),
+          },
         );
+        const fontFaces = resolvedFonts.faces;
+        fontAssets = resolvedFonts.assets;
         const usedFamilies = Object.values(docsTheme.presets).map(
           (preset) => preset.fontFamily ?? "",
         );
         configureFontFaces(fontFaces, {
+          display: options.config?.theme?.fontLoading?.display ?? "swap",
           onest: usedFamilies.some((family) =>
             family.includes("Onest Variable"),
           ),
@@ -295,14 +354,81 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             `Cookbook site.url (${configuredSite}) conflicts with Astro site (${astroSite}).`,
           );
         }
+        if (configuredSite || astroSite)
+          graphConfig = {
+            ...graphConfig,
+            site: { ...graphConfig?.site, url: (configuredSite ?? astroSite)! },
+          };
         siteIconBase = base;
         graphBase = base;
+        context.config.integrations.push(
+          sitemap({
+            serialize: (item) => {
+              if (!graph?.config.locales) return item;
+              const route = navigationPath(
+                decodeURI(new URL(item.url).pathname),
+                graphBase,
+              );
+              return {
+                ...item,
+                links: localeAlternates(
+                  route,
+                  graph.routes.filter((route) => route.sitemap !== false),
+                  graph.config,
+                ).map(({ lang, route }) => ({
+                  lang,
+                  url: new URL(
+                    `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+                    item.url,
+                  ).href,
+                })),
+              };
+            },
+            filter: (url) => {
+              const pathname = decodeURI(new URL(url).pathname);
+              const route = navigationPath(pathname, graphBase);
+              return (
+                graph?.routes.some(
+                  (entry) =>
+                    entry.route === route &&
+                    entry.discoverable !== false &&
+                    entry.sitemap !== false,
+                ) ?? false
+              );
+            },
+          }),
+        );
         siteIcons = await loadSiteIcons();
+        siteLogo = await resolveSiteLogo(
+          projectRoot!,
+          base,
+          options.config?.site,
+        );
         registerCookbookMarkdownPlugins(context.config.markdown.processor);
         const starlightIntegration = starlight({
-          ...(options.plugins ? { plugins: options.plugins } : {}),
+          plugins: [
+            {
+              name: "cookbook-content-bridge",
+              hooks: {
+                "config:setup"({
+                  addRouteMiddleware,
+                }: Parameters<
+                  NonNullable<StarlightPlugin["hooks"]["config:setup"]>
+                >[0]) {
+                  addRouteMiddleware({
+                    entrypoint: fileURLToPath(
+                      new URL("./route-middleware.js", import.meta.url),
+                    ),
+                    order: "pre",
+                  });
+                },
+              },
+            },
+            ...compatiblePlugins(options.plugins ?? []),
+          ],
           title: options.config?.site?.title ?? "Documentation",
           expressiveCode: false,
+          markdown: { processedDirs: [projectRoot!] },
           favicon: siteIcons.faviconPath,
           head: [...siteIcons.head, ...(options.config?.head ?? [])],
           ...(options.config?.editLink
@@ -333,6 +459,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             : {}),
           ...(options.config?.search?.enabled === false
             ? { pagefind: false }
+            : {}),
+          ...(options.config?.tableOfContents !== undefined
+            ? { tableOfContents: options.config.tableOfContents }
             : {}),
           disable404Route: true,
           components,
@@ -371,6 +500,23 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             },
             plugins: [
               {
+                name: "cookbook-server-only-styling",
+                enforce: "pre",
+                resolveId(id, _importer, settings) {
+                  if (
+                    settings?.ssr ||
+                    this.environment.config.consumer === "server"
+                  )
+                    return;
+                  if (isStylingRuntime(id)) this.error(stylingRuntimeError);
+                },
+                generateBundle() {
+                  if (this.environment.config.consumer === "server") return;
+                  for (const id of this.getModuleIds())
+                    if (isStylingRuntime(id)) this.error(stylingRuntimeError);
+                },
+              },
+              {
                 name: "cookbook-react-runtime",
                 enforce: "post",
                 configResolved(config) {
@@ -407,11 +553,12 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                   const loaded = await loadGraph(true);
                   const entries = await Promise.all(
                     loaded.entries.map(async (entry) => {
+                      const hero = await resolveHeroMetadata(entry);
                       if (
                         entry.trust === "mdx" &&
                         entry.sourcePath.toLowerCase().endsWith(".mdx")
                       ) {
-                        return { ...entry, mdx: true };
+                        return { ...entry, hero, mdx: true };
                       }
                       const { image, markdown, srcDir } = markdownRuntime;
                       markdownRenderer ??= markdown.processor.createRenderer({
@@ -433,6 +580,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                       );
                       return {
                         ...entry,
+                        hero,
                         rendered: {
                           html: rendered.code,
                           headings: rendered.metadata.headings,
@@ -444,9 +592,17 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     entries,
                     routes: loaded.routes,
                     redirects: loaded.redirects,
+                    tableOfContents: loaded.config.tableOfContents,
                     site: documentedSite(loaded),
                     base: loaded.config.build.base,
-                    search: loaded.config.search.enabled,
+                    search:
+                      loaded.config.search.enabled ||
+                      typeof options.config?.components?.overrides?.Search ===
+                        "string",
+                    logo: siteLogo?.logo,
+                    locales: loaded.config.locales,
+                    defaultLocale: loaded.config.defaultLocale,
+                    translations: loaded.config.translations,
                   };
                 },
                 navigation,
@@ -552,10 +708,19 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         });
       },
       "astro:config:done": async (context) => {
+        configureCodeHighlighting(
+          cookbookShikiConfig(context.config.markdown.shikiConfig),
+        );
         await callInner(inner, "astro:config:done", context);
       },
       "astro:server:setup": async ({ server, logger }) => {
         let assets = docsAssetMap(await loadGraph());
+        if (siteLogo?.sourcePaths.length) {
+          server.watcher.add(siteLogo.sourcePaths);
+          server.watcher.on("change", (path) => {
+            if (siteLogo?.sourcePaths.includes(path)) void server.restart();
+          });
+        }
         if (options.config?.site?.favicon && siteIcons) {
           server.watcher.add(siteIcons.sourcePath);
           server.watcher.on("change", async (changedPath) => {
@@ -573,7 +738,55 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             next();
             return;
           }
-          const pathname = requestPath(request.url);
+          const requestPathname = requestPath(request.url);
+          // Vite strips Astro's base before invoking development middleware.
+          const pathname =
+            graphBase !== "/" && !requestPathname.startsWith(graphBase)
+              ? `${graphBase.replace(/\/$/, "")}${requestPathname}`
+              : requestPathname;
+          if (pathname.includes("/_cookbook/pages/")) {
+            try {
+              const current = await loadGraph(true);
+              const entry = current.entries.find(
+                (entry) =>
+                  !entry.frontmatter.draft &&
+                  agentPagePath(entry.route, current.config.build.base) ===
+                    pathname,
+              );
+              if (entry && current.config.site.seo?.copyPage !== false) {
+                response.statusCode = 200;
+                response.setHeader(
+                  "Content-Type",
+                  "text/markdown; charset=utf-8",
+                );
+                response.setHeader("X-Robots-Tag", "noindex");
+                response.end(
+                  request.method === "HEAD"
+                    ? undefined
+                    : renderAgentMarkdown(entry, current.config),
+                );
+                return;
+              }
+            } catch (error) {
+              logger.error(errorMessage(error));
+            }
+          }
+          const fontAsset = [...fontAssets, ...(siteLogo?.assets ?? [])].find(
+            (asset) => asset.publicPath === pathname,
+          );
+          if (fontAsset) {
+            response.statusCode = 200;
+            response.setHeader("Content-Type", fontAsset.contentType);
+            response.setHeader("Content-Length", fontAsset.body.byteLength);
+            response.setHeader(
+              "Cache-Control",
+              "public, max-age=31536000, immutable",
+            );
+            response.end(
+              request.method === "HEAD" ? undefined : fontAsset.body,
+            );
+            return;
+          }
           const siteIcon = siteIcons?.assets.find(
             (asset) => asset.publicPath === pathname,
           );
@@ -634,28 +847,15 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             )
             .replace(/\s*<style>\s*<\/style>/g, "")
             .replace(
+              /<style>astro-island,astro-slot,astro-static-slot\{display:contents\}<\/style>/g,
+              "",
+            )
+            .replace(
               /\sstyle="--sl-icon-size:\s*([^;\"]+);?"/g,
               ' width="$1" height="$1"',
             )
-            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"')
-            .replace(
-              /(<kbd\b[^>]*)\sstyle="display:\s*none;?"([^>]*>)/g,
-              "$1$2",
-            )
-            .replace(
-              /(<dialog\b[^>]*)\sstyle="padding:\s*0;?"([^>]*>)/g,
-              "$1$2",
-            );
-          if (
-            /<style\b/.test(sanitized) ||
-            /<link\b(?=[^>]*\brel=["']stylesheet["'])(?![^>]*\bdata-tasty-ssr\b)[^>]*>/i.test(
-              sanitized,
-            )
-          ) {
-            throw new Error(
-              `Non-Tasty CSS found in ${relativePath}. Use theme.styles or Tasty components for visual changes.`,
-            );
-          }
+            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"');
+          assertTastyOutput(sanitized, relativePath);
           if (sanitized !== html) await writeFile(path, sanitized);
         }
         const pagefindOutput = join(output, "pagefind");
@@ -678,7 +878,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             );
           }
         }
-        for (const asset of siteIcons?.assets ?? []) {
+        for (const asset of [
+          ...(siteIcons?.assets ?? []),
+          ...fontAssets,
+          ...(siteLogo?.assets ?? []),
+        ]) {
           const target = join(output, asset.outputPath);
           await mkdir(dirname(target), { recursive: true });
           await writeFile(target, asset.body);
@@ -734,6 +938,7 @@ function stripStarlightStylesPlugin(root: string) {
     name: "cookbook-strip-starlight-css",
     enforce: "pre" as const,
     resolveId(source: string, importer: string | undefined) {
+      if (source === "@pagefind/default-ui") return "\0cookbook:pagefind-ui";
       const normalized = source.replaceAll("\\", "/").replace(/^\/@fs/, "");
       const owned =
         normalized.startsWith(`${normalizedRoot}/`) ||
@@ -752,7 +957,13 @@ function stripStarlightStylesPlugin(root: string) {
         return emptyStyleId;
       return undefined;
     },
-    load(id: string) {
+    async load(id: string) {
+      if (id === "\0cookbook:pagefind-ui") {
+        const entry = packageRequire.resolve("@pagefind/default-ui");
+        return adaptPagefindUI(
+          await readFile(resolve(dirname(entry), "../mjs/ui-core.mjs"), "utf8"),
+        );
+      }
       if (id === emptyPrintId) return 'export default "data:text/css,";';
       if (id === emptyStyleId) return "";
       return undefined;
@@ -842,12 +1053,25 @@ function configureTastyTheme(
   const tokens = tastyTokens(resolved) as ConfigTokens;
   const globalStyles = resolveLegacyAnatomyStyles(theme?.customStyles);
 
+  // Recipes and custom parser units are module-local in Tasty. Astro evaluates
+  // renderer code in a separate server module graph. Share configuration only
+  // inside the build process; never serialize this state into the page.
+  (
+    globalThis as typeof globalThis & { __tenphiCookbookTastyRuntime?: unknown }
+  ).__tenphiCookbookTastyRuntime = {
+    units: { ...TASTY_UNITS, ...theme?.units },
+    recipes: theme?.recipes ?? {},
+    states: theme?.states ?? {},
+    presets: resolved.presets,
+    tokens,
+  };
   configure({
     states: {
       ...cookbookStates,
       ...theme?.states,
     },
-    units: TASTY_UNITS,
+    units: { ...TASTY_UNITS, ...theme?.units },
+    recipes: theme?.recipes ?? {},
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,
     ...(globalStyles
@@ -973,8 +1197,18 @@ function virtualDocsPlugin(
         server.watcher.off("all", changed),
       );
     },
-    async resolveId(id: string) {
-      if (id === "virtual:cookbook/config") return configId;
+    async resolveId(
+      id: string,
+      _importer: string | undefined,
+      resolveOptions: { ssr?: boolean },
+    ) {
+      if (id === "virtual:cookbook/config") {
+        if (resolveOptions.ssr === false)
+          throw new Error(
+            "Cookbook content queries are build-time only. Pass selected public data to a client component as props instead.",
+          );
+        return configId;
+      }
       if (id === "virtual:cookbook/layout") return layoutId;
       if (id.startsWith(mdxPrefix)) {
         await loadContent();

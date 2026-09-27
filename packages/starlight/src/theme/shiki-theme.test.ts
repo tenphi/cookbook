@@ -21,10 +21,10 @@ describe("Cookbook Shiki theme", () => {
     const { code } = await render(markdown);
 
     expect(code).toMatch(
-      /syntax-string-color\)\">plan-i<\/span><span style="color:var\(--syntax-string-color\)\">d<\/span>/,
+      /td-syntax-string">plan-i<\/span><span class="td-syntax-string">d<\/span>/,
     );
     expect(code).toMatch(
-      /syntax-string-color\)\">run-i<\/span><span style="color:var\(--syntax-string-color\)\">d<\/span>/,
+      /td-syntax-string">run-i<\/span><span class="td-syntax-string">d<\/span>/,
     );
   });
 
@@ -40,23 +40,17 @@ describe("Cookbook Shiki theme", () => {
       ].join("\n");
       const { code } = await render(markdown);
 
+      expect(code).toContain('<span class="td-syntax-keyword">import</span>');
       expect(code).toContain(
-        '<span style="color:var(--syntax-keyword-color)">import</span>',
+        '<span class="td-syntax-string">@tenphi/cookbook/components</span>',
+      );
+      expect(code).toContain('<span class="td-syntax-function">Card</span>');
+      expect(code).toContain('<span class="td-syntax-property"> title</span>');
+      expect(code).toContain(
+        '<span class="td-syntax-string">Package-first</span>',
       );
       expect(code).toContain(
-        '<span style="color:var(--syntax-string-color)">@tenphi/cookbook/components</span>',
-      );
-      expect(code).toContain(
-        '<span style="color:var(--syntax-function-color)">Card</span>',
-      );
-      expect(code).toContain(
-        '<span style="color:var(--syntax-property-color)"> title</span>',
-      );
-      expect(code).toContain(
-        '<span style="color:var(--syntax-string-color)">Package-first</span>',
-      );
-      expect(code).toContain(
-        '<span style="color:var(--syntax-punctuation-color)">&#x3C;</span>',
+        '<span class="td-syntax-punctuation">&#x3C;</span>',
       );
     },
   );
@@ -73,14 +67,40 @@ describe("Cookbook Shiki theme", () => {
     ].join("\n");
     const { code } = await render(markdown);
 
-    expect(code).toContain('class="astro-code tasty-code td-diff"');
+    expect(code).toContain("astro-code tasty-code td-diff");
     expect(code).toMatch(/class="line td-diff-line--deleted"[^>]*>.*-.*old/);
     expect(code).toMatch(/class="line td-diff-line--inserted"[^>]*>.*\+.*new/);
     expect(code).not.toMatch(
       /class="line td-diff-line--(?:inserted|deleted)"[^>]*>.*(?:a|b)\/colors\.ts/,
     );
-    expect(code).toContain("var(--red-text-color)");
-    expect(code).toContain("var(--green-text-color)");
+    expect(code).toContain("td-red-text");
+    expect(code).toContain("td-green-text");
+  });
+
+  it("emits classes for foreground, background and italic tokens without inline CSS", async () => {
+    const { code } = await render(
+      "```ts\n// commentary\nconst value = 2;\n```",
+    );
+    expect(code).not.toMatch(/\sstyle=/);
+    expect(code).toContain("td-syntax-bg");
+    expect(code).toContain("td-syntax-italic");
+  });
+
+  it("rejects custom transformer styles with a customization hint", async () => {
+    const renderer = await createMarkdownProcessor({
+      shikiConfig: cookbookShikiConfig({
+        transformers: [
+          {
+            span(node: { properties: Record<string, unknown> }) {
+              node.properties.style = "color:red";
+            },
+          },
+        ],
+      }),
+    });
+    await expect(
+      renderer.render("```js\nconst x=1;\n```", { frontmatter: {} }),
+    ).rejects.toThrow("theme.styles.SyntaxHighlight");
   });
 
   it("preserves consumer languages and transformers", () => {
@@ -95,6 +115,7 @@ describe("Cookbook Shiki theme", () => {
       transformer,
       expect.objectContaining({ name: "cookbook:bash-placeholders" }),
       expect.objectContaining({ name: "cookbook:diff-lines" }),
+      expect.objectContaining({ name: "cookbook:tasty-classes" }),
     ]);
   });
 });

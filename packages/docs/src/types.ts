@@ -1,8 +1,13 @@
-import type { Styles, StylesWithoutSelectors } from "@tenphi/tasty/core";
+import type {
+  RecipeStyles,
+  Styles,
+  StylesWithoutSelectors,
+} from "@tenphi/tasty/core";
 import type {
   GlazeColorInput,
+  GlazeConfigOverride,
   GlazeColorValue,
-  RegularColorDef,
+  ColorDef,
 } from "@tenphi/glaze";
 import type { Root } from "mdast";
 
@@ -19,7 +24,35 @@ export interface DocsDiagnostic {
   related?: Array<{ file: string; line?: number; message: string }>;
 }
 
+export interface SocialImage {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+export interface SiteSeoConfig {
+  titleTemplate?: string;
+  image?: SocialImage | false;
+  /** False on preview deployments; pages cannot override this restriction. */
+  index?: boolean;
+  breadcrumbs?: boolean;
+  /** Offer a clean Markdown download and copy control. Defaults to true. */
+  copyPage?: boolean;
+}
+export interface PageSeoConfig {
+  /** Complete document title, overriding the site template. */
+  title?: string;
+  canonical?: string;
+  image?: SocialImage | false;
+  index?: boolean;
+  breadcrumbs?: BreadcrumbItem[] | false;
+}
 export interface SiteConfig {
+  seo?: SiteSeoConfig;
   title?: string;
   /** Version of the documented package, rendered beside the site title. */
   version?: string;
@@ -32,9 +65,13 @@ export interface SiteConfig {
   headerLinks?: HeaderLink[];
   /** Source artwork used to generate browser, touch, and installable-app icons. */
   favicon?: string | SiteIconConfig;
+  /** Shared header and mobile drawer artwork. Paths are relative to the project root. */
+  logo?: false | string | SiteLogoConfig;
 }
 
 export interface SiteVersion {
+  /** Exclude this version from search engines, sitemaps, and agent indexes. */
+  index?: boolean;
   label: string;
   routeBase: string;
 }
@@ -46,6 +83,21 @@ export interface HeaderLink {
   /** Desktop button variant; mobile More menus use uniform navigation links. */
   variant?: "default" | "primary";
   newTab?: boolean;
+}
+
+export interface SiteLogoConfig {
+  /** Use one image, or supply both light and dark images instead. */
+  src?: string;
+  light?: string;
+  dark?: string;
+  alt?: string;
+  /** Defaults to the localized documentation home. */
+  href?: string;
+  /** Intrinsic dimensions; normally inferred from the image. */
+  width?: number;
+  height?: number;
+  /** True by default because the site title labels the same destination. */
+  decorative?: boolean;
 }
 
 export interface SiteIconConfig {
@@ -124,7 +176,7 @@ export interface ContentConfig {
   allowOutsideRoot?: boolean;
   /** Rewrite absolute links into the current repository to matching Cookbook routes. */
   localizeRepositoryLinks?: boolean;
-  /** Keep unrelated metadata without exposing it as renderer frontmatter. */
+  /** Preserve custom metadata for content queries and renderer middleware, or reject unknown fields. */
   frontmatter?: "preserve" | "reject";
 }
 
@@ -172,6 +224,8 @@ export type ThemeTokenValue = string | number;
 export interface ThemeTokens {
   $gap?: ThemeTokenValue;
   $radius?: ThemeTokenValue;
+  /** Independent pill/circle radius for header controls and drawer close buttons. */
+  "$header-control-radius"?: ThemeTokenValue;
   "$card-radius"?: ThemeTokenValue;
   "$border-width"?: ThemeTokenValue;
   "$outline-width"?: ThemeTokenValue;
@@ -224,8 +278,22 @@ export interface ThemeFontFile {
 /** A Google Fonts family or a set of files hosted by the site. */
 export type ThemeFont =
   | string
-  | { google: string; weights?: number[] }
+  | {
+      google: string;
+      /** Individual weights or variable ranges, using the same syntax as local files. */
+      weights?: Array<number | `${number} ${number}`>;
+      /** Defaults to normal and italic; omit unavailable styles explicitly. */
+      styles?: Array<"normal" | "italic">;
+    }
   | { family: string; files: ThemeFontFile[] };
+
+export interface FontLoadingConfig {
+  /** Download Google font files into the site by default. */
+  google?: "self-hosted" | "remote";
+  /** Reuse verified cache entries by default. Offline never performs network requests. */
+  cache?: "reuse" | "refresh" | "offline";
+  display?: "auto" | "block" | "swap" | "fallback" | "optional";
+}
 
 export interface ThemeFonts {
   body?: ThemeFont;
@@ -234,10 +302,82 @@ export interface ThemeFonts {
 }
 
 /** A Glaze declaration, or a literal color retained as a convenient seed shorthand. */
-export type ThemePaletteColor = GlazeColorValue | RegularColorDef;
+export type ThemePaletteColor = GlazeColorValue | ColorDef;
+
+export const COOKBOOK_PALETTE_NAMES = [
+  "surface",
+  "header",
+  "surface-2",
+  "surface-3",
+  "text",
+  "heading",
+  "text-soft",
+  "text-muted",
+  "surface-2-hover",
+  "surface-2-pressed",
+  "surface-3-hover",
+  "surface-3-pressed",
+  "accent-text",
+  "focus",
+  "accent-surface",
+  "accent-surface-text",
+  "logo-surface",
+  "logo-mark",
+  "accent-surface-subtle",
+  "accent-surface-2-subtle",
+  "shadow",
+  "clear",
+  "info",
+  "info-text",
+  "info-surface",
+  "success",
+  "success-text",
+  "success-surface",
+  "warning",
+  "warning-text",
+  "warning-surface",
+  "danger",
+  "danger-text",
+  "danger-surface",
+  "orange",
+  "orange-text",
+  "orange-surface",
+  "green",
+  "green-text",
+  "green-surface",
+  "blue",
+  "blue-text",
+  "blue-surface",
+  "purple",
+  "purple-text",
+  "purple-surface",
+  "red",
+  "red-text",
+  "red-surface",
+  "overlay",
+  "border",
+  "border-strong",
+  "syntax-bg",
+  "syntax-text",
+  "syntax-comment",
+  "syntax-punctuation",
+  "syntax-keyword",
+  "syntax-string",
+  "syntax-token",
+  "syntax-property",
+  "syntax-number",
+  "syntax-function",
+  "syntax-value",
+  "syntax-operator",
+] as const;
+export type CookbookPaletteName = (typeof COOKBOOK_PALETTE_NAMES)[number];
 
 /** Semantic palette declarations resolved for every appearance mode. */
-export interface ThemePaletteConfig {
+export interface ThemePaletteConfig extends Partial<
+  Record<CookbookPaletteName, ThemePaletteColor>
+> {
+  /** Additional Glaze roles, exposed as Tasty #name tokens. Use lowercase hyphenated names. */
+  [name: string]: ThemePaletteColor | undefined;
   info?: ThemePaletteColor;
   success?: ThemePaletteColor;
   warning?: ThemePaletteColor;
@@ -263,6 +403,8 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "CodeGroup",
   "Tab",
   "Footer",
+  "PageActions",
+  "MobileTableOfContents",
   "Hero",
   "PageFrame",
   "HeaderFrame",
@@ -273,6 +415,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "TableOfContentsLayout",
   "LanguageSelect",
   "Logo",
+  "SiteLogo",
   "MarkdownCodeBlock",
   "MarkdownHeading",
   "MarkdownInlineCode",
@@ -281,7 +424,6 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "MobileMenuFooter",
   "MobileMenuToggle",
   "MobileNavigationTabs",
-  "MobileTableOfContents",
   "PackageVersion",
   "VersionSwitcher",
   "Preview",
@@ -293,12 +435,167 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "ThemeSelect",
   "TopNavigation",
   "StarlightHeader",
+  "Document",
+  "MainPane",
+  "MainContent",
+  "Banner",
+  "SkipLink",
+  "Search",
+  "Pagination",
+  "Markdown",
+  "MermaidSource",
+  "StarlightAside",
+  "StarlightCard",
+  "StarlightLinkCard",
+  "StarlightBadge",
+  "StarlightSteps",
+  "SearchResults",
+  "SyntaxHighlight",
 ] as const;
 
 export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  SyntaxHighlight: [
+    "Scroll",
+    "Wrap",
+    "Marker",
+    "Comment",
+    "Punctuation",
+    "Keyword",
+    "String",
+    "Token",
+    "Property",
+    "Number",
+    "Function",
+    "Value",
+    "Operator",
+    "Text",
+    "Bg",
+    "Inserted",
+    "Deleted",
+    "Italic",
+    "Strong",
+    "Underline",
+  ],
+  SearchResults: [
+    "Form",
+    "Input",
+    "Clear",
+    "Results",
+    "Result",
+    "ResultLink",
+    "SearchIcon",
+    "ClearIcon",
+    "SuppressedClear",
+    "Message",
+    "List",
+    "Title",
+    "Excerpt",
+    "NestedResult",
+    "Match",
+    "More",
+    "HoverMore",
+  ],
+  StarlightSteps: ["Item", "Counter", "Connector"],
+  StarlightBadge: [],
+  StarlightLinkCard: [
+    "Hover",
+    "Stack",
+    "Link",
+    "LinkOverlay",
+    "DescriptionAndIcon",
+  ],
+  StarlightCard: ["Title"],
+  StarlightAside: [
+    "Note",
+    "Tip",
+    "Caution",
+    "Danger",
+    "Title",
+    "Icon",
+    "FirstContent",
+  ],
+  MermaidSource: [],
+  Markdown: [
+    "Block",
+    "BlockSpacing",
+    "HeadingSpacing",
+    "List",
+    "CompactItem",
+    "ListItem",
+    "DefinitionTerm",
+    "DefinitionDescription",
+    "Link",
+    "HoverLink",
+    "Quote",
+    "Rule",
+    "Details",
+    "HoverDetails",
+    "Summary",
+    "OpenSummary",
+    "SummaryMarker",
+    "SummaryIcon",
+    "OpenSummaryIcon",
+    "Code",
+  ],
+  Pagination: [
+    "Link",
+    "NextLink",
+    "NextIcon",
+    "NextLabel",
+    "HoverLink",
+    "ActiveLink",
+    "Title",
+    "LoneNextLink",
+    "NativeIcon",
+    "Icon",
+    "PreviousIconRtl",
+    "NextIconRtl",
+  ],
+  Search: [
+    "Status",
+    "Dialog",
+    "CloseIcon",
+    "OpenDialog",
+    "Backdrop",
+    "Frame",
+    "Container",
+    "Close",
+    "HoverClose",
+    "ActiveClose",
+  ],
+  SkipLink: ["Focus"],
+  Banner: ["Link"],
+  MainContent: [
+    "ContentSpacing",
+    "Container",
+    "Panel",
+    "FirstPanel",
+    "BodyPanel",
+  ],
+  MainPane: ["WithSidebars"],
+  Document: [
+    "All",
+    "Body",
+    "Control",
+    "Pointer",
+    "ResponsiveWidth",
+    "ResponsiveHeight",
+    "Hidden",
+    "DesktopBlock",
+    "DesktopFlex",
+    "ScreenReaderOnly",
+    "Strong",
+    "Link",
+    "NarrowBlock",
+    "MobileBlock",
+    "Code",
+    "FocusRing",
+    "CurrentLink",
+    "SearchOpen",
+  ],
   PageFrame: ["MainFrame", "SidebarFrame", "Columns"],
   HeaderFrame: [],
   Heading: [
@@ -312,6 +609,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   HeaderLinks: [
     "Desktop",
+    "DesktopLink",
     "Link",
     "HoverLink",
     "PrimaryLink",
@@ -325,13 +623,31 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Close",
     "HoverClose",
   ],
-  Layout: ["LockedPage"],
-  SearchButton: ["Label", "Shortcut", "Hover", "Active", "NativeIcon", "Icon"],
-  TableOfContentsLayout: ["Content"],
+  Layout: ["Islands", "LockedPage", "Light", "Auto"],
+  SearchButton: [
+    "PendingShortcut",
+    "Label",
+    "Shortcut",
+    "Hover",
+    "Active",
+    "NativeIcon",
+    "Icon",
+  ],
+  TableOfContentsLayout: ["WithMobile", "Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
   Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
   CodeGroup: ["Caption", "Pre", "Code"],
   Tab: ["Heading", "Hidden", "HiddenHeading"],
+  MobileTableOfContents: [
+    "Summary",
+    "List",
+    "NestedList",
+    "Item",
+    "Link",
+    "HoverLink",
+    "Focus",
+  ],
+  PageActions: ["Control", "Hover", "Focus", "Pending", "Status"],
   Footer: [
     "Meta",
     "LoneMetaItem",
@@ -364,6 +680,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Option",
   ],
   Logo: ["Svg", "Mark"],
+  SiteLogo: ["Image", "Light", "Dark"],
   MarkdownCodeBlock: [
     "Pre",
     "CopyButton",
@@ -371,6 +688,13 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CopiedButton",
     "CopyIcon",
     "CopiedIcon",
+    "Code",
+    "Diff",
+    "DiffCode",
+    "DiffLine",
+    "EmptyDiffLine",
+    "InsertedLine",
+    "DeletedLine",
   ],
   MarkdownHeading: [
     "Heading",
@@ -388,7 +712,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CopiedLinkIcon",
     "CopiedIcon",
   ],
-  MarkdownTable: ["Table", "Cell", "LastBodyRowCell", "HeaderCell"],
+  MarkdownTable: ["Table", "Cell", "LastBodyRowCell", "HeaderCell", "Scroll"],
   MarkdownInlineCode: [],
   Mermaid: ["Diagram", "Text", "MonoText"],
   MobileMenuFooter: ["Social"],
@@ -412,14 +736,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "HoverLink",
     "CurrentLink",
   ],
-  MobileTableOfContents: [
-    "Item",
-    "Link",
-    "LinkLabel",
-    "HoverLink",
-    "CurrentLink",
-    "CurrentIndicator",
-  ],
   PackageVersion: [],
   VersionSwitcher: ["Trigger", "Panel", "OpenPanel", "Link", "CurrentLink"],
   Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
@@ -435,6 +751,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CloseIcon",
     "CurrentLink",
     "OpenPane",
+    "EnteredPane",
     "Content",
     "Tree",
     "List",
@@ -543,7 +860,14 @@ export type ComponentStylesConfig = {
 export interface ThemeConfig {
   brand?: BrandConfig;
   palette?: ThemePaletteConfig;
+  /** Glaze tone windows and adaptation settings; contrastLevel remains a top-level theme option. */
+  glaze?: Omit<GlazeConfigOverride, "contrastLevel">;
+  /** Named CSS length expressions used as custom Tasty units. */
+  units?: Record<string, string>;
+  /** Flat reusable Tasty style bundles. Recipes cannot reference other recipes. */
+  recipes?: Record<string, RecipeStyles>;
   fonts?: ThemeFonts;
+  fontLoading?: FontLoadingConfig;
   states?: Record<string, string>;
   tokens?: ThemeTokens;
   presets?: TypographyPresets;
@@ -580,7 +904,14 @@ export interface BuildConfig {
   maxAssetBytes?: number;
 }
 
+export interface TableOfContentsConfig {
+  minHeadingLevel?: number;
+  maxHeadingLevel?: number;
+  mobile?: boolean;
+}
+
 export interface DocsConfig {
+  tableOfContents?: false | TableOfContentsConfig;
   /** Content and lock directory, relative to docs.config.ts (or the inline root). */
   root?: string;
   /** Old public routes mapped to current document routes. */
@@ -593,6 +924,8 @@ export interface DocsConfig {
   lastUpdated?: boolean;
   /** Languages keyed by their URL segment, or `root` for `/`. */
   locales?: Record<string, LocaleConfig>;
+  /** Cookbook interface messages, keyed by language code. Missing keys use English. */
+  translations?: Record<string, Record<string, string>>;
   /** Locale key used for fallback content. */
   defaultLocale?: string;
   content?: ContentConfig;
@@ -605,12 +938,15 @@ export interface DocsConfig {
 }
 
 export interface NormalizedDocsConfig {
+  tableOfContents?: false | TableOfContentsConfig;
   redirects: Record<string, string>;
   site: SiteConfig;
   head: HeadConfig[];
   editLink?: EditLinkConfig;
   lastUpdated: boolean;
   locales?: Record<string, LocaleConfig>;
+  /** Cookbook interface messages, keyed by language code. Missing keys use English. */
+  translations?: Record<string, Record<string, string>>;
   defaultLocale?: string;
   content: Required<
     Pick<ContentConfig, "allowOutsideRoot" | "localizeRepositoryLinks">
@@ -626,14 +962,14 @@ export interface NormalizedDocsConfig {
 }
 
 export interface DocsFrontmatter {
+  seo?: PageSeoConfig;
   aliases?: string[];
   title?: string;
   description?: string;
   slug?: string;
   draft?: boolean;
   sidebar?: false | { label?: string; order?: number; group?: string };
-  tableOfContents?:
-    false | { minHeadingLevel?: number; maxHeadingLevel?: number };
+  tableOfContents?: false | TableOfContentsConfig;
   editUrl?: false | string;
   /** Starlight page layout. */
   template?: "doc" | "splash";
@@ -642,8 +978,14 @@ export interface DocsFrontmatter {
     tagline?: string;
     image?:
       | { html: string }
-      | { file: string; alt?: string }
-      | { dark: string; light: string; alt?: string };
+      | { file: string; alt?: string; width?: number; height?: number }
+      | {
+          dark: string;
+          light: string;
+          alt?: string;
+          width?: number;
+          height?: number;
+        };
     actions?: Array<{
       text: string;
       link: string;
@@ -707,6 +1049,13 @@ export interface DocsRoute {
   entryId: string;
   sourcePath: string;
   title: string;
+  /** False for public routes excluded from automatic navigation and indexes. */
+  discoverable?: boolean;
+  /** Search-engine eligibility, independent from navigation visibility. */
+  indexable?: boolean;
+  /** False for a canonical alias or a noindex page. */
+  sitemap?: boolean;
+  canonical?: string;
   sidebar?: false | NavigationPlacement;
 }
 

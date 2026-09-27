@@ -20,6 +20,10 @@ export default defineDocsConfig({
 Cookbook validates the configuration when it loads. Unknown top-level and
 section keys are errors.
 
+Start with a complete [configuration recipe](./recipes.md) for common tasks.
+This page documents the available options; [working examples](./examples.md)
+covers repository layouts and shared presets.
+
 ## Project resolution and presets
 
 `cookbook()` and CLI commands discover the same `docs.config.ts`. Set `root`
@@ -92,10 +96,19 @@ content: {
 },
 ```
 
-Each `routeBase` must have a page, and version roots must be distinct. A
+Each `routeBase` must have a home page (a localized home also qualifies), and version roots must be distinct. A
 single-version site can continue using `site.version` for a simple label.
 
-### Site icons
+### Site logo
+
+`site.logo` accepts a local image path, `false` to hide the mark, or an object
+with `src` (one image) or `light` and `dark` (appearance variants). Optional
+`alt`, `decorative`, `href`, `width`, and `height` control accessible text,
+destination, and intrinsic sizing. It applies to the header and mobile drawer.
+See the [shared logo guide](./theme-and-components.md#a-shared-site-logo).
+The logo and favicon are independent.
+
+## Site icons
 
 Cookbook ships its book mark as the default favicon. Set `site.favicon` to a
 local SVG, PNG, JPEG, WebP, AVIF, or GIF when the documentation should use the
@@ -204,6 +217,14 @@ renderer frontmatter. Use `content.frontmatter: "reject"` to reject unrelated
 fields. Other supported fields include `aliases`, `template`, `hero`, `editUrl`,
 `lastUpdated`, `prev`, `next`, `head`, `draft`, and `slug`.
 
+### Draft pages
+
+Set `draft: true` to publish a page for review at its normal URL. Drafts remain
+available in development and production, and authored links to them are valid.
+They are excluded from automatic navigation, pagination, search, sitemaps, and
+`llms.txt`, and receive `noindex` metadata. Removing `draft` makes the page
+discoverable on the next build. A draft URL is public; this is not access control.
+
 ## Languages
 
 Expose Starlight's multilingual routing and language picker directly:
@@ -218,10 +239,17 @@ defaultLocale: "root",
 ```
 
 Locale keys other than `root` are URL prefixes. A source routed to `/fr/guide`
-is the French counterpart of `/guide`; `defaultLocale` provides fallback
-content when a translated route is missing. See Starlight's
-[internationalization guide](https://starlight.astro.build/guides/i18n/) for
-the shared routing and fallback behavior.
+is the French counterpart of `/guide`. Navigation and pagination include the
+current locale's published routes. Locale prefixes are added once, after the
+site's deployment base.
+
+Cookbook does not create duplicate fallback pages. When the language picker
+cannot find a translation, it links to the equivalent page in `defaultLocale`,
+then an existing locale home or default-language home. The picker labels
+cross-language fallbacks. Locales with no usable target are omitted. Header home
+links use the same policy, so a missing `/fr/` never creates a broken home link.
+Alternate-language metadata lists only existing published translations. Drafts
+remain directly accessible but are excluded from locale discovery.
 
 ## Content
 
@@ -465,11 +493,9 @@ export default defineConfig({
 });
 ```
 
-Cookbook forwards these plugins to Starlight. Plugins that add stylesheets or
-style tags fail the production build because Cookbook ships only Tasty styles.
-Plugins that replace
-Cookbook-owned components or change routes can conflict with the content graph.
-Use `theme.styles` for visual changes.
+Cookbook preserves custom metadata for route middleware and supports custom schemas.
+See the [plugin compatibility guide](./plugins.md) for the tested ecosystem matrix,
+content query API, Tasty adapters, and collection/style limitations.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
 the static build. Flowcharts, state, sequence, class, and entity-relationship
@@ -594,3 +620,30 @@ contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFra
 `theme.palette.overlay` controls the fixed underlay color, defaulting to black at
 50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
 a 120ms slide transition; customize these through `theme.styles.Sidebar`.
+
+### Translate Cookbook controls
+
+Cookbook includes English and French interface messages. Other languages use
+English for missing Cookbook messages while Starlight supplies its own built-in
+translations. Override messages by language code; regional codes fall back to the
+base language and then English:
+
+```ts
+translations: {
+  de: {
+    appearance: "Darstellung",
+    closeNavigation: "Navigation schließen",
+    "navigation.Guide": "Anleitung",
+  },
+},
+```
+
+`navigation.<configured label>` translates named tabs and navigation groups.
+Automatically generated links use the title from the translated page.
+Cookbook message keys are `appearance`, `colorScheme`, `contrast`,
+`normalContrast`, `highContrast`, `auto`, `closeNavigation`, `primary`, `sections`,
+`chooseSection`, `headerLinks`, `more`, `closeMore`, `moreLinks`, `versions`,
+`documentationVersion`, `documentationVersions`, `version`, `home`,
+`generatedWith`, `viewSource`, `copyCode`, `codeCopied`, `codeCopyError`,
+`copyHeading`, `linkCopied`, `linkCopyError`, `notFound`, `notFoundDescription`,
+and `fallback`. Preserve `{heading}` in the `copyHeading` message.

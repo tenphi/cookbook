@@ -195,7 +195,7 @@ function renderDeploymentGuide(
       "https://vercel.com/docs/frameworks/frontend/astro",
     ],
   }[preset];
-  return `# Deploy to ${details[0]}\n\n${details[1]}\n\nSet \`site.url\` in \`docs.config.ts\` to the production HTTPS origin before publishing, then run \`${manager} run doctor\` and \`${manager} run build\`. The static site is written to \`dist/\`. Preview URLs use the production canonical URL unless you override it for previews.\n\nPlatform guide: ${details[2]}\n`;
+  return `# Deploy to ${details[0]}\n\n${details[1]}\n\nSet \`site.url\` in \`docs.config.ts\` to the production HTTPS origin before publishing, then run \`${manager} run validate\` (preflight, production build, and output checks). The static site is written to \`dist/\`. Preview URLs use the production canonical URL unless you override it for previews.\n\nPlatform guide: ${details[2]}\n`;
 }
 
 function renderAgentInstructions(
@@ -207,7 +207,7 @@ function renderAgentInstructions(
     : options.package
       ? `Documentation comes from the package pinned in \`cookbook.lock.json\`. Use \`${packageManager} run update\` to refresh the lock; add local pages through \`content.sources\` in \`docs.config.ts\`.`
       : "Edit `README.md` for the home page and add Markdown or MDX pages under `docs/` for other pages.";
-  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- For a Cookbook version upgrade, use \`.agents/skills/upgrade-cookbook/SKILL.md\`.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run doctor\` and \`${packageManager} run build\` after changes. The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
+  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- Keep Tasty/Glaze styling on the server. Use extracted static CSS and small client scripts for interactions; do not import Cookbook styling, Tasty, or Glaze into browser scripts or client islands.\n- For a Cookbook version upgrade, use \`.agents/skills/upgrade-cookbook/SKILL.md\`.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run validate\` after changes (doctor, production build, and output checks). The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
 }
 
 async function writeUpgradeSkill(destination: string): Promise<void> {
@@ -273,6 +273,8 @@ export function renderPackageJson(packageManager: PackageManager): string {
         build: "astro build",
         preview: "astro preview",
         doctor: "cookbook doctor",
+        validate: "cookbook doctor && astro build && cookbook check-build",
+        "check-build": "cookbook check-build",
         update: "cookbook update",
       },
       dependencies: {
@@ -359,7 +361,7 @@ export function renderGithubWorkflow(packageManager: PackageManager): string {
     yarn: "yarn install --immutable",
   }[packageManager];
 
-  return `name: Deploy documentation\n\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\npermissions:\n  actions: read\n  contents: read\n  pages: write\n  id-token: write\n\nconcurrency:\n  group: github-pages\n  cancel-in-progress: false\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n${setup}      - uses: actions/setup-node@v7\n        with:\n          node-version: 22\n          cache: ${packageManager}\n      - run: ${install}\n      - run: ${packageManager} run build\n      - uses: actions/configure-pages@v6\n      - uses: actions/upload-pages-artifact@v5\n        with:\n          path: dist\n\n  deploy:\n    environment:\n      name: github-pages\n      url: \${{ steps.deployment.outputs.page_url }}\n    runs-on: ubuntu-latest\n    needs: build\n    steps:\n      - name: Deploy to GitHub Pages\n        id: deployment\n        uses: actions/deploy-pages@v5\n`;
+  return `name: Deploy documentation\n\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\npermissions:\n  actions: read\n  contents: read\n  pages: write\n  id-token: write\n\nconcurrency:\n  group: github-pages\n  cancel-in-progress: false\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n${setup}      - uses: actions/setup-node@v7\n        with:\n          node-version: 22\n          cache: ${packageManager}\n      - run: ${install}\n      - run: ${packageManager} run validate\n      - uses: actions/configure-pages@v6\n      - uses: actions/upload-pages-artifact@v5\n        with:\n          path: dist\n\n  deploy:\n    environment:\n      name: github-pages\n      url: \${{ steps.deployment.outputs.page_url }}\n    runs-on: ubuntu-latest\n    needs: build\n    steps:\n      - name: Deploy to GitHub Pages\n        id: deployment\n        uses: actions/deploy-pages@v5\n`;
 }
 
 async function installDependencies(

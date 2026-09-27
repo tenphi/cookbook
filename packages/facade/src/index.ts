@@ -1,6 +1,7 @@
 export { default } from "@tenphi/starlight";
 export {
   COOKBOOK_COMPONENT_NAMES,
+  COOKBOOK_PALETTE_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
   defineDocsConfig,
   mergeDocsConfig,
@@ -36,8 +37,15 @@ export type {
   SearchConfig,
   SiteConfig,
   SiteIconConfig,
+  SiteLogoConfig,
+  SiteSeoConfig,
+  TableOfContentsConfig,
+  PageSeoConfig,
+  SocialImage,
+  BreadcrumbItem,
   SiteVersion,
   ThemeConfig,
+  FontLoadingConfig,
   ThemeFont,
   ThemeFontFile,
   ThemeFonts,

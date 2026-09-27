@@ -43,40 +43,32 @@ export default defineDocsConfig({
         link: "/",
         items: [
           "/",
-          "/getting-started",
-          "/ai-agents",
-          "/examples",
           {
-            label: "Author content",
-            items: [
-              "/content-sources",
-              {
-                label: "Customize",
-                link: "/configuration",
-                items: [
-                  "/starlight-comparison",
-                  {
-                    label: "Presentation",
-                    link: "/theme-and-components",
-                    items: ["/customization-rules", "/authoring"],
-                  },
-                ],
-              },
-            ],
+            label: "Start",
+            items: ["/getting-started", "/ai-agents", "/starlight-comparison"],
+          },
+          {
+            label: "Author",
+            items: ["/content-sources", "/authoring", "/examples"],
+          },
+          { label: "Customize", items: ["/recipes", "/customization-rules"] },
+          { label: "Extend", items: ["/plugins"] },
+          { label: "Publish", items: ["/deployment"] },
+          {
+            label: "Maintain",
+            items: ["/migration", "/quality-checks", "/troubleshooting"],
           },
         ],
       },
       {
         label: "Reference",
-        link: "/cli",
+        link: "/configuration",
         items: [
-          {
-            label: "Operations",
-            link: "/cli",
-            items: ["/deployment"],
-          },
+          "/configuration",
+          "/theme-and-components",
+          "/publishing",
+          "/cli",
           "/architecture",
-          "/migration",
         ],
       },
     ],

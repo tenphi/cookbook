@@ -1,5 +1,5 @@
 ---
-title: Theme and components
+title: Theme reference
 description: Build an accessible Glaze palette, customize Tasty tokens, and use the supported Astro components.
 sidebar:
   order: 5
@@ -27,20 +27,25 @@ cover the configuration language accepted by `theme.styles`:
 - [Tasty methodology](https://tasty.style/docs/methodology) for the design-system
   patterns behind roots, sub-elements, and controlled overrides.
 
+For the short brand, logo, and font path, start with the
+[configuration recipes](./recipes.md). This reference covers semantic colors,
+typography, tokens, every configurable style tree, and custom components. Read
+the [customization rules](./customization-rules.md) before adding styles.
+
 ## Brand color
 
 The default brand is a calm blue with 68% OKHSL saturation. Set a brand color
 with Glaze's `from` declaration:
 
 ```ts
-theme: {
-  brand: {
-    from: "#2f5bff";
-  }
-}
+import { defineDocsConfig } from "@tenphi/cookbook/config";
+
+export default defineDocsConfig({
+  theme: { brand: { from: "#2f5bff" } },
+});
 ```
 
-Add a contrast target when the brand appears as text or focus color:
+Add a contrast target when the brand appears as text:
 
 ```ts
 theme: {
@@ -51,9 +56,12 @@ theme: {
 }
 ```
 
-The authored color remains exact when it already satisfies the required
-contrast against the page surface. Otherwise Glaze moves it only as far as the
-floor requires. Dark and high-contrast schemes resolve independently.
+The brand supplies the hue and saturation seed. Cookbook derives separate text,
+filled-control, and focus roles from it. Small accent text and filled controls
+use stronger default APCA floors (75 normally, 90 in high contrast), and diagnostics
+also enforce WCAG 4.5:1 / 7:1 on their actual backgrounds. Higher authored brand
+targets are retained. Glaze adjusts tones only as far as these floors require;
+dark and high-contrast schemes resolve independently.
 
 Cookbook rejects a normal APCA target below 45 unless
 `unsafeContrast: true` is present. That escape hatch is intentionally visible
@@ -119,8 +127,8 @@ white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
 `surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
-`accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
-these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
+`accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
+Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
 accent fills, overlays, shadows, and the orange, green, blue, purple, and red
 roles used by Starlight content components. No browser color mixes or
@@ -207,15 +215,20 @@ theme: {
 }
 ```
 
-The short form requests the family's default style. To use specific weights,
-list them explicitly. Google Fonts must support the requested weights; see the
+The short form follows the regular and strong weights in your configured
+presets, including heading and custom preset references. It requests normal and
+italic styles, prefers a variable range, and falls back to real static weights
+when ranges are unavailable. A font without italics produces a build warning;
+choose another family or select only its supported styles. To control the
+request exactly, list weights or ascending variable ranges and styles. Google
+Fonts must support them; see the
 [Google Fonts CSS API](https://developers.google.com/fonts/docs/css2) for its
 available styles and weight syntax.
 
 ```ts
 theme: {
   fonts: {
-    body: { google: "Inter", weights: [400, 600, 700] }
+    body: { google: "Inter", weights: ["400 750"], styles: ["normal", "italic"] }
   }
 }
 ```
@@ -241,10 +254,38 @@ theme: {
 
 The `body` role also feeds navigation and small text. `heading` feeds `h1`
 through `h6`, while `code` covers code text. Each role has a system fallback.
-Cookbook emits the font faces through Tasty. Google font names are resolved at
-build time, so those builds need network access; the generated site has no
-Google CSS stylesheet. Font files are requested from Google's font CDN when
-visitors open the site. Use local files if you need a self-hosted site.
+Cookbook emits font faces through Tasty with `font-display: swap`. Google CSS
+and font files are downloaded at build time and cached in
+`<Astro cacheDir>/cookbook-fonts`. Files are served from your own site's
+`_cookbook/fonts/` path by default, including the deployment base. Visitors make
+no Google Fonts requests. Existing local-file definitions keep working.
+
+```ts
+theme: {
+  fonts: { body: "Inter" },
+  fontLoading: {
+    google: "self-hosted", // or "remote" to keep Google's font CDN URLs
+    cache: "reuse",       // "refresh" to fetch again; "offline" to forbid network
+    display: "swap"       // also auto, block, fallback, optional
+  }
+}
+```
+
+The first build requires network access. Preserve the Astro cache between CI
+runs; `offline` fails with an actionable message when an entry is missing or
+corrupt. Cache entries are content-verified and keyed by the exact request.
+`refresh` deliberately updates them. For a fully checked-in font source, copy
+licensed files into `public/fonts/` and use the local form. Only `wght` and
+`ital` axes are requested; use local variable files and Tasty typography styles
+for other axes. Styles and weights that do not exist are rejected for explicit
+requests. For static fonts, browsers select their nearest real weight;
+intermediate weights require a variable font.
+
+Migration: name-only Google font configuration now downloads the required
+weights and italics and serves them locally. This increases the initial build's
+font downloads and removes visitors' external font dependency. Set
+`fontLoading.google: "remote"` to retain CDN delivery. Existing CSS-variable
+weights that cannot be resolved from presets require explicit `weights`.
 
 ### Adjust presets
 
@@ -359,43 +400,62 @@ is merged into the base inside Cookbook.
 Every configurable surface accepts styles at the root plus these named Tasty
 sub-elements:
 
-| Configuration name      | Named sub-elements                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `Callout`               | `Title`, `Body`, `Tip`, `Caution`, `Danger`                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `CodeGroup`             | `Caption`, `Pre`, `Code`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `Tab`                   | `Heading`, `Hidden`, `HiddenHeading`                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                                                                                                                                                                                                                                                                                            |
-| `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`                                                                                                                                                                                                                                                                                                                |
-| `MarkdownInlineCode`    | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `MobileMenuFooter`      | `Social`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `MobileMenuToggle`      | `Control`, `Icon`, `Section`, `Page`, `HoverControl`, `ActiveControl`                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `MobileNavigationTabs`  | `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                      |
-| `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `PackageVersion`        | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `VersionSwitcher`       | `Trigger`, `Panel`, `OpenPanel`, `Link`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `Sidebar`               | `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink` |
-| `SocialIcons`           | `Link`, `HoverLink`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                                                                                                                                                                                                                                                                  |
-| `TableOfContentsLayout` | `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `SearchButton`          | `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `Layout`                | `LockedPage`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `HeaderLinks`           | `Desktop`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                                  |
-| `Heading`               | `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `PageFrame`             | `MainFrame`, `SidebarFrame`, `Columns`                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                                                                                                                                                                                                                                                       |
-| `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Configuration name      | Named sub-elements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card`                  | `Heading2`, `Heading3`, `Paragraph`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `Callout`               | `Title`, `Body`, `Tip`, `Caution`, `Danger`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `CodeGroup`             | `Caption`, `Pre`, `Code`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `Tab`                   | `Heading`, `Hidden`, `HiddenHeading`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `MobileTableOfContents` | `Summary`, `List`, `NestedList`, `Item`, `Link`, `HoverLink`, `Focus`                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `PageActions`           | `Control`, `Hover`, `Focus`, `Pending`, `Status`                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `Footer`                | `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `Hero`                  | `Visual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`                                                                                                                                                                                                                                                                                                                                                           |
+| `LanguageSelect`        | `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `Logo`                  | `Svg`, `Mark`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `SiteLogo`              | `Image`, `Light`, `Dark`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `MarkdownCodeBlock`     | `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`, `Code`, `Diff`, `DiffCode`, `DiffLine`, `EmptyDiffLine`, `InsertedLine`, `DeletedLine`                                                                                                                                                                                                                                                                                                                                       |
+| `MarkdownHeading`       | `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`                                                                                                                                                                                                                                                                                                                               |
+| `MarkdownInlineCode`    | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `MarkdownTable`         | `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`, `Scroll`                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `Mermaid`               | `Diagram`, `Text`, `MonoText`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `MobileMenuFooter`      | `Social`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `MobileMenuToggle`      | `Control`, `Icon`, `Section`, `Page`, `HoverControl`, `ActiveControl`                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `MobileNavigationTabs`  | `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `MobileTableOfContents` | `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`, `CurrentIndicator`                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `PackageVersion`        | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `VersionSwitcher`       | `Trigger`, `Panel`, `OpenPanel`, `Link`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `Sidebar`               | `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink` |
+| `SocialIcons`           | `Link`, `HoverLink`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                                                                                                                                                                                                                                                                                 |
+| `TableOfContentsLayout` | `WithMobile`, `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `SearchButton`          | `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `Layout`                | `Islands`, `LockedPage`, `Light`, `Auto`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `HeaderLinks`           | `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`                                                                                                                                                                                                                                                                                                                  |
+| `Heading`               | `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `HeaderFrame`           | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `PageFrame`             | `MainFrame`, `SidebarFrame`, `Columns`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `Steps`                 | `Item`, `Marker`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `Tabs`                  | `List`, `Button`, `SelectedButton`, `FocusedButton`                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `TableOfContents`       | `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `ThemeSelect`           | `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`                                                                                                                                                                                                                                                                      |
+| `TopNavigation`         | `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `Document`              | `All`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`                                                                                                                                                                                                                                                                      |
+| `MainPane`              | `WithSidebars`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `MainContent`           | `ContentSpacing`, `Container`, `Panel`, `FirstPanel`, `BodyPanel`                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `Banner`                | `Link`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `SkipLink`              | `Focus`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `Search`                | `Status`, `Dialog`, `CloseIcon`, `OpenDialog`, `Backdrop`, `Frame`, `Container`, `Close`, `HoverClose`, `ActiveClose`                                                                                                                                                                                                                                                                                                                                                                                          |
+| `Pagination`            | `Link`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `NativeIcon`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                        |
+| `Markdown`              | `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`                                                                                                                                                                                                                                  |
+| `MermaidSource`         | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `StarlightAside`        | `Note`, `Tip`, `Caution`, `Danger`, `Title`, `Icon`, `FirstContent`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `StarlightCard`         | `Title`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `StarlightLinkCard`     | `Hover`, `Stack`, `Link`, `LinkOverlay`, `DescriptionAndIcon`                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `StarlightBadge`        | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `StarlightSteps`        | `Item`, `Counter`, `Connector`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `SyntaxHighlight`       | `Scroll`, `Wrap`, `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`                                                                                                                                                                                                                                                                                                |
+| `SearchResults`         | `Form`, `Input`, `Clear`, `Results`, `Result`, `ResultLink`, `SearchIcon`, `ClearIcon`, `SuppressedClear`, `Message`, `List`, `Title`, `Excerpt`, `NestedResult`, `Match`, `More`, `HoverMore`                                                                                                                                                                                                                                                                                                                 |
 
 `COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and
 `COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the complete sub-element lists for
@@ -477,8 +537,8 @@ import { Card, Logo, Preview, Steps, Tabs } from "@tenphi/cookbook/components";
 
 See [Authoring components](./authoring.mdx) for complete examples and props.
 
-- `Preview` isolates HTML and CSS with declarative Shadow DOM, or JavaScript
-  in a sandboxed iframe.
+- `Preview` isolates HTML, CSS, and optional JavaScript in a sandboxed iframe.
+  The frame never receives same-origin access to the documentation page.
 
 Use MDX only for repository content you control. Locked package content remains
 Markdown-only unless the consumer explicitly sets `trust: "mdx"` for that
@@ -506,7 +566,84 @@ is needed for static components. Set shared tokens, presets, and states in
 `docs.config.ts` before rendering. Import the styling entry point in component
 modules; configuration files should use the main `@tenphi/cookbook` entry point.
 
-### A custom logo and site title
+### A shared site logo
+
+Set `site.logo` once to use your artwork in the header and mobile drawer:
+
+```ts
+site: {
+  title: "Acme",
+  logo: "./assets/acme.svg"
+}
+```
+
+Paths are local files relative to the resolved project root, just like
+`site.favicon`. Cookbook reads the intrinsic dimensions and copies the image to
+a content-hashed URL under the deployment base. SVG, PNG, JPEG, WebP, AVIF, and
+GIF are supported. Missing or invalid files fail during setup.
+
+```ts
+site: {
+  title: "Acme",
+  logo: {
+    light: "./assets/acme-light.svg",
+    dark: "./assets/acme-dark.svg",
+    alt: "Acme documentation",
+    href: "/",
+    decorative: true
+  },
+  favicon: "./assets/acme-icon.svg"
+}
+```
+
+Use `src` for one image, or both `light` and `dark`. Variants follow the
+appearance control and the system preference in Auto mode. They must share an
+aspect ratio to prevent layout shifts. Optional `width` and `height` describe
+intrinsic dimensions; Tasty controls display size. Customize
+`theme.styles.SiteLogo` and its complete anatomy: `Image`, `Light`, and `Dark`.
+Wide wordmarks retain their proportions within the header.
+
+The logo is decorative by default because the neighboring title labels the
+site. Set `decorative: false` and `alt` when the image itself carries meaningful
+text. The header logo link still has a name when the image is decorative.
+`href` defaults to the localized documentation home; it accepts a root-relative
+documentation route or HTTP(S) destination. The header title and drawer use the
+same destination. `site.logo: false` removes the mark from both locations.
+
+A logo does not change the favicon or touch icons. Configure `site.favicon`
+separately for square artwork; the default Cookbook icon set remains in place
+until changed. `Logo` remains available as the standalone Cookbook book mark.
+
+The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+Both default to Glaze `mode: "fixed"`: the brand background and light book keep
+their polarity in dark mode while respecting Glaze's tone boundaries and
+high-contrast settings. The mark-to-background contrast floor is 3:1 normally
+and 4.5:1 in high contrast. These colors are separate from interactive accents.
+For example, to customize the logo background while retaining brand hue:
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "logo-surface": {
+      base: "logo-mark",
+      tone: 40,
+      saturation: 0.8,
+      mode: "fixed",
+      contrast: { wcag: [3, 4.5] },
+    },
+    "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
+  },
+}
+```
+
+Custom image assets keep their authored colors; use `light`/`dark` files when
+you want distinct artwork. Header and drawer home links center logos with the
+site title regardless of their aspect ratio. Use `theme.styles.SiteLogo` for
+image size and `theme.styles.StarlightHeader.SiteTitle` / `Sidebar.HomeLink`
+for typography; they do not need baseline offsets for a different preset.
+
+### Advanced site title markup
 
 To put your own logo and title in one home link, create
 `docs/components/site-title.ts`:
@@ -560,20 +697,20 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 </SiteTitleRoot>
 ```
 
-Register the replacement in `docs.config.ts` and hide the default header mark.
+Register the replacement in `docs.config.ts` and disable the shared mark.
+A `SiteTitle` override affects the header; use `site.logo` above for ordinary
+branding shared with the drawer. For custom drawer markup, override `Sidebar`.
 The custom component supports root styles plus its complete list of named
 sub-elements: `Logo` and `Label`.
 
 ```ts
+site: { logo: false },
 components: {
   overrides: {
     SiteTitle: "./docs/components/SiteTitle.astro"
   }
 },
 theme: {
-  styles: {
-    StarlightHeader: { LogoLink: { hide: true } }
-  },
   customStyles: {
     ProjectSiteTitle: { Logo: { color: "#text" } }
   }
@@ -757,8 +894,264 @@ left-aligned navigation links with a `1bw` gap, without primary button variants.
 `HeaderLinks.PanelLink` styles the menu rows; `FirstPanelLink` reserves space
 for the close button. The inset divider above the tabs belongs to `TopNavigation`.
 
-The table of contents is hidden below 72rem through `TableOfContentsLayout`.
-`MobileTableOfContents` remains a legacy style name for custom overrides; the
-default renderer no longer renders that component. `Layout` controls shared
+The desktop table of contents is hidden below 72rem. Set
+`tableOfContents: { mobile: true }` to show an optional compact disclosure there.
+`MobileTableOfContents` owns its summary and links; `TableOfContentsLayout`
+controls placement. `Layout` controls shared
 navigation dimensions and the drawer's scroll lock; `PageFrame` styles the
 page container and content columns.
+
+### Header control shape
+
+Header buttons and the mobile drawer close button use the independent
+`$header-control-radius` token, which defaults to `999px` for pill and circular
+shapes. Set it to `8px` for the same corners as the default content controls:
+
+```ts
+theme: {
+  tokens: { "$header-control-radius": "8px" }
+}
+```
+
+`$radius` continues to control code-copy buttons, navigation items, and other
+content controls. Individual `theme.styles` overrides still take precedence.
+The mobile header divider spans the viewport while its content keeps the
+configured horizontal padding.
+
+### Add palette colors and reference other roles
+
+Every `theme.palette` entry participates in one Glaze color graph. Use lowercase
+names with hyphens; a role named `review-panel` becomes the Tasty token
+`#review-panel`. Declaration order does not matter. References can target custom
+colors or built-in roles, including header, border, overlay, and syntax colors.
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "review-ink": {
+      base: "review-panel",
+      tone: [4, 0],
+      saturation: 0.05,
+      contrast: { wcag: [7, 10] },
+    },
+    "review-panel": { base: "surface", tone: "-2", saturation: 0.05 },
+  },
+  styles: {
+    Callout: { fill: "#review-panel", color: "#review-ink" },
+  },
+},
+```
+
+Relative and absolute declarations inherit the brand's hue and saturation.
+Use saturation factors from `0` (neutral) to `1` (full seed saturation), and
+`hue` to choose a different hue. All roles resolve for light, dark, and both
+high-contrast modes. Configuration diagnostics and rendering use the same graph.
+Missing references and cycles fail with the color name; layered configurations
+resolve references after merging.
+
+`textSoft` remains an alias for `text-soft`. Use either spelling, but do not
+configure both. The names `current`, `constructor`, and `prototype` are reserved.
+Declaring a built-in name intentionally overrides that role; use a project
+prefix for additional roles to avoid future naming collisions.
+
+When a status role such as `info` uses a mix or shadow definition, its derived
+`info-text` defaults to neutral, contrast-corrected text. Override `info-text`
+explicitly for a colored label; the mix/shadow dependency graph stays intact.
+A shadow status also uses a neutral derived surface, because Glaze does not allow
+a shadow to be a mix target. Override the surface separately when needed.
+
+### Register units and recipes
+
+Register custom units and flat recipes in `theme`; Cookbook configures Tasty
+before evaluating your components:
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "review-panel": { base: "surface", tone: "-2", saturation: 0.05 },
+    "review-ink": { base: "review-panel", tone: 0, contrast: { wcag: [7, 10] } },
+  },
+  units: { rh: "6px" },
+  recipes: {
+    "review-panel": {
+      fill: "#review-panel",
+      color: "#review-ink",
+      padding: "2rh",
+      radius: "3px",
+    },
+  },
+  customStyles: { DemoBadge: { Label: { color: "#review-ink" } } },
+},
+```
+
+```ts
+import { defineComponent } from "@tenphi/cookbook/styling";
+
+export const DemoBadge = defineComponent("DemoBadge", {
+  as: "aside",
+  elements: { Label: "strong" },
+  styles: {
+    display: "block",
+    recipe: "review-panel",
+    Label: { preset: "h4" },
+  },
+});
+```
+
+Use `<DemoBadge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>` in
+MDX. Keep these styled components server-rendered: their CSS is extracted at
+build time. Add behavior with a small client script targeting the rendered
+markup. This recipe produces 12px padding. Units merge by name, with the later
+configuration winning. Recipes merge using Tasty `mergeStyles`, including state
+maps. Recipes are flat: define named sub-elements on the owning component, and
+compose recipes with `recipe: "base elevated"` rather than referencing a recipe
+inside another recipe. `none` is a reserved recipe name. Cookbook's built-in
+units are `x`, `r`, `cr`, and `bw`; overriding one changes its meaning globally.
+
+Keep editor and linter validation synchronized with your configuration:
+
+```ts
+// tasty.config.ts
+import { createValidationConfig } from "@tenphi/cookbook/eslint-plugin";
+import docs from "./docs.config";
+export default createValidationConfig(docs.theme);
+```
+
+### Configure Glaze adaptation
+
+`theme.glaze` accepts `lightTone`, `darkTone`, `darkDesaturation`, `autoFlip`,
+`pastel`, `inferRole`, and `shadowTuning`. Tone windows accept `[lo, hi]`, `false`
+for the full range, or the advanced `{ lo, hi, eps }` form. Continue to use
+`theme.contrastLevel` for manual contrast interpolation. Cookbook always emits
+all four appearance variants.
+
+```ts
+theme: {
+  glaze: { lightTone: [10, 100], darkTone: [15, 95] },
+  palette: {
+    "accent-surface-subtle": {
+      type: "mix", base: "surface", target: "accent-surface", value: [12, 20],
+    },
+    shadow: {
+      type: "shadow", bg: "surface", fg: "text", intensity: [12, 24],
+      tuning: { alphaMax: 0.3 },
+    },
+  },
+},
+```
+
+Palette roles accept Glaze's regular, mix, and shadow declarations. Mix and
+shadow references use the same graph as other roles. Native Glaze restrictions
+still apply, including the requirement for shadow backgrounds and foregrounds
+to reference non-shadow colors. `shadowTuning` exposes `saturationFactor`,
+`maxSaturation`, `lightnessFactor`, `lightnessBounds`, `minGapTarget`, `alphaMax`,
+and `bgHueBlend`; a role's own `tuning` takes precedence.
+
+### Built-in palette inventory
+
+Every generated role below can be overridden in `theme.palette`. Names map
+directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
+`@tenphi/docs`, lists the same roles for tooling.
+
+| Area                | Roles                                                                                                                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
+| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
+| Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
+| Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
+| Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
+| Additional hues     | `orange`, `green`, `blue`, `purple`, `red`, each with `-text` and `-surface` variants                                                                                                                           |
+| Syntax              | `syntax-bg`, `syntax-text`, `syntax-comment`, `syntax-punctuation`, `syntax-keyword`, `syntax-string`, `syntax-token`, `syntax-property`, `syntax-number`, `syntax-function`, `syntax-value`, `syntax-operator` |
+
+## Contrast checks and troubleshooting
+
+Cookbook checks text, headings, muted reading text, brand links, filled-control
+labels, status text on its tinted surface, focus rings on each elevated
+surface, and every palette declaration with a contrast floor. The same Glaze
+resolution powers rendering and `cookbook doctor`, in light, dark, and both
+high-contrast modes. Manual `theme.contrastLevel` targets interpolate with
+Glaze's contrast level.
+
+`resolveDocsTheme(theme).contrastChecks` lists each foreground/background pair,
+mode, metric, target, measured value, and pass result. APCA uses display-channel
+luminance; WCAG ratios use the sRGB transfer function. Transparent foregrounds
+are composited onto their background before measuring. These checks cover
+Cookbook's semantic pairs; test actual pages after changing component styles,
+backgrounds, typography, or layout.
+
+A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
+pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
+use an absolute tone for reading text, reduce saturation when needed, and keep
+`autoFlip` enabled when the solver needs to cross its base. A fixed middle-tone
+button fill may make its label's contrast impossible. Cookbook's default
+brand fill adapts to avoid this, including for orange, yellow, and pale brands.
+Focus uses a WCAG 3:1 floor (4.5:1 in high contrast) against the surface ramp.
+
+Keep contrast requirements when adjusting colors. Extreme custom tone windows,
+fixed colors, or opacity can prevent a requested floor from being met. A palette
+check does not replace keyboard, screen-reader, and rendered-page testing.
+
+## Customize shared page surfaces
+
+Each bridge has a complete base style tree; supply only the properties you
+want to change. Sub-elements keep their selectors and all other defaults.
+For example, a compact search dialog and quieter pagination need no CSS:
+
+```ts
+theme: {
+  styles: {
+    Search: { Dialog: { inlineSize: "max 32rem" } },
+    SearchResults: { ResultLink: { color: "#accent-text" } },
+    Pagination: { Link: { padding: "1.5x", fill: "#surface" } },
+    Banner: { padding: "1x 2x" },
+    Markdown: { Quote: { color: "#text", inlinePadding: "3x start" } },
+  },
+}
+```
+
+`Document` owns resets, base typography, generic controls, responsive media,
+and accessibility utilities. `MainPane` and `MainContent` own the content
+layout. `Markdown` owns prose, lists, links, quotations, and disclosure
+anatomy. `Search` owns the dialog; `SearchResults` owns the Pagefind UI.
+The `Starlight*` trees style compatible upstream component markup; Cookbook's
+own `Card`, `Callout`, and `Steps` use their respective trees.
+
+Custom components created with `defineComponent()` receive `theme.customStyles`
+overrides during server rendering. Units, recipes, states, and presets are
+resolved there and emitted as static CSS. Cookbook ships no Tasty/Glaze browser
+runtime, theme configuration, or style hydration setup. Browser scripts and
+`client:*` islands must not import Cookbook styling, Tasty, or Glaze; the build
+rejects these imports. Attach small interaction scripts to server-rendered markup
+or pass already-styled static markup into a client island.
+
+Code fences and `CodeGroup` use the same `MarkdownCodeBlock` style tree. Its
+root `$copy-button-size` defaults to `2rem`; the copy control and vertical
+padding share it, keeping equal top, right, and bottom insets on one-line
+snippets. The padding follows the `code` preset's line height. Override it with
+`theme.styles.MarkdownCodeBlock` when changing the control size or code layout.
+
+### Syntax highlighting and isolated previews
+
+Shiki classifies code; Tasty renders every token using Glaze's semantic syntax
+colors. Customize token rules with `theme.styles.SyntaxHighlight`, or their
+colors with `theme.palette` (for example `syntax-keyword`). Code fences, including
+MDX and diff blocks, use classes without inline style attributes. Custom Shiki
+transformers should emit classes; unsupported inline declarations fail with a
+configuration hint.
+
+The production build rejects style attributes, style blocks (including inside
+shadow-root templates), and non-Tasty stylesheets throughout documentation HTML.
+It parses actual markup, so escaped examples and strings in scripts are allowed.
+The explicit exception is the separate document in a sandboxed `Preview` iframe;
+it cannot access its parent's origin. Configure its size with
+`theme.styles.Preview.Frame`. The documentation shell supports the CSP directive
+`style-src-attr 'none'`. A host's CSP may also restrict the preview document; when
+using that directive, authored previews must use style blocks rather than style
+attributes.
+
+Search uses an owned, keyboard-accessible dialog with Pagefind's indexing and
+results UI. Its clear-button sizing is adapted to `SearchResults.Input` styles,
+so the browser does not need inline layout declarations. The adapter is checked
+against the pinned Pagefind UI version during builds.

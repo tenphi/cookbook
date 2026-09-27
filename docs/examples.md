@@ -19,7 +19,7 @@ export default defineConfig({ integrations: [cookbook()] });
 Put this in `docs.config.ts` at the repository root. README/docs discovery is
 automatic; add `content.sources` only when you need different routes or files.
 
-```ts
+```ts cookbook-verify=minimal
 import { defineDocsConfig } from "@tenphi/cookbook/config";
 
 export default defineDocsConfig({ site: { title: "My library" } });
@@ -75,7 +75,7 @@ is the npm public registry. Keep credentials out of committed configuration.
 
 A preset is an ordinary exported `DocsConfig` object:
 
-```ts
+```ts cookbook-verify=shared-theme
 import { defineDocsConfig, mergeDocsConfig } from "@tenphi/cookbook/config";
 
 const company = defineDocsConfig({
@@ -99,3 +99,6 @@ Objects merge recursively, arrays replace, and inputs are not mutated. Tasty
 styles preserve their default values when adding conditional overrides. A preset
 can live in a shared workspace package. Component overrides remain partial Tasty
 objects and merge into Cookbook's complete base styles inside the renderer.
+
+For complete branding, font, locale, and preview configurations, see
+[configuration recipes](./recipes.md).

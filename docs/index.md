@@ -43,20 +43,31 @@ for GitHub Pages or any static host.
 
 ## Choose a path
 
-Create a documentation project from a published npm package:
+| I want to…                           | Start here                              | Then read                                                             |
+| ------------------------------------ | --------------------------------------- | --------------------------------------------------------------------- |
+| Start a site                         | [Getting started](./getting-started.md) | [Validate and deploy](./deployment.md)                                |
+| Have an agent set it up              | [AI agent workflow](./ai-agents.md)     | [Customization rules](./customization-rules.md)                       |
+| Bring existing Markdown or an API    | [Content sources](./content-sources.md) | [Working examples](./examples.md)                                     |
+| Write pages and interactive examples | [Authoring](./authoring.mdx)            | [Mobile contents and hero images](./authoring.mdx#on-page-navigation) |
+| Change brand, fonts, or logo         | [Configuration recipes](./recipes.md)   | [Theme reference](./theme-and-components.md)                          |
+| Add a Starlight plugin               | [Plugin compatibility](./plugins.md)    | [Architecture](./architecture.md)                                     |
+| Publish for people and agents        | [Deployment](./deployment.md)           | [Publishing metadata](./publishing.md)                                |
+| Update or fix an existing site       | [Upgrade Cookbook](./migration.md)      | [Troubleshooting](./troubleshooting.md)                               |
+
+The **Guide** follows these tasks. **Reference** contains the complete
+[configuration](./configuration.md), [theme and component anatomy](./theme-and-components.md),
+[publishing controls](./publishing.md), and [CLI](./cli.md).
+
+To start immediately:
 
 ```sh
-npm create @tenphi/cookbook@latest my-package-docs -- --package your-package
+npm create @tenphi/cookbook@latest my-docs -- --yes
+cd my-docs
+npm run dev
 ```
 
-Or add the complete integration to an Astro project:
-
-```sh
-npx astro add @tenphi/cookbook
-```
-
-Continue with [Getting started](./getting-started.md), then learn how
-[content sources](./content-sources.md) become routes.
+Existing Astro projects can use `npx astro add @tenphi/cookbook`. See
+[Getting started](./getting-started.md) for repository and npm package sources.
 
 ## See the product, not a mock-up
 

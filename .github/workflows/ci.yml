@@ -25,9 +25,24 @@ jobs:
       - run: pnpm test
       - run: pnpm check:types
       - run: pnpm check:development
+      - run: pnpm check:locales
+      - run: pnpm check:theming
+      - run: pnpm check:plugins
+      - run: pnpm check:publishing-site
+      - run: pnpm check:authoring
+      - run: pnpm check:recipes
+      - run: pnpm check:benchmark
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm check:browser
+      - uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: browser-failures
+          path: |
+            playwright-report/
+            test-results/
       - run: pnpm knip
       - run: pnpm build:reference
       - run: node scripts/check-reference-budgets.mjs
       - run: pnpm check:packages
       - run: pnpm check:publishing
-      - run: pnpm check:install

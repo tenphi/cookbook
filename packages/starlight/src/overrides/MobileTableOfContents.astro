@@ -1,3 +1,37 @@
 ---
-// The table of contents is available in the desktop right sidebar only.
+import { content } from "virtual:cookbook/config";
+import { navigationPath } from "../navigation.js";
+import { MobileTableOfContentsRoot } from "../components/LayoutComponents.js";
+import MobileTocList from "../components/MobileTocList.astro";
+const { toc } = Astro.locals.starlightRoute;
+const entry = content.entries.find(
+  (entry) => entry.route === navigationPath(Astro.url.pathname, content.base),
+);
+const page = entry?.frontmatter.tableOfContents;
+const site = content.tableOfContents;
+const enabled =
+  page !== false && (page?.mobile ?? (site && site.mobile) ?? false);
+const label = Astro.locals.t("tableOfContents.onThisPage");
 ---
+
+{
+  enabled &&
+    toc &&
+    toc.items.some(
+      (item) => item.slug !== "_top" || item.children.length > 0,
+    ) && (
+      <MobileTableOfContentsRoot data-tasty-anatomy="MobileTableOfContents">
+        <details>
+          <>
+            <summary>{label}</summary>
+            <nav aria-label={label}>
+              <MobileTocList items={toc.items} />
+            </nav>
+          </>
+        </details>
+      </MobileTableOfContentsRoot>
+    )
+}
+<script>
+  import "../client/mobile-toc.js";
+</script>

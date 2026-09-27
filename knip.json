@@ -2,15 +2,29 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["scripts/fixtures/**"],
   "workspaces": {
-    "apps/convention": { "entry": ["docs/FixtureLabel.astro"] },
-    "apps/reference": { "entry": ["docs.config.ts"] },
-    "packages/facade": { "entry": ["tasty.config.mjs", "type-tests/index.ts"] },
-    "packages/starlight": { "entry": ["tasty.config.mjs"] }
+    "apps/convention": {
+      "entry": ["docs/FixtureLabel.astro"]
+    },
+    "apps/reference": {
+      "entry": ["docs.config.ts"]
+    },
+    "packages/facade": {
+      "entry": ["tasty.config.mjs", "type-tests/index.ts"]
+    },
+    "packages/starlight": {
+      "entry": ["tasty.config.mjs"]
+    },
+    ".": {
+      "entry": ["scripts/browser-site.mjs"]
+    }
   },
   "ignoreDependencies": [
     "@arethetypeswrong/cli",
     "@astrojs/react",
     "publint",
-    "unrun"
+    "unrun",
+    "@astrojs/markdown-remark",
+    "starlight-github-alerts",
+    "starlight-links-validator"
   ]
 }

@@ -23,8 +23,17 @@
             "additionalProperties": false,
             "required": ["label", "routeBase"],
             "properties": {
-              "label": { "type": "string", "minLength": 1 },
-              "routeBase": { "type": "string", "pattern": "^/(?!/)" }
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "routeBase": {
+                "type": "string",
+                "pattern": "^/(?!/)"
+              },
+              "index": {
+                "type": "boolean"
+              }
             }
           }
         },
@@ -38,6 +47,73 @@
         "repository": {
           "type": "string",
           "format": "uri"
+        },
+        "logo": {
+          "oneOf": [
+            {
+              "const": false
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "required": ["src"],
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": ["light"]
+                      },
+                      {
+                        "required": ["dark"]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "required": ["light", "dark"],
+                  "not": {
+                    "required": ["src"]
+                  }
+                }
+              ],
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "light": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dark": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "alt": {
+                  "type": "string"
+                },
+                "href": {
+                  "type": "string"
+                },
+                "width": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "decorative": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
         },
         "favicon": {
           "oneOf": [
@@ -87,6 +163,54 @@
               }
             }
           }
+        },
+        "seo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "titleTemplate": {
+              "type": "string",
+              "pattern": "\\{title\\}"
+            },
+            "image": {
+              "oneOf": [
+                {
+                  "const": false
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["src", "alt"],
+                  "properties": {
+                    "src": {
+                      "type": "string"
+                    },
+                    "alt": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "index": {
+              "type": "boolean"
+            },
+            "breadcrumbs": {
+              "type": "boolean"
+            },
+            "copyPage": {
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -131,6 +255,15 @@
       "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/locale"
+      }
+    },
+    "translations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
       }
     },
     "defaultLocale": {
@@ -192,30 +325,302 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "brand": { "$ref": "#/$defs/brandColor" },
+        "brand": {
+          "$ref": "#/$defs/brandColor"
+        },
         "palette": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?:textSoft|[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/paletteColor"
+          },
+          "properties": {
+            "surface-2": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface-3": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "text-soft": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "text-muted": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface-2-hover": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface-2-pressed": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface-3-hover": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface-3-pressed": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "accent-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "focus": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "accent-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "accent-surface-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "logo-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "logo-mark": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "accent-surface-subtle": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "accent-surface-2-subtle": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "shadow": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "clear": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "info-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "info-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "success-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "success-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "warning-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "warning-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "danger-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "danger-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "orange": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "orange-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "orange-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "green": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "green-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "green-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "blue": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "blue-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "blue-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "purple": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "purple-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "purple-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "red": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "red-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "red-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "border": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "border-strong": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-bg": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-comment": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-punctuation": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-keyword": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-string": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-token": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-property": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-number": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-function": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-value": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "syntax-operator": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "text": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "heading": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "textSoft": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "info": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "success": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "warning": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "danger": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "header": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "overlay": {
+              "$ref": "#/$defs/paletteColor"
+            }
+          }
+        },
+        "units": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "recipes": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "not": {
+              "const": "none"
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "propertyNames": {
+              "not": {
+                "pattern": "^[A-Z&.]"
+              }
+            },
+            "not": {
+              "required": ["recipe"]
+            }
+          }
+        },
+        "glaze": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "surface": { "$ref": "#/$defs/paletteColor" },
-            "text": { "$ref": "#/$defs/paletteColor" },
-            "heading": { "$ref": "#/$defs/paletteColor" },
-            "textSoft": { "$ref": "#/$defs/paletteColor" },
-            "info": { "$ref": "#/$defs/paletteColor" },
-            "success": { "$ref": "#/$defs/paletteColor" },
-            "warning": { "$ref": "#/$defs/paletteColor" },
-            "danger": { "$ref": "#/$defs/paletteColor" },
-            "header": { "$ref": "#/$defs/paletteColor" },
-            "overlay": { "$ref": "#/$defs/paletteColor" }
+            "lightTone": {
+              "$ref": "#/$defs/toneWindow"
+            },
+            "darkTone": {
+              "$ref": "#/$defs/toneWindow"
+            },
+            "darkDesaturation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "autoFlip": {
+              "type": "boolean"
+            },
+            "pastel": {
+              "type": "boolean"
+            },
+            "inferRole": {
+              "type": "boolean"
+            },
+            "shadowTuning": {
+              "type": "object"
+            }
+          }
+        },
+        "fontLoading": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "google": {
+              "enum": ["self-hosted", "remote"]
+            },
+            "cache": {
+              "enum": ["reuse", "refresh", "offline"]
+            },
+            "display": {
+              "enum": ["auto", "block", "swap", "fallback", "optional"]
+            }
           }
         },
         "fonts": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "body": { "$ref": "#/$defs/themeFont" },
-            "heading": { "$ref": "#/$defs/themeFont" },
-            "code": { "$ref": "#/$defs/themeFont" }
+            "body": {
+              "$ref": "#/$defs/themeFont"
+            },
+            "heading": {
+              "$ref": "#/$defs/themeFont"
+            },
+            "code": {
+              "$ref": "#/$defs/themeFont"
+            }
           }
         },
         "states": {
@@ -243,6 +648,134 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "Document": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "MainPane": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "MainContent": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Banner": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SkipLink": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Search": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Pagination": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "Markdown": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "MermaidSource": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "StarlightAside": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "StarlightCard": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "StarlightLinkCard": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "StarlightBadge": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "StarlightSteps": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SyntaxHighlight": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SearchResults": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
             "Card": {
               "type": "object",
               "propertyNames": {
@@ -300,6 +833,14 @@
               }
             },
             "LanguageSelect": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
+            "SiteLogo": {
               "type": "object",
               "propertyNames": {
                 "not": {
@@ -373,11 +914,7 @@
             },
             "MobileTableOfContents": {
               "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
+              "additionalProperties": true
             },
             "PackageVersion": {
               "type": "object",
@@ -522,6 +1059,10 @@
                   "const": "mode"
                 }
               }
+            },
+            "PageActions": {
+              "type": "object",
+              "additionalProperties": true
             }
           }
         },
@@ -645,21 +1186,55 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "tableOfContents": {
+      "oneOf": [
+        {
+          "const": false
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minHeadingLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "maxHeadingLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "mobile": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
     }
   },
   "$defs": {
     "brandColor": {
       "description": "A Glaze from declaration for the brand seed, optionally with APCA targets. Literal shorthand and structured hue, saturation, and tone are also supported.",
       "oneOf": [
-        { "$ref": "#/$defs/glazeColorValue" },
+        {
+          "$ref": "#/$defs/glazeColorValue"
+        },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["from"],
           "properties": {
-            "from": { "$ref": "#/$defs/glazeColorValue" },
-            "contrast": { "$ref": "#/$defs/brandContrast" },
-            "unsafeContrast": { "type": "boolean" }
+            "from": {
+              "$ref": "#/$defs/glazeColorValue"
+            },
+            "contrast": {
+              "$ref": "#/$defs/brandContrast"
+            },
+            "unsafeContrast": {
+              "type": "boolean"
+            }
           }
         },
         {
@@ -667,11 +1242,27 @@
           "additionalProperties": false,
           "required": ["hue", "saturation", "tone"],
           "properties": {
-            "hue": { "type": "number", "minimum": 0, "maximum": 360 },
-            "saturation": { "type": "number", "minimum": 0, "maximum": 100 },
-            "tone": { "type": "number", "minimum": 0, "maximum": 100 },
-            "contrast": { "$ref": "#/$defs/brandContrast" },
-            "unsafeContrast": { "type": "boolean" }
+            "hue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "saturation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "tone": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "contrast": {
+              "$ref": "#/$defs/brandContrast"
+            },
+            "unsafeContrast": {
+              "type": "boolean"
+            }
           }
         }
       ]
@@ -683,10 +1274,19 @@
       "properties": {
         "apca": {
           "oneOf": [
-            { "type": "number" },
+            {
+              "type": "number"
+            },
             {
               "type": "array",
-              "prefixItems": [{ "type": "number" }, { "type": "number" }],
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
               "minItems": 2,
               "maxItems": 2
             }
@@ -694,24 +1294,177 @@
         }
       }
     },
+    "toneWindow": {
+      "oneOf": [
+        {
+          "const": false
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "object",
+          "required": ["lo", "hi", "eps"],
+          "additionalProperties": false,
+          "properties": {
+            "lo": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "hi": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "eps": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      ]
+    },
     "paletteColor": {
       "description": "A Glaze color declaration; literal colors are convenient seed shorthands.",
       "oneOf": [
-        { "$ref": "#/$defs/glazeColorValue" },
-        { "$ref": "#/$defs/glazeDeclaration" }
+        {
+          "$ref": "#/$defs/glazeColorValue"
+        },
+        {
+          "$ref": "#/$defs/glazeDeclaration"
+        },
+        {
+          "$ref": "#/$defs/glazeMix"
+        },
+        {
+          "$ref": "#/$defs/glazeShadow"
+        }
       ]
+    },
+    "glazeMix": {
+      "type": "object",
+      "required": ["type", "base", "target", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "mix"
+        },
+        "base": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "blend": {
+          "enum": ["opaque", "transparent"]
+        },
+        "space": {
+          "enum": ["okhsl", "srgb"]
+        },
+        "contrast": {
+          "$ref": "#/$defs/glazeDeclaration/properties/contrast"
+        },
+        "role": {
+          "type": "string"
+        },
+        "pastel": {
+          "type": "boolean"
+        },
+        "inherit": {
+          "type": "boolean"
+        }
+      }
+    },
+    "glazeShadow": {
+      "type": "object",
+      "required": ["type", "bg", "intensity"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "shadow"
+        },
+        "bg": {
+          "type": "string"
+        },
+        "fg": {
+          "type": "string"
+        },
+        "intensity": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "tuning": {
+          "type": "object"
+        },
+        "pastel": {
+          "type": "boolean"
+        },
+        "inherit": {
+          "type": "boolean"
+        }
+      }
     },
     "glazeColorValue": {
       "oneOf": [
-        { "type": "string" },
+        {
+          "type": "string"
+        },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["h", "s", "l"],
           "properties": {
-            "h": { "type": "number" },
-            "s": { "type": "number" },
-            "l": { "type": "number" }
+            "h": {
+              "type": "number"
+            },
+            "s": {
+              "type": "number"
+            },
+            "l": {
+              "type": "number"
+            }
           }
         },
         {
@@ -719,9 +1472,15 @@
           "additionalProperties": false,
           "required": ["h", "s", "t"],
           "properties": {
-            "h": { "type": "number" },
-            "s": { "type": "number" },
-            "t": { "type": "number" }
+            "h": {
+              "type": "number"
+            },
+            "s": {
+              "type": "number"
+            },
+            "t": {
+              "type": "number"
+            }
           }
         },
         {
@@ -729,9 +1488,15 @@
           "additionalProperties": false,
           "required": ["r", "g", "b"],
           "properties": {
-            "r": { "type": "number" },
-            "g": { "type": "number" },
-            "b": { "type": "number" }
+            "r": {
+              "type": "number"
+            },
+            "g": {
+              "type": "number"
+            },
+            "b": {
+              "type": "number"
+            }
           }
         },
         {
@@ -739,9 +1504,15 @@
           "additionalProperties": false,
           "required": ["l", "c", "h"],
           "properties": {
-            "l": { "type": "number" },
-            "c": { "type": "number" },
-            "h": { "type": "number" }
+            "l": {
+              "type": "number"
+            },
+            "c": {
+              "type": "number"
+            },
+            "h": {
+              "type": "number"
+            }
           }
         }
       ]
@@ -750,31 +1521,89 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "from": { "$ref": "#/$defs/glazeColorValue" },
+        "from": {
+          "$ref": "#/$defs/glazeColorValue"
+        },
         "tone": {
           "oneOf": [
-            { "type": "number", "minimum": 0, "maximum": 100 },
-            { "type": "string" },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "string"
+            },
             {
               "type": "array",
               "prefixItems": [
-                { "oneOf": [{ "type": "number" }, { "type": "string" }] },
-                { "oneOf": [{ "type": "number" }, { "type": "string" }] }
+                {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
               ],
               "minItems": 2,
               "maxItems": 2
             }
           ]
         },
-        "saturation": { "type": "number", "minimum": 0, "maximum": 1 },
-        "hue": { "oneOf": [{ "type": "number" }, { "type": "string" }] },
-        "darkHue": { "oneOf": [{ "type": "number" }, { "type": "string" }] },
-        "darkSaturation": { "type": "number", "minimum": 0, "maximum": 1 },
-        "base": { "type": "string" },
+        "saturation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hue": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "darkHue": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "darkSaturation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "base": {
+          "type": "string"
+        },
         "contrast": {
           "oneOf": [
-            { "type": "number" },
-            { "type": "string" },
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
             {
               "type": "array",
               "minItems": 2,
@@ -790,27 +1619,66 @@
             }
           ]
         },
-        "mode": { "enum": ["auto", "fixed", "static"] },
-        "autoFlip": { "type": "boolean" },
-        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
-        "pastel": { "type": "boolean" },
-        "role": { "type": "string" },
-        "inherit": { "type": "boolean" }
+        "mode": {
+          "enum": ["auto", "fixed", "static"]
+        },
+        "autoFlip": {
+          "type": "boolean"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "pastel": {
+          "type": "boolean"
+        },
+        "role": {
+          "type": "string"
+        },
+        "inherit": {
+          "type": "boolean"
+        }
       }
     },
     "themeFont": {
       "oneOf": [
-        { "type": "string", "minLength": 1 },
+        {
+          "type": "string",
+          "minLength": 1
+        },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["google"],
           "properties": {
-            "google": { "type": "string", "minLength": 1 },
+            "google": {
+              "type": "string",
+              "minLength": 1
+            },
             "weights": {
               "type": "array",
               "minItems": 1,
-              "items": { "type": "integer", "minimum": 1, "maximum": 1000 }
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^(?:[1-9][0-9]{0,2}|1000) (?:[1-9][0-9]{0,2}|1000)$"
+                  }
+                ]
+              }
+            },
+            "styles": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "enum": ["normal", "italic"]
+              }
             }
           }
         },
@@ -819,7 +1687,10 @@
           "additionalProperties": false,
           "required": ["family", "files"],
           "properties": {
-            "family": { "type": "string", "minLength": 1 },
+            "family": {
+              "type": "string",
+              "minLength": 1
+            },
             "files": {
               "type": "array",
               "minItems": 1,
@@ -834,14 +1705,20 @@
                   },
                   "weight": {
                     "oneOf": [
-                      { "type": "integer", "minimum": 1, "maximum": 1000 },
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      },
                       {
                         "type": "string",
                         "pattern": "^(?:[1-9][0-9]{0,2}|1000) (?:[1-9][0-9]{0,2}|1000)$"
                       }
                     ]
                   },
-                  "style": { "enum": ["normal", "italic"] }
+                  "style": {
+                    "enum": ["normal", "italic"]
+                  }
                 }
               }
             }
@@ -1118,10 +1995,20 @@
           "additionalProperties": false,
           "required": ["openapi"],
           "properties": {
-            "openapi": { "type": "string", "minLength": 1 },
-            "id": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$" },
-            "root": { "type": "string" },
-            "routeBase": { "type": "string" }
+            "openapi": {
+              "type": "string",
+              "minLength": 1
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            },
+            "root": {
+              "type": "string"
+            },
+            "routeBase": {
+              "type": "string"
+            }
           }
         }
       ]

@@ -1,5 +1,12 @@
 ---
-import { layout } from "virtual:cookbook/layout";
+import {
+  localizedNavigation,
+  localePath,
+  localeHref,
+} from "../localization.js";
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import { MobileNavigationTabsRoot } from "./LayoutComponents.js";
 
@@ -10,27 +17,40 @@ interface Props {
 
 const { base = "/", currentPath } = Astro.props;
 const basePath = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  navigationPath(currentPath, base),
+  content,
+);
 const activeTab = activeNavigationTab(
   layout.tabs,
-  navigationPath(currentPath, basePath || "/"),
+  localePath(navigationPath(currentPath, basePath || "/"), content),
 );
 
 function tabHref(link: string): string {
-  return link.startsWith("/") ? `${basePath}${link}` || "/" : link;
+  return localeHref(
+    link,
+    navigationPath(currentPath, base),
+    content.routes,
+    content,
+    base,
+  );
 }
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 ---
 
 {
   layout.tabs.length > 0 && (
     <MobileNavigationTabsRoot
       className="td-mobile-tabs print:hidden"
-      aria-label="Sections"
+      aria-label={ui.sections}
       data-tasty-anatomy="MobileNavigationTabs"
     >
       <details>
-        <summary aria-label="Choose section">
+        <summary aria-label={ui.chooseSection}>
           <span class="td-mobile-tabs__label">
-            {layout.tabs[activeTab]?.label ?? "Sections"}
+            {layout.tabs[activeTab]?.label ?? ui.sections}
           </span>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
             <path

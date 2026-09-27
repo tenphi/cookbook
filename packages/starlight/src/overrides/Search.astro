@@ -1,0 +1,66 @@
+---
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
+import project from "virtual:starlight/project-context";
+const label = Astro.locals.t("search.label");
+const translations = {
+  placeholder: label,
+  error: messages(Astro.locals.starlightRoute?.lang ?? "en", content)
+    .searchError,
+  ...Object.fromEntries(
+    Object.entries(Astro.locals.t.all())
+      .filter(([key]) => key.startsWith("pagefind."))
+      .map(([key, value]) => [key.slice(9), value]),
+  ),
+};
+---
+
+<site-search
+  class={Astro.props.class}
+  data-translations={JSON.stringify(translations)}
+  data-strip-trailing-slash={project.trailingSlash === "never" || undefined}
+>
+  <button
+    type="button"
+    data-open-modal
+    disabled
+    aria-label={label}
+    aria-keyshortcuts="Control+K"
+  >
+    <span aria-hidden="true">{label}</span>
+    <kbd data-pending aria-hidden="true"
+      ><kbd>{Astro.locals.t("search.ctrlKey")}</kbd><kbd>K</kbd></kbd
+    >
+  </button>
+  <dialog aria-label={label}>
+    <div class="dialog-frame">
+      <button type="button" data-close-modal
+        >{Astro.locals.t("search.cancelLabel")}</button
+      >
+      {
+        import.meta.env.DEV ? (
+          <p data-search-status dir="ltr">
+            {Astro.locals.t("search.devWarning")}
+          </p>
+        ) : (
+          <div class="search-container">
+            <p data-search-status role="status" hidden />
+            <div id="starlight__search" />
+          </div>
+        )
+      }
+    </div>
+  </dialog>
+</site-search>
+<script>
+  import { pagefindUserConfig } from "virtual:starlight/pagefind-config";
+  import { initializeSearch } from "../client/search.js";
+  document.querySelectorAll<HTMLElement>("site-search").forEach((element) => {
+    initializeSearch(
+      element,
+      pagefindUserConfig,
+      import.meta.env.DEV,
+      import.meta.env.BASE_URL,
+    );
+  });
+</script>

@@ -17,5 +17,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm check:packages
-      - run: npm create astro@latest -- --help
-      - run: npx astro@latest add --help
+      - run: pnpm check:install
+        env:
+          COOKBOOK_TEST_UPSTREAM: "1"
+      - run: pnpm check:fonts
+      - run: pnpm check:benchmark
+        env:
+          COOKBOOK_BENCH_PAGES: "1000"
+          COOKBOOK_BENCH_BUILD: "1"

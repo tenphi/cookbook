@@ -1,4 +1,6 @@
 import { configure, getGlobalPredefinedStates } from "@tenphi/tasty";
+import { resolveTypographyPresets } from "../theme/defaults.js";
+import { TASTY_UNITS } from "../theme/tasty-config.js";
 
 export const cookbookStates = {
   "@mobile": "@media(w < 50rem)",
@@ -13,10 +15,20 @@ export const cookbookStates = {
 };
 
 let configured = false;
+let configuredRuntime;
 
 /** Configure aliases in the renderer's Tasty module before styles are parsed. */
 export function configureCookbookStates() {
-  if (configured) return;
+  // Process-local server configuration shared across Astro/Vite module graphs.
+  // The integration prevents this module from entering browser bundles.
+  const runtime = globalThis.__tenphiCookbookTastyRuntime;
+  if (configured && configuredRuntime === runtime) return;
+  configure({
+    presets: resolveTypographyPresets(),
+    ...runtime,
+    units: { ...TASTY_UNITS, ...runtime?.units },
+  });
+  configuredRuntime = runtime;
   // The integration may have configured this runtime already, including
   // consumer overrides of built-in breakpoints. Only supply missing aliases.
   const existingStates = getGlobalPredefinedStates();

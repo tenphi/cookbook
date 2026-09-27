@@ -1,9 +1,12 @@
 ---
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
 import Icon from "@astrojs/starlight/user-components/Icon.astro";
 import paletteIcon from "../icons/palette.svg?raw";
 import ContrastIcon from "../components/ContrastIcon.astro";
 import { ThemeSelectRoot } from "../components/LayoutComponents.js";
 
+const ui = messages(Astro.locals.starlightRoute?.lang ?? "en", content);
 const id = `appearance-${crypto.randomUUID()}`;
 const schemes = [
   { value: "light", label: Astro.locals.t("themeSelect.light"), icon: "sun" },
@@ -11,9 +14,9 @@ const schemes = [
   { value: "auto", label: Astro.locals.t("themeSelect.auto"), icon: "laptop" },
 ] as const;
 const contrasts = [
-  { value: "normal", label: "Normal", icon: "normal" },
-  { value: "more", label: "High", icon: "more" },
-  { value: "system", label: "Auto", icon: "auto" },
+  { value: "normal", label: ui.normalContrast, icon: "normal" },
+  { value: "more", label: ui.highContrast, icon: "more" },
+  { value: "system", label: ui.auto, icon: "auto" },
 ] as const;
 ---
 
@@ -21,14 +24,14 @@ const contrasts = [
   <button
     type="button"
     popovertarget={id}
-    aria-label="Appearance"
-    title="Appearance"
+    aria-label={ui.appearance}
+    title={ui.appearance}
   >
     <span aria-hidden="true" set:html={paletteIcon} />
   </button>
-  <div id={id} popover="auto" role="group" aria-label="Appearance">
+  <div id={id} popover="auto" role="group" aria-label={ui.appearance}>
     <fieldset>
-      <legend>Color scheme</legend>
+      <legend>{ui.colorScheme}</legend>
       {
         schemes.map(({ value, label, icon }) => (
           <label>
@@ -47,7 +50,7 @@ const contrasts = [
       }
     </fieldset>
     <fieldset>
-      <legend>Contrast</legend>
+      <legend>{ui.contrast}</legend>
       {
         contrasts.map(({ value, label, icon }) => (
           <label>

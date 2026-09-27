@@ -7,20 +7,19 @@ const { title = data.title, tagline, image, actions = [] } = data.hero ?? {};
 const imageAttributes = {
   loading: "eager" as const,
   decoding: "async" as const,
-  width: 400,
-  height: 400,
+  fetchpriority: "high" as const,
   alt: image?.alt ?? "",
 };
 
-let darkImage: string | undefined;
-let lightImage: string | undefined;
+let darkImage: { src: string; width: number; height: number } | undefined;
+let lightImage: { src: string; width: number; height: number } | undefined;
 let rawHtml: string | undefined;
 if (image) {
   if ("file" in image) {
-    darkImage = image.file.src;
+    darkImage = image.file;
   } else if ("dark" in image) {
-    darkImage = image.dark.src;
-    lightImage = image.light.src;
+    darkImage = image.dark;
+    lightImage = image.light;
   } else {
     rawHtml = image.html;
   }
@@ -31,7 +30,9 @@ if (image) {
   {
     darkImage && (
       <img
-        src={darkImage}
+        src={darkImage.src}
+        width={darkImage.width}
+        height={darkImage.height}
         {...imageAttributes}
         class:list={{ "light:sl-hidden": Boolean(lightImage) }}
       />
@@ -39,7 +40,13 @@ if (image) {
   }
   {
     lightImage && (
-      <img src={lightImage} {...imageAttributes} class="dark:sl-hidden" />
+      <img
+        src={lightImage.src}
+        width={lightImage.width}
+        height={lightImage.height}
+        {...imageAttributes}
+        class="dark:sl-hidden"
+      />
     )
   }
   {rawHtml && <div class="hero-html sl-flex" set:html={rawHtml} />}

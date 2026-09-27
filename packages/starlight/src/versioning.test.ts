@@ -28,3 +28,37 @@ describe("version navigation", () => {
     expect(links[1]?.href).toBe("/v1");
   });
 });
+
+it("keeps locale prefixes and falls back only to real non-draft version pages", () => {
+  const localized = [
+    ...routes,
+    ...["/fr/guide", "/fr/v1/guide"].map((route) => ({
+      route,
+      entryId: route,
+      title: route,
+      sourcePath: route,
+    })),
+  ];
+  expect(
+    versionLinks(versions, localized, "/fr/v1/guide", "/manual/", {
+      locales: {
+        root: { label: "English", lang: "en" },
+        fr: { label: "Français" },
+      },
+    }),
+  ).toMatchObject({
+    current: versions[1],
+    links: [{ href: "/manual/fr/guide" }, { href: "/manual/fr/v1/guide" }],
+  });
+  const hidden = localized.map((route) =>
+    route.route === "/fr/v1/guide" ? { ...route, discoverable: false } : route,
+  );
+  expect(
+    versionLinks(versions, hidden, "/fr/guide", "/", {
+      locales: {
+        root: { label: "English", lang: "en" },
+        fr: { label: "Français" },
+      },
+    }).links[1]?.href,
+  ).toBe("/v1/guide");
+});

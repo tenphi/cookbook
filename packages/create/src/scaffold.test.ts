@@ -89,7 +89,13 @@ describe("creator defaults", () => {
       "utf8",
     );
     expect(agentInstructions).toContain("Edit `README.md` for the home page");
-    expect(agentInstructions).toContain("npm run doctor");
+    expect(agentInstructions).toContain("npm run validate");
+    const scripts = JSON.parse(
+      await readFile(join(destination, "package.json"), "utf8"),
+    ).scripts;
+    expect(scripts.validate).toBe(
+      "cookbook doctor && astro build && cookbook check-build",
+    );
     expect(agentInstructions).toContain("site.url");
     expect(agentInstructions).toContain(
       ".agents/skills/upgrade-cookbook/SKILL.md",

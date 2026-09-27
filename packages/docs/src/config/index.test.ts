@@ -179,13 +179,72 @@ describe("docs configuration", () => {
     ).toBe("#/$defs/paletteColor");
   });
 
+  it("validates shared logo variants and replaces definitions across layers", () => {
+    expect(
+      normalizeDocsConfig({
+        site: {
+          logo: {
+            light: "light.svg",
+            dark: "dark.svg",
+            href: "https://example.com",
+            decorative: false,
+          },
+        },
+      }).site.logo,
+    ).toBeDefined();
+    for (const logo of [
+      true,
+      "https://example.com/logo.svg",
+      { src: "" },
+      { light: "light.svg" },
+      { src: "one.svg", dark: "dark.svg" },
+      { src: "one.svg", href: "javascript:alert(1)" },
+      { src: "one.svg", width: 0 },
+    ])
+      expect(() => normalizeDocsConfig({ site: { logo } } as never)).toThrow(
+        /site.logo/,
+      );
+    expect(
+      mergeDocsConfig(
+        { site: { logo: { src: "one.svg" } } },
+        { site: { logo: { light: "light.svg", dark: "dark.svg" } } },
+      ).site?.logo,
+    ).toEqual({ light: "light.svg", dark: "dark.svg" });
+  });
+
+  it("validates font hosting, cache and display controls", () => {
+    expect(
+      normalizeDocsConfig({
+        theme: {
+          fontLoading: {
+            google: "self-hosted",
+            cache: "offline",
+            display: "optional",
+          },
+        },
+      }).theme.fontLoading?.cache,
+    ).toBe("offline");
+    for (const fontLoading of [
+      { cache: "forever" },
+      { google: "download" },
+      { display: "fast" },
+    ])
+      expect(() =>
+        normalizeDocsConfig({ theme: { fontLoading } } as never),
+      ).toThrow(/theme.fontLoading/);
+  });
+
   it("accepts Google names and local font files, and rejects malformed definitions", () => {
     expect(
       normalizeDocsConfig({
         theme: {
           fonts: {
             body: "Inter",
-            heading: { google: "Newsreader", weights: [400, 700] },
+            heading: {
+              google: "Newsreader",
+              weights: [400, "600 800"],
+              styles: ["normal", "italic"],
+            },
             code: {
               family: "Acme Mono",
               files: [{ src: "/fonts/acme.woff2", weight: "100 900" }],
@@ -201,6 +260,9 @@ describe("docs configuration", () => {
     for (const fonts of [
       { body: "" },
       { body: { google: "Inter", weights: [] } },
+      { body: { google: "Inter", weights: ["900 100"] } },
+      { body: { google: "Inter", styles: [] } },
+      { body: { google: "Inter", styles: ["slant"] } },
       { body: { family: "Acme", files: [{ src: "../outside.woff2" }] } },
       {
         code: {

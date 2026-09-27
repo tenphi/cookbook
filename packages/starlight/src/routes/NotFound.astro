@@ -2,15 +2,18 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { content } from "virtual:cookbook/config";
 import { layout } from "virtual:cookbook/layout";
+import { localizedNavigation, messages } from "../localization.js";
 import { starlightPageSidebar } from "../navigation.js";
 
 export const prerender = true;
+const navigation = localizedNavigation(layout, content.routes, "/404", content);
+const ui = messages(content.locales?.root?.lang ?? "en", content);
 ---
 
 <StarlightPage
-  frontmatter={{ title: "Page not found", pagefind: false }}
+  frontmatter={{ title: ui.notFound, pagefind: false }}
   headings={[]}
-  sidebar={starlightPageSidebar(layout, content.routes)}
+  sidebar={starlightPageSidebar(navigation.layout, navigation.routes)}
 >
-  <p>The page you requested could not be found.</p>
+  <p>{ui.notFoundDescription}</p>
 </StarlightPage>

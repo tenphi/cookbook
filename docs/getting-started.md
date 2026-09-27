@@ -72,9 +72,10 @@ With no documentation configuration, it uses README/docs conventions.
 
 ## Configure the site
 
-Read the [customization rules](./customization-rules.md) before changing the
-theme or adding custom components. These rules and their upstream references
-are also included in the installed Cookbook package.
+Start with the complete [brand, logo, and font recipes](./recipes.md).
+For deeper style changes or new components, read the
+[customization rules](./customization-rules.md). These rules and upstream
+references are also included in the installed Cookbook package.
 
 Create `docs.config.ts` next to `astro.config.ts`:
 
@@ -124,11 +125,13 @@ also declare their own roots for multi-package sites.
 ## Validate and publish
 
 ```sh
-npm run doctor
-npm run build
+npm run validate
 npm run preview
 ```
 
 See [working examples](./examples.md), [authoring components](./authoring.mdx),
 the [AI agent workflow](./ai-agents.md), and [deployment](./deployment.md). Existing users should read the
-[prerelease migration guide](./migration.md).
+[version-specific upgrade guide](./migration.md).
+
+For a complete configuration to adapt, start with the [recipes](./recipes.md).
+If validation fails, see [troubleshooting](./troubleshooting.md).

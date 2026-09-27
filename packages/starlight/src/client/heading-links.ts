@@ -1,3 +1,4 @@
+import { message as uiMessage } from "./messages.js";
 /** Keep real fragment links as the no-JavaScript and modified-click fallback. */
 export function initializeHeadingLinks(): void {
   for (const content of document.querySelectorAll(".sl-markdown-content")) {
@@ -19,7 +20,7 @@ export function initializeHeadingLinks(): void {
       link.dataset.copyReady = "true";
       const heading =
         link.previousElementSibling?.textContent?.trim() ?? "section";
-      const label = `Copy link to “${heading}”`;
+      const label = uiMessage("copyHeading").replace("{heading}", heading);
       link.setAttribute("role", "button");
       link.setAttribute("aria-label", label);
       link.title = label;
@@ -58,10 +59,10 @@ export function initializeHeadingLinks(): void {
         try {
           const url = new URL(link.getAttribute("href")!, window.location.href);
           await copyLink(url.href);
-          message = "Link copied";
+          message = uiMessage("linkCopied");
           state = "copied";
         } catch {
-          message = "Could not copy link";
+          message = uiMessage("linkCopyError");
           state = "error";
         }
         if (currentAttempt !== attempt || !link.isConnected) return;

@@ -43,7 +43,7 @@ export const LogoRoot = customizeComponent(
       flexBasis: "auto",
       inlineSize: "4rem",
       blockSize: "4rem",
-      color: "#accent-surface",
+      color: "#logo-surface",
       Svg: {
         $: "> svg",
         display: "block",
@@ -52,7 +52,45 @@ export const LogoRoot = customizeComponent(
       },
       Mark: {
         $: "> svg > .td-logo__mark",
-        color: "#accent-surface-text",
+        color: "#logo-mark",
+      },
+    },
+  }),
+);
+
+export const SiteLogoRoot = customizeComponent(
+  "SiteLogo",
+  tasty({
+    as: "span",
+    styles: {
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+      inlineSize: { "": "auto max 12rem", "@mobile": "auto max 30vw" },
+      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      Image: {
+        $: "> img",
+        display: "block",
+        inlineSize: "auto max 100%",
+        blockSize: "100%",
+        objectFit: "contain",
+      },
+      Light: {
+        $: "> .td-site-logo__light",
+        hide: {
+          "": false,
+          "@parent(theme=dark)": true,
+          "!@parent(theme) & @media(prefers-color-scheme: dark)": true,
+        },
+      },
+      Dark: {
+        $: "> .td-site-logo__dark",
+        hide: {
+          "": true,
+          "@parent(theme=dark)": false,
+          "!@parent(theme) & @media(prefers-color-scheme: dark)": false,
+        },
       },
     },
   }),
@@ -96,7 +134,7 @@ export const VersionSwitcherRoot = customizeComponent(
         inlinePadding: "$gap",
         fill: "#surface-2",
         border: true,
-        radius: "$radius",
+        radius: "$header-control-radius",
         preset: "small / strong",
         cursor: "pointer",
         whiteSpace: "nowrap",
@@ -223,7 +261,7 @@ export const StarlightHeaderRoot = customizeComponent(
         textDecoration: "none",
       },
       Logo: {
-        $: ".td-header__logo",
+        $: '.td-header__logo[data-tasty-anatomy="Logo"]',
         inlineSize: {
           "": "2rem",
           "@mobile": "1.75rem",
@@ -310,7 +348,7 @@ export const ThemeSelectRoot = customizeComponent(
         color: "#text-soft",
         fill: "#clear",
         border: "0",
-        radius: "$radius",
+        radius: "$header-control-radius",
         transition: "color $transition, fill $transition",
       },
       HoverTrigger: {
@@ -456,7 +494,7 @@ export const SocialIconsRoot = customizeComponent(
         blockSize: "$control-height",
         color: "#text-soft",
         fill: "#clear",
-        radius: "$radius",
+        radius: "$header-control-radius",
         textDecoration: "none",
       },
       HoverLink: {
@@ -657,6 +695,10 @@ export const HeaderLinksRoot = customizeComponent(
         textDecoration: "none",
         whiteSpace: "nowrap",
       },
+      DesktopLink: {
+        $: ".td-header-links__desktop a",
+        radius: "$header-control-radius",
+      },
       HoverLink: { $: "a:hover", color: "#text", fill: "#surface-2-hover" },
       PrimaryLink: {
         $: 'a[data-variant="primary"]',
@@ -676,7 +718,7 @@ export const HeaderLinksRoot = customizeComponent(
         blockSize: "$docs-menu-button-size",
         padding: "0",
         border: "0",
-        radius: "$radius",
+        radius: "$header-control-radius",
         color: "#text-soft",
         fill: "#clear",
       },
@@ -732,12 +774,92 @@ export const HeaderLinksRoot = customizeComponent(
         border: "0",
         color: "#text-soft",
         fill: "#clear",
-        radius: "$radius",
+        radius: "$header-control-radius",
       },
       HoverClose: {
         $: ".td-header-links__close:hover",
         color: "#text",
         fill: "#surface-2-hover",
+      },
+    },
+  }),
+);
+
+export const PageActionsRoot = customizeComponent(
+  "PageActions",
+  tasty({
+    as: "cookbook-page-actions",
+    styles: {
+      display: "flex",
+      flow: "row wrap",
+      alignItems: "center",
+      gap: "$gap",
+      preset: "small",
+      Control: {
+        $: "button, a",
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "$gap ($gap * 1.5)",
+        border: true,
+        radius: "$radius",
+        color: "#text",
+        fill: "#surface",
+        preset: "small",
+        textDecoration: "none",
+        cursor: "pointer",
+      },
+      Hover: { $: "button:hover, a:hover", fill: "#surface-2" },
+      Focus: {
+        $: "button:focus-visible, a:focus-visible",
+        outline: "2px solid #focus / 2px",
+      },
+      Pending: { $: 'button[aria-disabled="true"]', cursor: "wait" },
+      Status: { $: "[role=status]", color: "#text-soft" },
+    },
+  }),
+);
+
+export const MobileTableOfContentsRoot = customizeComponent(
+  "MobileTableOfContents",
+  tasty({
+    as: "cookbook-mobile-toc",
+    styles: {
+      display: "block",
+      hide: { "": true, "@narrow-layout": false },
+      padding: "$gap $docs-sidebar-pad-x",
+      blockBorder: "$border-width solid #border end",
+      fill: "#surface",
+      Summary: {
+        $: "summary",
+        padding: "$gap",
+        color: "#text",
+        preset: "small / strong",
+        cursor: "pointer",
+        radius: "$radius",
+      },
+      List: {
+        $: "ul",
+        listStyle: "none",
+        padding: "0",
+        margin: "0",
+        display: "grid",
+        gap: "2px",
+      },
+      NestedList: { $: "ul ul", inlinePadding: "($gap * 2) start" },
+      Item: { $: "li", listStyle: "none", margin: "0", padding: "0" },
+      Link: {
+        $: "a",
+        display: "block",
+        padding: "$gap",
+        color: "#text-soft",
+        preset: "small",
+        radius: "$radius",
+        textDecoration: "none",
+      },
+      HoverLink: { $: "a:hover", fill: "#surface-2", color: "#text" },
+      Focus: {
+        $: "a:focus-visible, summary:focus-visible",
+        outline: "2px solid #focus / 2px",
       },
     },
   }),

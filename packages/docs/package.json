@@ -33,7 +33,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown --config tsdown.config.ts && mkdir -p dist/config && cp src/config/schema.json dist/config/schema.json",
+    "build": "tsdown --config tsdown.config.ts && node ../../scripts/copy-build-file.mjs src/config/schema.json dist/config/schema.json",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

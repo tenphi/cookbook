@@ -98,17 +98,22 @@ function render(source: string): string {
   const safeSource = source
     .replace(sourceStyleDirective, "")
     .replace(accessibilityDirective, "");
-  return renderMermaidSVG(safeSource, {
-    bg: "var(--surface-2-color)",
-    fg: "var(--text-color)",
-    line: "var(--text-soft-color)",
-    accent: "var(--accent-text-color)",
-    muted: "var(--text-soft-color)",
-    surface: "var(--surface-color)",
-    border: "var(--border-strong-color)",
-    font: "var(--body-font-family)",
-    transparent: true,
-  }).replace(svgStyleBlock, "");
+  return (
+    renderMermaidSVG(safeSource, {
+      bg: "var(--surface-2-color)",
+      fg: "var(--text-color)",
+      line: "var(--text-soft-color)",
+      accent: "var(--accent-text-color)",
+      muted: "var(--text-soft-color)",
+      surface: "var(--surface-color)",
+      border: "var(--border-strong-color)",
+      font: "var(--body-font-family)",
+      transparent: true,
+    })
+      .replace(svgStyleBlock, "")
+      // The root variables are owned by theme.styles.Mermaid.Diagram.
+      .replace(/(<svg\b[^>]*?)\sstyle="[^"]*"/, "$1")
+  );
 }
 
 function accessibleSvg(svg: string, source: string): string {
