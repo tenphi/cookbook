@@ -242,6 +242,14 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       contrast: { apca: [75, 90] },
       mode: "auto",
     },
+    "logo-surface": {
+      from: brand.from,
+      base: "logo-mark",
+      role: "surface",
+      contrast: { wcag: [3, 4.5] },
+      mode: "fixed",
+    },
+    "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
     "accent-surface-subtle": mix("surface", "accent-surface", [12, 18]),
     "accent-surface-2-subtle": mix("surface-2", "accent-surface", [12, 18]),
     shadow: {

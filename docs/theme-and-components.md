@@ -127,7 +127,7 @@ white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
 `surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
-`accent-surface`, `accent-surface-text`, and `focus`. Tasty components can use
+`accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`. Tasty components can use
 these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
 accent fills, overlays, shadows, and the orange, green, blue, purple, and red
@@ -614,6 +614,35 @@ A logo does not change the favicon or touch icons. Configure `site.favicon`
 separately for square artwork; the default Cookbook icon set remains in place
 until changed. `Logo` remains available as the standalone Cookbook book mark.
 
+The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+Both default to Glaze `mode: "fixed"`: the brand background and light book keep
+their polarity in dark mode while respecting Glaze's tone boundaries and
+high-contrast settings. The mark-to-background contrast floor is 3:1 normally
+and 4.5:1 in high contrast. These colors are separate from interactive accents.
+For example, to customize the logo background while retaining brand hue:
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "logo-surface": {
+      base: "logo-mark",
+      tone: 40,
+      saturation: 0.8,
+      mode: "fixed",
+      contrast: { wcag: [3, 4.5] },
+    },
+    "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
+  },
+}
+```
+
+Custom image assets keep their authored colors; use `light`/`dark` files when
+you want distinct artwork. Header and drawer home links center logos with the
+site title regardless of their aspect ratio. Use `theme.styles.SiteLogo` for
+image size and `theme.styles.StarlightHeader.SiteTitle` / `Sidebar.HomeLink`
+for typography; they do not need baseline offsets for a different preset.
+
 ### Advanced site title markup
 
 To put your own logo and title in one home link, create
@@ -1030,7 +1059,7 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
 | Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
-| Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `focus`                                                                                             |
+| Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
 | Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
 | Additional hues     | `orange`, `green`, `blue`, `purple`, `red`, each with `-text` and `-surface` variants                                                                                                                           |

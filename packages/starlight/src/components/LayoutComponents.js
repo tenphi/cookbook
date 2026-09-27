@@ -43,7 +43,7 @@ export const LogoRoot = customizeComponent(
       flexBasis: "auto",
       inlineSize: "4rem",
       blockSize: "4rem",
-      color: "#accent-surface",
+      color: "#logo-surface",
       Svg: {
         $: "> svg",
         display: "block",
@@ -52,7 +52,7 @@ export const LogoRoot = customizeComponent(
       },
       Mark: {
         $: "> svg > .td-logo__mark",
-        color: "#accent-surface-text",
+        color: "#logo-mark",
       },
     },
   }),
@@ -64,6 +64,8 @@ export const SiteLogoRoot = customizeComponent(
     as: "span",
     styles: {
       display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
       flexShrink: 0,
       inlineSize: { "": "auto max 12rem", "@mobile": "auto max 30vw" },
       blockSize: { "": "2rem", "@mobile": "1.75rem" },

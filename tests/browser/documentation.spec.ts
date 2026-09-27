@@ -56,6 +56,16 @@ for (const scheme of ["Light", "Dark"])
         "data-theme",
         scheme.toLowerCase(),
       );
+      const logo = await page
+        .locator('.td-header__logo[data-tasty-anatomy="Logo"]')
+        .evaluate((e) => ({
+          background: getComputedStyle(e).color,
+          mark: getComputedStyle(e.querySelector(".td-logo__mark")!).color,
+        }));
+      // Glaze emits OKLCH: fixed logo colors retain a light book on a darker brand fill.
+      const lightness = (color: string) =>
+        Number(color.match(/^oklch\(([\d.]+)/)![1]);
+      expect(lightness(logo.mark)).toBeGreaterThan(lightness(logo.background));
       const results = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
         .analyze();
@@ -198,4 +208,62 @@ for (const width of [390, 1440]) {
       Math.abs(copy.y - card.y - (card.y + card.height - copy.y - copy.height)),
     ).toBeLessThan(0.1);
   });
+}
+
+for (const variant of ["manual", "wide-logo", "tall-logo"]) {
+  for (const width of [320, 390, 1440]) {
+    test(`${variant} logo stays centered with its title at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(`/${variant}/guide/`);
+      await page.evaluate(() => document.fonts.ready);
+      const logo = (await page.locator(".td-header__logo").boundingBox())!;
+      const title = (await page.locator(".site-title").boundingBox())!;
+      expect(
+        Math.abs(logo.y + logo.height / 2 - title.y - title.height / 2),
+      ).toBeLessThan(0.5);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBe(width);
+      if (variant !== "manual") {
+        expect(
+          await page
+            .locator(".site-title")
+            .evaluate((e) => getComputedStyle(e).fontSize),
+        ).toBe(width < 1440 ? "22px" : "28px");
+        const artwork = (await page
+          .locator(".td-header__logo img")
+          .boundingBox())!;
+        expect(artwork.width / artwork.height).toBeCloseTo(
+          variant === "wide-logo" ? 3 : 1 / 3,
+          1,
+        );
+        expect(
+          Math.abs(artwork.y + artwork.height / 2 - title.y - title.height / 2),
+        ).toBeLessThan(0.5);
+        const fence = page.locator(".td-code-block").last();
+        const card = (await fence.locator("pre").boundingBox())!;
+        const copy = (await fence.locator("[data-copy-code]").boundingBox())!;
+        expect(
+          Math.abs(
+            copy.y - card.y - (card.y + card.height - copy.y - copy.height),
+          ),
+        ).toBeLessThan(0.1);
+      }
+      if (width < 1440) {
+        await page.getByRole("button", { name: /Menu/ }).click();
+        const home = page.locator(".td-sidebar-heading__home");
+        const mark = (await home
+          .locator(
+            '[data-tasty-anatomy="Logo"], [data-tasty-anatomy="SiteLogo"]',
+          )
+          .boundingBox())!;
+        const label = (await home.locator("[data-site-title]").boundingBox())!;
+        expect(
+          Math.abs(mark.y + mark.height / 2 - label.y - label.height / 2),
+        ).toBeLessThan(0.5);
+      }
+    });
+  }
 }

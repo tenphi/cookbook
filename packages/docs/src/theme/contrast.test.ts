@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { glaze } from "@tenphi/glaze";
+import { glaze, variantToOkhsl } from "@tenphi/glaze";
 import { measureColorContrast } from "./contrast.js";
 import { resolveColorTheme } from "./palette.js";
 
@@ -22,6 +22,18 @@ describe("semantic contrast diagnostics", () => {
     const theme = resolveColorTheme({ brand: { from } });
     expect(theme.diagnostics).toEqual([]);
     expect(theme.contrastChecks.every((check) => check.passed)).toBe(true);
+    for (const [state, mark] of Object.entries(
+      theme.colorTokens["#logo-mark"]!,
+    )) {
+      const surface = theme.colorTokens["#logo-surface"]![state]!;
+      const markLightness = variantToOkhsl(
+        glaze.color({ from: mark, mode: "static" }).resolve().light,
+      ).l;
+      const surfaceLightness = variantToOkhsl(
+        glaze.color({ from: surface, mode: "static" }).resolve().light,
+      ).l;
+      expect(markLightness).toBeGreaterThan(surfaceLightness);
+    }
     for (const mode of [
       "light",
       "dark",

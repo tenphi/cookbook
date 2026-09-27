@@ -1,4 +1,4 @@
-import { URL } from "node:url";
+import { URL, pathToFileURL } from "node:url";
 import { createServer } from "node:http";
 import {
   cp,
@@ -14,33 +14,73 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 const root = process.cwd();
 const fixture = await mkdtemp(join(root, ".cookbook-browser-"));
-await cp(join(root, "scripts/fixtures/browser"), fixture, { recursive: true });
-await symlink(
-  join(root, "apps/convention/node_modules"),
-  join(fixture, "node_modules"),
-  process.platform === "win32" ? "junction" : "dir",
-);
-await writeFile(join(fixture, "package.json"), '{"type":"module"}');
-await writeFile(
-  join(fixture, "astro.config.mjs"),
-  'import cookbook from "@tenphi/cookbook";export default {base:"/manual/",integrations:[cookbook()]};',
-);
+const source = join(root, "scripts/fixtures/browser");
+const originalConfig = (
+  await import(pathToFileURL(join(source, "docs.config.mjs")).href)
+).default;
+const outputs = new Map();
 try {
-  await promisify(execFile)(
-    process.execPath,
-    [join(root, "apps/convention/node_modules/astro/bin/astro.mjs"), "build"],
-    {
-      cwd: fixture,
-      maxBuffer: 8 * 1024 * 1024,
-      env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
-    },
-  );
+  for (const name of ["manual", "wide-logo", "tall-logo"]) {
+    const site = join(fixture, name);
+    await cp(source, site, { recursive: true });
+    await symlink(
+      join(root, "apps/convention/node_modules"),
+      join(site, "node_modules"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
+    await writeFile(join(site, "package.json"), '{"type":"module"}');
+    await writeFile(
+      join(site, "astro.config.mjs"),
+      `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",integrations:[cookbook()]};`,
+    );
+    if (name !== "manual") {
+      const width = name === "wide-logo" ? 96 : 32;
+      const height = name === "wide-logo" ? 32 : 96;
+      await writeFile(
+        join(site, "logo.svg"),
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#315efb"/></svg>`,
+      );
+      const config = globalThis.structuredClone(originalConfig);
+      config.site.title = "Custom documentation";
+      delete config.site.versions;
+      config.site.logo = "./logo.svg";
+      config.theme.presets = {
+        h4: {
+          fontFamily: "serif",
+          fontSize: "28px",
+          fontWeight: 500,
+          lineHeight: 1.5,
+        },
+        h5: {
+          fontFamily: "serif",
+          fontSize: "22px",
+          fontWeight: 450,
+          lineHeight: 1.6,
+        },
+        code: { fontSize: "16px", lineHeight: 1.8 },
+      };
+      config.theme.styles = { SiteLogo: { blockSize: "40px" } };
+      await writeFile(
+        join(site, "docs.config.mjs"),
+        `export default ${JSON.stringify(config)};`,
+      );
+    }
+    await promisify(execFile)(
+      process.execPath,
+      [join(root, "apps/convention/node_modules/astro/bin/astro.mjs"), "build"],
+      {
+        cwd: site,
+        maxBuffer: 8 * 1024 * 1024,
+        env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
+      },
+    );
+    outputs.set(name, join(site, "dist"));
+  }
 } catch (error) {
   console.error(error.stdout, error.stderr);
   await rm(fixture, { recursive: true, force: true });
   process.exit(1);
 }
-const output = join(fixture, "dist");
 const types = {
   ".html": "text/html",
   ".css": "text/css",
@@ -59,11 +99,13 @@ const server = createServer(async (req, res) => {
     const path = decodeURIComponent(
       new URL(req.url, "http://localhost").pathname,
     );
-    if (!path.startsWith("/manual/")) {
+    const name = path.split("/")[1];
+    const output = outputs.get(name);
+    if (!output || !path.startsWith(`/${name}/`)) {
       res.writeHead(404).end();
       return;
     }
-    let file = resolve(output, path.slice("/manual/".length));
+    let file = resolve(output, path.slice(name.length + 2));
     if (file !== output && !file.startsWith(`${output}${sep}`)) {
       res.writeHead(404).end();
       return;

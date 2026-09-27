@@ -321,6 +321,8 @@ export const COOKBOOK_PALETTE_NAMES = [
   "focus",
   "accent-surface",
   "accent-surface-text",
+  "logo-surface",
+  "logo-mark",
   "accent-surface-subtle",
   "accent-surface-2-subtle",
   "shadow",

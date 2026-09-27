@@ -373,6 +373,12 @@
             "accent-surface-text": {
               "$ref": "#/$defs/paletteColor"
             },
+            "logo-surface": {
+              "$ref": "#/$defs/paletteColor"
+            },
+            "logo-mark": {
+              "$ref": "#/$defs/paletteColor"
+            },
             "accent-surface-subtle": {
               "$ref": "#/$defs/paletteColor"
             },

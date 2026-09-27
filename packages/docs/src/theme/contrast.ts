@@ -142,6 +142,7 @@ export function checkColorContrast(
     add("accent-text", background, { wcag: [4.5, 7] });
   add("accent-surface-text", "accent-surface", { wcag: [4.5, 7] });
   add("accent-surface-text", "accent-surface", { apca: [60, 75] });
+  add("logo-mark", "logo-surface", { wcag: [3, 4.5] });
   for (const background of ["surface", "surface-2", "surface-3"])
     add("focus", background, { wcag: [3, 4.5] });
   for (const role of [

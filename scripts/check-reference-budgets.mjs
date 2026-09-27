@@ -304,7 +304,7 @@ if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
   throw new Error("The project logo is missing from the documentation header.");
 }
 if (
-  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--accent-surface-text-color\)/.test(
+  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--logo-mark-color\)/.test(
     sharedCss,
   )
 ) {
