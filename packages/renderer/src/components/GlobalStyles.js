@@ -1281,10 +1281,13 @@ export default function GlobalStyles() {
         fill: "#surface-2-hover",
       },
       LinkIcon: {
-        $: "> .cookbook-anchor-link .cookbook-anchor-icon, > .cookbook-anchor-link svg",
+        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
         display: "block",
-        inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
-        blockSize: "clamp(1rem, 0.65em, 1.5rem)",
+        fontSize: "clamp(1rem, 0.65em, 1.5rem)",
+        lineHeight: "1",
+        textAlign: "center",
+        inlineSize: "1em",
+        blockSize: "1em",
       },
       CopiedLink: {
         $: '> .cookbook-anchor-link[data-copy-state="copied"]',

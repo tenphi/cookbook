@@ -40,6 +40,66 @@ test("code group keyboard navigation and copying share the fence controls", asyn
   await expect(page.getByText("Page copied", { exact: true })).toBeVisible();
 });
 
+const headingCases = [
+  ...[320, 390, 768, 1024, 1440].map((width) => ({ site: "manual", width })),
+  { site: "wide-logo", width: 320 },
+  { site: "wide-logo", width: 1440 },
+];
+for (const { site, width } of headingCases) {
+  test(`heading copy links align with text in ${site} at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`/${site}/heading-links/`);
+    const positions = await page
+      .locator(".cookbook-heading-wrapper")
+      .evaluateAll((wrappers) =>
+        wrappers.map((wrapper) => {
+          const heading = wrapper.firstElementChild!;
+          const link = wrapper.querySelector<HTMLElement>(
+            ".cookbook-anchor-link",
+          )!;
+          const icon = link.querySelector<HTMLElement>(
+            ".cookbook-anchor-icon",
+          )!;
+          const text = document.createRange();
+          text.selectNodeContents(heading);
+          const lines = [...text.getClientRects()];
+          const line =
+            getComputedStyle(link).position === "relative"
+              ? lines.at(-1)!
+              : lines[0]!;
+          const linkBox = link.getBoundingClientRect();
+          const iconBox = icon.getBoundingClientRect();
+          return {
+            level: heading.tagName,
+            lines: lines.length,
+            iconFontSize: Number.parseFloat(getComputedStyle(icon).fontSize),
+            iconHeight: iconBox.height,
+            linkHeight: linkBox.height,
+            centerOffset:
+              (iconBox.top + iconBox.bottom - line.top - line.bottom) / 2,
+          };
+        }),
+      );
+    expect(positions).toHaveLength(12);
+    expect(new Set(positions.map(({ level }) => level))).toEqual(
+      new Set(["H1", "H2", "H3", "H4", "H5", "H6"]),
+    );
+    if (width <= 390)
+      expect(positions.some(({ lines }) => lines > 1)).toBe(true);
+    for (const position of positions) {
+      expect(
+        Math.abs(position.iconHeight - position.iconFontSize),
+      ).toBeLessThan(0.5);
+      expect(position.iconHeight).toBeLessThanOrEqual(
+        position.linkHeight + 0.5,
+      );
+      expect(Math.abs(position.centerOffset)).toBeLessThan(4);
+    }
+  });
+}
+
 test("desktop contents follows the current section and keeps its link visible", async ({
   page,
 }) => {
