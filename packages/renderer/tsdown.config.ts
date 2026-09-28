@@ -24,6 +24,7 @@ export default defineConfig({
     "client/search": "src/client/search.ts",
     "client/navigation": "src/client/navigation.ts",
     "client/sidebar": "src/client/sidebar.ts",
+    "client/table-of-contents": "src/client/table-of-contents.ts",
     "markdown/rendered-content": "src/markdown/rendered-content.ts",
     "theme/defaults": "src/theme/defaults.ts",
     "theme/tasty-config": "src/theme/tasty-config.ts",

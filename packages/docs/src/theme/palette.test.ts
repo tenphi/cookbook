@@ -8,6 +8,28 @@ import { resolveColorTheme } from "./palette.js";
 import type { ThemePaletteConfig } from "../types.js";
 
 describe("shared Glaze palette graph", () => {
+  it("tints the dark syntax surface with the brand while keeping light code white", () => {
+    const blue = resolveColorTheme({ brand: { from: "#315efb" } });
+    const orange = resolveColorTheme({ brand: { from: "#d97706" } });
+    const blueBackground = blue.colorTokens["#syntax-bg"]!;
+    const orangeBackground = orange.colorTokens["#syntax-bg"]!;
+    const dark = Object.keys(blueBackground).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    )!;
+    expect(blueBackground[""]).toBe("oklch(1 0 0)");
+    expect(orangeBackground[""]).toBe("oklch(1 0 0)");
+    expect(blueBackground[dark]).toMatch(/^oklch\(0\.\d+ 0\.\d+ 26\d/);
+    expect(orangeBackground[dark]).toMatch(/^oklch\(0\.\d+ 0\.\d+ 5\d/);
+    expect(blueBackground[dark]).not.toBe(orangeBackground[dark]);
+    expect(
+      resolveColorTheme({
+        brand: { from: "#315efb" },
+        palette: { "syntax-bg": { from: "#3b1824" } },
+      }).colorTokens["#syntax-bg"],
+    ).not.toEqual(blueBackground);
+  });
+
   it("validates and renders forward references across custom and built-in roles", () => {
     const palette: ThemePaletteConfig = {
       text: { base: "header", tone: 0 },
