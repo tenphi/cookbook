@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.19.1
+
+### Patch Changes
+
+- [#114](https://github.com/tenphi/cookbook/pull/114) [`c0d02ef`](https://github.com/tenphi/cookbook/commit/c0d02ef721c6b5ad10ca71f00360f64ffee91753) Thanks [@tenphi](https://github.com/tenphi)! - Tint dark code surfaces with the configured brand hue and restore the active desktop table-of-contents link as readers scroll.
+
 ## 0.19.0
 
 ### Minor Changes

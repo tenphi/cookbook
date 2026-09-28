@@ -1,5 +1,13 @@
 # @tenphi/cookbook
 
+## 0.19.1
+
+### Patch Changes
+
+- Updated dependencies [[`c0d02ef`](https://github.com/tenphi/cookbook/commit/c0d02ef721c6b5ad10ca71f00360f64ffee91753)]:
+  - @tenphi/docs@0.19.1
+  - @tenphi/renderer@0.19.1
+
 ## 0.19.0
 
 ### Minor Changes
