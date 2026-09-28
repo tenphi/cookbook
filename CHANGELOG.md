@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.20.1
+
+### Patch Changes
+
+- Place the Cookbook logo above the headline at a smaller size on mobile documentation homepages.
+
 ## 0.20.0
 
 ### Minor Changes

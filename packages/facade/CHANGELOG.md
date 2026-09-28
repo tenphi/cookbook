@@ -1,5 +1,15 @@
 # @tenphi/cookbook
 
+## 0.20.1
+
+### Patch Changes
+
+- Place the Cookbook logo above the headline at a smaller size on mobile documentation homepages.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.20.1
+  - @tenphi/renderer@0.20.1
+
 ## 0.20.0
 
 ### Patch Changes
