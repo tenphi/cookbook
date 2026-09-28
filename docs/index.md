@@ -17,6 +17,7 @@ hero:
       link: /comparison/
       variant: secondary
 sidebar:
+  label: Overview
   order: 1
 ---
 

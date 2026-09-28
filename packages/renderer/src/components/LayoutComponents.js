@@ -698,6 +698,7 @@ export const HeaderLinksRoot = customizeComponent(
       DesktopLink: {
         $: ".td-header-links__desktop a",
         radius: "$header-control-radius",
+        inlinePadding: "($gap * 2)",
       },
       HoverLink: { $: "a:hover", color: "#text", fill: "#surface-2-hover" },
       PrimaryLink: {

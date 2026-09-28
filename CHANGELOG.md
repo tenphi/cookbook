@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.20.2
+
+### Patch Changes
+
+- Label the Cookbook reference homepage "Overview" in the sidebar to distinguish it from the project name in the header.
+- Increase the horizontal padding of desktop header text links while keeping icon-only controls unchanged.
+
 ## 0.20.1
 
 ### Patch Changes
