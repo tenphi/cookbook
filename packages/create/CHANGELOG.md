@@ -1,5 +1,12 @@
 # @tenphi/create-cookbook
 
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies [[`716f515`](https://github.com/tenphi/cookbook/commit/716f515c462ede40aa66b34be38a485cc1e519c2)]:
+  - @tenphi/docs@0.18.2
+
 ## 0.18.1
 
 ### Patch Changes
