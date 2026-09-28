@@ -10,10 +10,6 @@ const head = (
     ? pageMetadata(entry, content, Astro.locals.cookbookRoute.head)
     : [
         ...Astro.locals.cookbookRoute.head,
-        {
-          tag: "title",
-          content: `${Astro.locals.cookbookRoute.entry.data.title} | ${content.site.title}`,
-        },
         { tag: "meta", attrs: { name: "robots", content: "noindex, follow" } },
       ]
 ).filter(
@@ -48,6 +44,13 @@ if (Astro.site && indexedRoutes.some((route) => route.route === current)) {
 const ui = messages(Astro.locals.cookbookRoute.lang, content);
 ---
 
+{
+  !entry && (
+    <title>
+      {`${Astro.locals.cookbookRoute.entry.data.title} | ${content.site.title}`}
+    </title>
+  )
+}
 {
   head.map(({ tag: Tag, attrs, content }) => (
     <Tag {...attrs} set:html={content} />

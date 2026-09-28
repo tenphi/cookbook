@@ -167,7 +167,7 @@ if (
 const home = await readFile(join(output, "index.html"), "utf8");
 const notFound = await readFile(join(output, "404.html"), "utf8");
 if (
-  !/<title>Page not found \| [^<]+<\/title>/.test(notFound) ||
+  !/<title>\s*Page not found \| [^<]+<\/title>/.test(notFound) ||
   !/<meta name="robots" content="noindex, follow"\s*\/>/.test(notFound)
 ) {
   throw new Error("The 404 page needs a title and noindex metadata.");
