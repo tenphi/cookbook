@@ -8,7 +8,14 @@ const entry = content.entries.find((entry) => entry.route === current);
 const head = (
   entry
     ? pageMetadata(entry, content, Astro.locals.cookbookRoute.head)
-    : Astro.locals.cookbookRoute.head
+    : [
+        ...Astro.locals.cookbookRoute.head,
+        {
+          tag: "title",
+          content: `${Astro.locals.cookbookRoute.entry.data.title} | ${content.site.title}`,
+        },
+        { tag: "meta", attrs: { name: "robots", content: "noindex, follow" } },
+      ]
 ).filter(
   (tag) =>
     (tag.tag !== "link" ||
