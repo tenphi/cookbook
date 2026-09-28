@@ -40,6 +40,52 @@ test("code group keyboard navigation and copying share the fence controls", asyn
   await expect(page.getByText("Page copied", { exact: true })).toBeVisible();
 });
 
+test("desktop contents follows the current section and keeps its link visible", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 600 });
+  await page.goto("/manual/contents/");
+  const contents = page.locator("cookbook-table-of-contents");
+  const links = contents.locator('nav a[href^="#"]');
+  const count = await links.count();
+  expect(count).toBeGreaterThan(12);
+  await expect(links.first()).toHaveAttribute("aria-current", "location");
+
+  const sidebar = page.locator(".right-sidebar");
+  const initialTop = (await sidebar.boundingBox())!.y;
+  const middle = links.nth(Math.floor(count / 2));
+  const middleHref = await middle.getAttribute("href");
+  await page
+    .locator(middleHref!)
+    .evaluate((heading) => heading.scrollIntoView({ block: "start" }));
+  await expect(middle).toHaveAttribute("aria-current", "location");
+  await expect(links.first()).not.toHaveAttribute("aria-current");
+  expect((await sidebar.boundingBox())!.y).toBeCloseTo(initialTop, 0);
+
+  const last = links.last();
+  const lastHref = await last.getAttribute("href");
+  await page
+    .locator(lastHref!)
+    .evaluate((heading) => heading.scrollIntoView({ block: "start" }));
+  await expect(last).toHaveAttribute("aria-current", "location");
+  const position = await last.evaluate((link) => {
+    const item = link.getBoundingClientRect();
+    const sidebar = link.closest<HTMLElement>(".right-sidebar")!;
+    const panel = sidebar.getBoundingClientRect();
+    return {
+      itemTop: item.top,
+      itemBottom: item.bottom,
+      panelTop: panel.top,
+      panelBottom: panel.bottom,
+      scrollTop: sidebar.scrollTop,
+      scrollHeight: sidebar.scrollHeight,
+    };
+  });
+  expect(position.scrollHeight).toBeGreaterThan(600);
+  expect(position.itemTop).toBeGreaterThanOrEqual(position.panelTop - 1);
+  expect(position.itemBottom).toBeLessThanOrEqual(position.panelBottom + 1);
+});
+
 for (const scheme of ["Light", "Dark"])
   for (const contrast of ["Normal", "High"]) {
     test(`accessible ${scheme} / ${contrast}`, async ({ page }, testInfo) => {

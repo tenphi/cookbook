@@ -781,7 +781,11 @@ export default function GlobalStyles() {
         whiteSpace: "nowrap",
       },
       HoverLink: { $: "a:hover", color: "#text" },
-      CurrentLink: { $: 'a[aria-current="true"]', color: "#accent-text" },
+      CurrentLink: {
+        $: 'a[aria-current="location"]',
+        color: "#accent-text",
+        preset: "small / strong",
+      },
     }),
   );
 

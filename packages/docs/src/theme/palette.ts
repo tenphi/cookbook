@@ -289,8 +289,13 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     saturation: 0.205,
     mode: "auto",
   };
-  // Syntax uses explicit independent seeds while sharing the same dependency graph.
-  definitions["syntax-bg"] = { from: { h: 210, s: 0.09, t: 1 } };
+  // Keep light code on white while carrying the brand hue into dark code surfaces.
+  definitions["syntax-bg"] = {
+    tone: 100,
+    saturation: 0.08,
+    darkSaturation: 0.035,
+    mode: "auto",
+  };
   definitions["syntax-text"] = {
     base: "syntax-bg",
     tone: 0,

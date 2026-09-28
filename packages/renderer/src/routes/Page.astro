@@ -58,14 +58,14 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
             <aside class="right-sidebar-container cookbook-print-hidden">
               <div class="right-sidebar">
                 <MobileTableOfContents />
-                <div class="right-sidebar-panel">
+                <cookbook-table-of-contents class="right-sidebar-panel">
                   <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
                   <nav
                     aria-label={Astro.locals.t("tableOfContents.onThisPage")}
                   >
                     <TableOfContents items={route.toc.items} />
                   </nav>
-                </div>
+                </cookbook-table-of-contents>
               </div>
             </aside>
           )
@@ -116,5 +116,8 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
         </div>
       </div>
     </PageFrame>
+    <script>
+      import "../client/table-of-contents.js";
+    </script>
   </body>
 </html>
