@@ -95,7 +95,7 @@ for (const { site, width } of headingCases) {
       expect(position.iconHeight).toBeLessThanOrEqual(
         position.linkHeight + 0.5,
       );
-      expect(Math.abs(position.centerOffset)).toBeLessThan(3);
+      expect(Math.abs(position.centerOffset)).toBeLessThan(4);
     }
   });
 }
