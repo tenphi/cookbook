@@ -41,7 +41,10 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
   data-has-toc={route.toc ? "" : undefined}
   data-has-hero={data.hero ? "" : undefined}
 >
-  <head><Head /></head>
+  <head>
+    <meta charset="utf-8" />
+    <Head />
+  </head>
   <body>
     <a class="cookbook-skip-link" href="#main-content"
       >{Astro.locals.t("page.skipToContent")}</a
