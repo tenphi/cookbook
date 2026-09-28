@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/renderer",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "description": "Astro renderer and Tasty theme for Cookbook",
   "type": "module",
   "sideEffects": [

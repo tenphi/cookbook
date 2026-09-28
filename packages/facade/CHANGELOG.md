@@ -1,5 +1,15 @@
 # @tenphi/cookbook
 
+## 0.20.2
+
+### Patch Changes
+
+- Label the Cookbook reference homepage "Overview" in the sidebar to distinguish it from the project name in the header.
+
+- Updated dependencies []:
+  - @tenphi/renderer@0.20.2
+  - @tenphi/docs@0.20.2
+
 ## 0.20.1
 
 ### Patch Changes

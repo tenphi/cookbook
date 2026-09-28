@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.20.2
+
+### Patch Changes
+
+- Increase the horizontal padding of desktop header text links while keeping icon-only controls unchanged.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.20.2
+
 ## 0.20.1
 
 ### Patch Changes
