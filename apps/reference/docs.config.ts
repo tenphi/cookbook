@@ -112,7 +112,13 @@ export default defineDocsConfig({
       "$sidebar-width": "17.5rem",
     },
     styles: {
-      Hero: { Visual: { order: "2" } },
+      Hero: {
+        Visual: {
+          order: { "": "2", "@mobile": "-1" },
+          inlineSize: { "": "11rem", "@mobile": "6rem" },
+          blockSize: { "": "11rem", "@mobile": "6rem" },
+        },
+      },
     },
   },
 });
