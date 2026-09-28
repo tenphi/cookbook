@@ -46,7 +46,7 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({
   theme: {
     styles: {
-      StarlightHeader: { SiteTitle: { preset: "h4 / strong" } },
+      Header: { SiteTitle: { preset: "h4 / strong" } },
     },
   },
 });
@@ -69,7 +69,7 @@ integration or calling upstream `configure()` is unnecessary. Shared settings
 belong in `docs.config.ts`.
 
 - Express styles with Tasty. Do not add CSS files, CSS modules, Astro `<style>`
-  blocks, inline `style` attributes, or imported Starlight styles to customize
+  blocks, inline `style` attributes, or imported component styles to customize
   the documentation interface. The isolated content of `Preview` is a separate
   demonstration surface.
 - Model descendants and pseudo-elements as named sub-elements inside the

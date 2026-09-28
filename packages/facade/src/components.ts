@@ -7,5 +7,5 @@ export {
   Tab,
   Callout,
   CodeGroup,
-} from "@tenphi/starlight/components";
-export type * from "@tenphi/starlight/components";
+} from "@tenphi/renderer/components";
+export type * from "@tenphi/renderer/components";

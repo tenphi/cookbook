@@ -12,7 +12,7 @@ import {
 const run = promisify(execFile);
 const root = process.cwd();
 const temporary = await mkdtemp(join(tmpdir(), "cookbook-packs-"));
-const packages = ["docs", "starlight", "facade", "create"];
+const packages = ["docs", "renderer", "facade", "create"];
 
 try {
   for (const directory of packages) {
@@ -102,7 +102,7 @@ try {
           await readFile(
             join(
               root,
-              "packages/starlight/node_modules",
+              "packages/renderer/node_modules",
               reference.name,
               "package.json",
             ),
@@ -116,7 +116,7 @@ try {
       }
     }
     if (
-      ["@tenphi/cookbook", "@tenphi/starlight"].includes(manifest.name) &&
+      ["@tenphi/cookbook", "@tenphi/renderer"].includes(manifest.name) &&
       !files.has("package/tasty.config.mjs")
     ) {
       throw new Error(`${tarball} is missing its inheritable Tasty config.`);
@@ -133,7 +133,7 @@ try {
       if (!present)
         throw new Error(`${tarball} export target is missing: ${target}.`);
     }
-    if (manifest.name === "@tenphi/starlight") {
+    if (manifest.name === "@tenphi/renderer") {
       for (const required of [
         "package/dist/components/GlobalStyles.js",
         "package/dist/components/TastyComponents.js",

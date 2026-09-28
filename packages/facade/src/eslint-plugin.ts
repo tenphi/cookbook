@@ -4,9 +4,9 @@ export {
   strict,
   validationConfig,
   createValidationConfig,
-} from "@tenphi/starlight/eslint-plugin";
+} from "@tenphi/renderer/eslint-plugin";
 export type {
   ResolvedConfig,
   StyleFunctionConfig,
   TastyValidationConfig,
-} from "@tenphi/starlight/eslint-plugin";
+} from "@tenphi/renderer/eslint-plugin";

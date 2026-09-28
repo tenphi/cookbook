@@ -28,7 +28,7 @@ for (const name of entries) {
     sharedCssPath = join(assets, name);
   }
 }
-// Semantic typography and the owned Starlight affordances are emitted through
+// Semantic typography and the owned page affordances are emitted through
 // complete Tasty style trees so every configured field and sub-element reaches
 // its target, rather than being manually cherry-picked in GlobalStyles. Tasty
 // 3.8 also emits typed custom-property registrations for configured tokens.
@@ -58,7 +58,7 @@ const allCss = (
 if (/details:has\(a\[aria-current="page"\]\)/.test(sharedCss)) {
   throw new Error("Sidebar ancestors must not receive current-page styling.");
 }
-if (/#starlight__sidebar details > ul > li\s*\{/.test(sharedCss)) {
+if (/#cookbook__sidebar details > ul > li\s*\{/.test(sharedCss)) {
   throw new Error(
     "Sidebar group indentation must not affect the mobile section selector.",
   );
@@ -116,9 +116,9 @@ if (
   );
 }
 for (const [selector, label] of [
-  ["#starlight__sidebar a > span:first-child", "left navigation links"],
+  ["#cookbook__sidebar a > span:first-child", "left navigation links"],
   [
-    "#starlight__sidebar .group-label > span:first-child",
+    "#cookbook__sidebar .group-label > span:first-child",
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
@@ -142,9 +142,7 @@ if (
   );
 }
 if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
-  throw new Error(
-    "The desktop table of contents must override Starlight's hidden utility.",
-  );
+  throw new Error("The desktop table of contents must be visible.");
 }
 for (const transition of [
   "translate 120ms ease-out",
@@ -179,7 +177,7 @@ const guide = await readFile(
   join(output, "getting-started/index.html"),
   "utf8",
 );
-if (guide.includes("mobile-starlight-toc")) {
+if (/<cookbook-mobile-toc(?:\s|>)/.test(guide)) {
   throw new Error(
     "Mobile and tablet pages must not render a compact table of contents.",
   );

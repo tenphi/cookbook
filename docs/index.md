@@ -21,7 +21,7 @@ sidebar:
 ## Keep documentation close to its source
 
 Cookbook combines [Astro](https://astro.build) and
-[Starlight](https://starlight.astro.build) with repository-aware content,
+an Astro renderer with repository-aware content,
 strict validation, local Pagefind search, and a theme powered by
 [Tasty](https://tasty.style) and [Glaze](https://glaze.tenphi.me).
 
@@ -62,7 +62,7 @@ states, and named component styles.
 | Bring existing Markdown or an API    | [Content sources](./content-sources.md) | [Working examples](./examples.md)                                     |
 | Write pages and interactive examples | [Authoring](./authoring.mdx)            | [Mobile contents and hero images](./authoring.mdx#on-page-navigation) |
 | Change brand, fonts, or logo         | [Configuration recipes](./recipes.md)   | [Theme reference](./theme-and-components.md)                          |
-| Add a Starlight plugin               | [Plugin compatibility](./plugins.md)    | [Architecture](./architecture.md)                                     |
+| Add a Markdown extension             | [Extend Cookbook](./plugins.md)         | [Architecture](./architecture.md)                                     |
 | Publish for people and agents        | [Deployment](./deployment.md)           | [Publishing metadata](./publishing.md)                                |
 | Update or fix an existing site       | [Upgrade Cookbook](./migration.md)      | [Troubleshooting](./troubleshooting.md)                               |
 

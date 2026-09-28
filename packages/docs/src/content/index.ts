@@ -60,7 +60,7 @@ export function createDocsLoader(
       context.store.clear();
       for (const entry of graph.entries) {
         const loaderEntry = toLoaderEntry(entry);
-        const filePath = starlightFilePath(entry, context.config);
+        const filePath = contentFilePath(entry, context.config);
         const data = context.parseData
           ? await context.parseData({
               id: loaderEntry.id,
@@ -91,7 +91,7 @@ export function createDocsLoader(
   };
 }
 
-function starlightFilePath(
+function contentFilePath(
   entry: DocsEntry,
   config?: DocsLoaderContext["config"],
 ): string {

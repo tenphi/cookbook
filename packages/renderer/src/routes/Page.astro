@@ -1,0 +1,117 @@
+---
+import type { DocsHeading } from "@tenphi/docs";
+import { content } from "virtual:cookbook/config";
+import { layout } from "virtual:cookbook/layout";
+import { createRouteContext } from "../route-context.js";
+import { uiTranslations } from "../ui.js";
+import Head from "virtual:cookbook/components/Head";
+import Header from "virtual:cookbook/components/Header";
+import Sidebar from "virtual:cookbook/components/Sidebar";
+import PageFrame from "virtual:cookbook/components/PageFrame";
+import Footer from "virtual:cookbook/components/Footer";
+import Hero from "virtual:cookbook/components/Hero";
+import MarkdownContent from "virtual:cookbook/components/MarkdownContent";
+import MobileTableOfContents from "virtual:cookbook/components/MobileTableOfContents";
+import DraftContentNotice from "virtual:cookbook/components/DraftContentNotice";
+import TableOfContents from "virtual:cookbook/components/TableOfContents";
+
+interface Props {
+  frontmatter: Record<string, any>;
+  headings: DocsHeading[];
+}
+const route = createRouteContext({
+  pathname: Astro.url.pathname,
+  frontmatter: Astro.props.frontmatter,
+  headings: Astro.props.headings,
+  layout,
+  content,
+});
+Astro.locals.cookbookRoute = route;
+const translations = uiTranslations(route.lang, content);
+Astro.locals.t = (key: string) => translations[key] ?? key;
+const { data } = route.entry;
+const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
+---
+
+<html
+  lang={route.lang}
+  dir={route.dir}
+  data-theme="dark"
+  data-has-sidebar={route.hasSidebar ? "" : undefined}
+  data-has-toc={route.toc ? "" : undefined}
+  data-has-hero={data.hero ? "" : undefined}
+>
+  <head><Head /></head>
+  <body>
+    <a class="sl-skip-link" href="#main-content"
+      >{Astro.locals.t("page.skipToContent")}</a
+    >
+    <PageFrame>
+      <Header slot="header" />
+      {route.hasSidebar && <Sidebar slot="sidebar" />}
+      <div class="lg:sl-flex">
+        {
+          route.toc && (
+            <aside class="right-sidebar-container print:hidden">
+              <div class="right-sidebar">
+                <MobileTableOfContents />
+                <div class="right-sidebar-panel">
+                  <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
+                  <nav
+                    aria-label={Astro.locals.t("tableOfContents.onThisPage")}
+                  >
+                    <TableOfContents items={route.toc.items} />
+                  </nav>
+                </div>
+              </div>
+            </aside>
+          )
+        }
+        <div class="main-pane">
+          <main
+            id="main-content"
+            data-pagefind-body={indexed ? "" : undefined}
+            lang={route.entryMeta.lang}
+            dir={route.entryMeta.dir}
+          >
+            {
+              data.banner && (
+                <div class="sl-banner" set:html={data.banner.content} />
+              )
+            }
+            {
+              data.hero ? (
+                <div class="content-panel">
+                  <div class="sl-container">
+                    <Hero />
+                    <MarkdownContent>
+                      <slot />
+                    </MarkdownContent>
+                    <Footer />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div class="content-panel">
+                    <div class="sl-container">
+                      <h1 id="_top" data-page-title set:html={data.title} />
+                      {data.draft && <DraftContentNotice />}
+                    </div>
+                  </div>
+                  <div class="content-panel">
+                    <div class="sl-container">
+                      <MarkdownContent>
+                        <slot />
+                      </MarkdownContent>
+                      <Footer />
+                    </div>
+                  </div>
+                </>
+              )
+            }
+          </main>
+        </div>
+      </div>
+    </PageFrame>
+  </body>
+</html>

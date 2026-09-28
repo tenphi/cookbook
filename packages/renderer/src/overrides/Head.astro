@@ -1,0 +1,49 @@
+---
+import { pageMetadata } from "../page-metadata.js";
+import { content } from "virtual:cookbook/config";
+import { localeAlternates, messages } from "../localization.js";
+import { navigationPath } from "../navigation.js";
+const current = navigationPath(Astro.url.pathname, content.base);
+const entry = content.entries.find((entry) => entry.route === current);
+const head = (
+  entry
+    ? pageMetadata(entry, content, Astro.locals.cookbookRoute.head)
+    : Astro.locals.cookbookRoute.head
+).filter(
+  (tag) =>
+    (tag.tag !== "link" ||
+      tag.attrs?.rel !== "sitemap" ||
+      content.routes.some((route) => route.sitemap !== false)) &&
+    (!content.locales ||
+      tag.tag !== "link" ||
+      tag.attrs?.rel !== "alternate" ||
+      !tag.attrs?.hreflang),
+);
+const indexedRoutes = content.routes.filter((route) => route.sitemap !== false);
+if (Astro.site && indexedRoutes.some((route) => route.route === current)) {
+  for (const { lang, route } of localeAlternates(
+    current,
+    indexedRoutes,
+    content,
+  ))
+    head.push({
+      tag: "link",
+      attrs: {
+        rel: "alternate",
+        hreflang: lang,
+        href: new URL(
+          `${content.base.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+          Astro.site,
+        ).href,
+      },
+    });
+}
+const ui = messages(Astro.locals.cookbookRoute.lang, content);
+---
+
+{
+  head.map(({ tag: Tag, attrs, content }) => (
+    <Tag {...attrs} set:html={content} />
+  ))
+}
+<meta name="cookbook-messages" content={JSON.stringify(ui)} />

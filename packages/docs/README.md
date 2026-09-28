@@ -26,5 +26,5 @@ understands trusted MDX syntax; and confines locked npm artifacts to their
 extraction root.
 
 Most applications should install `@tenphi/cookbook`, which combines this engine
-with the supported Astro/Starlight renderer. This package is useful for custom
+with the Cookbook Astro renderer. This package is useful for custom
 tooling, validation, and alternate renderers. Node.js 22.19 or newer is required.

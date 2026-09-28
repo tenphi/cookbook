@@ -49,15 +49,13 @@ contrast. Browser checks complement the numeric diagnostics.
 
 ## Incompatible plugins
 
-Use the [tested plugin matrix](./plugins.md#verified-compatibility). Cookbook
-owns content routing and all rendered styles. Plugins that read Astro's docs
-collection filesystem or inject CSS are not automatically compatible.
-`starlight-github-alerts` requires the documented unified Markdown processor;
-`starlight-links-validator` is unsupported because it reads synthetic paths.
-Use Cookbook's graph and built-output checks for links.
+Cookbook owns content routing and all rendered styles. Starlight plugins that
+read its docs collection or inject CSS cannot run in the Astro renderer. GitHub
+alerts are supported directly; use Cookbook's graph and built-output checks
+for links. See [extending Cookbook](./plugins.md) for Astro Markdown plugins.
 
-For your own plugin, read custom frontmatter through route middleware or the
-server-only `@tenphi/cookbook/content` API. If a schema rejects data, check that
+Read custom frontmatter through the server-only `@tenphi/cookbook/content` API
+or `Astro.locals.cookbookRoute` in a component override. If a schema rejects data, check that
 custom fields do not replace reserved Cookbook frontmatter and that parsed
 values are JSON-safe. A plugin's successful registration is not proof that its
 rendered output works.

@@ -15,7 +15,7 @@ import {
   type DocsDiagnostic,
   type DocsProject,
 } from "@tenphi/docs";
-import { resolveDocsTheme } from "@tenphi/starlight";
+import { resolveDocsTheme } from "@tenphi/renderer";
 
 let jsonOutput = process.argv.slice(2).includes("--json");
 

@@ -9,11 +9,11 @@ const files = (await readdir(facadeSource)).filter((file) =>
 const allowedImports = new Set([
   "@tenphi/docs",
   "@tenphi/docs/config",
-  "@tenphi/starlight",
-  "@tenphi/starlight/components",
-  "@tenphi/starlight/content",
-  "@tenphi/starlight/styling",
-  "@tenphi/starlight/eslint-plugin",
+  "@tenphi/renderer",
+  "@tenphi/renderer/components",
+  "@tenphi/renderer/content",
+  "@tenphi/renderer/styling",
+  "@tenphi/renderer/eslint-plugin",
 ]);
 
 for (const file of files) {
@@ -26,7 +26,7 @@ for (const file of files) {
   }
 }
 
-for (const directory of ["docs", "starlight"]) {
+for (const directory of ["docs", "renderer"]) {
   const packageJson = JSON.parse(
     await readFile(join(root, "packages", directory, "package.json"), "utf8"),
   );
@@ -35,11 +35,11 @@ for (const directory of ["docs", "starlight"]) {
   }
 }
 
-const starlightSource = join(root, "packages/starlight/src");
-for (const file of await walk(starlightSource)) {
+const rendererSource = join(root, "packages/renderer/src");
+for (const file of await walk(rendererSource)) {
   if (extname(file) === ".css") {
     throw new Error(
-      `Starlight styling must use Tasty style objects, not authored CSS: ${file}`,
+      `Renderer styling must use Tasty style objects, not authored CSS: ${file}`,
     );
   }
 }

@@ -15,7 +15,7 @@ export async function checkStyleLinting({ site, root, run }) {
       `
     import assert from 'node:assert/strict';
     import plugin, { recommended, strict, validationConfig } from '@tenphi/cookbook/eslint-plugin';
-    import renderer, { validationConfig as rendererConfig } from '@tenphi/starlight/eslint-plugin';
+    import renderer, { validationConfig as rendererConfig } from '@tenphi/renderer/eslint-plugin';
     assert.equal(plugin, renderer);
     assert.equal(validationConfig, rendererConfig);
     assert.equal(recommended, plugin.configs.recommended.rules);
@@ -34,7 +34,7 @@ export async function checkStyleLinting({ site, root, run }) {
   const validationPath = join(site, "linting/tasty.config.ts");
   const validation = await readFile(validationPath, "utf8");
 
-  for (const source of ["@tenphi/cookbook", "@tenphi/starlight"]) {
+  for (const source of ["@tenphi/cookbook", "@tenphi/renderer"]) {
     await writeFile(
       validationPath,
       validation.replaceAll("@tenphi/cookbook", source),

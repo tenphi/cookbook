@@ -540,7 +540,7 @@ describe("docs configuration", () => {
         styles: {
           MobileTableOfContents: { Link: { padding: "1x" } },
           Sidebar: { Link: { padding: "1x" } },
-          StarlightHeader: { padding: "2x" },
+          Header: { padding: "2x" },
           TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
           ThemeSelect: { Panel: { padding: "2x" } },
           SocialIcons: { Link: { radius: "999px" } },
@@ -552,7 +552,7 @@ describe("docs configuration", () => {
     expect(config.theme.styles).toEqual({
       MobileTableOfContents: { Link: { padding: "1x" } },
       Sidebar: { Link: { padding: "1x" } },
-      StarlightHeader: { padding: "2x" },
+      Header: { padding: "2x" },
       TableOfContents: { LinkLabel: { whiteSpace: "normal" } },
       ThemeSelect: { Panel: { padding: "2x" } },
       SocialIcons: { Link: { radius: "999px" } },

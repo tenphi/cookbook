@@ -63,7 +63,7 @@ const site = join(temporary, "site");
 try {
   await mkdir(packed, { recursive: true });
   await mkdir(site, { recursive: true });
-  for (const directory of ["docs", "starlight", "facade", "create"]) {
+  for (const directory of ["docs", "renderer", "facade", "create"]) {
     await run("pnpm", ["pack", "--pack-destination", packed], {
       cwd: join(root, "packages", directory),
     });
@@ -114,7 +114,7 @@ try {
       fileDependency("tenphi-cookbook-");
     generatedPackage.overrides = {
       "@tenphi/docs": fileDependency("tenphi-docs-"),
-      "@tenphi/starlight": fileDependency("tenphi-starlight-"),
+      "@tenphi/renderer": fileDependency("tenphi-renderer-"),
     };
     await writeFile(
       join(generated, "package.json"),
@@ -203,7 +203,7 @@ try {
     scripts: { build: "astro build", "check-build": "cookbook check-build" },
     dependencies: {
       "@tenphi/docs": fileDependency("tenphi-docs-"),
-      "@tenphi/starlight": fileDependency("tenphi-starlight-"),
+      "@tenphi/renderer": fileDependency("tenphi-renderer-"),
       astro,
       "@tenphi/cookbook": fileDependency("tenphi-cookbook-"),
     },
@@ -249,7 +249,7 @@ try {
   await cp(
     join(
       root,
-      "packages/starlight/node_modules/@fontsource-variable/onest/files/onest-latin-wght-normal.woff2",
+      "packages/renderer/node_modules/@fontsource-variable/onest/files/onest-latin-wght-normal.woff2",
     ),
     join(site, "public", "fonts", "consumer-mono.woff2"),
   );
@@ -271,7 +271,7 @@ const config = defineDocsConfig({
     },
     presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
     styles: {
-      StarlightHeader: { Logo: { hide: true } },
+      Header: { Logo: { hide: true } },
     },
     customStyles: {
       ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
@@ -390,7 +390,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
   for (const marker of ["data-has-toc", "td-header", "right-sidebar"]) {
     if (!html.includes(marker)) {
       throw new Error(
-        `Packed convention page did not use the default Starlight theme: missing ${marker}.`,
+        `Packed convention page did not use the default Cookbook theme: missing ${marker}.`,
       );
     }
   }

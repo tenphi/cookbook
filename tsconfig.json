@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/docs" },
-    { "path": "./packages/starlight" },
+    { "path": "./packages/renderer" },
     { "path": "./packages/facade" },
     { "path": "./packages/create" }
   ]

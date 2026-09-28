@@ -1,0 +1,12 @@
+---
+import Page from "./Page.astro";
+import { content } from "virtual:cookbook/config";
+import { messages } from "../localization.js";
+
+export const prerender = true;
+const ui = messages(content.locales?.root?.lang ?? "en", content);
+---
+
+<Page frontmatter={{ title: ui.notFound, pagefind: false }} headings={[]}>
+  <p>{ui.notFoundDescription}</p>
+</Page>

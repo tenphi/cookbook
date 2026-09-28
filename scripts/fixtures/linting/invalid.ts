@@ -4,7 +4,7 @@ import {
   resolveComponentStyles,
   tasty,
 } from "@tenphi/cookbook/styling";
-import { defineComponent as rendererComponent } from "@tenphi/starlight/styling";
+import { defineComponent as rendererComponent } from "@tenphi/renderer/styling";
 
 defineComponent("Broken", {
   styles: {

@@ -11,7 +11,7 @@
     "packages/facade": {
       "entry": ["tasty.config.mjs", "type-tests/index.ts"]
     },
-    "packages/starlight": {
+    "packages/renderer": {
       "entry": ["tasty.config.mjs"]
     },
     ".": {
@@ -23,8 +23,6 @@
     "@astrojs/react",
     "publint",
     "unrun",
-    "@astrojs/markdown-remark",
-    "starlight-github-alerts",
-    "starlight-links-validator"
+    "@astrojs/markdown-remark"
   ]
 }

@@ -5,10 +5,10 @@ sidebar:
   order: 5
 ---
 
-Cookbook uses [Astro Starlight](https://starlight.astro.build/) as its
-documentation shell. It keeps familiar page-authoring conventions while adding
-repository and npm content sources, stricter validation, and a Tasty/Glaze
-theme model.
+Cookbook has its own Astro renderer and does not depend on
+[Starlight](https://starlight.astro.build/). It keeps familiar page-authoring
+conventions while adding repository and npm content sources, strict validation,
+and a Tasty/Glaze theme model.
 
 ## Cookbook or Starlight?
 
@@ -24,8 +24,8 @@ npm package—must remain the source of truth.
 | Reproducible releases   | Follows the dependencies and content committed with the site.                      | Can lock an npm package to its exact resolved version and integrity, then rebuild from the files users actually receive.                                                              |
 | Build guarantees        | Provides Starlight's content schema and Astro build pipeline.                      | Adds strict checks for duplicate routes, broken links, missing assets, unsafe paths, and invalid navigation with source-aware diagnostics.                                            |
 | Design system           | Supports CSS variables, custom CSS, and component overrides.                       | Exposes the full [Tasty styling DSL](https://tasty.style/docs/dsl) through configuration, with Glaze-generated semantic colors and named style trees for Cookbook and shell surfaces. |
-| Familiar authoring      | Defines the Starlight page, navigation, i18n, and frontmatter conventions.         | Preserves those conventions—including splash pages, locales, edit links, and last-updated metadata—while resolving them against each original source.                                 |
-| Structural escape hatch | Replaces Starlight components when markup or behavior must change.                 | Supports Astro component overrides for structural changes; visual changes normally stay in typed `theme` configuration.                                                               |
+| Familiar authoring      | Defines Starlight page, navigation, i18n, and frontmatter conventions.             | Supports familiar fields—including splash pages, locales, edit links, and last-updated metadata—while resolving them against each original source.                                    |
+| Structural escape hatch | Replaces Starlight components when markup or behavior must change.                 | Supports Cookbook Astro component overrides for structural changes; visual changes normally stay in typed `theme` configuration.                                                      |
 
 Choose Starlight when the documentation site is the natural home for the
 content and its CSS-oriented customization model fits the project. Choose
@@ -95,9 +95,9 @@ export default defineDocsConfig({
 });
 ```
 
-The keys deliberately match Starlight so an existing Starlight author does not
-need to relearn page metadata or i18n. Cookbook resolves edit and Git metadata
-before handing each page to Starlight because its source may live in a root
+The keys deliberately match familiar Starlight fields so an existing author does
+not need to relearn page metadata or i18n. Cookbook resolves edit and Git metadata
+before rendering each page because its source may live in a root
 `docs/` directory, outside the Astro app, or inside a locked npm artifact.
 
 ## Create a splash page

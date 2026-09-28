@@ -47,7 +47,7 @@ try {
   await cp(
     join(
       root,
-      "packages/starlight/node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2",
+      "packages/renderer/node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2",
     ),
     join(fixture, "public/fonts/acme.woff2"),
   );
@@ -113,8 +113,8 @@ try {
         );
       if (id === "github-alerts")
         assert.ok(
-          html.includes("starlight-aside--note"),
-          "Plugin must transform the note into its Tasty adapter",
+          html.includes("cookbook-alert--note"),
+          "Cookbook must render the note with its Tasty styles",
         );
       if (id === "local-font")
         assert.ok(

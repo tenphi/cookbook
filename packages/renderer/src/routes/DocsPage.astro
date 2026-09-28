@@ -1,0 +1,91 @@
+---
+import Page from "./Page.astro";
+import { content, mdxLoaders } from "virtual:cookbook/config";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  const entries = content.entries;
+  return [
+    ...entries.map((entry) => ({
+      params: { route: entry.route === "/" ? undefined : entry.route.slice(1) },
+      props: { entry, routes: content.routes },
+    })),
+    ...Object.entries(content.redirects).flatMap(([alias, target]) => {
+      const entry = entries.find((entry) => entry.route === target);
+      return entry
+        ? [
+            {
+              params: { route: alias === "/" ? undefined : alias.slice(1) },
+              props: { entry, routes: content.routes, redirect: target },
+            },
+          ]
+        : [];
+    }),
+  ];
+}
+
+const { entry, routes, redirect } = Astro.props;
+if (redirect)
+  return Astro.redirect(`${content.base.replace(/\/$/, "")}${redirect}`, 301);
+const loadMdx = mdxLoaders[entry.route];
+if (!entry.rendered && !loadMdx) {
+  throw new Error(`Cookbook did not render ${entry.sourcePath}.`);
+}
+const mdx = loadMdx ? await loadMdx() : undefined;
+const MdxContent = mdx?.default;
+const headings = mdx?.getHeadings
+  ? await mdx.getHeadings()
+  : (entry.rendered?.headings ?? []);
+const lastUpdated =
+  typeof entry.frontmatter.lastUpdated === "string"
+    ? new Date(entry.frontmatter.lastUpdated)
+    : entry.frontmatter.lastUpdated;
+const hero = entry.hero;
+const frontmatter = {
+  ...entry.metadata,
+  ...entry.frontmatter,
+  title: entry.title,
+  ...(entry.description ? { description: entry.description } : {}),
+  ...(entry.frontmatter.tableOfContents !== undefined
+    ? { tableOfContents: entry.frontmatter.tableOfContents }
+    : {}),
+  ...(entry.frontmatter.editUrl !== undefined
+    ? { editUrl: entry.frontmatter.editUrl }
+    : {}),
+  ...(entry.frontmatter.template !== undefined
+    ? { template: entry.frontmatter.template }
+    : {}),
+  ...(hero !== undefined ? { hero } : {}),
+  ...(lastUpdated !== undefined ? { lastUpdated } : {}),
+  ...(entry.frontmatter.prev !== undefined
+    ? { prev: entry.frontmatter.prev }
+    : {}),
+  ...(entry.frontmatter.next !== undefined
+    ? { next: entry.frontmatter.next }
+    : {}),
+  ...(entry.frontmatter.banner !== undefined
+    ? { banner: entry.frontmatter.banner }
+    : {}),
+  ...(entry.frontmatter.pagefind !== undefined
+    ? { pagefind: entry.frontmatter.pagefind }
+    : {}),
+  head: [
+    ...(entry.frontmatter.head ?? []).filter(
+      (tag) =>
+        !entry.frontmatter.draft ||
+        tag.tag !== "meta" ||
+        tag.attrs?.name !== "robots",
+    ),
+    ...(entry.frontmatter.draft
+      ? [{ tag: "meta", attrs: { name: "robots", content: "noindex, follow" } }]
+      : []),
+  ],
+  ...(entry.frontmatter.draft ? { pagefind: false } : {}),
+  ...(entry.frontmatter.draft ? { draft: true } : {}),
+};
+---
+
+<Page frontmatter={frontmatter} headings={headings}>
+  {MdxContent ? <MdxContent /> : <div set:html={entry.rendered?.html ?? ""} />}
+</Page>

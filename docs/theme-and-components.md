@@ -131,8 +131,8 @@ Components consume semantic colors consistently: `surface`, `header`, `surface-2
 Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
 accent fills, overlays, shadows, and the orange, green, blue, purple, and red
-roles used by Starlight content components. No browser color mixes or
-Starlight fallback palette values participate in the rendered theme. Surface
+roles used by Cookbook content components. No browser color mixes or
+upstream fallback palette values participate in the rendered theme. Surface
 elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
 steps and `surface-3` advances four from the base surface, with proportionally
 wider steps in high-contrast mode. Their saturation also steps down to 75% and
@@ -362,10 +362,9 @@ are useful when building a theme editor or presenting a reset action.
 ## Style customization
 
 Cookbook-owned interface elements are direct `tasty()` components. Supported
-Starlight-rendered surfaces use the same Tasty style trees through the global
-bridge. Customize either kind by name under `theme.styles`; the configuration
-is resolved before CSS generation, so this is not a selector-based CSS
-override.
+Cookbook components and generated Markdown surfaces use Tasty style trees.
+Customize them by name under `theme.styles`; the configuration is resolved
+before CSS generation, so this is not a selector-based CSS override.
 
 > **Direct styles, without a specificity battle.** Cookbook merges your partial
 > style object with the component's base styles before Tasty extracts CSS. The
@@ -378,13 +377,13 @@ below to find its exact anatomy:
 
 | Page area                     | Style names to inspect                                                               |
 | ----------------------------- | ------------------------------------------------------------------------------------ |
-| Header, title, and navigation | `HeaderFrame`, `StarlightHeader`, `SiteLogo`, `HeaderLinks`, `TopNavigation`         |
+| Header, title, and navigation | `HeaderFrame`, `Header`, `SiteLogo`, `HeaderLinks`, `TopNavigation`                  |
 | Sidebar and mobile menu       | `Sidebar`, `MobileMenuToggle`, `MobileNavigationTabs`, `MobileMenuFooter`            |
 | Article text and headings     | `Markdown`, `MarkdownHeading`, `Heading`, `MainContent`                              |
 | Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid` |
 | Search                        | `SearchButton`, `Search`, `SearchResults`                                            |
 | Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                  |
-| Cards, notes, and tabs        | `Card`, `StarlightCard`, `StarlightAside`, `Tabs`                                    |
+| Cards, notes, and tabs        | `Card`, `Callout`, `MarkdownAlert`, `Tabs`                                           |
 | Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                 |
 
 For example, this changes a typography role and one named element without
@@ -483,7 +482,7 @@ sub-elements:
 | `Preview`               | `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `Sidebar`               | `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink` |
 | `SocialIcons`           | `Link`, `HoverLink`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `StarlightHeader`       | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                                                                                                                                                                                                                                                                                 |
+| `Header`                | `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`                                                                                                                                                                                                                                                                                                                                                                 |
 | `TableOfContentsLayout` | `WithMobile`, `Content`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `SearchButton`          | `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `Layout`                | `Islands`, `LockedPage`, `Light`, `Auto`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -505,11 +504,7 @@ sub-elements:
 | `Pagination`            | `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                      |
 | `Markdown`              | `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`                                                                                                                                                                                                                                  |
 | `MermaidSource`         | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `StarlightAside`        | `Note`, `Tip`, `Caution`, `Danger`, `Title`, `Icon`, `FirstContent`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `StarlightCard`         | `Title`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `StarlightLinkCard`     | `Hover`, `Stack`, `Link`, `LinkOverlay`, `DescriptionAndIcon`                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `StarlightBadge`        | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `StarlightSteps`        | `Item`, `Counter`, `Connector`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `MarkdownAlert`         | `Note`, `Tip`, `Caution`, `Danger`, `Title`, `FirstContent`                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `SyntaxHighlight`       | `Scroll`, `Wrap`, `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`                                                                                                                                                                                                                                                                                                |
 | `SearchResults`         | `Form`, `Input`, `Clear`, `Results`, `Result`, `ResultLink`, `SearchIcon`, `ClearIcon`, `SuppressedClear`, `Message`, `List`, `Title`, `Excerpt`, `NestedResult`, `Match`, `More`, `HoverMore`                                                                                                                                                                                                                                                                                                                 |
 
@@ -609,7 +604,7 @@ source.
 Import styling tools from `@tenphi/cookbook/styling`. They use the same Tasty
 runtime as Cookbook, with its semantic colors, typography presets, units, and
 responsive states. The renderer package also exposes them from
-`@tenphi/starlight/styling`.
+`@tenphi/renderer/styling`.
 
 | Export                   | Purpose                                                                            |
 | ------------------------ | ---------------------------------------------------------------------------------- |
@@ -701,7 +696,7 @@ theme: {
 Custom image assets keep their authored colors; use `light`/`dark` files when
 you want distinct artwork. Header and drawer home links center logos with the
 site title regardless of their aspect ratio. Use `theme.styles.SiteLogo` for
-image size and `theme.styles.StarlightHeader.SiteTitle` / `Sidebar.HomeLink`
+image size and `theme.styles.Header.SiteTitle` / `Sidebar.HomeLink`
 for typography; they do not need baseline offsets for a different preset.
 
 ### Advanced site title markup
@@ -749,7 +744,7 @@ Then create `docs/components/SiteTitle.astro`, using an SVG whose paths use
 import ProjectLogo from "../../public/logo.svg";
 import { SiteTitleRoot } from "./site-title.js";
 
-const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
 ---
 
 <SiteTitleRoot href={siteTitleHref}>
@@ -828,7 +823,7 @@ components using the compatibility bridge described above.
 
 `@tenphi/cookbook/eslint-plugin` re-exports the Tasty ESLint plugin together with
 Cookbook's `validationConfig`. The renderer offers the same exports from
-`@tenphi/starlight/eslint-plugin`. Keep style definitions in `.ts` or `.tsx`
+`@tenphi/renderer/eslint-plugin`. Keep style definitions in `.ts` or `.tsx`
 modules, as in the site title example above, to lint them with either ESLint or
 oxlint.
 
@@ -840,7 +835,7 @@ export default {
 };
 ```
 
-Renderer-only consumers can use `extends: "@tenphi/starlight"` instead.
+Renderer-only consumers can use `extends: "@tenphi/renderer"` instead.
 The preset registers both Cookbook styling import paths, its built-in tokens,
 units, responsive states, and typography presets. It also describes
 `defineComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
@@ -938,7 +933,7 @@ output.
 The header uses `#header`, generated from `theme.palette.header` (or the page
 surface) at 70% opacity in all four appearance modes, with a 16px backdrop blur.
 Customize the outer bar with `theme.styles.HeaderFrame`, its contents with
-`StarlightHeader`, and header buttons with `HeaderLinks` and `SearchButton`.
+`Header`, and header buttons with `HeaderLinks` and `SearchButton`.
 
 Below 50rem, page navigation moves into a header row and opens a left drawer.
 `MobileMenuToggle.Section` and `Page` style its breadcrumb labels. The drawer
@@ -1177,8 +1172,8 @@ theme: {
 and accessibility utilities. `MainPane` and `MainContent` own the content
 layout. `Markdown` owns prose, lists, links, quotations, and disclosure
 anatomy. `Search` owns the dialog; `SearchResults` owns the Pagefind UI.
-The `Starlight*` trees style compatible upstream component markup; Cookbook's
-own `Card`, `Callout`, and `Steps` use their respective trees.
+`MarkdownAlert` styles rendered alert blockquotes; `Card`, `Callout`, and
+`Steps` style Cookbook components.
 
 Custom components created with `defineComponent()` receive `theme.customStyles`
 overrides during server rendering. Units, recipes, states, and presets are

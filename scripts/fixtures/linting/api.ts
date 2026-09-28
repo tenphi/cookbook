@@ -8,7 +8,7 @@ import plugin, {
 } from "@tenphi/cookbook/eslint-plugin";
 import rendererPlugin, {
   type StyleFunctionConfig as RendererStyleFunctionConfig,
-} from "@tenphi/starlight/eslint-plugin";
+} from "@tenphi/renderer/eslint-plugin";
 
 export const helper: StyleFunctionConfig = {
   argument: "all",

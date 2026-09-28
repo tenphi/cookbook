@@ -1,4 +1,4 @@
 export {
   getCookbookCollection,
   getCookbookEntry,
-} from "@tenphi/starlight/content";
+} from "@tenphi/renderer/content";

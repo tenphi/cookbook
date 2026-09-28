@@ -7,7 +7,7 @@
     "astro-integration",
     "astro",
     "documentation",
-    "starlight",
+    "documentation",
     "static-site"
   ],
   "bin": {
@@ -76,7 +76,7 @@
   "license": "MIT",
   "dependencies": {
     "@tenphi/docs": "workspace:*",
-    "@tenphi/starlight": "workspace:*"
+    "@tenphi/renderer": "workspace:*"
   },
   "peerDependencies": {
     "astro": "catalog:"

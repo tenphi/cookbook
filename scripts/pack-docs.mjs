@@ -13,7 +13,7 @@ const facadeRoot = join(repositoryRoot, "packages/facade");
 /** Build local reference docs from the same dependencies as the renderer. */
 export async function packDocs(output = join(facadeRoot, "docs")) {
   const rendererRequire = createRequire(
-    join(repositoryRoot, "packages/starlight/package.json"),
+    join(repositoryRoot, "packages/renderer/package.json"),
   );
   const upstream = [];
   for (const name of ["tasty", "glaze"]) {

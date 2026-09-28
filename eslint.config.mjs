@@ -24,7 +24,7 @@ export default [
     files: ["**/*.{js,mjs}"],
   },
   {
-    files: ["packages/starlight/src/components/GlobalStyles.js"],
+    files: ["packages/renderer/src/components/GlobalStyles.js"],
     rules: {
       // Global responsive rules intentionally do not invent a desktop value
       // when the upstream component owns that side of the cascade.
