@@ -4,6 +4,44 @@ import { measureColorContrast } from "./contrast.js";
 import { resolveColorTheme } from "./palette.js";
 
 describe("semantic contrast diagnostics", () => {
+  it("keeps sidebar text subtly quieter while preserving readable contrast", () => {
+    const theme = resolveColorTheme();
+    const sidebar = theme.colorTokens["#sidebar-text"]!;
+    const soft = theme.colorTokens["#text-soft"]!;
+    const surface = theme.colorTokens["#surface"]!;
+    for (const state of Object.keys(sidebar)) {
+      const background = glaze
+        .color({
+          from: surface[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const sidebarColor = glaze
+        .color({
+          from: sidebar[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const softColor = glaze
+        .color({
+          from: soft[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const sidebarContrast = measureColorContrast(
+        sidebarColor,
+        background,
+        "wcag",
+      );
+      const softContrast = measureColorContrast(softColor, background, "wcag");
+      expect(sidebarContrast).toBeGreaterThanOrEqual(
+        state.includes("contrast=more") ? 7 : 4.5,
+      );
+      expect(sidebarContrast).toBeLessThanOrEqual(softContrast);
+      if (!state.includes("contrast=more"))
+        expect(sidebarContrast).toBeLessThan(softContrast);
+    }
+  });
   it.each([
     "#d97706",
     "#315efb",

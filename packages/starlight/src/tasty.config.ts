@@ -38,6 +38,7 @@ export default {
     "#text",
     "#text-soft",
     "#text-muted",
+    "#sidebar-text",
     "#border",
     "#border-strong",
     "#accent-text",

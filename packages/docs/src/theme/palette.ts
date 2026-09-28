@@ -208,6 +208,10 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       mode: "auto",
     }),
     "text-muted": mix("surface", "text", 66),
+    "sidebar-text": paletteDefinition(
+      theme.palette?.["sidebar-text"],
+      mix("surface", "text-soft", [94, 100]),
+    ),
     "surface-2-hover": mix("surface-2", "text", [3, 6]),
     "surface-2-pressed": mix("surface-2", "text", [9, 14]),
     "surface-3-hover": mix("surface-3", "text", [3, 6]),

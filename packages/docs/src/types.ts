@@ -313,6 +313,7 @@ export const COOKBOOK_PALETTE_NAMES = [
   "heading",
   "text-soft",
   "text-muted",
+  "sidebar-text",
   "surface-2-hover",
   "surface-2-pressed",
   "surface-3-hover",

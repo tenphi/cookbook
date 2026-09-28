@@ -630,7 +630,7 @@ export default function GlobalStyles() {
         $: "cookbook-sidebar summary, cookbook-sidebar a",
         blockSize: "min 2.25rem",
         padding: "($gap * 0.75) ($gap * 1.25)",
-        color: "#text-soft",
+        color: "#sidebar-text",
         preset: "navigation",
         radius: "$radius",
         textDecoration: "none",

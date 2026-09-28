@@ -126,7 +126,7 @@ Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
-`surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
+`surface-3`, `text`, `heading`, `text-soft`, `sidebar-text`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
 Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
@@ -332,6 +332,10 @@ headings use a medium `610` weight and progressively gentle negative tracking.
 The separate `720` heading bold weight keeps emphasized heading text distinct.
 Navigation uses a lighter `450` weight with `580` for the current sidebar page,
 while smaller group labels establish hierarchy without oversized bold text.
+Inactive sidebar links use `sidebar-text`, a slightly softer blend of `text-soft`
+and the surface. In high-contrast mode it matches `text-soft`. Set
+`theme.palette['sidebar-text']` to adjust that color without changing other
+secondary text, or `theme.styles.Sidebar.Control` to customize the control.
 Top-level sidebar groups are always-visible section headings with their direct
 links aligned beneath them. Deeper groups expand on click or keyboard activation;
 the current group and its ancestors start open. Groups can have a parent-page
@@ -1115,7 +1119,7 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | Area                | Roles                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
-| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
+| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`, `sidebar-text`                                                                                                                                 |
 | Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
 | Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
