@@ -13,7 +13,7 @@ function storage(values: Record<string, string> = {}) {
 describe("appearance preferences", () => {
   it("restores existing independent scheme and contrast choices", () => {
     const saved = storage({
-      "starlight-theme": "dark",
+      "cookbook-theme": "dark",
       "cookbook-appearance": JSON.stringify({ contrast: "more" }),
     });
     expect(loadPreferences(saved)).toEqual({
@@ -52,7 +52,7 @@ describe("appearance preferences", () => {
     "recovers from malformed contrast data: %s",
     (value) => {
       const saved = storage({
-        "starlight-theme": "light",
+        "cookbook-theme": "light",
         "cookbook-appearance": value,
       });
       expect(loadPreferences(saved)).toEqual({
@@ -68,7 +68,7 @@ describe("appearance preferences", () => {
   );
 
   it("uses system defaults for unknown values or unavailable storage", () => {
-    expect(loadPreferences(storage({ "starlight-theme": "invalid" }))).toEqual({
+    expect(loadPreferences(storage({ "cookbook-theme": "invalid" }))).toEqual({
       scheme: "auto",
       contrast: "system",
     });

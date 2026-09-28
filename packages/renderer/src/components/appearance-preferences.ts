@@ -26,9 +26,7 @@ export function loadPreferences(storage?: PreferenceStorage): Preferences {
   const preferences: Preferences = { scheme: "auto", contrast: "system" };
   try {
     storage ??= localStorage;
-    preferences.scheme = parseScheme(
-      storage.getItem("cookbook-theme") ?? storage.getItem("starlight-theme"),
-    );
+    preferences.scheme = parseScheme(storage.getItem("cookbook-theme"));
     preferences.contrast = parseContrast(storedAppearance(storage).contrast);
   } catch {
     // System defaults work even when browser storage is unavailable.

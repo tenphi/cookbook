@@ -66,6 +66,7 @@ if (/#cookbook__sidebar details > ul > li\s*\{/.test(sharedCss)) {
 for (const [pattern, label] of [
   [/--sl-/i, "Starlight custom properties"],
   [/@layer\s+starlight/i, "Starlight cascade layers"],
+  [/\bsl-[a-z]/i, "legacy renderer classes"],
   [/expressive-code|--ec-/i, "Expressive Code styles"],
 ]) {
   if (pattern.test(allCss)) {
@@ -122,7 +123,10 @@ for (const [selector, label] of [
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
-  [".sl-menu-button .td-menu-button__page", "mobile navigation breadcrumb"],
+  [
+    ".cookbook-menu-button .td-menu-button__page",
+    "mobile navigation breadcrumb",
+  ],
 ]) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   if (
@@ -339,6 +343,9 @@ for (const name of outputEntries.filter(
   if (/--sl-/i.test(html)) {
     throw new Error(`${name} contains an inline Starlight style token.`);
   }
+  if (/\bsl-[a-z]/i.test(html)) {
+    throw new Error(`${name} contains a legacy renderer class.`);
+  }
   if (/<style(?:\s|>)/i.test(html)) {
     throw new Error(`${name} contains an authored style block.`);
   }
@@ -365,15 +372,16 @@ for (const name of conventionEntries.filter(
 )) {
   const html = await readFile(join(conventionOutput, name), "utf8");
   for (const match of html.matchAll(
-    /<div\b[^>]*\bclass="[^"]*\bsl-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
+    /<div\b[^>]*\bclass="[^"]*\bcookbook-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
   )) {
     conventionHeadingWrappers += 1;
     const content = match[1] ?? "";
-    if (/\bclass="[^"]*\bsl-heading-wrapper\b/.test(content)) {
+    if (/\bclass="[^"]*\bcookbook-heading-wrapper\b/.test(content)) {
       throw new Error(`${name} contains nested heading permalink wrappers.`);
     }
     if (
-      (content.match(/\bclass="[^"]*\bsl-anchor-link\b/g) ?? []).length !== 1
+      (content.match(/\bclass="[^"]*\bcookbook-anchor-link\b/g) ?? [])
+        .length !== 1
     ) {
       throw new Error(`${name} must render exactly one permalink per heading.`);
     }

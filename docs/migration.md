@@ -52,6 +52,10 @@ your own overrides. The named style surfaces `StarlightHeader` and
 link-card, badge, and steps bridges are removed. Cookbook's `Card`, `Callout`,
 and `Steps` components remain available.
 
+Renderer class names now use Cookbook-owned names. Update any custom CSS or
+scripts that target generated markup, and prefer the named `theme.styles`
+surfaces in the [theme reference](./theme-and-components.md).
+
 The `plugins` integration option no longer forwards Starlight hooks. Move
 content transforms to Astro's `markdown` configuration and use
 `frontmatterSchema` for custom page metadata. GitHub alert blockquotes render
@@ -62,8 +66,8 @@ Starlight's content collection or physical docs files. See
 
 Build and preview each site after updating its package manifest. Check custom
 component overrides, locale navigation, search, and Tasty style names before
-deploying. Existing appearance preferences are read from the old browser key
-until the visitor changes the setting, which saves the new Cookbook key.
+deploying. Cookbook-saved appearance choices remain. Older Starlight-only
+choices are ignored; visitors who relied on one can select their scheme again.
 
 ## 0.17.x to 0.18
 

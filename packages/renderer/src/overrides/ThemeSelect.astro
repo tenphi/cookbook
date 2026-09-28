@@ -116,9 +116,7 @@ const contrasts = [
   window.addEventListener("storage", (event) => {
     if (
       !event.key ||
-      ["starlight-theme", "cookbook-theme", "cookbook-appearance"].includes(
-        event.key,
-      )
+      ["cookbook-theme", "cookbook-appearance"].includes(event.key)
     ) {
       current = loadPreferences();
       applyPreferences();

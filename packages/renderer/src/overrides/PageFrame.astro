@@ -13,13 +13,13 @@ const { hasSidebar } = Astro.locals.cookbookRoute;
     hasSidebar && (
       <cookbook-sidebar-pane
         id="cookbook__sidebar"
-        class="sidebar-pane print:hidden"
+        class="sidebar-pane cookbook-print-hidden"
         popover="auto"
         aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
         tabindex="-1"
       >
         <nav
-          class="sidebar-content sl-flex"
+          class="sidebar-content"
           aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
         >
           <slot name="sidebar" />

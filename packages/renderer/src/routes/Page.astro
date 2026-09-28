@@ -43,16 +43,16 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
 >
   <head><Head /></head>
   <body>
-    <a class="sl-skip-link" href="#main-content"
+    <a class="cookbook-skip-link" href="#main-content"
       >{Astro.locals.t("page.skipToContent")}</a
     >
     <PageFrame>
       <Header slot="header" />
       {route.hasSidebar && <Sidebar slot="sidebar" />}
-      <div class="lg:sl-flex">
+      <div>
         {
           route.toc && (
-            <aside class="right-sidebar-container print:hidden">
+            <aside class="right-sidebar-container cookbook-print-hidden">
               <div class="right-sidebar">
                 <MobileTableOfContents />
                 <div class="right-sidebar-panel">
@@ -76,13 +76,13 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
           >
             {
               data.banner && (
-                <div class="sl-banner" set:html={data.banner.content} />
+                <div class="cookbook-banner" set:html={data.banner.content} />
               )
             }
             {
               data.hero ? (
                 <div class="content-panel">
-                  <div class="sl-container">
+                  <div class="cookbook-container">
                     <Hero />
                     <MarkdownContent>
                       <slot />
@@ -93,13 +93,13 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
               ) : (
                 <>
                   <div class="content-panel">
-                    <div class="sl-container">
+                    <div class="cookbook-container">
                       <h1 id="_top" data-page-title set:html={data.title} />
                       {data.draft && <DraftContentNotice />}
                     </div>
                   </div>
                   <div class="content-panel">
-                    <div class="sl-container">
+                    <div class="cookbook-container">
                       <MarkdownContent>
                         <slot />
                       </MarkdownContent>

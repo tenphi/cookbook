@@ -185,13 +185,10 @@ path, not a generated content-collection path. Set `editUrl: false` or
 sources show a timestamp only when their materialized file has Git history or
 the page supplies one explicitly.
 
-These settings intentionally mirror Starlight's
-[`editLink`](https://starlight.astro.build/reference/configuration/#editlink)
-and
-[`lastUpdated`](https://starlight.astro.build/reference/configuration/#lastupdated)
-configuration while preserving Cookbook's original source paths.
+These settings use Cookbook's original source paths when constructing links and
+timestamps.
 
-Cookbook also accepts Starlight-compatible page presentation frontmatter:
+Cookbook also accepts page presentation frontmatter:
 
 ```yaml
 tableOfContents:

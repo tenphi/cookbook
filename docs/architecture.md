@@ -8,6 +8,10 @@ sidebar:
 Cookbook keeps content concerns separate from rendering so another renderer
 can consume the same validated graph in the future.
 
+Cookbook's early documentation experience was inspired by
+[Astro Starlight](https://starlight.astro.build/). Its current renderer is
+maintained in this repository.
+
 ## Packages
 
 | Package                   | Responsibility                                                                                          |

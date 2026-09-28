@@ -1,7 +1,9 @@
 import { message as uiMessage } from "./messages.js";
 /** Keep real fragment links as the no-JavaScript and modified-click fallback. */
 export function initializeHeadingLinks(): void {
-  for (const content of document.querySelectorAll(".sl-markdown-content")) {
+  for (const content of document.querySelectorAll(
+    ".cookbook-markdown-content",
+  )) {
     let status = content.querySelector<HTMLElement>(
       "[data-heading-copy-status]",
     );
@@ -14,7 +16,7 @@ export function initializeHeadingLinks(): void {
     }
 
     for (const link of content.querySelectorAll<HTMLAnchorElement>(
-      '.sl-heading-wrapper > .sl-anchor-link[href^="#"]',
+      '.cookbook-heading-wrapper > .cookbook-anchor-link[href^="#"]',
     )) {
       if (link.dataset.copyReady) continue;
       link.dataset.copyReady = "true";

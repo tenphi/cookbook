@@ -94,7 +94,6 @@ including the current entry, locale, navigation, table of contents, and head
 tags. See [theme and components](./theme-and-components.md) for Tasty styling
 and [configuration](./configuration.md) for structural overrides.
 
-Starlight plugin hooks are not part of the Cookbook renderer. Plugins that
-depend on Starlight route data, its content collection, or its CSS require a
-Cookbook-specific adapter. Use Astro's Markdown plugin APIs for content
-transforms, and Cookbook's graph and built-output checks for link validation.
+Use Astro's Markdown plugin APIs for content transforms, and Cookbook's graph
+and built-output checks for link validation. Extensions tied to another
+renderer need an adapter built against Cookbook's APIs.

@@ -118,13 +118,17 @@ export default function GlobalStyles() {
         $: "img:not([height]), :where(picture), video:not([height]), canvas:not([height]), svg:not([height])",
         blockSize: "auto",
       },
-      Hidden: { $: ":where([hidden]), :where(.sl-hidden)", hide: true },
+      Hidden: { $: ":where([hidden]), :where(.cookbook-hidden)", hide: true },
+      PrintHidden: {
+        $: ".cookbook-print-hidden",
+        display: { "@media:print": "none" },
+      },
       DesktopBlock: {
-        $: '[class~="md:sl-block"]',
+        $: '[class~="md:cookbook-block"]',
         display: { "": "block", "@mobile": "none" },
       },
       DesktopFlex: {
-        $: '[class~="md:sl-flex"]',
+        $: '[class~="md:cookbook-flex"]',
         display: { "": "flex", "@mobile": "none" },
       },
       ScreenReaderOnly: {
@@ -142,11 +146,11 @@ export default function GlobalStyles() {
       Strong: { $: ":where(strong), :where(b)", preset: "strong" },
       Link: { $: "a", color: "#accent-text" },
       NarrowBlock: {
-        $: '[class~="lg:sl-hidden"]',
+        $: '[class~="lg:cookbook-hidden"]',
         display: { "": "none", "@narrow-layout": "block" },
       },
       MobileBlock: {
-        $: '[class~="md:sl-hidden"]',
+        $: '[class~="md:cookbook-hidden"]',
         display: { "": "none", "@mobile": "block" },
       },
       Code: {
@@ -226,11 +230,11 @@ export default function GlobalStyles() {
     resolveComponentStyles("MainContent", {
       padding: "0 0 5rem",
       ContentSpacing: {
-        $: ".content-panel > .sl-container > * + *",
+        $: ".content-panel > .cookbook-container > * + *",
         marginBlockStart: "($gap * 3)",
       },
       Container: {
-        $: ".content-panel > .sl-container",
+        $: ".content-panel > .cookbook-container",
         marginInlineStart: { "": "auto", "@narrow-layout": "0" },
         marginInlineEnd: { "": "auto", "@narrow-layout": "0" },
         maxInlineSize: "$content-width",
@@ -249,7 +253,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-banner",
+    ".cookbook-banner",
     resolveComponentStyles("Banner", {
       padding: "($gap * 1.5) $docs-nav-pad-x",
       color: "#accent-surface-text",
@@ -263,7 +267,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-skip-link",
+    ".cookbook-skip-link",
     resolveComponentStyles("SkipLink", {
       position: "fixed",
       inset: "($gap * 1.5) auto auto ($gap * 1.5)",
@@ -808,6 +812,14 @@ export default function GlobalStyles() {
         marginInlineEnd: "auto",
         color: "#logo-surface",
       },
+      DarkVisual: {
+        $: '> img[data-hero-image="dark"]',
+        hide: { "": false, "@parent(theme=light)": true },
+      },
+      LightVisual: {
+        $: '> img[data-hero-image="light"]',
+        hide: { "": true, "@parent(theme=light)": false },
+      },
       Stack: {
         $: "> .stack",
         display: "flex",
@@ -848,7 +860,7 @@ export default function GlobalStyles() {
         gap: "($gap * 1.5)",
       },
       Action: {
-        $: ".sl-link-button",
+        $: ".cookbook-link-button",
         display: "inline-flex",
         alignItems: "center",
         minBlockSize: "$control-height",
@@ -863,35 +875,35 @@ export default function GlobalStyles() {
         transition: "fill $transition, translate $transition",
       },
       HoverAction: {
-        $: ".sl-link-button:hover",
+        $: ".cookbook-link-button:hover",
         fill: "#surface-2-hover",
         translate: "0 -1px",
       },
       PrimaryAction: {
-        $: ".sl-link-button.primary",
+        $: ".cookbook-link-button.primary",
         color: "#accent-surface-text",
         borderColor: "#accent-surface",
         fill: "#accent-surface",
       },
       SecondaryAction: {
-        $: ".sl-link-button.secondary",
+        $: ".cookbook-link-button.secondary",
         color: "#accent-text",
         borderColor: "#border-strong",
       },
       MinimalAction: {
-        $: ".sl-link-button.minimal",
+        $: ".cookbook-link-button.minimal",
         paddingInlineStart: "0",
         paddingInlineEnd: "0",
         color: "#accent-text",
         border: "0",
         fill: "#clear",
       },
-      ActionIcon: { $: ".sl-link-button svg", flexShrink: "0" },
+      ActionIcon: { $: ".cookbook-link-button svg", flexShrink: "0" },
     }),
   );
 
   useGlobalStyles(
-    ".sl-markdown-content",
+    ".cookbook-markdown-content",
     resolveComponentStyles("Markdown", {
       fontSize: "1.025rem",
       Block: {
@@ -904,7 +916,7 @@ export default function GlobalStyles() {
         marginBlockStart: "($gap * 3)",
       },
       HeadingSpacing: {
-        $: ":not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h1):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h2):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h3):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h4):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h5):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(h6):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.sl-heading-wrapper) + :where(.sl-heading-wrapper):not(.not-content *)",
+        $: ":not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h1):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h2):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h3):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h4):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h5):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h6):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(.cookbook-heading-wrapper):not(.not-content *)",
         marginBlockStart: "1.5em",
       },
       List: {
@@ -991,7 +1003,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content code:not(:where(pre *, .not-content *))",
+    ".cookbook-markdown-content code:not(:where(pre *, .not-content *))",
     resolveComponentStyles("MarkdownInlineCode", {
       padding: "0.125rem 0.375rem",
       color: "#text",
@@ -1063,7 +1075,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content .td-code-block",
+    ".cookbook-markdown-content .td-code-block",
     resolveComponentStyles("MarkdownCodeBlock", {
       "$copy-button-size": "2rem",
       display: "block",
@@ -1158,7 +1170,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    '.sl-markdown-content pre[data-language="mermaid"]:not(.not-content *)',
+    '.cookbook-markdown-content pre[data-language="mermaid"]:not(.not-content *)',
     resolveComponentStyles("MermaidSource", {
       padding: "0.875rem 1rem",
       overflowX: "auto",
@@ -1171,7 +1183,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content .td-mermaid",
+    ".cookbook-markdown-content .td-mermaid",
     resolveComponentStyles("Mermaid", {
       display: "grid",
       placeItems: "center",
@@ -1213,7 +1225,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content .sl-heading-wrapper",
+    ".cookbook-markdown-content .cookbook-heading-wrapper",
     resolveComponentStyles("MarkdownHeading", {
       position: "relative",
       color: "#heading",
@@ -1231,7 +1243,7 @@ export default function GlobalStyles() {
       Heading5: { $: "&.level-h5", preset: "h5" },
       Heading6: { $: "&.level-h6", preset: "h6" },
       Link: {
-        $: "> .sl-anchor-link",
+        $: "> .cookbook-anchor-link",
         position: { "": "absolute", "@mobile": "relative" },
         insetBlockStart: {
           "": "((1lh - 1.75rem) / 2)",
@@ -1256,31 +1268,31 @@ export default function GlobalStyles() {
         transition: "color $transition, fill $transition, opacity $transition",
       },
       RevealedLink: {
-        $: "&:hover > .sl-anchor-link, > .sl-anchor-link:focus-visible",
+        $: "&:hover > .cookbook-anchor-link, > .cookbook-anchor-link:focus-visible",
         opacity: "1",
       },
       HoverLink: {
-        $: "> .sl-anchor-link:hover, > .sl-anchor-link:focus-visible",
+        $: "> .cookbook-anchor-link:hover, > .cookbook-anchor-link:focus-visible",
         color: "#accent-text",
         fill: "#surface-2-hover",
       },
       LinkIcon: {
-        $: "> .sl-anchor-link .sl-anchor-icon, > .sl-anchor-link svg",
+        $: "> .cookbook-anchor-link .cookbook-anchor-icon, > .cookbook-anchor-link svg",
         display: "block",
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
         blockSize: "clamp(1rem, 0.65em, 1.5rem)",
       },
       CopiedLink: {
-        $: '> .sl-anchor-link[data-copy-state="copied"]',
+        $: '> .cookbook-anchor-link[data-copy-state="copied"]',
         color: "#green-text",
         opacity: "1",
       },
       CopiedLinkIcon: {
-        $: '> .sl-anchor-link[data-copy-state="copied"] > .sl-anchor-icon',
+        $: '> .cookbook-anchor-link[data-copy-state="copied"] > .cookbook-anchor-icon',
         visibility: "hidden",
       },
       CopiedIcon: {
-        $: '> .sl-anchor-link[data-copy-state="copied"]::after',
+        $: '> .cookbook-anchor-link[data-copy-state="copied"]::after',
         content: '""',
         position: "absolute",
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
@@ -1564,7 +1576,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-menu-button",
+    ".cookbook-menu-button",
     resolveComponentStyles("MobileMenuToggle", {
       display: { "": "none", "@mobile": "flex" },
       alignItems: "center",
@@ -1610,7 +1622,7 @@ export default function GlobalStyles() {
   );
 
   useGlobalStyles(
-    ".sl-markdown-content:where(*)",
+    ".cookbook-markdown-content:where(*)",
     resolveComponentStyles("MarkdownTable", {
       Table: {
         $: "table",

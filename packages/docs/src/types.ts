@@ -563,6 +563,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ResponsiveWidth",
     "ResponsiveHeight",
     "Hidden",
+    "PrintHidden",
     "DesktopBlock",
     "DesktopFlex",
     "ScreenReaderOnly",
@@ -638,6 +639,8 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   Hero: [
     "Visual",
+    "DarkVisual",
+    "LightVisual",
     "Stack",
     "Copy",
     "Title",

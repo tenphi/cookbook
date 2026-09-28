@@ -41,7 +41,7 @@ class CookbookSidebarPane extends HTMLElement {
           this.getBoundingClientRect();
           this.setAttribute("data-open", "");
           for (const element of document.querySelectorAll<HTMLElement>(
-            ".header, .main-frame, .sl-skip-link",
+            ".header, .main-frame, .cookbook-skip-link",
           )) {
             this.#inert.set(element, element.inert);
             element.inert = true;

@@ -49,8 +49,8 @@ contrast. Browser checks complement the numeric diagnostics.
 
 ## Incompatible plugins
 
-Cookbook owns content routing and all rendered styles. Starlight plugins that
-read its docs collection or inject CSS cannot run in the Astro renderer. GitHub
+Cookbook owns content routing and all rendered styles. Plugins that assume a
+different docs collection or inject CSS cannot run in the renderer. GitHub
 alerts are supported directly; use Cookbook's graph and built-output checks
 for links. See [extending Cookbook](./plugins.md) for Astro Markdown plugins.
 

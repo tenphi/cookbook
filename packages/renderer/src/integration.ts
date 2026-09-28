@@ -767,12 +767,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             .replace(
               /<style>astro-island,astro-slot,astro-static-slot\{display:contents\}<\/style>/g,
               "",
-            )
-            .replace(
-              /\sstyle="--sl-icon-size:\s*([^;\"]+);?"/g,
-              ' width="$1" height="$1"',
-            )
-            .replace(/\sstyle="--depth:\s*([^;\"]+);?"/g, ' data-depth="$1"');
+            );
           assertTastyOutput(sanitized, relativePath);
           if (sanitized !== html) await writeFile(path, sanitized);
         }

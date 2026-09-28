@@ -40,7 +40,7 @@ function popover(element: HTMLElement) {
 
 function mount() {
   document.body.innerHTML =
-    '<a class="sl-skip-link" href="#main">Skip</a><header class="header"><button class="td-menu-button" popovertarget="cookbook__sidebar">Open</button></header><main class="main-frame" id="main"></main>';
+    '<a class="cookbook-skip-link" href="#main">Skip</a><header class="header"><button class="td-menu-button" popovertarget="cookbook__sidebar">Open</button></header><main class="main-frame" id="main"></main>';
   const pane = document.createElement("cookbook-sidebar-pane");
   pane.id = "cookbook__sidebar";
   pane.innerHTML =

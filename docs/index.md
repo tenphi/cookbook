@@ -11,8 +11,8 @@ hero:
     - text: Get started
       link: /getting-started/
       variant: primary
-    - text: See how it compares
-      link: /starlight-comparison/
+    - text: Explore architecture
+      link: /architecture/
       variant: secondary
 sidebar:
   order: 1

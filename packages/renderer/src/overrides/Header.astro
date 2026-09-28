@@ -98,14 +98,18 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
         />
       )
     }
-    <div class="td-header__search print:hidden">
+    <div class="td-header__search cookbook-print-hidden">
       {shouldRenderSearch && <Search />}
     </div>
     <HeaderLinks />
-    <div class="td-header__mobile-theme md:sl-hidden print:hidden">
+    <div
+      class="td-header__mobile-theme md:cookbook-hidden cookbook-print-hidden"
+    >
       <ThemeSelect />
     </div>
-    <div class="td-header__tools sl-hidden md:sl-flex print:hidden">
+    <div
+      class="td-header__tools cookbook-hidden md:cookbook-flex cookbook-print-hidden"
+    >
       <div class="td-header__social"><SocialIcons /></div>
       <ThemeSelect />
       <LanguageSelect />
@@ -114,7 +118,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
   {
     layout.tabs.length > 0 && (
       <TopNavigationRoot
-        className="td-top-tabs print:hidden"
+        className="td-top-tabs cookbook-print-hidden"
         aria-label={ui.primary}
         data-tasty-anatomy="TopNavigation"
       >

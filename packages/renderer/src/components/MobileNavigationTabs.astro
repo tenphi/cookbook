@@ -43,7 +43,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 {
   layout.tabs.length > 0 && (
     <MobileNavigationTabsRoot
-      className="td-mobile-tabs print:hidden"
+      className="td-mobile-tabs cookbook-print-hidden"
       aria-label={ui.sections}
       data-tasty-anatomy="MobileNavigationTabs"
     >
