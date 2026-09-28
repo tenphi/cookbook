@@ -11,8 +11,8 @@ hero:
     - text: Get started
       link: /getting-started/
       variant: primary
-    - text: Explore architecture
-      link: /architecture/
+    - text: Compare tools
+      link: /comparison/
       variant: secondary
 sidebar:
   order: 1
@@ -58,6 +58,7 @@ states, and named component styles.
 | I want to…                           | Start here                              | Then read                                                             |
 | ------------------------------------ | --------------------------------------- | --------------------------------------------------------------------- |
 | Start a site                         | [Getting started](./getting-started.md) | [Validate and deploy](./deployment.md)                                |
+| Choose a documentation tool          | [Compare tools](./comparison.md)        | [Getting started](./getting-started.md)                               |
 | Have an agent set it up              | [AI agent workflow](./ai-agents.md)     | [Customization rules](./customization-rules.md)                       |
 | Bring existing Markdown or an API    | [Content sources](./content-sources.md) | [Working examples](./examples.md)                                     |
 | Write pages and interactive examples | [Authoring](./authoring.mdx)            | [Mobile contents and hero images](./authoring.mdx#on-page-navigation) |

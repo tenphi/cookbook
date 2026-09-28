@@ -45,7 +45,7 @@ export default defineDocsConfig({
           "/",
           {
             label: "Start",
-            items: ["/getting-started", "/ai-agents"],
+            items: ["/getting-started", "/comparison", "/ai-agents"],
           },
           {
             label: "Author",
