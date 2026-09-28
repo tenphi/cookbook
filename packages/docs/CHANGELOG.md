@@ -1,5 +1,13 @@
 # @tenphi/docs
 
+## 0.18.2
+
+### Patch Changes
+
+- [#109](https://github.com/tenphi/cookbook/pull/109) [`716f515`](https://github.com/tenphi/cookbook/commit/716f515c462ede40aa66b34be38a485cc1e519c2) Thanks [@tenphi](https://github.com/tenphi)! - Keep primary button and hero logo fills brand-colored in dark mode with fixed Glaze palette roles. Link Glaze and Tasty from their first mentions in the styling overview.
+  Render Next first in the page navigation's source and keyboard order, with responsive placement in CSS and no client-side reordering.
+  Give inactive sidebar items a slightly softer semantic color than the shared secondary text, while retaining stronger high-contrast colors and a palette override.
+
 ## 0.18.1
 
 ### Patch Changes
