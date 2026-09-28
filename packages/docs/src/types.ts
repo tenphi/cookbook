@@ -313,6 +313,7 @@ export const COOKBOOK_PALETTE_NAMES = [
   "heading",
   "text-soft",
   "text-muted",
+  "sidebar-text",
   "surface-2-hover",
   "surface-2-pressed",
   "surface-3-hover",
@@ -542,6 +543,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   Pagination: [
     "Link",
+    "PreviousLink",
     "NextLink",
     "NextIcon",
     "NextLabel",
@@ -549,7 +551,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ActiveLink",
     "Title",
     "LoneNextLink",
-    "NativeIcon",
     "Icon",
     "PreviousIconRtl",
     "NextIconRtl",

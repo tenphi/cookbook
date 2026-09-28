@@ -126,7 +126,7 @@ Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
-`surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
+`surface-3`, `text`, `heading`, `text-soft`, `sidebar-text`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
 Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
@@ -160,9 +160,14 @@ Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
 pressed states build on that elevated surface without changing the border.
 Inputs stay on their surrounding surface so their border remains the visual
-boundary. Selected navigation uses the fixed-mode `accent-surface` and its
-paired `accent-surface-text`, so the brand fill does not drift toward the
-adaptive link color in dark mode.
+boundary. Primary buttons and selected navigation use the fixed-mode
+`accent-surface` and its paired light `accent-surface-text`. The brand fill
+keeps its polarity in dark mode while Glaze adjusts it to preserve label
+contrast.
+
+Page navigation keeps Next first in the keyboard order. It appears above
+Previous on narrow screens; wider layouts show Previous at the start and Next
+at the end.
 
 ## Design tokens
 
@@ -327,6 +332,10 @@ headings use a medium `610` weight and progressively gentle negative tracking.
 The separate `720` heading bold weight keeps emphasized heading text distinct.
 Navigation uses a lighter `450` weight with `580` for the current sidebar page,
 while smaller group labels establish hierarchy without oversized bold text.
+Inactive sidebar links use `sidebar-text`, a slightly softer blend of `text-soft`
+and the surface. In high-contrast mode it matches `text-soft`. Set
+`theme.palette['sidebar-text']` to adjust that color without changing other
+secondary text, or `theme.styles.Sidebar.Control` to customize the control.
 Top-level sidebar groups are always-visible section headings with their direct
 links aligned beneath them. Deeper groups expand on click or keyboard activation;
 the current group and its ancestors start open. Groups can have a parent-page
@@ -493,7 +502,7 @@ sub-elements:
 | `Banner`                | `Link`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `SkipLink`              | `Focus`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `Search`                | `Status`, `Dialog`, `CloseIcon`, `OpenDialog`, `Backdrop`, `Frame`, `Container`, `Close`, `HoverClose`, `ActiveClose`                                                                                                                                                                                                                                                                                                                                                                                          |
-| `Pagination`            | `Link`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `NativeIcon`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                        |
+| `Pagination`            | `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                      |
 | `Markdown`              | `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`                                                                                                                                                                                                                                  |
 | `MermaidSource`         | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `StarlightAside`        | `Note`, `Tip`, `Caution`, `Danger`, `Title`, `Icon`, `FirstContent`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -666,6 +675,7 @@ separately for square artwork; the default Cookbook icon set remains in place
 until changed. `Logo` remains available as the standalone Cookbook book mark.
 
 The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+The default homepage hero artwork also uses `logo-surface` for its brand fill.
 Both default to Glaze `mode: "fixed"`: the brand background and light book keep
 their polarity in dark mode while respecting Glaze's tone boundaries and
 high-contrast settings. The mark-to-background contrast floor is 3:1 normally
@@ -1109,7 +1119,7 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | Area                | Roles                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
-| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
+| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`, `sidebar-text`                                                                                                                                 |
 | Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
 | Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
@@ -1135,9 +1145,10 @@ backgrounds, typography, or layout.
 A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
 pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
 use an absolute tone for reading text, reduce saturation when needed, and keep
-`autoFlip` enabled when the solver needs to cross its base. A fixed middle-tone
-button fill may make its label's contrast impossible. Cookbook's default
-brand fill adapts to avoid this, including for orange, yellow, and pale brands.
+`autoFlip` enabled when the solver needs to cross its base. Cookbook's default
+fixed brand fill is anchored to a light label and darkens when needed to meet
+contrast, including for orange, yellow, and pale brands. A custom fixed
+middle-tone fill can make its label's contrast impossible.
 Focus uses a WCAG 3:1 floor (4.5:1 in high contrast) against the surface ramp.
 
 Keep contrast requirements when adjusting colors. Extreme custom tone windows,

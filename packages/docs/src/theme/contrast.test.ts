@@ -4,6 +4,44 @@ import { measureColorContrast } from "./contrast.js";
 import { resolveColorTheme } from "./palette.js";
 
 describe("semantic contrast diagnostics", () => {
+  it("keeps sidebar text subtly quieter while preserving readable contrast", () => {
+    const theme = resolveColorTheme();
+    const sidebar = theme.colorTokens["#sidebar-text"]!;
+    const soft = theme.colorTokens["#text-soft"]!;
+    const surface = theme.colorTokens["#surface"]!;
+    for (const state of Object.keys(sidebar)) {
+      const background = glaze
+        .color({
+          from: surface[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const sidebarColor = glaze
+        .color({
+          from: sidebar[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const softColor = glaze
+        .color({
+          from: soft[state]!,
+          mode: "static",
+        })
+        .resolve().light;
+      const sidebarContrast = measureColorContrast(
+        sidebarColor,
+        background,
+        "wcag",
+      );
+      const softContrast = measureColorContrast(softColor, background, "wcag");
+      expect(sidebarContrast).toBeGreaterThanOrEqual(
+        state.includes("contrast=more") ? 7 : 4.5,
+      );
+      expect(sidebarContrast).toBeLessThanOrEqual(softContrast);
+      if (!state.includes("contrast=more"))
+        expect(sidebarContrast).toBeLessThan(softContrast);
+    }
+  });
   it.each([
     "#d97706",
     "#315efb",
@@ -26,14 +64,19 @@ describe("semantic contrast diagnostics", () => {
       theme.colorTokens["#logo-mark"]!,
     )) {
       const surface = theme.colorTokens["#logo-surface"]![state]!;
-      const markLightness = variantToOkhsl(
-        glaze.color({ from: mark, mode: "static" }).resolve().light,
-      ).l;
-      const surfaceLightness = variantToOkhsl(
-        glaze.color({ from: surface, mode: "static" }).resolve().light,
-      ).l;
-      expect(markLightness).toBeGreaterThan(surfaceLightness);
+      expect(colorLightness(mark)).toBeGreaterThan(colorLightness(surface));
     }
+    const darkState = Object.keys(theme.colorTokens["#accent-surface"]!).find(
+      (state) =>
+        state.includes("theme=dark") && !state.includes("contrast=more"),
+    )!;
+    for (const fill of ["#logo-surface", "#accent-surface"])
+      expect(colorLightness(theme.colorTokens[fill]![darkState]!)).toBeLessThan(
+        0.7,
+      );
+    expect(
+      colorLightness(theme.colorTokens["#accent-surface-text"]![darkState]!),
+    ).toBeGreaterThan(0.9);
     for (const mode of [
       "light",
       "dark",
@@ -138,3 +181,9 @@ describe("semantic contrast diagnostics", () => {
     ).toBe(true);
   });
 });
+
+function colorLightness(color: string): number {
+  return variantToOkhsl(
+    glaze.color({ from: color, mode: "static" }).resolve().light,
+  ).l;
+}
