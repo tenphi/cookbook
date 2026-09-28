@@ -237,7 +237,9 @@ function resolveToc(
   frontmatter: Record<string, any>,
   content: Content,
 ): { items: TocItem[] } | undefined {
-  const option = frontmatter.tableOfContents ?? content.tableOfContents;
+  const option =
+    frontmatter.tableOfContents ??
+    (frontmatter.template === "splash" ? false : content.tableOfContents);
   if (option === false) return undefined;
   const min = typeof option === "object" ? (option.minHeadingLevel ?? 2) : 2;
   const max = typeof option === "object" ? (option.maxHeadingLevel ?? 3) : 3;

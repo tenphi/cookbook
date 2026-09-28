@@ -6,9 +6,18 @@ export default defineDocsConfig({
   site: {
     title: "Cookbook",
     version: cookbookPackage.version,
-    description: "Repository-native documentation for Astro.",
+    description:
+      "Build a static Astro documentation site from existing files with a theme that fits your product.",
     url: "https://cookbook.tenphi.me",
     repository: "https://github.com/tenphi/cookbook",
+    seo: {
+      image: {
+        src: "/social.jpg",
+        alt: "Cookbook documentation that stays with the code and fits your product.",
+        width: 1200,
+        height: 630,
+      },
+    },
     headerLinks: [
       { label: "Examples", link: "/examples" },
       {
@@ -101,6 +110,9 @@ export default defineDocsConfig({
       "$layout-width": "87.5rem",
       "$content-width": "58rem",
       "$sidebar-width": "17.5rem",
+    },
+    styles: {
+      Hero: { Visual: { order: "2" } },
     },
   },
 });

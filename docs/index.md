@@ -1,12 +1,14 @@
 ---
 title: Cookbook
-description: Build a customizable static documentation site from the Markdown your project already owns.
+description: Build a static Astro documentation site from your repository or a published npm package, with a theme that fits your product.
 template: splash
+seo:
+  title: Cookbook — docs that stay with the code and fit your product
 hero:
   title: Documentation that stays with the code.
-  tagline: Turn repository Markdown or a locked npm package into an Astro docs site that fits your design system—without creating a second source of truth.
+  tagline: Build a static Astro docs site from repository Markdown or a locked npm package, then shape its colors, typography, and components to fit your product.
   image:
-    html: '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'
+    html: '<svg xmlns="http://www.w3.org/2000/svg" width="176" height="176" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'
   actions:
     - text: Get started
       link: /getting-started/
@@ -18,82 +20,63 @@ sidebar:
   order: 1
 ---
 
-## Keep documentation close to its source
+## Start with your repository
 
-Cookbook combines [Astro](https://astro.build) and
-an Astro renderer with repository-aware content,
-strict validation, local Pagefind search, and a theme powered by
-[Tasty](https://tasty.style) and [Glaze](https://glaze.tenphi.me).
-
-### Repository-native
-
-Keep `README.md`, `docs/`, and local assets where they already live. Cookbook
-transforms sources in memory and never rewrites them.
-
-### Package-first
-
-Build a reproducible site from the files actually published to npm—without
-cloning the package repository or running its lifecycle scripts.
-
-### Strict and static
-
-Broken links, missing assets, duplicate routes, invalid navigation, and unsafe
-paths fail with source locations. The result is prerendered HTML and CSS ready
-for GitHub Pages or any static host.
-
-### Styling that fits your product
-
-[Glaze](https://glaze.tenphi.me) turns a brand and semantic palette into light, dark, and high-contrast
-colors with contrast targets. [Tasty](https://tasty.style) applies those color roles alongside shared
-tokens and typography presets, so the docs can follow your design system.
-State maps keep hover, focus, and responsive values beside the styles they
-change. Partial `theme.styles` overrides merge before CSS extraction, letting
-you adjust supported components without selector chains or `!important`.
-The browser receives static CSS, with no Tasty or Glaze styling runtime.
-See the [theme reference](./theme-and-components.md) for the palette, presets,
-states, and named component styles.
-
-## Choose a path
-
-| I want to…                           | Start here                              | Then read                                                             |
-| ------------------------------------ | --------------------------------------- | --------------------------------------------------------------------- |
-| Start a site                         | [Getting started](./getting-started.md) | [Validate and deploy](./deployment.md)                                |
-| Choose a documentation tool          | [Compare tools](./comparison.md)        | [Getting started](./getting-started.md)                               |
-| Have an agent set it up              | [AI agent workflow](./ai-agents.md)     | [Customization rules](./customization-rules.md)                       |
-| Bring existing Markdown or an API    | [Content sources](./content-sources.md) | [Working examples](./examples.md)                                     |
-| Write pages and interactive examples | [Authoring](./authoring.mdx)            | [Mobile contents and hero images](./authoring.mdx#on-page-navigation) |
-| Change brand, fonts, or logo         | [Configuration recipes](./recipes.md)   | [Theme reference](./theme-and-components.md)                          |
-| Add a Markdown extension             | [Extend Cookbook](./plugins.md)         | [Architecture](./architecture.md)                                     |
-| Publish for people and agents        | [Deployment](./deployment.md)           | [Publishing metadata](./publishing.md)                                |
-| Update or fix an existing site       | [Upgrade Cookbook](./migration.md)      | [Troubleshooting](./troubleshooting.md)                               |
-
-The **Guide** follows these tasks. **Reference** contains the complete
-[configuration](./configuration.md), [theme and component anatomy](./theme-and-components.md),
-[publishing controls](./publishing.md), and [CLI](./cli.md).
-
-To start immediately:
+Run this from a project that already has a `README.md` or `docs/` directory:
 
 ```sh
-npm create @tenphi/cookbook@latest my-docs -- --yes
-cd my-docs
+npm create @tenphi/cookbook@latest docs-site -- --source . --yes
+cd docs-site
 npm run dev
 ```
 
-Existing Astro projects can use `npx astro add @tenphi/cookbook`. See
-[Getting started](./getting-started.md) for repository and npm package sources.
+Cookbook reads those files where they live. You can also
+[start a new site](./getting-started.md#create-your-first-site),
+[document the exact files published to npm](./getting-started.md#document-a-published-npm-package),
+or [add Cookbook to an Astro project](./getting-started.md#add-to-an-existing-astro-project).
 
-## See the product, not a mock-up
+## This site is the example
 
-The pages you are reading live in this repository's root `docs/` directory.
-The small Astro app under `apps/reference` points the integration at the
-repository root, validates this content through the same graph-backed route
-pipeline used by consumer sites, builds the site, and publishes the result to
-GitHub Pages. There is no copied documentation tree.
+The page you're reading comes from this repository's
+[docs/index.md](https://github.com/tenphi/cookbook/blob/main/docs/index.md).
+A small [Astro app](https://github.com/tenphi/cookbook/tree/main/apps/reference)
+builds directly from the root `docs/` directory. Its navigation, search, code
+controls, edit links, and Git timestamps are available to every Cookbook site.
 
-This homepage also uses Cookbook's public `template: splash` and `hero`
-frontmatter. The heading permalinks, code-copy controls, edit links, and Git
-timestamps throughout the guide are the same capabilities available to every
-Cookbook site.
+## Content and design on your terms
 
-See [Architecture](./architecture.md) for the package boundaries behind the
-site.
+### Keep the source where it belongs
+
+Use a repository's Markdown and local assets without copying them into an Astro
+content tree. Cookbook can also read OpenAPI specs or the documentation inside an
+npm artifact pinned to its exact version and integrity.
+[Explore content sources](./content-sources.md).
+
+### Shape the site through configuration
+
+Start with a brand color, then configure semantic palettes, fonts, typography,
+and named component parts through [Tasty](https://tasty.style) and
+[Glaze](https://glaze.tenphi.me). Partial `theme.styles` overrides merge with
+Cookbook's defaults before CSS extraction, so the browser receives static CSS.
+[Explore the theme](./theme-and-components.md).
+
+### Catch drift before publishing
+
+Broken links, missing assets, duplicate routes, and invalid navigation fail with
+source-aware errors. The result is prerendered HTML with local search, ready for
+any static host. [See the validation workflow](./quality-checks.md).
+
+## Explore the guide
+
+- [Getting started](./getting-started.md) covers repositories, npm packages, and
+  existing Astro projects.
+- [Compare documentation tools](./comparison.md) explains Cookbook's content and
+  customization model alongside other options.
+- [Working examples](./examples.md) show repository, monorepo, package, and
+  shared-theme configurations.
+- [Authoring](./authoring.mdx) covers pages, components, and interactive examples.
+- [Deployment](./deployment.md) covers validation and static hosting.
+
+For agent-assisted setup, see the [AI agent workflow](./ai-agents.md). The
+[configuration reference](./configuration.md), [publishing controls](./publishing.md),
+and [CLI reference](./cli.md) cover the full set of options.

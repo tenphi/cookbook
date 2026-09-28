@@ -45,4 +45,45 @@ describe("owned route context", () => {
     expect(route.sidebar[0]).toMatchObject({ type: "link", isCurrent: false });
     expect(route.sidebar[1]).toMatchObject({ type: "link", isCurrent: true });
   });
+
+  it("omits the contents sidebar on splash pages unless requested", () => {
+    const headings = [{ depth: 2, slug: "features", text: "Features" }];
+    const content = {
+      routes,
+      base: "/",
+      site: { title: "Docs" },
+      tableOfContents: { maxHeadingLevel: 3 },
+    };
+    const splash = createRouteContext({
+      pathname: "/",
+      frontmatter: { title: "Home", template: "splash" },
+      headings,
+      layout: resolveNavigationLayout(["/", "/guide"]),
+      content,
+    });
+    expect(splash.hasSidebar).toBe(false);
+    expect(splash.toc).toBeUndefined();
+
+    const optedIn = createRouteContext({
+      pathname: "/",
+      frontmatter: {
+        title: "Home",
+        template: "splash",
+        tableOfContents: { maxHeadingLevel: 3 },
+      },
+      headings,
+      layout: resolveNavigationLayout(["/", "/guide"]),
+      content,
+    });
+    expect(optedIn.toc?.items).toHaveLength(1);
+
+    const guide = createRouteContext({
+      pathname: "/guide/",
+      frontmatter: { title: "Guide" },
+      headings,
+      layout: resolveNavigationLayout(["/", "/guide"]),
+      content,
+    });
+    expect(guide.toc?.items).toHaveLength(1);
+  });
 });

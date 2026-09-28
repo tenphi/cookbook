@@ -17,7 +17,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { dirname, extname, join, resolve } from "node:path";
+import { dirname, extname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import mdx from "@astrojs/mdx";
 import * as pagefind from "pagefind";
@@ -788,11 +788,29 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               );
             const added = await index.addDirectory({ path: output });
             if (added.errors.length) throw new Error(added.errors.join("\n"));
-            const written = await index.writeFiles({
-              outputPath: join(output, "pagefind"),
-            });
-            if (written.errors.length)
-              throw new Error(written.errors.join("\n"));
+            const generated = await index.getFiles();
+            if (generated.errors.length)
+              throw new Error(generated.errors.join("\n"));
+            if (
+              !generated.files.some(
+                (file) => file.path === "pagefind-entry.json",
+              )
+            )
+              throw new Error("Pagefind did not produce a search index.");
+            const pagefindOutput = join(output, "pagefind");
+            // Write the completed buffers before closing Pagefind's service.
+            // Its disk writer can report success before every file is flushed.
+            for (const file of generated.files) {
+              const target = resolve(pagefindOutput, file.path);
+              if (!target.startsWith(`${pagefindOutput}${sep}`))
+                throw new Error(`Invalid Pagefind output path: ${file.path}`);
+              if (!file.content.byteLength)
+                throw new Error(
+                  `Pagefind produced an empty file: ${file.path}`,
+                );
+              await mkdir(dirname(target), { recursive: true });
+              await writeFile(target, file.content);
+            }
           } finally {
             await pagefind.close();
           }
