@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.20.0
+
+### Minor Changes
+
+- [#118](https://github.com/tenphi/cookbook/pull/118) [`17821f8`](https://github.com/tenphi/cookbook/commit/17821f8b17f5175c0b98d39862bf2c5250133533) Thanks [@tenphi](https://github.com/tenphi)! - Generate a themed social preview image for documentation sites without a configured `site.seo.image`, and use it for Open Graph and X cards while preserving site and page image overrides.
+
 ## 0.19.2
 
 ### Patch Changes
