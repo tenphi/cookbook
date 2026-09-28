@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.19.2
+
+### Patch Changes
+
+- [#116](https://github.com/tenphi/cookbook/pull/116) [`c0652bc`](https://github.com/tenphi/cookbook/commit/c0652bca6582fb5938c0eb539bb7494d78ff8793) Thanks [@tenphi](https://github.com/tenphi)! - Align heading copy-link icons with the heading text at responsive sizes and custom heading presets.
+
 ## 0.19.1
 
 ### Patch Changes
