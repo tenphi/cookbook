@@ -34,10 +34,19 @@ Without a template, Cookbook renders `Page | Site`, or just `Site` when both nam
 match. Templates require `{title}` and may use `{site}`. A page's `seo.title` is a
 complete document title, overriding the template; its visible heading is unchanged.
 
-Social images accept an absolute HTTP(S) URL or a root-relative public asset path.
-Provide meaningful `alt` text. Dimensions are optional but must be provided together.
-A page inherits the site image, can replace it, or can set `image: false`. Pages
-without an image use a `summary` card; an image enables `summary_large_image`.
+When no site image is configured, Cookbook generates a 1200×630 PNG preview from
+the site title, description, public hostname, and light theme colors. It emits
+`og:image` and `twitter:image` for every page using that preview. Set `site.url`
+(or Astro's `site`) so those tags contain an absolute URL for social crawlers.
+The generated image lives at `/_cookbook/social-preview.png` under the deployment
+base and does not modify `public/`.
+
+Set `site.seo.image` to replace the generated preview with your own image, or
+`false` to disable the site-wide image. Custom images accept an absolute HTTP(S)
+URL or a root-relative public asset path. Provide meaningful `alt` text.
+Dimensions are optional but must be provided together. A page inherits the site
+image, can replace it, or can set `image: false` to use a plain `summary` card.
+Pages with an image use `summary_large_image`.
 
 ```yaml
 ---

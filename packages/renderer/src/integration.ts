@@ -68,6 +68,10 @@ import {
 import { resolveComponentOverrides } from "./component-overrides.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
+import {
+  createDefaultSocialImage,
+  type GeneratedSocialImage,
+} from "./social-image.js";
 import { outputPathForPublicAsset } from "./output-path.js";
 import { agentPagePath } from "./page-metadata.js";
 import { renderAgentMarkdown } from "@tenphi/docs";
@@ -251,6 +255,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
+  let socialImage: GeneratedSocialImage | undefined;
   let fontAssets: FontAsset[] = [];
   let siteLogo: SiteLogoSet | undefined;
 
@@ -399,6 +404,14 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           }),
         );
         siteIcons = await loadSiteIcons();
+        socialImage =
+          graphConfig?.site?.seo?.image === undefined
+            ? await createDefaultSocialImage(
+                graphConfig?.site ?? {},
+                base,
+                docsTheme.colors,
+              )
+            : undefined;
         siteLogo = await resolveSiteLogo(
           projectRoot!,
           base,
@@ -534,7 +547,15 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                     routes: loaded.routes,
                     redirects: loaded.redirects,
                     tableOfContents: loaded.config.tableOfContents,
-                    site: documentedSite(loaded),
+                    site: socialImage
+                      ? {
+                          ...documentedSite(loaded),
+                          seo: {
+                            ...loaded.config.site.seo,
+                            image: socialImage.image,
+                          },
+                        }
+                      : documentedSite(loaded),
                     base: loaded.config.build.base,
                     search:
                       loaded.config.search.enabled ||
@@ -713,6 +734,16 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             response.end(request.method === "HEAD" ? undefined : siteIcon.body);
             return;
           }
+          if (socialImage?.publicPath === pathname) {
+            response.statusCode = 200;
+            response.setHeader("Content-Type", socialImage.contentType);
+            response.setHeader("Content-Length", socialImage.body.byteLength);
+            response.setHeader("Cache-Control", "no-cache");
+            response.end(
+              request.method === "HEAD" ? undefined : socialImage.body,
+            );
+            return;
+          }
           if (!pathname.includes("/_tasty-assets/")) {
             next();
             return;
@@ -837,6 +868,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         }
         for (const asset of [
           ...(siteIcons?.assets ?? []),
+          ...(socialImage ? [socialImage] : []),
           ...fontAssets,
           ...(siteLogo?.assets ?? []),
         ]) {

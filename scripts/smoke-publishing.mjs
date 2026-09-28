@@ -33,12 +33,6 @@ try {
       ],
       seo: {
         breadcrumbs: true,
-        image: {
-          src: "/social.svg",
-          alt: "Acme docs",
-          width: 1200,
-          height: 630,
-        },
       },
     },
     locales: {
@@ -56,10 +50,6 @@ try {
   await mkdir(join(fixture, "docs/fr/v1"), { recursive: true });
   await mkdir(join(fixture, "docs/v1"), { recursive: true });
   await mkdir(join(fixture, "public"));
-  await writeFile(
-    join(fixture, "public/social.svg"),
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"></svg>',
-  );
   for (const [name, body] of Object.entries({
     index: "# Acme",
     guide: "# Guide\n\nA useful guide.\n\n## Setup\n\n```js\nconst x=1;\n```",
@@ -126,8 +116,18 @@ try {
   );
   assert.equal(
     guide.querySelector('meta[property="og:image"]').content,
-    "https://docs.example.com/manual/social.svg",
+    "https://docs.example.com/manual/_cookbook/social-preview.png",
   );
+  assert.equal(
+    guide.querySelector('meta[name="twitter:image"]').content,
+    "https://docs.example.com/manual/_cookbook/social-preview.png",
+  );
+  const socialPreview = await readFile(
+    join(fixture, "dist/_cookbook/social-preview.png"),
+  );
+  assert.equal(socialPreview.subarray(1, 4).toString(), "PNG");
+  assert.equal(socialPreview.readUInt32BE(16), 1200);
+  assert.equal(socialPreview.readUInt32BE(20), 630);
   assert.equal(
     guide.querySelector('meta[name="twitter:card"]').content,
     "summary_large_image",
@@ -199,11 +199,29 @@ try {
   );
   config.site.seo.index = false;
   config.site.seo.titleTemplate = "{title} — {site}";
+  config.site.seo.image = {
+    src: "/social.svg",
+    alt: "Acme docs",
+    width: 1200,
+    height: 630,
+  };
+  await writeFile(
+    join(fixture, "public/social.svg"),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"></svg>',
+  );
   await writeConfig();
   await build();
   await checkBuild();
   const preview = await page("guide");
   assert.equal(preview.title, "Guide — Acme");
+  assert.equal(
+    preview.querySelector('meta[property="og:image"]').content,
+    "https://docs.example.com/manual/social.svg",
+  );
+  await assert.rejects(
+    readFile(join(fixture, "dist/_cookbook/social-preview.png")),
+    { code: "ENOENT" },
+  );
   assert.equal(
     preview.querySelector("meta[name=robots]").content,
     "noindex, follow",
@@ -219,6 +237,20 @@ try {
     JSON.parse(
       await readFile(join(fixture, "dist/_cookbook/publishing.json"), "utf8"),
     ).pages.every((p) => !p.index && !p.sitemap),
+  );
+  config.site.seo.image = false;
+  await writeConfig();
+  await build();
+  await checkBuild();
+  const withoutImage = await page("guide");
+  assert.ok(!withoutImage.querySelector('meta[property="og:image"]'));
+  assert.equal(
+    withoutImage.querySelector('meta[name="twitter:card"]').content,
+    "summary",
+  );
+  await assert.rejects(
+    readFile(join(fixture, "dist/_cookbook/social-preview.png")),
+    { code: "ENOENT" },
   );
   await Promise.all(windows.map((w) => w.happyDOM.close()));
   console.log(
