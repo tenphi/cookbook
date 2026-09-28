@@ -293,7 +293,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
   definitions["syntax-bg"] = {
     tone: 100,
     saturation: 0.08,
-    darkSaturation: 0.25,
+    darkSaturation: 0.035,
     mode: "auto",
   };
   definitions["syntax-text"] = {

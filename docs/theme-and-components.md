@@ -1197,8 +1197,9 @@ snippets. The padding follows the `code` preset's line height. Override it with
 Shiki classifies code; Tasty renders every token using Glaze's semantic syntax
 colors. Customize token rules with `theme.styles.SyntaxHighlight`, or their
 colors with `theme.palette` (for example `syntax-keyword`). The default
-`syntax-bg` stays white in light mode and takes a restrained hue from the brand
-in dark mode. Set `theme.palette["syntax-bg"]` to give code its own color seed;
+`syntax-bg` stays white in light mode and takes a slight brand-hued tint, close
+to the page background's saturation, in dark mode. Set
+`theme.palette["syntax-bg"]` to give code its own color seed;
 syntax text and token contrast resolve against that surface. Code fences, including
 MDX and diff blocks, use classes without inline style attributes. Custom Shiki
 transformers should emit classes; unsupported inline declarations fail with a

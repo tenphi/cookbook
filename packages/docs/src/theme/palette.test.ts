@@ -22,6 +22,18 @@ describe("shared Glaze palette graph", () => {
     expect(blueBackground[dark]).toMatch(/^oklch\(0\.\d+ 0\.\d+ 26\d/);
     expect(orangeBackground[dark]).toMatch(/^oklch\(0\.\d+ 0\.\d+ 5\d/);
     expect(blueBackground[dark]).not.toBe(orangeBackground[dark]);
+    const reference = resolveColorTheme({
+      brand: { from: "okhsl(266 68% 48%)" },
+      palette: { surface: { tone: 98, saturation: 0.05 } },
+    });
+    const chroma = (value: string) =>
+      Number(value.match(/^oklch\([^ ]+ ([^ ]+)/)![1]);
+    expect(
+      Math.abs(
+        chroma(reference.colorTokens["#syntax-bg"]![dark]!) -
+          chroma(reference.colorTokens["#surface"]![dark]!),
+      ),
+    ).toBeLessThan(0.002);
     expect(
       resolveColorTheme({
         brand: { from: "#315efb" },
