@@ -522,10 +522,12 @@ and mobile menu. On wider layouts, heading permalinks sit to the left of the
 heading and are revealed on heading hover or keyboard focus. On mobile they
 stay visible and inline so the target is not clipped by the narrower content
 gutter. Customize the behavior with `MarkdownHeading.Link`,
-`MarkdownHeading.RevealedLink`, and `MarkdownHeading.LinkIcon`. Activating a
-heading link copies the full page URL with that section’s fragment, without
-scrolling or changing the current URL. A checkmark and screen-reader status
-confirm the copy; clipboard failures are announced. Modified clicks and links
+`MarkdownHeading.RevealedLink`, and `MarkdownHeading.LinkIcon`. The `#` icon
+scales with its heading and stays centered in the link target across heading
+levels and screen widths. Activating a heading link copies the full page URL
+with that section’s fragment without scrolling or changing the current URL. A
+checkmark and screen-reader status confirm the copy; clipboard failures are
+announced. Modified clicks and links
 without JavaScript retain native anchor behavior. Customize the confirmation
 with `MarkdownHeading.CopiedLink`, `MarkdownHeading.CopiedLinkIcon` (the hidden
 original icon), and `MarkdownHeading.CopiedIcon` (the checkmark).
