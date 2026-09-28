@@ -1,0 +1,29 @@
+---
+const { dir, pagination } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+---
+
+{
+  (next || prev) && (
+    <div class="pagination-links" dir={dir} data-tasty-anatomy="Pagination">
+      {next && (
+        <a href={next.href} rel="next">
+          <span>
+            {Astro.locals.t("page.nextLink")}
+            <br />
+            <span class="link-title">{next.label}</span>
+          </span>
+        </a>
+      )}
+      {prev && (
+        <a href={prev.href} rel="prev">
+          <span>
+            {Astro.locals.t("page.previousLink")}
+            <br />
+            <span class="link-title">{prev.label}</span>
+          </span>
+        </a>
+      )}
+    </div>
+  )
+}

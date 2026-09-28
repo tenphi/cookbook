@@ -126,7 +126,7 @@ Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
 Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
-`surface-3`, `text`, `heading`, `text-soft`, `border`, `border-strong`, `accent-text`,
+`surface-3`, `text`, `heading`, `text-soft`, `sidebar-text`, `border`, `border-strong`, `accent-text`,
 `accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
 Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
@@ -160,9 +160,14 @@ Interactive controls step up exactly one surface level: a control on `surface`
 uses `surface-2`, while a control on `surface-2` uses `surface-3`. Hover and
 pressed states build on that elevated surface without changing the border.
 Inputs stay on their surrounding surface so their border remains the visual
-boundary. Selected navigation uses the fixed-mode `accent-surface` and its
-paired `accent-surface-text`, so the brand fill does not drift toward the
-adaptive link color in dark mode.
+boundary. Primary buttons and selected navigation use the fixed-mode
+`accent-surface` and its paired light `accent-surface-text`. The brand fill
+keeps its polarity in dark mode while Glaze adjusts it to preserve label
+contrast.
+
+Page navigation keeps Next first in the keyboard order. It appears above
+Previous on narrow screens; wider layouts show Previous at the start and Next
+at the end.
 
 ## Design tokens
 
@@ -327,6 +332,10 @@ headings use a medium `610` weight and progressively gentle negative tracking.
 The separate `720` heading bold weight keeps emphasized heading text distinct.
 Navigation uses a lighter `450` weight with `580` for the current sidebar page,
 while smaller group labels establish hierarchy without oversized bold text.
+Inactive sidebar links use `sidebar-text`, a slightly softer blend of `text-soft`
+and the surface. In high-contrast mode it matches `text-soft`. Set
+`theme.palette['sidebar-text']` to adjust that color without changing other
+secondary text, or `theme.styles.Sidebar.Control` to customize the control.
 Top-level sidebar groups are always-visible section headings with their direct
 links aligned beneath them. Deeper groups expand on click or keyboard activation;
 the current group and its ancestors start open. Groups can have a parent-page
@@ -357,6 +366,53 @@ Starlight-rendered surfaces use the same Tasty style trees through the global
 bridge. Customize either kind by name under `theme.styles`; the configuration
 is resolved before CSS generation, so this is not a selector-based CSS
 override.
+
+> **Direct styles, without a specificity battle.** Cookbook merges your partial
+> style object with the component's base styles before Tasty extracts CSS. The
+> generated stylesheet reflects that result; changing a supported property
+> does not add a competing rule just to beat the original. You can customize
+> existing elements without long selectors or `!important`.
+
+Start with the area you want to change, then use the complete sub-element table
+below to find its exact anatomy:
+
+| Page area                     | Style names to inspect                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| Header, title, and navigation | `HeaderFrame`, `StarlightHeader`, `SiteLogo`, `HeaderLinks`, `TopNavigation`         |
+| Sidebar and mobile menu       | `Sidebar`, `MobileMenuToggle`, `MobileNavigationTabs`, `MobileMenuFooter`            |
+| Article text and headings     | `Markdown`, `MarkdownHeading`, `Heading`, `MainContent`                              |
+| Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid` |
+| Search                        | `SearchButton`, `Search`, `SearchResults`                                            |
+| Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                  |
+| Cards, notes, and tabs        | `Card`, `StarlightCard`, `StarlightAside`, `Tabs`                                    |
+| Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                 |
+
+For example, this changes a typography role and one named element without
+copying a component's full style tree:
+
+```ts
+theme: {
+  presets: { h2: { fontSize: "1.75rem" } },
+  styles: {
+    Sidebar: {
+      LinkLabel: {
+        preset: "body",
+        whiteSpace: { "": "nowrap", "@mobile": "normal" }
+      }
+    }
+  }
+}
+```
+
+The `@mobile` value sits with the default value in one Tasty state map. Shared
+tokens and presets keep the component aligned with the rest of the site, while
+Glaze resolves semantic colors across the configured schemes and contrast
+modes.
+
+In a generated site, run `npm run validate` (or the matching package manager's
+command) after editing `docs.config.ts`. It checks TypeScript theme properties,
+then runs Cookbook's preflight and production output checks. A misspelled
+preset or built-in sub-element property fails type checking.
 
 Provide only the root and named
 [sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
@@ -446,7 +502,7 @@ sub-elements:
 | `Banner`                | `Link`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `SkipLink`              | `Focus`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `Search`                | `Status`, `Dialog`, `CloseIcon`, `OpenDialog`, `Backdrop`, `Frame`, `Container`, `Close`, `HoverClose`, `ActiveClose`                                                                                                                                                                                                                                                                                                                                                                                          |
-| `Pagination`            | `Link`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `NativeIcon`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                        |
+| `Pagination`            | `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`                                                                                                                                                                                                                                                                                                                                                      |
 | `Markdown`              | `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`                                                                                                                                                                                                                                  |
 | `MermaidSource`         | None                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `StarlightAside`        | `Note`, `Tip`, `Caution`, `Danger`, `Title`, `Icon`, `FirstContent`                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -492,6 +548,10 @@ same.
 Register custom names and their partial Tasty objects in `theme.customStyles`.
 Built-in names belong in `theme.styles` and reject misspelled sub-elements.
 Custom names can also target a matching user-authored `data-tasty-anatomy` attribute.
+The name must match the string passed to `defineComponent()` or
+`resolveComponentStyles()`, or the `data-tasty-anatomy` value. A production
+build warns when a configured custom name has no matching component style
+resolver or rendered anatomy attribute.
 
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static
@@ -615,6 +675,7 @@ separately for square artwork; the default Cookbook icon set remains in place
 until changed. `Logo` remains available as the standalone Cookbook book mark.
 
 The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+The default homepage hero artwork also uses `logo-surface` for its brand fill.
 Both default to Glaze `mode: "fixed"`: the brand background and light book keep
 their polarity in dark mode while respecting Glaze's tone boundaries and
 high-contrast settings. The mark-to-background contrast floor is 3:1 normally
@@ -1058,7 +1119,7 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | Area                | Roles                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
-| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`                                                                                                                                                 |
+| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`, `sidebar-text`                                                                                                                                 |
 | Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
 | Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
@@ -1084,9 +1145,10 @@ backgrounds, typography, or layout.
 A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
 pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
 use an absolute tone for reading text, reduce saturation when needed, and keep
-`autoFlip` enabled when the solver needs to cross its base. A fixed middle-tone
-button fill may make its label's contrast impossible. Cookbook's default
-brand fill adapts to avoid this, including for orange, yellow, and pale brands.
+`autoFlip` enabled when the solver needs to cross its base. Cookbook's default
+fixed brand fill is anchored to a light label and darkens when needed to meet
+contrast, including for orange, yellow, and pale brands. A custom fixed
+middle-tone fill can make its label's contrast impossible.
 Focus uses a WCAG 3:1 floor (4.5:1 in high contrast) against the surface ramp.
 
 Keep contrast requirements when adjusting colors. Extreme custom tone windows,

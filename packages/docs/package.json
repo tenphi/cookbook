@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/docs",
-  "version": "0.17.1",
+  "version": "0.18.2",
   "description": "Repository-native content and configuration engine for Cookbook",
   "type": "module",
   "sideEffects": false,
@@ -71,6 +71,7 @@
     "micromark-extension-mdxjs": "^3.0.0",
     "npm-package-arg": "^13.0.2",
     "pacote": "^21.5.1",
+    "react": "^18.3.1 || ^19.0.0",
     "tinyglobby": "^0.2.15",
     "unist-util-visit": "^5.0.0",
     "yaml": "^2.9.1"

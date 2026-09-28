@@ -356,7 +356,10 @@ async function conventionSources(root: string): Promise<DocsSource[]> {
   if (await isFile(resolve(root, "README.md")))
     sources.push({ file: "README.md", route: "/" });
   const docs = resolve(root, "docs");
-  if (await isDirectory(docs)) {
+  if (
+    (await isDirectory(docs)) &&
+    (await glob("docs/**/*.{md,mdx}", { cwd: root })).length > 0
+  ) {
     sources.push({ glob: "docs/**/*.{md,mdx}", base: "docs" });
   }
   return sources;

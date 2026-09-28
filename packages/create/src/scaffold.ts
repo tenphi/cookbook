@@ -195,7 +195,7 @@ function renderDeploymentGuide(
       "https://vercel.com/docs/frameworks/frontend/astro",
     ],
   }[preset];
-  return `# Deploy to ${details[0]}\n\n${details[1]}\n\nSet \`site.url\` in \`docs.config.ts\` to the production HTTPS origin before publishing, then run \`${manager} run validate\` (preflight, production build, and output checks). The static site is written to \`dist/\`. Preview URLs use the production canonical URL unless you override it for previews.\n\nPlatform guide: ${details[2]}\n`;
+  return `# Deploy to ${details[0]}\n\n${details[1]}\n\nSet \`site.url\` in \`docs.config.ts\` to the production HTTPS origin before publishing, then run \`${manager} run validate\` (type checking, preflight, production build, and output checks). The static site is written to \`dist/\`. Preview URLs use the production canonical URL unless you override it for previews.\n\nPlatform guide: ${details[2]}\n`;
 }
 
 function renderAgentInstructions(
@@ -207,7 +207,7 @@ function renderAgentInstructions(
     : options.package
       ? `Documentation comes from the package pinned in \`cookbook.lock.json\`. Use \`${packageManager} run update\` to refresh the lock; add local pages through \`content.sources\` in \`docs.config.ts\`.`
       : "Edit `README.md` for the home page and add Markdown or MDX pages under `docs/` for other pages.";
-  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- Keep Tasty/Glaze styling on the server. Use extracted static CSS and small client scripts for interactions; do not import Cookbook styling, Tasty, or Glaze into browser scripts or client islands.\n- For a Cookbook version upgrade, use \`.agents/skills/upgrade-cookbook/SKILL.md\`.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run validate\` after changes (doctor, production build, and output checks). The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
+  return `# Cookbook site instructions for coding agents\n\n${contentLocation}\n\n- Read \`docs.config.ts\` before changing content, navigation, or theme. \`astro.config.ts\` loads Cookbook.\n- Read \`node_modules/@tenphi/cookbook/docs/getting-started.md\` and \`node_modules/@tenphi/cookbook/docs/customization-rules.md\` for supported workflows. The installed package also includes the theme and configuration references.\n- Keep Tasty/Glaze styling on the server. Use extracted static CSS and small client scripts for interactions; do not import Cookbook styling, Tasty, or Glaze into browser scripts or client islands.\n- For a Cookbook version upgrade, use \`.agents/skills/upgrade-cookbook/SKILL.md\`.\n- Configure the public HTTPS origin in \`site.url\` in \`docs.config.ts\` before deployment. For a site hosted under a path, set Astro's \`base\` in \`astro.config.ts\`.\n- Run \`${packageManager} run validate\` after changes (type checking, doctor, production build, and output checks). The build writes static HTML, a sitemap when \`site.url\` is set, and \`llms.txt\` into \`dist/\`. At an origin root it also writes \`robots.txt\` with the sitemap URL.\n- Keep headings descriptive and links meaningful. Check the built HTML and discovery files before publishing.\n`;
 }
 
 async function writeUpgradeSkill(destination: string): Promise<void> {
@@ -273,13 +273,18 @@ export function renderPackageJson(packageManager: PackageManager): string {
         build: "astro build",
         preview: "astro preview",
         doctor: "cookbook doctor",
-        validate: "cookbook doctor && astro build && cookbook check-build",
+        typecheck: "tsc --noEmit",
+        validate:
+          "tsc --noEmit && cookbook doctor && astro build && cookbook check-build",
         "check-build": "cookbook check-build",
         update: "cookbook update",
       },
       dependencies: {
         astro: "^7.3.2",
         "@tenphi/cookbook": `^${creatorPackage.version}`,
+      },
+      devDependencies: {
+        typescript: "^7.0.2",
       },
     },
     null,

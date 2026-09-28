@@ -74,6 +74,94 @@ try {
   // Relative file specs avoid Windows short-path URL escaping (RUNNER~1).
   const fileDependency = (prefix) =>
     `file:../packed/${basename(byPrefix(prefix))}`;
+  if (manager === "npm") {
+    const creator = join(temporary, "creator");
+    const generated = join(temporary, "generated");
+    await mkdir(creator);
+    await writeFile(
+      join(creator, "package.json"),
+      JSON.stringify({
+        name: "cookbook-isolated-creator-smoke",
+        private: true,
+        dependencies: {
+          "@tenphi/create-cookbook": fileDependency("tenphi-create-cookbook-"),
+          "@tenphi/docs": fileDependency("tenphi-docs-"),
+        },
+        overrides: { "@tenphi/docs": "$@tenphi/docs" },
+      }),
+    );
+    await run(
+      "npm",
+      ["install", "--ignore-scripts", "--no-audit", "--no-fund"],
+      {
+        cwd: creator,
+      },
+    );
+    await run(
+      process.execPath,
+      [
+        join(creator, "node_modules/@tenphi/create-cookbook/dist/cli.js"),
+        generated,
+        "--yes",
+        "--no-install",
+      ],
+      { cwd: creator },
+    );
+    const generatedPackage = JSON.parse(
+      await readFile(join(generated, "package.json"), "utf8"),
+    );
+    generatedPackage.dependencies["@tenphi/cookbook"] =
+      fileDependency("tenphi-cookbook-");
+    generatedPackage.overrides = {
+      "@tenphi/docs": fileDependency("tenphi-docs-"),
+      "@tenphi/starlight": fileDependency("tenphi-starlight-"),
+    };
+    await writeFile(
+      join(generated, "package.json"),
+      JSON.stringify(generatedPackage),
+    );
+    await run(
+      "npm",
+      ["install", "--ignore-scripts", "--no-audit", "--no-fund"],
+      {
+        cwd: generated,
+      },
+    );
+    await mkdir(join(generated, "docs", "components"), { recursive: true });
+    await writeFile(
+      join(generated, "docs", "components", "Note.astro"),
+      "<aside><slot /></aside>\n",
+    );
+    await run("npm", ["run", "validate"], { cwd: generated });
+
+    const configPath = join(generated, "docs.config.ts");
+    const validConfig = await readFile(configPath, "utf8");
+    for (const [theme, property] of [
+      ['{ presets: { h1: { fontSizee: "3rem" } } }', "fontSizee"],
+      ['{ styles: { Sidebar: { LinkLabel: { colorr: "#text" } } } }', "colorr"],
+    ]) {
+      await writeFile(
+        configPath,
+        validConfig.replace(
+          "defineDocsConfig({",
+          `defineDocsConfig({\n  theme: ${theme},`,
+        ),
+      );
+      try {
+        await run("npm", ["run", "typecheck"], { cwd: generated });
+        throw new Error(`Generated typecheck accepted invalid theme: ${theme}`);
+      } catch (error) {
+        if (error.message.startsWith("Generated typecheck accepted"))
+          throw error;
+        if (!`${error.stdout}\n${error.stderr}`.includes(property))
+          throw new Error(
+            `Generated typecheck failed without reporting ${property}: ${error.stdout}\n${error.stderr}`,
+            { cause: error },
+          );
+      }
+    }
+    await writeFile(configPath, validConfig);
+  }
   let astro = JSON.parse(
     await readFile(
       join(root, "apps/convention/node_modules/astro/package.json"),
@@ -188,6 +276,8 @@ const config = defineDocsConfig({
     customStyles: {
       ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
       ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
+      ConsumerAnatomy: { color: '#text' },
+      ConsumerUnused: { color: '#text' },
     },
   },
   components: { overrides: { SiteTitle: './docs/components/SiteTitle.astro' } },
@@ -263,7 +353,21 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     cwd: root,
     maxBuffer: 8 * 1024 * 1024,
   });
-  await runManager(["run", "build"], { cwd: site, maxBuffer: 8 * 1024 * 1024 });
+  const build = await runManager(["run", "build"], {
+    cwd: site,
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  const buildLog = `${build.stdout}\n${build.stderr}`;
+  if (
+    !buildLog.includes("theme.customStyles.ConsumerUnused did not match") ||
+    buildLog.includes("theme.customStyles.ConsumerSiteTitle did not match") ||
+    buildLog.includes("theme.customStyles.ConsumerGlobal did not match") ||
+    buildLog.includes("theme.customStyles.ConsumerAnatomy did not match")
+  ) {
+    throw new Error(
+      `Custom component style usage diagnostics were incorrect: ${buildLog}`,
+    );
+  }
   await runManager(["run", "check-build"], {
     cwd: site,
     maxBuffer: 8 * 1024 * 1024,

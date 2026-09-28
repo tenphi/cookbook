@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { createDocsFixture } from "../testing/index.js";
@@ -126,6 +126,29 @@ components:
 
     expect(graph.diagnostics).toContainEqual(
       expect.objectContaining({ code: "DOCS_NO_PAGES", severity: "error" }),
+    );
+  });
+
+  it("allows custom components before the first docs page", async () => {
+    const root = await createDocsFixture({
+      "README.md": "# Home\n",
+      "docs/components/Note.astro": "<aside><slot /></aside>\n",
+    });
+    const initial = await createDocsGraph({ root });
+    expect(initial.routes.map(({ route }) => route)).toEqual(["/"]);
+    expect(initial.diagnostics).not.toContainEqual(
+      expect.objectContaining({ code: "DOCS_SOURCE_NOT_FOUND" }),
+    );
+
+    await writeFile(join(root, "docs", "guide.md"), "# Guide\n");
+    const withGuide = await createDocsGraph({ root });
+    expect(withGuide.routes.map(({ route }) => route)).toEqual(["/", "/guide"]);
+
+    const emptyRoot = await createDocsFixture({ "README.md": "# Home\n" });
+    await mkdir(join(emptyRoot, "docs"));
+    const empty = await createDocsGraph({ root: emptyRoot });
+    expect(empty.diagnostics).not.toContainEqual(
+      expect.objectContaining({ code: "DOCS_SOURCE_NOT_FOUND" }),
     );
   });
 
