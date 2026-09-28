@@ -1,0 +1,11 @@
+---
+const { editUrl } = Astro.locals.cookbookRoute;
+---
+
+{
+  editUrl && (
+    <a href={editUrl} class="cookbook-print-hidden">
+      {Astro.locals.t("page.editLink")}
+    </a>
+  )
+}

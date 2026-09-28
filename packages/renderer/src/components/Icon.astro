@@ -1,0 +1,39 @@
+---
+import menu from "../icons/menu.svg?raw";
+import close from "../icons/close.svg?raw";
+import down from "../icons/chevron-down.svg?raw";
+import right from "../icons/chevron-right.svg?raw";
+import sun from "../icons/sun.svg?raw";
+import moon from "../icons/moon.svg?raw";
+import desktop from "../icons/device-desktop.svg?raw";
+import check from "../icons/check.svg?raw";
+
+interface Props {
+  name: string;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+const originals: Record<string, string> = {
+  bars: menu,
+  close,
+  "down-caret": down,
+  "right-caret": right,
+  sun,
+  moon,
+  laptop: desktop,
+  "approve-check": check,
+  translate:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>',
+  github:
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.77.6-3.36-1.18-3.36-1.18-.45-1.14-1.1-1.44-1.1-1.44-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.33 1.08 2.9.83.09-.65.35-1.08.63-1.33-2.21-.25-4.53-1.1-4.53-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.66c.85 0 1.7.11 2.5.34 1.9-1.29 2.74-1.02 2.74-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.33 4.68-4.55 4.93.36.31.68.92.68 1.86v2.91c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>',
+  gitlab:
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 22 4.42-13.6H7.58L12 22ZM2.4 8.4 12 22 7.58 8.4H2.4Zm19.2 0L12 22l4.42-13.6h5.18ZM2.4 8.4 4.1 3.2c.1-.3.52-.3.62 0l2.86 5.2H2.4Zm19.2 0-1.7-5.2c-.1-.3-.52-.3-.62 0l-2.86 5.2h5.18Z"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
+};
+const svg = originals[name]
+  ?.replaceAll('stroke="black"', 'stroke="currentColor"')
+  .replace("<svg ", `<svg class="${className ?? ""}" aria-hidden="true" `);
+if (!svg) throw new Error(`Unknown Cookbook icon: ${name}`);
+---
+
+<Fragment set:html={svg} />

@@ -170,7 +170,7 @@ Package Markdown is untrusted by default. Raw HTML is sanitized to safe
 elements, HTML-capable frontmatter is stripped, custom `head` entries are discarded,
 unsafe URL protocols are rejected, and MDX cannot execute. Set `trust: "mdx"`
 only after reviewing the exact locked artifact; doing so allows its build-time
-code to run. Trusted MDX is compiled by Starlight, including relative component
+code to run. Trusted MDX is compiled by Astro, including relative component
 imports from the source file's directory. Package-provided indexes, include
 patterns, exclude patterns, and every discovered file are confined to the
 extracted artifact root.

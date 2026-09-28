@@ -1,0 +1,79 @@
+---
+import {
+  localizedNavigation,
+  localePath,
+  localeHref,
+} from "../localization.js";
+import { messages } from "../localization.js";
+import { content } from "virtual:cookbook/config";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+import { MobileNavigationTabsRoot } from "./LayoutComponents.js";
+
+interface Props {
+  base?: string;
+  currentPath: string;
+}
+
+const { base = "/", currentPath } = Astro.props;
+const basePath = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  navigationPath(currentPath, base),
+  content,
+);
+const activeTab = activeNavigationTab(
+  layout.tabs,
+  localePath(navigationPath(currentPath, basePath || "/"), content),
+);
+
+function tabHref(link: string): string {
+  return localeHref(
+    link,
+    navigationPath(currentPath, base),
+    content.routes,
+    content,
+    base,
+  );
+}
+const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
+---
+
+{
+  layout.tabs.length > 0 && (
+    <MobileNavigationTabsRoot
+      className="td-mobile-tabs cookbook-print-hidden"
+      aria-label={ui.sections}
+      data-tasty-anatomy="MobileNavigationTabs"
+    >
+      <details>
+        <summary aria-label={ui.chooseSection}>
+          <span class="td-mobile-tabs__label">
+            {layout.tabs[activeTab]?.label ?? ui.sections}
+          </span>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+            <path
+              d="m4 6 4 4 4-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
+        </summary>
+        <ul>
+          {layout.tabs.map((tab, index) => (
+            <li>
+              <a
+                href={tabHref(tab.link)}
+                aria-current={index === activeTab ? "page" : undefined}
+              >
+                {tab.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </MobileNavigationTabsRoot>
+  )
+}

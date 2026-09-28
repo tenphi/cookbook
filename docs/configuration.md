@@ -185,13 +185,10 @@ path, not a generated content-collection path. Set `editUrl: false` or
 sources show a timestamp only when their materialized file has Git history or
 the page supplies one explicitly.
 
-These settings intentionally mirror Starlight's
-[`editLink`](https://starlight.astro.build/reference/configuration/#editlink)
-and
-[`lastUpdated`](https://starlight.astro.build/reference/configuration/#lastupdated)
-configuration while preserving Cookbook's original source paths.
+These settings use Cookbook's original source paths when constructing links and
+timestamps.
 
-Cookbook also accepts Starlight-compatible page presentation frontmatter:
+Cookbook also accepts page presentation frontmatter:
 
 ```yaml
 tableOfContents:
@@ -227,7 +224,7 @@ discoverable on the next build. A draft URL is public; this is not access contro
 
 ## Languages
 
-Expose Starlight's multilingual routing and language picker directly:
+Configure Cookbook's multilingual routing and language picker:
 
 ```ts
 locales: {
@@ -483,19 +480,9 @@ Configure renderer-level Markdown options such as custom remark or rehype
 plugins and Shiki languages through Astro's top-level `markdown` configuration.
 Cookbook preserves those settings while adding its own build-time transforms.
 
-Starlight content and behavior plugins can be supplied to the Astro integration:
-
-```ts
-import myStarlightPlugin from "./plugins/my-starlight-plugin.js";
-
-export default defineConfig({
-  integrations: [cookbook({ plugins: [myStarlightPlugin()] })],
-});
-```
-
-Cookbook preserves custom metadata for route middleware and supports custom schemas.
-See the [plugin compatibility guide](./plugins.md) for the tested ecosystem matrix,
-content query API, Tasty adapters, and collection/style limitations.
+Cookbook preserves custom metadata and supports custom schemas. See
+[extending Cookbook](./plugins.md) for Astro Markdown plugins, native GitHub
+alerts, the content query API, and styling limits.
 
 Cookbook renders fenced `mermaid` blocks as responsive, theme-aware SVG during
 the static build. Flowcharts, state, sequence, class, and entity-relationship
@@ -624,8 +611,7 @@ a 120ms slide transition; customize these through `theme.styles.Sidebar`.
 ### Translate Cookbook controls
 
 Cookbook includes English and French interface messages. Other languages use
-English for missing Cookbook messages while Starlight supplies its own built-in
-translations. Override messages by language code; regional codes fall back to the
+English for missing messages. Override messages by language code; regional codes fall back to the
 base language and then English:
 
 ```ts

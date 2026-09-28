@@ -8,17 +8,21 @@ sidebar:
 Cookbook keeps content concerns separate from rendering so another renderer
 can consume the same validated graph in the future.
 
+Cookbook's early documentation experience was inspired by
+[Astro Starlight](https://starlight.astro.build/). Its current renderer is
+maintained in this repository.
+
 ## Packages
 
-| Package                   | Responsibility                                                                                              |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `@tenphi/create-cookbook` | Inspect an npm artifact and scaffold a reproducible documentation project                                   |
-| `@tenphi/cookbook`        | Provide the memorable Astro integration, public config exports, and CLI                                     |
-| `@tenphi/docs`            | Discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics     |
-| `@tenphi/starlight`       | Adapt the graph to Astro/Starlight and provide the Tasty/Glaze theme, components, search, and static assets |
+| Package                   | Responsibility                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `@tenphi/create-cookbook` | Inspect an npm artifact and scaffold a reproducible documentation project                               |
+| `@tenphi/cookbook`        | Provide the memorable Astro integration, public config exports, and CLI                                 |
+| `@tenphi/docs`            | Discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics |
+| `@tenphi/renderer`        | Render the graph with Astro and provide the Tasty/Glaze theme, components, search, and static assets    |
 
 The `@tenphi/cookbook` default export represents the complete product. Consumers do
-not compose Starlight or renderer internals themselves.
+not compose renderer internals themselves.
 
 ## Build pipeline
 
@@ -28,7 +32,7 @@ not compose Starlight or renderer internals themselves.
 4. Parse Markdown and collect headings, links, and assets.
 5. Rewrite internal references through the completed route graph.
 6. Reject unsafe paths and report strict diagnostics.
-7. Render static pages through Astro and Starlight.
+7. Render static pages through Astro and Cookbook components.
 8. Copy content-hashed assets and build the local Pagefind index.
 
 Source documents are read-only throughout this process. The transformed body
@@ -44,7 +48,7 @@ Theme resolution has three deliberately separate layers:
 2. The Glaze values, design tokens, typography presets, states, and units are
    registered directly with Tasty.
 3. Cookbook components use `tasty()` and the Tasty selector bridge styles DOM
-   owned by Astro, Starlight, Expressive Code, Pagefind, and rendered Markdown.
+   owned by Astro, Pagefind, and rendered Markdown.
 
 The palette owns color relationships. Components never choose raw light/dark
 colors, and shape tokens never contain palette logic. This keeps a palette
@@ -78,7 +82,7 @@ for (const route of graph.routes) {
 ```
 
 The graph exposes normalized entries, routes, assets, and structured
-diagnostics without importing Starlight.
+diagnostics without importing the renderer.
 
 ## Reference app
 

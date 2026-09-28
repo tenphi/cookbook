@@ -43,7 +43,7 @@ See [Theme and components](./docs/theme-and-components.md) for all named
 sub-elements and the custom component flow.
 
 Without configuration, a root `README.md` becomes `/` and
-`docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes Starlight,
+`docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes its Astro renderer,
 generates only static output, and derives its URL base from Astro. Adding other
 Astro content collections does not require a Cookbook collection adapter.
 

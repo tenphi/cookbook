@@ -133,7 +133,7 @@ try {
     await readFile(join(fixture, "dist/api/get-item/index.html"), "utf8"),
   );
   const api = apiWindow.document;
-  const article = api.querySelector(".sl-markdown-content").textContent;
+  const article = api.querySelector(".cookbook-markdown-content").textContent;
   for (const text of ["HTTP bearer", "Override", "Example: result"])
     assert.ok(article.includes(text));
   assert.equal(api.querySelectorAll("tbody tr").length, 1);

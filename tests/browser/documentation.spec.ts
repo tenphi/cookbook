@@ -79,6 +79,21 @@ for (const scheme of ["Light", "Dark"])
     });
   }
 
+test("hero image follows the selected appearance", async ({ page }) => {
+  await page.goto("/manual/");
+  const darkImage = page.locator('.hero > img[data-hero-image="dark"]');
+  const lightImage = page.locator('.hero > img[data-hero-image="light"]');
+  await page.getByRole("button", { name: "Appearance", exact: true }).click();
+  await page.getByRole("radio", { name: "Dark", exact: true }).focus();
+  await page.keyboard.press("Space");
+  await expect(darkImage).toBeVisible();
+  await expect(lightImage).toBeHidden();
+  await page.getByRole("radio", { name: "Light", exact: true }).focus();
+  await page.keyboard.press("Space");
+  await expect(darkImage).toBeHidden();
+  await expect(lightImage).toBeVisible();
+});
+
 for (const width of [320, 390, 768]) {
   test(`mobile navigation, full-width divider and controls at ${width}px`, async ({
     page,
@@ -107,7 +122,7 @@ for (const width of [320, 390, 768]) {
     await expect(
       page.locator("cookbook-mobile-toc details"),
     ).not.toHaveAttribute("open");
-    const hero = await page.getByAltText("Documentation preview").boundingBox();
+    const hero = await page.locator(".hero > img:visible").boundingBox();
     expect(hero!.width / hero!.height).toBeCloseTo(3, 1);
     const divider = await page.locator(".td-menu-button").boundingBox();
     expect(divider!.x).toBe(0);
@@ -166,7 +181,7 @@ test("footer credit keeps its space and pagination uses heading weight", async (
   });
   expect(gap).toBeGreaterThan(2);
   const heading = await page
-    .locator(".sl-markdown-content h2")
+    .locator(".cookbook-markdown-content h2")
     .first()
     .evaluate((e) => ({
       weight: getComputedStyle(e).fontWeight,

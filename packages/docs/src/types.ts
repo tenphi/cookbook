@@ -107,7 +107,7 @@ export interface SiteIconConfig {
   background?: string;
 }
 
-/** A language exposed by Starlight's locale picker and routing. */
+/** A language exposed by Cookbook's locale picker and routing. */
 export interface LocaleConfig {
   label: string;
   /** BCP-47 language tag. Defaults to the locale key. */
@@ -435,7 +435,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "TableOfContents",
   "ThemeSelect",
   "TopNavigation",
-  "StarlightHeader",
+  "Header",
   "Document",
   "MainPane",
   "MainContent",
@@ -445,11 +445,7 @@ export const COOKBOOK_COMPONENT_NAMES = [
   "Pagination",
   "Markdown",
   "MermaidSource",
-  "StarlightAside",
-  "StarlightCard",
-  "StarlightLinkCard",
-  "StarlightBadge",
-  "StarlightSteps",
+  "MarkdownAlert",
   "SearchResults",
   "SyntaxHighlight",
 ] as const;
@@ -499,25 +495,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "More",
     "HoverMore",
   ],
-  StarlightSteps: ["Item", "Counter", "Connector"],
-  StarlightBadge: [],
-  StarlightLinkCard: [
-    "Hover",
-    "Stack",
-    "Link",
-    "LinkOverlay",
-    "DescriptionAndIcon",
-  ],
-  StarlightCard: ["Title"],
-  StarlightAside: [
-    "Note",
-    "Tip",
-    "Caution",
-    "Danger",
-    "Title",
-    "Icon",
-    "FirstContent",
-  ],
+  MarkdownAlert: ["Note", "Tip", "Caution", "Danger", "Title", "FirstContent"],
   MermaidSource: [],
   Markdown: [
     "Block",
@@ -585,6 +563,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ResponsiveWidth",
     "ResponsiveHeight",
     "Hidden",
+    "PrintHidden",
     "DesktopBlock",
     "DesktopFlex",
     "ScreenReaderOnly",
@@ -660,6 +639,8 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   Hero: [
     "Visual",
+    "DarkVisual",
+    "LightVisual",
     "Stack",
     "Copy",
     "Title",
@@ -816,7 +797,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CurrentLink",
     "ActiveIndicator",
   ],
-  StarlightHeader: [
+  Header: [
     "Primary",
     "TitleAndSearch",
     "Title",
@@ -890,7 +871,7 @@ export interface SearchConfig {
 }
 
 export interface ComponentsConfig {
-  /** Astro component paths keyed by Starlight component name. `Footer` also accepts `false`. */
+  /** Astro component paths keyed by Cookbook component name. `Footer` also accepts `false`. */
   overrides?: Record<string, string | false>;
 }
 
@@ -972,7 +953,7 @@ export interface DocsFrontmatter {
   sidebar?: false | { label?: string; order?: number; group?: string };
   tableOfContents?: false | TableOfContentsConfig;
   editUrl?: false | string;
-  /** Starlight page layout. */
+  /** Cookbook page layout. */
   template?: "doc" | "splash";
   hero?: {
     title?: string;

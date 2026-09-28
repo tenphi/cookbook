@@ -38,9 +38,40 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## 0.18.x to 0.19
+
+Cookbook now renders documentation with its own Astro components. The public
+`@tenphi/cookbook` integration remains the normal entry point. Projects that
+import the renderer package directly should replace `@tenphi/starlight` with
+`@tenphi/renderer`.
+
+The page and theme contracts remain familiar, but component overrides now read
+`Astro.locals.cookbookRoute`. Replace uses of `Astro.locals.starlightRoute` in
+your own overrides. The named style surfaces `StarlightHeader` and
+`StarlightAside` become `Header` and `MarkdownAlert`; the unused Starlight card,
+link-card, badge, and steps bridges are removed. Cookbook's `Card`, `Callout`,
+and `Steps` components remain available.
+
+Renderer class names now use Cookbook-owned names. Update any custom CSS or
+scripts that target generated markup, and prefer the named `theme.styles`
+surfaces in the [theme reference](./theme-and-components.md).
+
+The `plugins` integration option no longer forwards Starlight hooks. Move
+content transforms to Astro's `markdown` configuration and use
+`frontmatterSchema` for custom page metadata. GitHub alert blockquotes render
+directly in Markdown and MDX, so `starlight-github-alerts` is no longer needed.
+Use `cookbook doctor` and `cookbook check-build` instead of plugins that inspect
+Starlight's content collection or physical docs files. See
+[extending Cookbook](./plugins.md) for examples.
+
+Build and preview each site after updating its package manifest. Check custom
+component overrides, locale navigation, search, and Tasty style names before
+deploying. Cookbook-saved appearance choices remain. Older Starlight-only
+choices are ignored; visitors who relied on one can select their scheme again.
+
 ## 0.17.x to 0.18
 
-These changes are included in the next minor release:
+These changes were introduced in 0.18:
 
 - **Google fonts:** family-name shorthand loads preset weights and italics and
   self-hosts the files. The initial build requires network access. Preserve the
@@ -63,7 +94,7 @@ These changes are included in the next minor release:
 - **Plugins:** custom metadata is available to route middleware and through
   Cookbook's content API. Plugins that need Astro's synthetic content files or
   inject their own CSS require adaptation. See the tested
-  [plugin matrix](./plugins.md#verified-compatibility).
+  [extension guide](./plugins.md).
 - **Styles:** rendered inline styles are rejected. Move custom styling to Tasty
   and registered theme style trees. Keep these components server-rendered;
   browser scripts and `client:*` islands cannot import Cookbook styling, Tasty,

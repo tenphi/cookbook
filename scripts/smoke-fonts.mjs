@@ -33,7 +33,7 @@ try {
   await cp(
     join(
       root,
-      "packages/starlight/node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2",
+      "packages/renderer/node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2",
     ),
     join(fixture, "public/fonts/mono.woff2"),
   );

@@ -7,7 +7,7 @@
       "@tenphi/create-cookbook",
       "@tenphi/cookbook",
       "@tenphi/docs",
-      "@tenphi/starlight"
+      "@tenphi/renderer"
     ]
   ],
   "linked": [],

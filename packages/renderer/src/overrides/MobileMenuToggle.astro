@@ -1,0 +1,36 @@
+---
+import { localizedNavigation, localePath } from "../localization.js";
+import { content } from "virtual:cookbook/config";
+import Icon from "../components/Icon.astro";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+const route = Astro.locals.cookbookRoute;
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  navigationPath(Astro.url.pathname, import.meta.env.BASE_URL),
+  content,
+);
+const active = activeNavigationTab(
+  layout.tabs,
+  localePath(
+    navigationPath(Astro.url.pathname, import.meta.env.BASE_URL),
+    content,
+  ),
+);
+const section = layout.tabs[active]?.label;
+---
+
+<button
+  type="button"
+  popovertarget="cookbook__sidebar"
+  aria-controls="cookbook__sidebar"
+  aria-expanded="false"
+  class="td-menu-button cookbook-menu-button cookbook-print-hidden"
+>
+  <Icon name="bars" class="open-menu" />
+  <span class="sr-only">{Astro.locals.t("menuButton.accessibleLabel")}</span>
+  {section && <span class="td-menu-button__section">{section}</span>}
+  {section && <Icon name="right-caret" />}
+  <span class="td-menu-button__page">{route.entry.data.title}</span>
+</button>

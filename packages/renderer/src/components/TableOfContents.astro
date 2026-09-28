@@ -1,0 +1,23 @@
+---
+import type { TocItem } from "../route-context.js";
+interface Props {
+  items: TocItem[];
+  nested?: boolean;
+}
+const { items, nested = false } = Astro.props;
+---
+
+<ul>
+  {
+    items.map((item) => (
+      <li>
+        <a href={`#${item.slug}`}>
+          <span>{item.text}</span>
+        </a>
+        {item.children.length > 0 && (
+          <Astro.self items={item.children} nested />
+        )}
+      </li>
+    ))
+  }
+</ul>

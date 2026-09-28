@@ -14,7 +14,7 @@ afterEach(async () => {
 });
 
 describe("createDocsLoader", () => {
-  it("renders Markdown and exposes a Starlight-compatible virtual file path", async () => {
+  it("renders Markdown and exposes a source-aware virtual file path", async () => {
     const root = await mkdtemp(join(tmpdir(), "cookbook-loader-"));
     cleanups.push(root);
     await mkdir(join(root, "docs"));

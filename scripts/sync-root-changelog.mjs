@@ -7,7 +7,7 @@ const packageChangelogPaths = [
   "packages/create/CHANGELOG.md",
   "packages/docs/CHANGELOG.md",
   "packages/facade/CHANGELOG.md",
-  "packages/starlight/CHANGELOG.md",
+  "packages/renderer/CHANGELOG.md",
 ].map((path) => `${repositoryRoot}${path}`);
 
 const changeHeadings = ["Major Changes", "Minor Changes", "Patch Changes"];

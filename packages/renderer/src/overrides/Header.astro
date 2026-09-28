@@ -1,0 +1,139 @@
+---
+import {
+  localizedNavigation,
+  localePath,
+  localeHref,
+} from "../localization.js";
+import { messages } from "../localization.js";
+import LanguageSelect from "virtual:cookbook/components/LanguageSelect";
+import Search from "virtual:cookbook/components/Search";
+import SiteTitle from "virtual:cookbook/components/SiteTitle";
+import SocialIcons from "virtual:cookbook/components/SocialIcons";
+import MobileMenuToggle from "virtual:cookbook/components/MobileMenuToggle";
+import HeaderLinks from "../components/HeaderLinks.astro";
+import ThemeSelect from "virtual:cookbook/components/ThemeSelect";
+import { content } from "virtual:cookbook/config";
+import { layout as configuredLayout } from "virtual:cookbook/layout";
+import { activeNavigationTab, navigationPath } from "../navigation.js";
+import GlobalStyles from "../components/GlobalStyles.js";
+import Logo from "../components/SiteLogo.astro";
+import PackageVersion from "../components/PackageVersion.astro";
+import VersionSwitcher from "../components/VersionSwitcher.astro";
+import {
+  HeaderRoot,
+  TopNavigationRoot,
+} from "../components/LayoutComponents.js";
+
+const shouldRenderSearch = content.search;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const currentPath = navigationPath(Astro.url.pathname, base || "/");
+const { layout } = localizedNavigation(
+  configuredLayout,
+  content.routes,
+  currentPath,
+  content,
+);
+const activeTab = activeNavigationTab(
+  layout.tabs,
+  localePath(currentPath, content),
+);
+Astro.locals.cookbookRoute.siteTitleHref = localeHref(
+  content.logo ? (content.logo.href ?? "/") : "/",
+  currentPath,
+  content.routes,
+  content,
+  base || "/",
+);
+const { siteTitle } = Astro.locals.cookbookRoute;
+
+function tabHref(link: string): string {
+  return localeHref(link, currentPath, content.routes, content, base || "/");
+}
+const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
+---
+
+<GlobalStyles />
+<HeaderRoot
+  className={`td-header${layout.tabs.length ? " td-header--with-tabs" : ""}`}
+  data-tasty-anatomy="Header"
+  data-has-sidebar={Astro.locals.cookbookRoute.hasSidebar ? "" : undefined}
+>
+  <div class="td-header__primary">
+    <div class="td-header__title">
+      {
+        content.logo !== false && (
+          <a
+            class="td-header__logo-link"
+            href={localeHref(
+              content.logo ? (content.logo.href ?? "/") : "/",
+              currentPath,
+              content.routes,
+              content,
+              base || "/",
+            )}
+            aria-label={
+              content.logo && !content.logo.decorative
+                ? undefined
+                : `${siteTitle}: ${ui.home}`
+            }
+          >
+            <Logo class="td-header__logo" />
+          </a>
+        )
+      }
+      <SiteTitle />
+      {
+        !content.site.versions && (
+          <PackageVersion version={content.site.version} />
+        )
+      }
+    </div>
+    {
+      content.site.versions && (
+        <VersionSwitcher
+          versions={content.site.versions}
+          routes={content.routes}
+          currentPath={currentPath}
+          base={base || "/"}
+        />
+      )
+    }
+    <div class="td-header__search cookbook-print-hidden">
+      {shouldRenderSearch && <Search />}
+    </div>
+    <HeaderLinks />
+    <div
+      class="td-header__mobile-theme md:cookbook-hidden cookbook-print-hidden"
+    >
+      <ThemeSelect />
+    </div>
+    <div
+      class="td-header__tools cookbook-hidden md:cookbook-flex cookbook-print-hidden"
+    >
+      <div class="td-header__social"><SocialIcons /></div>
+      <ThemeSelect />
+      <LanguageSelect />
+    </div>
+  </div>
+  {
+    layout.tabs.length > 0 && (
+      <TopNavigationRoot
+        className="td-top-tabs cookbook-print-hidden"
+        aria-label={ui.primary}
+        data-tasty-anatomy="TopNavigation"
+      >
+        {layout.tabs.map((tab, index) => (
+          <a
+            href={tabHref(tab.link)}
+            aria-current={index === activeTab ? "page" : undefined}
+          >
+            {tab.label}
+          </a>
+        ))}
+      </TopNavigationRoot>
+    )
+  }
+  {Astro.locals.cookbookRoute.hasSidebar && <MobileMenuToggle />}
+</HeaderRoot>
+
+<script src="../client/code-copy.js"></script>

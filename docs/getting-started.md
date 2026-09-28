@@ -67,7 +67,7 @@ import cookbook from "@tenphi/cookbook";
 export default defineConfig({ integrations: [cookbook()] });
 ```
 
-Cookbook includes Starlight and discovers `docs.config.ts` automatically.
+Cookbook includes its Astro renderer and discovers `docs.config.ts` automatically.
 With no documentation configuration, it uses README/docs conventions.
 
 ## Configure the site

@@ -1,0 +1,63 @@
+---
+import { content } from "virtual:cookbook/config";
+import { localeTarget, routeLocale, messages } from "../localization.js";
+import { navigationPath } from "../navigation.js";
+import Icon from "../components/Icon.astro";
+const current = navigationPath(Astro.url.pathname, content.base);
+const selected = routeLocale(current, content);
+const ui = messages(Astro.locals.cookbookRoute.lang, content);
+const options = Object.entries(content.locales ?? {}).flatMap(
+  ([locale, config]) => {
+    const target = localeTarget(current, locale, content.routes, content);
+    const fallback = target && routeLocale(target, content) !== locale;
+    return target
+      ? [
+          {
+            locale,
+            label: `${config.label}${fallback ? ` (${ui.fallback})` : ""}`,
+            href: `${content.base.replace(/\/$/, "")}${target === "/" ? "/" : `${target}/`}`,
+          },
+        ]
+      : [];
+  },
+);
+---
+
+{
+  options.length > 1 && (
+    <cookbook-language-select>
+      <label>
+        <Icon name="translate" class="label-icon" />
+        <span class="sr-only">
+          {Astro.locals.t("languageSelect.accessibleLabel")}
+        </span>
+        <select>
+          {options.map((option) => (
+            <option value={option.href} selected={option.locale === selected}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <Icon name="down-caret" class="caret" />
+      </label>
+    </cookbook-language-select>
+  )
+}
+
+<script>
+  class CookbookLanguageSelect extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector("select");
+      select?.addEventListener("change", () => {
+        window.location.href = select.value;
+      });
+      window.addEventListener("pageshow", () => {
+        if (select)
+          select.selectedIndex =
+            select.querySelector("option[selected]")?.index ?? 0;
+      });
+    }
+  }
+  if (!customElements.get("cookbook-language-select"))
+    customElements.define("cookbook-language-select", CookbookLanguageSelect);
+</script>

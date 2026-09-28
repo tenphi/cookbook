@@ -19,8 +19,8 @@ try {
   for (const [name, source] of [
     ["@tenphi/cookbook", "packages/facade"],
     ["astro", "apps/convention/node_modules/astro"],
-    ["react", "packages/starlight/node_modules/react"],
-    ["react-dom", "packages/starlight/node_modules/react-dom"],
+    ["react", "packages/renderer/node_modules/react"],
+    ["react-dom", "packages/renderer/node_modules/react-dom"],
   ])
     await symlink(
       join(root, source),

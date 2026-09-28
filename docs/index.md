@@ -1,18 +1,18 @@
 ---
 title: Cookbook
-description: Build a polished static documentation site from the Markdown your project already owns.
+description: Build a customizable static documentation site from the Markdown your project already owns.
 template: splash
 hero:
   title: Documentation that stays with the code.
-  tagline: Turn repository Markdown or a locked npm package into a polished, searchable Astro site—without creating a second source of truth.
+  tagline: Turn repository Markdown or a locked npm package into an Astro docs site that fits your design system—without creating a second source of truth.
   image:
     html: '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'
   actions:
     - text: Get started
       link: /getting-started/
       variant: primary
-    - text: See how it compares
-      link: /starlight-comparison/
+    - text: Compare tools
+      link: /comparison/
       variant: secondary
 sidebar:
   order: 1
@@ -21,7 +21,7 @@ sidebar:
 ## Keep documentation close to its source
 
 Cookbook combines [Astro](https://astro.build) and
-[Starlight](https://starlight.astro.build) with repository-aware content,
+an Astro renderer with repository-aware content,
 strict validation, local Pagefind search, and a theme powered by
 [Tasty](https://tasty.style) and [Glaze](https://glaze.tenphi.me).
 
@@ -58,11 +58,12 @@ states, and named component styles.
 | I want to…                           | Start here                              | Then read                                                             |
 | ------------------------------------ | --------------------------------------- | --------------------------------------------------------------------- |
 | Start a site                         | [Getting started](./getting-started.md) | [Validate and deploy](./deployment.md)                                |
+| Choose a documentation tool          | [Compare tools](./comparison.md)        | [Getting started](./getting-started.md)                               |
 | Have an agent set it up              | [AI agent workflow](./ai-agents.md)     | [Customization rules](./customization-rules.md)                       |
 | Bring existing Markdown or an API    | [Content sources](./content-sources.md) | [Working examples](./examples.md)                                     |
 | Write pages and interactive examples | [Authoring](./authoring.mdx)            | [Mobile contents and hero images](./authoring.mdx#on-page-navigation) |
 | Change brand, fonts, or logo         | [Configuration recipes](./recipes.md)   | [Theme reference](./theme-and-components.md)                          |
-| Add a Starlight plugin               | [Plugin compatibility](./plugins.md)    | [Architecture](./architecture.md)                                     |
+| Add a Markdown extension             | [Extend Cookbook](./plugins.md)         | [Architecture](./architecture.md)                                     |
 | Publish for people and agents        | [Deployment](./deployment.md)           | [Publishing metadata](./publishing.md)                                |
 | Update or fix an existing site       | [Upgrade Cookbook](./migration.md)      | [Troubleshooting](./troubleshooting.md)                               |
 

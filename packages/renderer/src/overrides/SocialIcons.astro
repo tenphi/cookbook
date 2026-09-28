@@ -1,0 +1,27 @@
+---
+import { content } from "virtual:cookbook/config";
+import Icon from "../components/Icon.astro";
+import { SocialIconsRoot } from "../components/LayoutComponents.js";
+
+const repository = content.site.repository;
+const icon = repository?.includes("github.com")
+  ? "github"
+  : repository?.includes("gitlab.com")
+    ? "gitlab"
+    : "link";
+const links = repository
+  ? [{ href: repository, label: "Source repository", icon }]
+  : [];
+---
+
+{
+  links.length > 0 && (
+    <SocialIconsRoot data-tasty-anatomy="SocialIcons">
+      {links.map(({ label, href, icon }) => (
+        <a href={href} rel="me" aria-label={label} title={label}>
+          <Icon name={icon} />
+        </a>
+      ))}
+    </SocialIconsRoot>
+  )
+}

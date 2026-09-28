@@ -1,4 +1,4 @@
-export { default } from "@tenphi/starlight";
+export { default } from "@tenphi/renderer";
 export {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_PALETTE_NAMES,
@@ -59,5 +59,5 @@ export type {
 export {
   DEFAULT_THEME_TOKENS,
   DEFAULT_TYPOGRAPHY_PRESETS,
-} from "@tenphi/starlight";
-export type { CookbookOptions } from "@tenphi/starlight";
+} from "@tenphi/renderer";
+export type { CookbookOptions } from "@tenphi/renderer";

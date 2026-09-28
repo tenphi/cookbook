@@ -28,7 +28,7 @@ for (const name of entries) {
     sharedCssPath = join(assets, name);
   }
 }
-// Semantic typography and the owned Starlight affordances are emitted through
+// Semantic typography and the owned page affordances are emitted through
 // complete Tasty style trees so every configured field and sub-element reaches
 // its target, rather than being manually cherry-picked in GlobalStyles. Tasty
 // 3.8 also emits typed custom-property registrations for configured tokens.
@@ -58,7 +58,7 @@ const allCss = (
 if (/details:has\(a\[aria-current="page"\]\)/.test(sharedCss)) {
   throw new Error("Sidebar ancestors must not receive current-page styling.");
 }
-if (/#starlight__sidebar details > ul > li\s*\{/.test(sharedCss)) {
+if (/#cookbook__sidebar details > ul > li\s*\{/.test(sharedCss)) {
   throw new Error(
     "Sidebar group indentation must not affect the mobile section selector.",
   );
@@ -66,6 +66,7 @@ if (/#starlight__sidebar details > ul > li\s*\{/.test(sharedCss)) {
 for (const [pattern, label] of [
   [/--sl-/i, "Starlight custom properties"],
   [/@layer\s+starlight/i, "Starlight cascade layers"],
+  [/\bsl-[a-z]/i, "legacy renderer classes"],
   [/expressive-code|--ec-/i, "Expressive Code styles"],
 ]) {
   if (pattern.test(allCss)) {
@@ -116,13 +117,16 @@ if (
   );
 }
 for (const [selector, label] of [
-  ["#starlight__sidebar a > span:first-child", "left navigation links"],
+  ["#cookbook__sidebar a > span:first-child", "left navigation links"],
   [
-    "#starlight__sidebar .group-label > span:first-child",
+    "#cookbook__sidebar .group-label > span:first-child",
     "left navigation groups",
   ],
   [".right-sidebar-panel a > span", "desktop table of contents"],
-  [".sl-menu-button .td-menu-button__page", "mobile navigation breadcrumb"],
+  [
+    ".cookbook-menu-button .td-menu-button__page",
+    "mobile navigation breadcrumb",
+  ],
 ]) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   if (
@@ -142,9 +146,7 @@ if (
   );
 }
 if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
-  throw new Error(
-    "The desktop table of contents must override Starlight's hidden utility.",
-  );
+  throw new Error("The desktop table of contents must be visible.");
 }
 for (const transition of [
   "translate 120ms ease-out",
@@ -167,6 +169,13 @@ if (
   );
 }
 const home = await readFile(join(output, "index.html"), "utf8");
+const notFound = await readFile(join(output, "404.html"), "utf8");
+if (
+  !/<title>\s*Page not found \| [^<]+<\/title>/.test(notFound) ||
+  !/<meta name="robots" content="noindex, follow"\s*\/>/.test(notFound)
+) {
+  throw new Error("The 404 page needs a title and noindex metadata.");
+}
 const sidebarHtml = (html) => {
   const sidebar =
     /<cookbook-sidebar(?=[\s>])[^>]*>([\s\S]*?)<\/cookbook-sidebar>/.exec(
@@ -179,7 +188,7 @@ const guide = await readFile(
   join(output, "getting-started/index.html"),
   "utf8",
 );
-if (guide.includes("mobile-starlight-toc")) {
+if (/<cookbook-mobile-toc(?:\s|>)/.test(guide)) {
   throw new Error(
     "Mobile and tablet pages must not render a compact table of contents.",
   );
@@ -334,6 +343,9 @@ for (const name of outputEntries.filter(
   if (/--sl-/i.test(html)) {
     throw new Error(`${name} contains an inline Starlight style token.`);
   }
+  if (/\bsl-[a-z]/i.test(html)) {
+    throw new Error(`${name} contains a legacy renderer class.`);
+  }
   if (/<style(?:\s|>)/i.test(html)) {
     throw new Error(`${name} contains an authored style block.`);
   }
@@ -360,15 +372,16 @@ for (const name of conventionEntries.filter(
 )) {
   const html = await readFile(join(conventionOutput, name), "utf8");
   for (const match of html.matchAll(
-    /<div\b[^>]*\bclass="[^"]*\bsl-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
+    /<div\b[^>]*\bclass="[^"]*\bcookbook-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
   )) {
     conventionHeadingWrappers += 1;
     const content = match[1] ?? "";
-    if (/\bclass="[^"]*\bsl-heading-wrapper\b/.test(content)) {
+    if (/\bclass="[^"]*\bcookbook-heading-wrapper\b/.test(content)) {
       throw new Error(`${name} contains nested heading permalink wrappers.`);
     }
     if (
-      (content.match(/\bclass="[^"]*\bsl-anchor-link\b/g) ?? []).length !== 1
+      (content.match(/\bclass="[^"]*\bcookbook-anchor-link\b/g) ?? [])
+        .length !== 1
     ) {
       throw new Error(`${name} must render exactly one permalink per heading.`);
     }

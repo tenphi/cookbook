@@ -1,0 +1,29 @@
+---
+import { PageActionsRoot } from "./LayoutComponents.js";
+import { content } from "virtual:cookbook/config";
+import { navigationPath } from "../navigation.js";
+import { agentPagePath } from "../page-metadata.js";
+import { messages } from "../localization.js";
+const route = navigationPath(Astro.url.pathname, content.base);
+const entry = content.entries.find((entry) => entry.route === route);
+const ui = messages(Astro.locals.cookbookRoute.lang, content);
+const enabled =
+  entry && !entry.frontmatter.draft && content.site.seo?.copyPage !== false;
+---
+
+{
+  enabled && (
+    <PageActionsRoot data-tasty-anatomy="PageActions">
+      <button type="button" data-copy-page={agentPagePath(route, content.base)}>
+        {ui.copyPage}
+      </button>
+      <a href={agentPagePath(route, content.base)} download>
+        {ui.viewMarkdown}
+      </a>
+      <span role="status" aria-live="polite" />
+    </PageActionsRoot>
+  )
+}
+<script>
+  import "../client/page-copy.js";
+</script>

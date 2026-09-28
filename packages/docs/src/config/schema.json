@@ -723,39 +723,7 @@
                 }
               }
             },
-            "StarlightAside": {
-              "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
-            },
-            "StarlightCard": {
-              "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
-            },
-            "StarlightLinkCard": {
-              "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
-            },
-            "StarlightBadge": {
-              "type": "object",
-              "propertyNames": {
-                "not": {
-                  "const": "mode"
-                }
-              }
-            },
-            "StarlightSteps": {
+            "MarkdownAlert": {
               "type": "object",
               "propertyNames": {
                 "not": {
@@ -991,7 +959,7 @@
                 }
               }
             },
-            "StarlightHeader": {
+            "Header": {
               "type": "object",
               "propertyNames": {
                 "not": {
