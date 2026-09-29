@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.20.5
+
+### Patch Changes
+
+- [#128](https://github.com/tenphi/cookbook/pull/128) [`367bed1`](https://github.com/tenphi/cookbook/commit/367bed14194acfbf724bca500eb93af8f6bca793) Thanks [@tenphi](https://github.com/tenphi)! - Showcase Spanish, Russian, Japanese, and Simplified Chinese on the Cookbook home and Getting Started pages. Keep untranslated guides reachable through English fallback links and localize the header navigation. Render the language and version selectors with a shared, configurable, server-rendered popover, including a mobile sidebar placement for language. Align their transitions with the Appearance and links menus and refine the globe icon.
+
+- Updated dependencies [[`367bed1`](https://github.com/tenphi/cookbook/commit/367bed14194acfbf724bca500eb93af8f6bca793)]:
+  - @tenphi/docs@0.20.5
+
 ## 0.20.4
 
 ### Patch Changes

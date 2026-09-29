@@ -1,6 +1,6 @@
 {
   "name": "@tenphi/create-cookbook",
-  "version": "0.20.4",
+  "version": "0.20.5",
   "description": "Create a reproducible Cookbook site from a published npm package",
   "type": "module",
   "bin": {
