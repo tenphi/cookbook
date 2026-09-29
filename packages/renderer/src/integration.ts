@@ -459,9 +459,12 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                 name: "cookbook-pagefind-ui",
                 enforce: "pre",
                 transform(source, id) {
+                  const modulePath = id
+                    .replaceAll("\\", "/")
+                    .replace(/\?.*$/, "");
                   if (
-                    id.includes("/@pagefind/default-ui/npm_dist/") &&
-                    /\/ui-core\.(?:mjs|cjs)$/.test(id)
+                    modulePath.includes("/@pagefind/default-ui/npm_dist/") &&
+                    /\/ui-core\.(?:mjs|cjs)$/.test(modulePath)
                   )
                     return adaptPagefindUI(source);
                 },
