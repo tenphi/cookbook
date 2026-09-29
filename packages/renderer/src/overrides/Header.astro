@@ -107,6 +107,14 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
     >
       <ThemeSelect />
     </div>
+    {
+      !Astro.locals.cookbookRoute.hasSidebar &&
+        Object.keys(content.locales ?? {}).length > 1 && (
+          <div class="td-header__mobile-language cookbook-print-hidden">
+            <LanguageSelect compact />
+          </div>
+        )
+    }
     <div
       class="td-header__tools cookbook-hidden md:cookbook-flex cookbook-print-hidden"
     >

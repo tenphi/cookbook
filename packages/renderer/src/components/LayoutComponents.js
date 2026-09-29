@@ -320,6 +320,15 @@ export const HeaderRoot = customizeComponent(
         inlineSize: "$docs-menu-button-size",
         blockSize: "$docs-menu-button-size",
       },
+      MobileLanguage: {
+        $: ".td-header__mobile-language",
+        display: "grid",
+        hide: { "": true, "@mobile": false },
+        flexShrink: "0",
+        order: "1",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+      },
     },
   }),
 );
@@ -394,9 +403,9 @@ export const ThemeSelectRoot = customizeComponent(
         },
       },
       OpenPanel: {
-        $: "[popover]:popover-open",
-        opacity: { "": "1", "@starting": "0" },
-        scale: { "": "1", "@starting": "1 0.96" },
+        $: "[popover]:popover-open[data-open]",
+        opacity: "1",
+        scale: "1",
       },
       Section: {
         $: "fieldset",
@@ -745,7 +754,7 @@ export const HeaderLinksRoot = customizeComponent(
         shadow: "0 0.75rem 2rem #shadow",
         opacity: "0",
         scale: "1 0.96",
-        transformOrigin: "top right",
+        transformOrigin: "top",
         transition: {
           "": "none",
           "!@reduced-motion":

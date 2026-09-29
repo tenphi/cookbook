@@ -79,13 +79,11 @@ for (const width of [390, 1440]) {
   });
 }
 
-test("search and mobile header menu fade on open and close", async ({
-  page,
-}) => {
+test("header popovers fade on open and close", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 700 });
-  await page.goto("/manual/guide/");
+  await page.goto("/manual/");
 
-  for (const { trigger, panel, close } of [
+  for (const option of [
     {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
       panel: page.locator("site-search dialog"),
@@ -99,7 +97,28 @@ test("search and mobile header menu fade on open and close", async ({
         exact: true,
       }),
     },
+    {
+      trigger: page.getByRole("button", { name: "Appearance", exact: true }),
+      panel: page.locator(
+        ".td-header__mobile-theme cookbook-appearance-menu [popover]",
+      ),
+      close: page.getByRole("button", { name: "Appearance", exact: true }),
+    },
+    {
+      before: () => page.getByRole("button", { name: /Menu/ }).click(),
+      trigger: page.locator("cookbook-sidebar-pane").getByRole("button", {
+        name: "Select language: English",
+      }),
+      panel: page.locator(
+        "cookbook-sidebar-pane cookbook-language-select [popover]",
+      ),
+      close: page.locator("cookbook-sidebar-pane").getByRole("button", {
+        name: "Select language: English",
+      }),
+    },
   ]) {
+    if ("before" in option) await option.before();
+    const { trigger, panel, close } = option;
     await trigger.click();
     await expect(panel).toHaveAttribute("data-open", "");
     expect(
@@ -112,14 +131,12 @@ test("search and mobile header menu fade on open and close", async ({
   }
 });
 
-test("search and mobile header menu respect reduced motion", async ({
-  page,
-}) => {
+test("header popovers respect reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 700 });
-  await page.goto("/manual/guide/");
+  await page.goto("/manual/");
 
-  for (const { trigger, panel, close } of [
+  for (const option of [
     {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
       panel: page.locator("site-search dialog"),
@@ -133,7 +150,28 @@ test("search and mobile header menu respect reduced motion", async ({
         exact: true,
       }),
     },
+    {
+      trigger: page.getByRole("button", { name: "Appearance", exact: true }),
+      panel: page.locator(
+        ".td-header__mobile-theme cookbook-appearance-menu [popover]",
+      ),
+      close: page.getByRole("button", { name: "Appearance", exact: true }),
+    },
+    {
+      before: () => page.getByRole("button", { name: /Menu/ }).click(),
+      trigger: page.locator("cookbook-sidebar-pane").getByRole("button", {
+        name: "Select language: English",
+      }),
+      panel: page.locator(
+        "cookbook-sidebar-pane cookbook-language-select [popover]",
+      ),
+      close: page.locator("cookbook-sidebar-pane").getByRole("button", {
+        name: "Select language: English",
+      }),
+    },
   ]) {
+    if ("before" in option) await option.before();
+    const { trigger, panel, close } = option;
     await trigger.click();
     await expect(panel).toHaveCSS("transition-property", "none");
     await expect(panel).toHaveCSS("opacity", "1");
@@ -393,6 +431,59 @@ test("locale/version navigation keeps prefixes and drafts remain direct-only", a
   expect(
     await page.locator('cookbook-sidebar a[href="/manual/draft"]').count(),
   ).toBe(0);
+});
+
+test("language popover is styled and switches pages on desktop and mobile", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const desktop = page.locator(".td-header__tools cookbook-language-select");
+  await desktop
+    .getByRole("button", { name: "Select language: English" })
+    .click();
+  const panel = desktop.locator("[popover]");
+  await expect(panel).toHaveCSS("opacity", "1");
+  await expect(panel.getByRole("link", { name: "English" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  expect(
+    await desktop
+      .locator(".label-icon")
+      .evaluate((icon) => Math.round(icon.getBoundingClientRect().width)),
+  ).toBe(20);
+  await page.keyboard.press("Tab");
+  await expect(panel.getByRole("link", { name: "English" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(panel).toBeHidden();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: /Menu/ }).click();
+  const mobile = page.locator("cookbook-sidebar-pane cookbook-language-select");
+  await mobile
+    .getByRole("button", { name: "Select language: English" })
+    .click();
+  await expect(mobile.locator("[popover]")).toHaveCSS("opacity", "1");
+  const placement = await mobile.evaluate((root) => {
+    const panel = root.querySelector("[popover]")!.getBoundingClientRect();
+    const trigger = root.querySelector("button")!.getBoundingClientRect();
+    const sidebar = document
+      .querySelector("#cookbook__sidebar")!
+      .getBoundingClientRect();
+    return {
+      left: panel.left,
+      right: panel.right,
+      bottom: panel.bottom,
+      sidebarLeft: sidebar.left,
+      sidebarRight: sidebar.right,
+      triggerTop: trigger.top,
+    };
+  });
+  expect(placement.left).toBeGreaterThanOrEqual(placement.sidebarLeft);
+  expect(placement.right).toBeLessThanOrEqual(placement.sidebarRight);
+  expect(placement.bottom).toBeLessThan(placement.triggerTop);
+  await mobile.getByRole("link", { name: "Français" }).click();
+  await expect(page).toHaveURL(/\/manual\/fr\/guide\/?$/);
 });
 
 test("footer credit keeps its space and pagination uses heading weight", async ({

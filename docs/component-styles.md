@@ -145,7 +145,7 @@ it stays complete when a surface changes.
 
 #### Navigation and controls
 
-- `Header`: `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`
+- `Header`: `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`, `MobileLanguage`
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
 - `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`
 - `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
@@ -158,7 +158,7 @@ it stays complete when a surface changes.
 - `MobileTableOfContents`: `Summary`, `List`, `NestedList`, `Item`, `Link`, `HoverLink`, `Focus`
 - `Pagination`: `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`
 - `VersionSwitcher`: `Trigger`, `Panel`, `OpenPanel`, `Link`, `CurrentLink`
-- `LanguageSelect`: `Label`, `HoverLabel`, `LabelIcon`, `Select`, `Caret`, `Option`
+- `LanguageSelect`: `Compact`, `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
 - `SocialIcons`: `Link`, `HoverLink`, `Icon`
 - `ThemeSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`
 
@@ -260,9 +260,10 @@ The Appearance button in the desktop and mobile header opens one panel with
 Color scheme and Contrast sections. Color scheme offers Light, Dark, and Auto;
 Contrast offers Normal, High, and Auto. Each preference is independent, and
 selections are saved in the browser. The panel supports keyboard navigation,
-Escape, and outside-click dismissal. The popover fades and scales vertically
-from 96% to 100% over 120ms using native entry and exit transitions. Reduced
-motion disables the transition. Customize these states with
+Escape, and outside-click dismissal. The Appearance, Language, and mobile links
+popovers each fade and scale vertically from 96% to 100% over 120ms when
+opening and closing. Reduced motion disables the transition. Customize the
+Appearance states with
 `theme.styles.ThemeSelect.Panel` and `OpenPanel`; the root `$popover-transition`
 token controls the duration. Contrast can follow the system, force the
 normal palette, or activate the Glaze high-contrast palette.

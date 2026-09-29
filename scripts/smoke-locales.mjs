@@ -59,7 +59,7 @@ try {
   const sidebar = window.document.querySelector("cookbook-sidebar");
   assert.deepEqual(
     [...sidebar.querySelectorAll("a")].map((a) => a.getAttribute("href")),
-    ["/manual/fr/guide"],
+    ["/manual/", "/manual/fr/guide", "/manual/only-en"],
   );
   const alternates = [
     ...window.document.querySelectorAll('link[rel="alternate"][hreflang]'),
@@ -73,23 +73,22 @@ try {
     window.document.querySelector(".site-title").getAttribute("href"),
     "/manual/",
   );
-  assert.deepEqual(
-    [
-      ...window.document.querySelectorAll("cookbook-language-select select"),
-    ][0].querySelectorAll("option").length,
-    2,
+  const selector = window.document.querySelector("cookbook-language-select");
+  assert.equal(selector.querySelectorAll("[popover] nav a").length, 2);
+  assert.equal(
+    selector.querySelector("button").getAttribute("popovertarget"),
+    selector.querySelector("[popover]").id,
   );
   const english = new Window();
   english.document.write(
     await readFile(join(fixture, "dist/only-en/index.html"), "utf8"),
   );
   assert.ok(!english.document.querySelector('link[hreflang="fr"]'));
-  assert.equal(
-    english.document
-      .querySelector("cookbook-language-select option:nth-child(2)")
-      .getAttribute("value"),
-    "/manual/only-en/",
+  const fallback = english.document.querySelector(
+    "cookbook-language-select [popover] nav a:nth-child(2)",
   );
+  assert.equal(fallback.getAttribute("href"), "/manual/only-en/");
+  assert.ok(fallback.textContent.includes("fallback"));
   await window.happyDOM.close();
   await english.happyDOM.close();
   const sitemap = await readFile(join(fixture, "dist/sitemap-0.xml"), "utf8");

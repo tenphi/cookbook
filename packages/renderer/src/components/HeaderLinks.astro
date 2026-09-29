@@ -1,11 +1,22 @@
 ---
 import { messages } from "../localization.js";
+import { localeHref, routeLocale } from "../localization.js";
+import { navigationPath } from "../navigation.js";
 import { content } from "virtual:cookbook/config";
 import { HeaderLinksRoot } from "./LayoutComponents.js";
 
 const links = content.site.headerLinks ?? [];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const href = (link: string) => (link.startsWith("/") ? `${base}${link}` : link);
+const currentPath = navigationPath(Astro.url.pathname, base || "/");
+const href = (link: string) =>
+  localeHref(link, currentPath, content.routes, content, base || "/");
+const locale = routeLocale(currentPath, content);
+const language =
+  content.locales?.[locale]?.lang ?? (locale === "root" ? "en" : locale);
+const label = (value: string) =>
+  content.translations?.[language]?.[`navigation.${value}`] ??
+  content.translations?.[language.split("-")[0]!]?.[`navigation.${value}`] ??
+  value;
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
@@ -20,7 +31,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
             target={link.newTab ? "_blank" : undefined}
             rel={link.newTab ? "noopener noreferrer" : undefined}
           >
-            {link.label}
+            {label(link.label)}
           </a>
         ))}
       </nav>
@@ -74,7 +85,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
               target={link.newTab ? "_blank" : undefined}
               rel={link.newTab ? "noopener noreferrer" : undefined}
             >
-              {link.label}
+              {label(link.label)}
             </a>
           ))}
         </nav>

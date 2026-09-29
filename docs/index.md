@@ -43,6 +43,9 @@ The page you're reading comes from this repository's
 A small [Astro app](https://github.com/tenphi/cookbook/tree/main/apps/reference)
 builds directly from the root `docs/` directory. Its navigation, search, code
 controls, edit links, and Git timestamps are available to every Cookbook site.
+Use the language selector in the header to read this page and the getting-started
+guide in Spanish, Russian, Japanese, or Simplified Chinese. Other guides remain
+in English for now.
 
 ## Content and design on your terms
 

@@ -116,24 +116,53 @@ export function localizedNavigation(
       .filter((route) => route.discoverable !== false)
       .map((route) => route.route),
   );
+  const visibleRoutes = new Map(
+    routes
+      .filter((route) => route.discoverable !== false)
+      .map((route) => [route.route, route]),
+  );
+  const fallbackLocale =
+    options.defaultLocale ??
+    (options.locales.root ? "root" : Object.keys(options.locales)[0]!);
   const convert = (items: NavigationItem[]): NavigationItem[] =>
     items.flatMap((item): NavigationItem[] => {
       const link = typeof item === "string" ? item : item.link;
       const internal = link?.startsWith("/") && !link.startsWith("//");
       const translated = internal ? localePath(link!, options) : link;
-      if (typeof item === "string")
-        return !internal || available.has(translated!) ? [translated!] : [];
+      const fallback = internal
+        ? localizedRoute(link!, fallbackLocale, options)
+        : undefined;
+      const target =
+        !internal || available.has(translated!)
+          ? translated
+          : fallback && visibleRoutes.has(fallback)
+            ? fallback
+            : undefined;
+      if (typeof item === "string") {
+        if (!target) return [];
+        if (!internal || available.has(translated!)) return [target];
+        const route = visibleRoutes.get(target)!;
+        return [
+          {
+            label:
+              typeof route.sidebar === "object" && route.sidebar.label
+                ? route.sidebar.label
+                : route.title,
+            link: target,
+          },
+        ];
+      }
       if ("items" in item || "autogenerate" in item) {
         const { link: _link, ...group } = item;
+        const children = "items" in item ? convert(item.items) : undefined;
+        if (children?.length === 0 && !target) return [];
         return [
           {
             ...group,
             label: label(group.label),
-            ...(translated && (!internal || available.has(translated))
-              ? { link: translated }
-              : {}),
+            ...(target ? { link: target } : {}),
             ...("items" in item
-              ? { items: convert(item.items) }
+              ? { items: children! }
               : {
                   autogenerate: {
                     directory: localePath(item.autogenerate.directory, options),
@@ -142,8 +171,8 @@ export function localizedNavigation(
           },
         ];
       }
-      return !internal || available.has(translated!)
-        ? [{ ...item, label: label(item.label), link: translated! }]
+      return target
+        ? [{ ...item, label: label(item.label), link: target }]
         : [];
     });
   return {
