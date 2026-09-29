@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.20.4
+
+### Patch Changes
+
+- [#125](https://github.com/tenphi/cookbook/pull/125) [`c032992`](https://github.com/tenphi/cookbook/commit/c032992d34027ae05949be9e9a173b88c4241e04) Thanks [@tenphi](https://github.com/tenphi)! - Polish the header, sidebar, and search dialog. Keep search controls visible while results scroll, show localized result counts, and prevent Pagefind from adding inline input styles.
+
 ## 0.20.3
 
 ## 0.20.2
