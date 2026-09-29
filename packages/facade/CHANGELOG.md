@@ -1,5 +1,15 @@
 # @tenphi/cookbook
 
+## 0.20.3
+
+### Patch Changes
+
+- [#123](https://github.com/tenphi/cookbook/pull/123) [`ad0edfd`](https://github.com/tenphi/cookbook/commit/ad0edfdac6bc6d9cbcd3ba41e0b7c633f8aea42e) Thanks [@tenphi](https://github.com/tenphi)! - Report an actionable error when adding Cookbook to a server-rendered Astro project instead of silently changing its output mode.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.20.3
+  - @tenphi/renderer@0.20.3
+
 ## 0.20.2
 
 ### Patch Changes
