@@ -106,6 +106,14 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
+  !/\.td-code-block pre\.td-diff > code > \.line\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+    sharedCss,
+  ) ||
+  /\.td-code-block pre\.td-diff\.line\s*\{/.test(sharedCss)
+) {
+  throw new Error("Diff lines lost their padding or typography rules.");
+}
+if (
   !/\.td-footer__credit\s*\{[^}]*color:\s*var\(--text-color\)/.test(
     sharedCss,
   ) ||

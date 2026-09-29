@@ -725,7 +725,16 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   PackageVersion: [],
   VersionSwitcher: ["Trigger", "Panel", "OpenPanel", "Link", "CurrentLink"],
-  Preview: ["Caption", "Stage", "Frame", "Code", "Summary", "Pre"],
+  Preview: [
+    "Caption",
+    "Stage",
+    "Frame",
+    "Code",
+    "Summary",
+    "HoverSummary",
+    "ActiveSummary",
+    "Pre",
+  ],
   Sidebar: [
     "Backdrop",
     "OpenBackdrop",

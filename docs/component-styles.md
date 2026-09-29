@@ -54,6 +54,31 @@ tokens and presets keep the component aligned with the rest of the site, while
 Glaze resolves semantic colors across the configured schemes and contrast
 modes.
 
+### Responsive states
+
+Cookbook registers these Tasty state aliases for `theme.styles`, custom
+components, and recipes. Widths use CSS `rem` units; their pixel values depend
+on the browser's font-size settings.
+
+| State             | Condition                        | Typical use                                        |
+| ----------------- | -------------------------------- | -------------------------------------------------- |
+| `@compact`        | width ≤ 23rem                    | Hide optional header controls in very narrow space |
+| `@small`          | width ≤ 40rem                    | Stack compact grids                                |
+| `@shell-mobile`   | width ≤ 48rem                    | Switch the page shell to its narrow arrangement    |
+| `@shell-desktop`  | width > 48rem                    | Restore the wider shell arrangement                |
+| `@mobile`         | width < 50rem                    | Mobile navigation and component layouts            |
+| `@desktop`        | width ≥ 50rem                    | Desktop navigation and component layouts           |
+| `@medium-layout`  | 50rem ≤ width < 72rem            | Intermediate two-column layouts                    |
+| `@narrow-layout`  | width < 72rem                    | Hide or reposition the desktop table of contents   |
+| `@reduced-motion` | `prefers-reduced-motion: reduce` | Remove optional motion                             |
+
+The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
+boundary serve different parts of the layout; their ranges intentionally
+overlap. Use the default state key `""` for the value outside the listed
+condition. Add your own aliases with `theme.states`; redefining a built-in
+alias also changes the renderer's responsive layout, so check the whole site
+when doing so.
+
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,
 then runs Cookbook's preflight and production output checks. A misspelled
@@ -158,7 +183,7 @@ it stays complete when a surface changes.
 - `Tabs`: `List`, `Button`, `SelectedButton`, `FocusedButton`
 - `Steps`: `Item`, `Marker`
 - `Hero`: `Visual`, `DarkVisual`, `LightVisual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`
-- `Preview`: `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `Pre`
+- `Preview`: `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `HoverSummary`, `ActiveSummary`, `Pre`
 - `SiteLogo`: `Image`, `Light`, `Dark`
 - `Logo`: `Svg`, `Mark`
 - `PageActions`: `Control`, `Hover`, `Focus`, `Pending`, `Status`

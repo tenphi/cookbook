@@ -466,8 +466,10 @@ contains only the properties to override; Cookbook deep-merges it into that
 surface's complete base object internally. Unknown built-in names and sub-elements are rejected. Register custom
 component names and their overrides in `theme.customStyles`. Structural Astro overrides under
 `components.overrides` remain available when styling alone is insufficient.
-`theme.states` registers additional Tasty state shorthands, and `contrastLevel`
-is forwarded to Glaze's palette resolution.
+`theme.states` registers additional Tasty state shorthands or replaces a
+built-in alias; see the [responsive state reference](./component-styles.md#responsive-states)
+for all nine defaults. `contrastLevel` is forwarded to Glaze's palette
+resolution.
 The built-in documentation navigation surfaces are available as `Sidebar`,
 `TableOfContents`, `MobileMenuToggle`, and `MobileNavigationTabs`; see
 [Component styles](./component-styles.md#style-customization) for their
