@@ -1,5 +1,12 @@
 # @tenphi/create-cookbook
 
+## 0.20.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tenphi/docs@0.20.3
+
 ## 0.20.2
 
 ### Patch Changes
