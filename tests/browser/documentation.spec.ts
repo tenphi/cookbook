@@ -43,6 +43,36 @@ for (const width of [390, 1440]) {
       const box = (await close.boundingBox())!;
       expect(box.y).toBeCloseTo(closeTop, 0);
       expect(box.width).toBe(box.height);
+      const dialog = (await page.locator("site-search dialog").boundingBox())!;
+      const pane = (await results.boundingBox())!;
+      const field = (await input.boundingBox())!;
+      const sideInset = field.x - dialog.x;
+      const closeGap = field.y - box.y - box.height;
+      const resultsGap = pane.y - field.y - field.height;
+      expect(Math.abs(sideInset - closeGap)).toBeLessThan(2);
+      expect(Math.abs(sideInset - resultsGap)).toBeLessThan(2);
+      expect(Math.abs(pane.x - dialog.x)).toBeLessThan(2);
+      expect(
+        Math.abs(pane.x + pane.width - dialog.x - dialog.width),
+      ).toBeLessThan(2);
+      expect(
+        Math.abs(pane.y + pane.height - dialog.y - dialog.height),
+      ).toBeLessThan(2);
+      expect(
+        await results.evaluate(
+          (element) => getComputedStyle(element).borderTopWidth,
+        ),
+      ).not.toBe("0px");
+      const more = page.locator(".pagefind-ui__button");
+      if (await more.isVisible()) {
+        const button = (await more.boundingBox())!;
+        const list = (await page
+          .locator(".pagefind-ui__results")
+          .boundingBox())!;
+        expect(
+          Math.abs(button.x + button.width - list.x - list.width),
+        ).toBeLessThan(2);
+      }
       await close.click();
       await expect(page.locator("site-search dialog")).not.toBeVisible();
     }
