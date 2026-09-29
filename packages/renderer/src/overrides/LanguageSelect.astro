@@ -2,7 +2,7 @@
 import { content } from "virtual:cookbook/config";
 import { localeTarget, routeLocale, messages } from "../localization.js";
 import { navigationPath } from "../navigation.js";
-import Icon from "../components/Icon.astro";
+import SelectPopover from "../components/SelectPopover.astro";
 interface Props {
   compact?: boolean;
   sidebar?: boolean;
@@ -12,7 +12,6 @@ const current = navigationPath(Astro.url.pathname, content.base);
 const selected = routeLocale(current, content);
 const ui = messages(Astro.locals.cookbookRoute.lang, content);
 const accessibleLabel = Astro.locals.t("languageSelect.accessibleLabel");
-const id = `language-${crypto.randomUUID()}`;
 const options = Object.entries(content.locales ?? {}).flatMap(
   ([locale, config]) => {
     const target = localeTarget(current, locale, content.routes, content);
@@ -40,41 +39,19 @@ const selectedOption = options.find((option) => option.locale === selected);
       data-sidebar={sidebar ? "" : undefined}
       data-tasty-anatomy="LanguageSelect"
     >
-      <button
-        type="button"
-        popovertarget={id}
-        aria-label={`${accessibleLabel}: ${selectedOption?.label ?? ""}`}
+      <SelectPopover
+        triggerLabel={`${accessibleLabel}: ${selectedOption?.label ?? ""}`}
+        selectedLabel={selectedOption?.label ?? ""}
         title={accessibleLabel}
-      >
-        <Icon name="translate" class="label-icon" />
-        <span class="trigger-label">{selectedOption?.label}</span>
-        <Icon name="down-caret" class="caret" />
-      </button>
-      <div id={id} popover="auto" role="group" aria-label={accessibleLabel}>
-        <div class="panel-title">{accessibleLabel}</div>
-        <nav aria-label={accessibleLabel}>
-          {options.map((option) => (
-            <a
-              href={option.href}
-              aria-current={option.locale === selected ? "page" : undefined}
-            >
-              <span lang={option.lang}>{option.label}</span>
-              {option.fallback && (
-                <span class="fallback-label">({ui.fallback})</span>
-              )}
-              <Icon name="approve-check" class="checkmark" />
-            </a>
-          ))}
-        </nav>
-      </div>
+        icon="translate"
+        options={options.map((option) => ({
+          href: option.href,
+          label: option.label,
+          lang: option.lang,
+          hint: option.fallback ? ui.fallback : undefined,
+          current: option.locale === selected,
+        }))}
+      />
     </cookbook-language-select>
   )
 }
-
-<script>
-  import { initializePopoverMotion } from "../client/popover-motion.js";
-
-  document
-    .querySelectorAll<HTMLElement>("cookbook-language-select [popover]")
-    .forEach((panel) => initializePopoverMotion(panel));
-</script>

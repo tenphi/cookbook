@@ -157,7 +157,7 @@ it stays complete when a surface changes.
 - `TableOfContents`: `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`
 - `MobileTableOfContents`: `Summary`, `List`, `NestedList`, `Item`, `Link`, `HoverLink`, `Focus`
 - `Pagination`: `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`
-- `VersionSwitcher`: `Trigger`, `Panel`, `OpenPanel`, `Link`, `CurrentLink`
+- `VersionSwitcher`: `Trigger`, `HoverTrigger`, `TriggerLabel`, `Caret`, `Panel`, `OpenPanel`, `PanelTitle`, `Options`, `Link`, `HoverLink`, `CurrentLink`, `Checkmark`, `SelectedCheckmark`
 - `LanguageSelect`: `Compact`, `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
 - `SocialIcons`: `Link`, `HoverLink`, `Icon`
 - `ThemeSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`
@@ -260,7 +260,7 @@ The Appearance button in the desktop and mobile header opens one panel with
 Color scheme and Contrast sections. Color scheme offers Light, Dark, and Auto;
 Contrast offers Normal, High, and Auto. Each preference is independent, and
 selections are saved in the browser. The panel supports keyboard navigation,
-Escape, and outside-click dismissal. The Appearance, Language, and mobile links
+Escape, and outside-click dismissal. The Appearance, Language, Version, and mobile links
 popovers each fade and scale vertically from 96% to 100% over 120ms when
 opening and closing. Reduced motion disables the transition. Customize the
 Appearance states with

@@ -85,6 +85,15 @@ test("header popovers fade on open and close", async ({ page }) => {
 
   for (const option of [
     {
+      trigger: page.getByRole("button", {
+        name: "Documentation version: Current",
+      }),
+      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+      close: page.getByRole("button", {
+        name: "Documentation version: Current",
+      }),
+    },
+    {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
       panel: page.locator("site-search dialog"),
       close: page.getByRole("button", { name: "Cancel", exact: true }),
@@ -138,6 +147,15 @@ test("header popovers respect reduced motion", async ({ page }) => {
 
   for (const option of [
     {
+      trigger: page.getByRole("button", {
+        name: "Documentation version: Current",
+      }),
+      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+      close: page.getByRole("button", {
+        name: "Documentation version: Current",
+      }),
+    },
+    {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
       panel: page.locator("site-search dialog"),
       close: page.getByRole("button", { name: "Cancel", exact: true }),
@@ -178,6 +196,63 @@ test("header popovers respect reduced motion", async ({ page }) => {
     await close.click();
     await expect(panel).toHaveCSS("display", "none");
   }
+});
+
+test("selection popovers dismiss on Escape and outside click", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  for (const { trigger, panel } of [
+    {
+      trigger: page.getByRole("button", {
+        name: "Documentation version: Current",
+      }),
+      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+    },
+    {
+      trigger: page.getByRole("button", { name: "Appearance", exact: true }),
+      panel: page.locator(
+        ".td-header__tools cookbook-appearance-menu [popover]",
+      ),
+    },
+    {
+      trigger: page.getByRole("button", { name: "Select language: English" }),
+      panel: page.locator(
+        ".td-header__tools cookbook-language-select [popover]",
+      ),
+    },
+  ]) {
+    await trigger.click();
+    await expect(panel).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await trigger.click();
+    await page.getByRole("heading", { name: "Update the site" }).click();
+    await expect(panel).toBeHidden();
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const more = page.getByRole("button", { name: "More", exact: true });
+  const morePanel = page.locator(".td-header-links__panel");
+  await more.click();
+  await page.keyboard.press("Escape");
+  await expect(morePanel).toBeHidden();
+  await more.click();
+  await page.getByRole("heading", { name: "Update the site" }).click();
+  await expect(morePanel).toBeHidden();
+
+  await page.getByRole("button", { name: /Menu/ }).click();
+  const sidebar = page.locator("cookbook-sidebar-pane");
+  const language = sidebar.getByRole("button", {
+    name: "Select language: English",
+  });
+  const languagePanel = sidebar.locator("cookbook-language-select [popover]");
+  await language.click();
+  await page.keyboard.press("Escape");
+  await expect(languagePanel).toBeHidden();
+  await language.click();
+  await page.mouse.click(380, 700);
+  await expect(languagePanel).toBeHidden();
 });
 
 test("code group keyboard navigation and copying share the fence controls", async ({
@@ -431,6 +506,66 @@ test("locale/version navigation keeps prefixes and drafts remain direct-only", a
   expect(
     await page.locator('cookbook-sidebar a[href="/manual/draft"]').count(),
   ).toBe(0);
+});
+
+test("version popover dismisses and switches matching pages on desktop and mobile", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const switcher = page.locator('[data-tasty-anatomy="VersionSwitcher"]');
+  const trigger = switcher.getByRole("button", {
+    name: "Documentation version: Current",
+  });
+  const panel = switcher.locator("[popover]");
+  await expect(panel).toBeHidden();
+  await trigger.click();
+  await expect(panel).toHaveCSS("opacity", "1");
+  await expect(panel.getByRole("link", { name: "Current" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.keyboard.press("Tab");
+  await expect(panel.getByRole("link", { name: "Current" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(panel).toBeHidden();
+
+  await trigger.click();
+  await page.getByRole("heading", { name: "Update the site" }).click();
+  await expect(panel).toBeHidden();
+  await trigger.click();
+  await panel.getByRole("link", { name: "v1" }).click();
+  await expect(page).toHaveURL(/\/manual\/v1\/guide\/?$/);
+  await expect(
+    switcher.getByRole("button", { name: "Documentation version: v1" }),
+  ).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await switcher
+    .getByRole("button", { name: "Documentation version: v1" })
+    .click();
+  await expect(panel).toHaveCSS("opacity", "1");
+  const placement = await switcher.evaluate((root) => {
+    const panel = root.querySelector("[popover]")!.getBoundingClientRect();
+    const trigger = root.querySelector("button")!.getBoundingClientRect();
+    return {
+      left: panel.left,
+      right: panel.right,
+      top: panel.top,
+      triggerBottom: trigger.bottom,
+    };
+  });
+  expect(placement.left).toBeGreaterThanOrEqual(0);
+  expect(placement.right).toBeLessThanOrEqual(390);
+  expect(placement.top).toBeGreaterThan(placement.triggerBottom);
+  await panel.getByRole("link", { name: "Current" }).click();
+  await expect(page).toHaveURL(/\/manual\/guide\/?$/);
+
+  await page.goto("/manual/fr/guide/");
+  await switcher
+    .getByRole("button", { name: "Version de la documentation: Current" })
+    .click();
+  await panel.getByRole("link", { name: "v1" }).click();
+  await expect(page).toHaveURL(/\/manual\/fr\/v1\/guide\/?$/);
 });
 
 test("language popover is styled and switches pages on desktop and mobile", async ({

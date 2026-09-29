@@ -1,5 +1,6 @@
 import { tasty } from "@tenphi/tasty";
 import { customizeComponent } from "./customize-component.js";
+import { selectPopoverStyles } from "./select-popover-styles.js";
 import { configureCookbookStates } from "./tasty-states.js";
 
 configureCookbookStates();
@@ -117,56 +118,37 @@ export const PackageVersionRoot = customizeComponent(
   }),
 );
 
+const versionSelectStyles = selectPopoverStyles({
+  option: "Link",
+  hoverOption: "HoverLink",
+  currentOption: "CurrentLink",
+});
+
 export const VersionSwitcherRoot = customizeComponent(
   "VersionSwitcher",
   tasty({
-    as: "details",
+    as: "div",
     styles: {
+      ...versionSelectStyles,
       display: "inline-flex",
-      position: "relative",
       flexShrink: "0",
-      color: "#text-soft",
       Trigger: {
-        $: "> summary",
-        display: "flex",
-        alignItems: "center",
+        ...versionSelectStyles.Trigger,
         blockSize: "min $control-height",
         inlinePadding: "$gap",
         fill: "#surface-2",
         border: true,
-        radius: "$header-control-radius",
         preset: "small / strong",
-        cursor: "pointer",
-        whiteSpace: "nowrap",
+        anchorName: "--version-trigger",
       },
       Panel: {
-        $: "> nav",
-        position: "absolute",
-        inset: { "": "100% auto auto 0", "@mobile": "100% 0 auto auto" },
-        zIndex: "10",
-        inlineSize: "min 8rem",
-        padding: "($gap * 0.5)",
-        fill: "#surface",
-        border: true,
-        radius: "$radius",
-        shadow: "0 0.75rem 2rem #shadow",
-      },
-      OpenPanel: {
-        $: "&[open] > nav",
-        display: "grid",
-      },
-      Link: {
-        $: "> nav > a",
-        display: "block",
-        padding: "($gap * 0.5) $gap",
-        color: "#text-soft",
-        preset: "small",
-        textDecoration: "none",
-      },
-      CurrentLink: {
-        $: '> nav > a[aria-current="page"]',
-        color: "#accent-text",
-        preset: "small / strong",
+        ...versionSelectStyles.Panel,
+        positionAnchor: "--version-trigger",
+        blockInset: "(anchor(bottom) + $gap) start, auto end",
+        inlineInset: {
+          "": "anchor(left) start, auto end",
+          "@mobile": "auto start, anchor(right) end",
+        },
       },
     },
   }),

@@ -9,6 +9,7 @@ import closeIcon from "../icons/close.svg?raw";
 import copyIcon from "../icons/copy.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
 import { resolveComponentStyles } from "./component-styles.js";
+import { selectPopoverStyles } from "./select-popover-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
 import { configureCookbookStates } from "./tasty-states.js";
 import { getDefaultFontUsage, getFontFaces } from "../theme/fonts.js";
@@ -1432,37 +1433,26 @@ export default function GlobalStyles() {
     }),
   );
 
+  const languageSelectStyles = selectPopoverStyles();
   useGlobalStyles(
     "cookbook-language-select",
     resolveComponentStyles("LanguageSelect", {
       display: "flex",
       flexShrink: "0",
-      "$popover-transition": "120ms",
+      "$popover-transition": languageSelectStyles["$popover-transition"],
       Compact: {
         $: "&[data-compact]",
       },
       Trigger: {
-        $: "> button",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "($gap * 0.5)",
+        ...languageSelectStyles.Trigger,
         inlineSize: "8rem",
         blockSize: "$control-height",
         padding: "0 $gap",
-        color: "#text-soft",
         fill: "#clear",
         border: "0",
-        radius: "$header-control-radius",
-        preset: "small",
-        cursor: "pointer",
         transition: "color $transition, fill $transition",
       },
-      HoverTrigger: {
-        $: "> button:hover, &:has([popover]:popover-open) > button",
-        color: "#text",
-        fill: "#surface-2-hover",
-      },
+      HoverTrigger: languageSelectStyles.HoverTrigger,
       ActiveTrigger: {
         $: "> button:active",
         color: "#text",
@@ -1475,18 +1465,8 @@ export default function GlobalStyles() {
         inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
         blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
       },
-      TriggerLabel: {
-        $: ".trigger-label",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-      },
-      Caret: {
-        $: "> button > .caret",
-        flexShrink: "0",
-        inlineSize: "0.875rem",
-        blockSize: "0.875rem",
-      },
+      TriggerLabel: languageSelectStyles.TriggerLabel,
+      Caret: languageSelectStyles.Caret,
       CompactTrigger: {
         $: "&[data-compact] > button",
         inlineSize: "$docs-menu-button-size",
@@ -1508,30 +1488,10 @@ export default function GlobalStyles() {
         anchorName: "--language-trigger",
       },
       Panel: {
-        $: "[popover]",
-        position: "fixed",
-        inset: "auto",
+        ...languageSelectStyles.Panel,
         blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
         inlineInset:
           "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
-        inlineSize: "min(15rem, calc(100vw - 2 * $docs-nav-pad-x))",
-        blockSize: "max (100dvh - $docs-nav-height - $gap)",
-        overflowY: "auto",
-        margin: "0",
-        padding: "$gap",
-        color: "#text",
-        fill: "#surface-2",
-        border: true,
-        radius: "$card-radius",
-        shadow: "0 0.75rem 2rem #shadow",
-        opacity: "0",
-        scale: "1 0.96",
-        transformOrigin: "top",
-        transition: {
-          "": "none",
-          "!@reduced-motion":
-            "opacity $popover-transition ease-out, scale $popover-transition ease-out, display $popover-transition allow-discrete, overlay $popover-transition allow-discrete",
-        },
       },
       SidebarPanel: {
         $: "&[data-sidebar] > [popover]",
@@ -1543,53 +1503,15 @@ export default function GlobalStyles() {
         blockSize: "max (100dvh - 8rem)",
         transformOrigin: "bottom",
       },
-      OpenPanel: {
-        $: "[popover]:popover-open[data-open]",
-        opacity: "1",
-        scale: "1",
-      },
-      PanelTitle: {
-        $: ".panel-title",
-        padding: "($gap * 0.75) $gap",
-        color: "#text-muted",
-        preset: "small / strong",
-      },
-      Options: { $: "nav", display: "grid", gap: "($gap * 0.25)" },
-      Option: {
-        $: "nav a",
-        display: "flex",
-        alignItems: "center",
-        gap: "$gap",
-        minBlockSize: "2.25rem",
-        padding: "($gap * 0.75) $gap",
-        color: "#text-soft",
-        preset: "small",
-        textDecoration: "none",
-        radius: "$radius",
-      },
-      HoverOption: {
-        $: "nav a:hover",
-        color: "#text",
-        fill: "#surface-2-hover",
-      },
-      CurrentOption: {
-        $: 'nav a[aria-current="page"]',
-        color: "#accent-text",
-        fill: "#accent-surface-2-subtle",
-      },
+      OpenPanel: languageSelectStyles.OpenPanel,
+      PanelTitle: languageSelectStyles.PanelTitle,
+      Options: languageSelectStyles.Options,
+      Option: languageSelectStyles.Option,
+      HoverOption: languageSelectStyles.HoverOption,
+      CurrentOption: languageSelectStyles.CurrentOption,
       Fallback: { $: ".fallback-label", color: "#text-muted" },
-      Checkmark: {
-        $: "nav a > .checkmark",
-        flexShrink: "0",
-        inlineMargin: "auto start",
-        inlineSize: "1rem",
-        blockSize: "1rem",
-        visibility: "hidden",
-      },
-      SelectedCheckmark: {
-        $: 'nav a[aria-current="page"] > .checkmark',
-        visibility: "visible",
-      },
+      Checkmark: languageSelectStyles.Checkmark,
+      SelectedCheckmark: languageSelectStyles.SelectedCheckmark,
     }),
   );
 

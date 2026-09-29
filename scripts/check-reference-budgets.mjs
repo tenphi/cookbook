@@ -46,7 +46,7 @@ for (const name of entries) {
 // The full customization registry, semantic syntax classes, owned search,
 // page actions, and mobile contents add ~23 KiB to the previous 163 KiB limit.
 // The configurable language popover and mobile placement add about 8 KiB.
-// Current measured maximum: 198,275 bytes; keep a small explicit growth margin.
+// Current measured maximum: 198,287 bytes; keep a small explicit growth margin.
 const cssBudget = 200 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
