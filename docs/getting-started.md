@@ -54,6 +54,9 @@ Run `npm run update` when you want to resolve the requested tag or range again.
 
 ## Add to an existing Astro project
 
+Cookbook requires Astro's `output: "static"` setting. If your project uses
+`output: "server"`, create a separate static Astro project for its documentation.
+
 ```sh
 npx astro add @tenphi/cookbook
 ```

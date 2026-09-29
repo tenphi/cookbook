@@ -118,6 +118,11 @@ export default function cookbook(
     name: "cookbook",
     hooks: {
       "astro:config:setup": async (context) => {
+        if (context.config.output !== "static") {
+          throw new Error(
+            `Cookbook requires Astro output: "static"; this project uses "${context.config.output}". Use a separate static Astro project for documentation.`,
+          );
+        }
         const project = await resolveDocsProject({
           ...options,
           root: options.root ?? fileURLToPath(context.config.root),
@@ -438,7 +443,6 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             ? { site: configuredSite }
             : {}),
           base,
-          output: "static",
           markdown: {
             syntaxHighlight: "shiki",
             shikiConfig: cookbookShikiConfig(

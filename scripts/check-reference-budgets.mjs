@@ -1,5 +1,6 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { extname, join, posix } from "node:path";
+import { gzipSync } from "node:zlib";
 
 const output = join(process.cwd(), "apps/reference/dist");
 const assets = join(output, "_astro");
@@ -440,6 +441,27 @@ async function checkAssetBudgets() {
       await visit(posix.normalize(posix.join(posix.dirname(file), match[1])));
   };
   for (const script of scripts) await visit(script);
+  const stylesheets = [
+    ...guide.matchAll(
+      /<link\b(?=[^>]*rel="stylesheet")[^>]*href="(\/_astro\/[^"?#]+)"/g,
+    ),
+  ].map((match) => match[1].slice(1));
+  if (stylesheets.length === 0)
+    throw new Error("The guide is missing its extracted stylesheets.");
+  const gzipSize = async (file) =>
+    gzipSync(await readFile(join(output, file))).length;
+  const [htmlGzip, cssGzip, jsGzip] = await Promise.all([
+    gzipSize("getting-started/index.html"),
+    Promise.all(stylesheets.map(gzipSize)).then((sizes) =>
+      sizes.reduce((sum, bytes) => sum + bytes, 0),
+    ),
+    Promise.all([...initial].map(gzipSize)).then((sizes) =>
+      sizes.reduce((sum, bytes) => sum + bytes, 0),
+    ),
+  ]);
+  console.log(
+    `Initial guide gzip estimate (first-party HTML/CSS/JS): ${htmlGzip} + ${cssGzip} + ${jsGzip} = ${htmlGzip + cssGzip + jsGzip} bytes.`,
+  );
   budgets.push([
     "initial page JavaScript",
     [...initial].reduce((sum, file) => sum + (sizes.get(file) ?? 0), 0),
