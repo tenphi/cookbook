@@ -49,10 +49,13 @@ rejects the TypeScript 7 API. Runtime compilation and lint parsing are separate.
 
 The reference build enforces separate limits for initial page JavaScript,
 lazy search assets, font files, images, and extracted Tasty CSS. A default guide
-currently loads about 12 KB of first-party JavaScript initially; search is lazy.
-The checked reference output contains about 73 KB of fonts and 35 KB of images.
-`node scripts/check-reference-budgets.mjs` prints measured bytes and limits.
-These are uncompressed first-party build sizes, excluding external analytics.
+currently loads about 9 KB of first-party JavaScript initially; search is lazy.
+The checked reference output contains about 73 KB of fonts, 66 KB of images and
+icons, and a 189 KB shared stylesheet. The guide's first-party HTML, CSS, and
+initial JavaScript total about 33 KB when gzipped. Actual network transfers vary
+with hosting compression and caching. `node scripts/check-reference-budgets.mjs`
+prints current raw budgets and the gzip estimate; neither includes external
+analytics.
 
 A local macOS / Node 22.22 run processed 500 pages with 10,000 headings in about
 1.1 seconds and built that site in 33.5 seconds. A 1,000-page / 20,000-heading

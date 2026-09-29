@@ -103,8 +103,24 @@ if (route.id === "/guide") {
     await readFile(join(fixture, "dist/fr/guide/index.html"), "utf8"),
     /lang="fr"/,
   );
+  await writeFile(
+    join(fixture, "astro.config.mjs"),
+    'import cookbook from "@tenphi/cookbook"; export default { output: "server", integrations: [cookbook()] };',
+  );
+  await assert.rejects(
+    run(
+      process.execPath,
+      [join(root, "apps/convention/node_modules/astro/bin/astro.mjs"), "build"],
+      {
+        cwd: fixture,
+        env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
+        maxBuffer: 8 * 1024 * 1024,
+      },
+    ),
+    /Cookbook requires Astro output: "static"; this project uses "server"/,
+  );
   console.log(
-    "Extension consumer passed: Astro Markdown plugin, Markdown and MDX alerts, metadata schema, content queries, component override, drafts, base path, and locale.",
+    "Extension consumer passed: Astro Markdown plugin, Markdown and MDX alerts, metadata schema, content queries, component override, drafts, base path, locale, and server-output rejection.",
   );
 } finally {
   if (!process.env.COOKBOOK_KEEP_FIXTURE)
