@@ -674,6 +674,7 @@ export const HeaderLinksRoot = customizeComponent(
       display: "flex",
       flexShrink: "0",
       order: { "": "0", "@mobile": "2" },
+      "$popover-transition": "120ms",
       Desktop: {
         $: ".td-header-links__desktop",
         display: "flex",
@@ -742,6 +743,19 @@ export const HeaderLinksRoot = customizeComponent(
         border: true,
         radius: "$card-radius",
         shadow: "0 0.75rem 2rem #shadow",
+        opacity: "0",
+        scale: "1 0.96",
+        transformOrigin: "top right",
+        transition: {
+          "": "none",
+          "!@reduced-motion":
+            "opacity $popover-transition ease-out, scale $popover-transition ease-out, display $popover-transition allow-discrete, overlay $popover-transition allow-discrete",
+        },
+      },
+      OpenPanel: {
+        $: ".td-header-links__panel:popover-open[data-open]",
+        opacity: "1",
+        scale: "1",
       },
       PanelNavigation: {
         $: ".td-header-links__panel nav",

@@ -49,6 +49,69 @@ for (const width of [390, 1440]) {
   });
 }
 
+test("search and mobile header menu fade on open and close", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/manual/guide/");
+
+  for (const { trigger, panel, close } of [
+    {
+      trigger: page.getByRole("button", { name: "Search", exact: true }),
+      panel: page.locator("site-search dialog"),
+      close: page.getByRole("button", { name: "Cancel", exact: true }),
+    },
+    {
+      trigger: page.getByRole("button", { name: "More", exact: true }),
+      panel: page.locator(".td-header-links__panel"),
+      close: page.getByRole("button", {
+        name: "Close more menu",
+        exact: true,
+      }),
+    },
+  ]) {
+    await trigger.click();
+    await expect(panel).toHaveAttribute("data-open", "");
+    expect(
+      await panel.evaluate((element) => getComputedStyle(element).transition),
+    ).toContain("opacity 0.12s");
+    await expect(panel).toHaveCSS("opacity", "1");
+    await close.click();
+    await expect(panel).not.toHaveAttribute("data-open");
+    await expect(panel).toHaveCSS("display", "none");
+  }
+});
+
+test("search and mobile header menu respect reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/manual/guide/");
+
+  for (const { trigger, panel, close } of [
+    {
+      trigger: page.getByRole("button", { name: "Search", exact: true }),
+      panel: page.locator("site-search dialog"),
+      close: page.getByRole("button", { name: "Cancel", exact: true }),
+    },
+    {
+      trigger: page.getByRole("button", { name: "More", exact: true }),
+      panel: page.locator(".td-header-links__panel"),
+      close: page.getByRole("button", {
+        name: "Close more menu",
+        exact: true,
+      }),
+    },
+  ]) {
+    await trigger.click();
+    await expect(panel).toHaveCSS("transition-property", "none");
+    await expect(panel).toHaveCSS("opacity", "1");
+    await close.click();
+    await expect(panel).toHaveCSS("display", "none");
+  }
+});
+
 test("code group keyboard navigation and copying share the fence controls", async ({
   page,
   context,

@@ -313,6 +313,7 @@ export default function GlobalStyles() {
     "site-search",
     resolveComponentStyles("Search", {
       display: "contents",
+      "$dialog-transition": "120ms",
       Status: {
         $: "[data-search-status]",
         margin: "auto",
@@ -333,6 +334,13 @@ export default function GlobalStyles() {
         border: true,
         fill: "#surface",
         shadow: "0 1rem 3rem #shadow",
+        opacity: "0",
+        scale: { "": "0.98", "@mobile": "1" },
+        transition: {
+          "": "none",
+          "!@reduced-motion":
+            "opacity $dialog-transition ease-out, scale $dialog-transition ease-out, display $dialog-transition allow-discrete, overlay $dialog-transition allow-discrete",
+        },
       },
       CloseIcon: {
         $: "button[data-close-modal]::before",
@@ -347,10 +355,25 @@ export default function GlobalStyles() {
         mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
       },
       OpenDialog: { $: "dialog[open]", display: "flex" },
+      EnteredDialog: {
+        $: "dialog[open][data-open]",
+        opacity: "1",
+        scale: "1",
+      },
       Backdrop: {
         $: "dialog::backdrop",
         fill: "#overlay",
         backdropFilter: "blur(0.25rem)",
+        opacity: "0",
+        transition: {
+          "": "none",
+          "!@reduced-motion":
+            "opacity $dialog-transition ease-out, display $dialog-transition allow-discrete, overlay $dialog-transition allow-discrete",
+        },
+      },
+      EnteredBackdrop: {
+        $: "dialog[open][data-open]::backdrop",
+        opacity: "1",
       },
       Frame: {
         $: ".dialog-frame",
@@ -720,7 +743,7 @@ export default function GlobalStyles() {
       },
       TopLevelLink: {
         $: 'a.large:not([aria-current="page"])',
-        color: "#text",
+        color: "#sidebar-text",
         preset: "navigation",
       },
     }),
