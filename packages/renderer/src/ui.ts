@@ -18,9 +18,9 @@ const english: Record<string, string> = {
   "page.lastUpdated": "Last updated",
   "page.skipToContent": "Skip to content",
   "pagefind.search": "Search for",
-  "pagefind.zero_results": "No results for",
-  "pagefind.many_results": "results for",
-  "pagefind.one_result": "result for",
+  "pagefind.zero_results": "No results",
+  "pagefind.many_results": "[COUNT] results",
+  "pagefind.one_result": "[COUNT] result",
 };
 
 const french: Record<string, string> = {
@@ -35,6 +35,10 @@ const french: Record<string, string> = {
   "search.cancelLabel": "Annuler",
   "search.devWarning":
     "La recherche est disponible après la génération du site.",
+  "pagefind.search": "Rechercher",
+  "pagefind.zero_results": "Aucun résultat",
+  "pagefind.many_results": "[COUNT] résultats",
+  "pagefind.one_result": "[COUNT] résultat",
   "page.nextLink": "Suivant",
   "page.previousLink": "Précédent",
   "page.editLink": "Modifier la page",

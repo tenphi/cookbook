@@ -450,10 +450,22 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
             ),
           },
           vite: {
+            optimizeDeps: { exclude: ["@pagefind/default-ui"] },
             ssr: {
               external: ["@tenphi/docs", "react", "react-dom"],
             },
             plugins: [
+              {
+                name: "cookbook-pagefind-ui",
+                enforce: "pre",
+                transform(source, id) {
+                  if (
+                    id.includes("/@pagefind/default-ui/npm_dist/") &&
+                    /\/ui-core\.(?:mjs|cjs)$/.test(id)
+                  )
+                    return adaptPagefindUI(source);
+                },
+              },
               {
                 name: "cookbook-server-only-styling",
                 enforce: "pre",

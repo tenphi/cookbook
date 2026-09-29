@@ -16,6 +16,39 @@ test("keyboard search focuses the input and returns focus on close", async ({
   await expect(trigger).toBeFocused();
 });
 
+for (const width of [390, 1440]) {
+  test(`search keeps its controls visible while results scroll at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 420 });
+    await page.goto("/manual/guide/");
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    const input = page.getByRole("textbox", { name: "Search", exact: true });
+    await input.fill("configuration");
+    await expect(page.locator(".pagefind-ui__message")).toHaveText(
+      /^\d+ results?$/,
+    );
+    await expect(input).not.toHaveAttribute("style");
+
+    const results = page.locator(".pagefind-ui__results-area");
+    const inputTop = (await input.boundingBox())!.y;
+    const close = page.getByRole("button", { name: "Cancel", exact: true });
+    const closeTop = width < 800 ? (await close.boundingBox())!.y : undefined;
+    await results.evaluate((element) => (element.scrollTop = 150));
+    expect(
+      await results.evaluate((element) => element.scrollTop),
+    ).toBeGreaterThan(0);
+    expect((await input.boundingBox())!.y).toBeCloseTo(inputTop, 0);
+    if (closeTop !== undefined) {
+      const box = (await close.boundingBox())!;
+      expect(box.y).toBeCloseTo(closeTop, 0);
+      expect(box.width).toBe(box.height);
+      await close.click();
+      await expect(page.locator("site-search dialog")).not.toBeVisible();
+    }
+  });
+}
+
 test("code group keyboard navigation and copying share the fence controls", async ({
   page,
   context,

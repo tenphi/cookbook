@@ -477,7 +477,9 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Underline",
   ],
   SearchResults: [
+    "UI",
     "Form",
+    "Drawer",
     "Input",
     "Clear",
     "Results",
