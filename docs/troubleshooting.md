@@ -36,7 +36,7 @@ contrast. Browser checks complement the numeric diagnostics.
   `doctor --public-dir ./static` if your Astro app uses a custom public directory.
 - **Google request fails:** check the exact family name and supported weights and
   styles. Explicit requests reject missing styles; shorthand warns if italics
-  are unavailable. See [font configuration](./theme-and-components.md#change-font-families).
+  are unavailable. See [font configuration](./fonts-and-typography.md#change-font-families).
 - **Offline cache miss:** warm the cache with `cache: "reuse"` while online, and
   retain `<Astro cacheDir>/cookbook-fonts`. The key includes the requested family,
   weights, and styles. `cache: "refresh"` intentionally needs the network.

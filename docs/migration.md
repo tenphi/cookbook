@@ -38,6 +38,20 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## 0.19.x to 0.20
+
+Cookbook 0.20 generates a themed social preview image when a site has no
+`site.seo.image`. If your host or sharing workflow expects a particular image,
+set that field explicitly; use `false` to publish without a site-wide image.
+Review [social preview configuration](./publishing.md#titles-and-social-previews)
+after upgrading.
+
+Cookbook requires a static Astro output. Adding it to an Astro project with
+`output: "server"` now reports that requirement directly; create a separate
+static documentation app for that case. Search and navigation received visual
+and interaction updates without a configuration migration. Review any custom
+`Search`, `SearchResults`, or header styles in a production preview.
+
 ## 0.18.x to 0.19
 
 Cookbook now renders documentation with its own Astro components. The public
@@ -54,7 +68,7 @@ and `Steps` components remain available.
 
 Renderer class names now use Cookbook-owned names. Update any custom CSS or
 scripts that target generated markup, and prefer the named `theme.styles`
-surfaces in the [theme reference](./theme-and-components.md).
+surfaces in [Component styles](./component-styles.md).
 
 The `plugins` integration option no longer forwards Starlight hooks. Move
 content transforms to Astro's `markdown` configuration and use
@@ -77,7 +91,7 @@ These changes were introduced in 0.18:
   self-hosts the files. The initial build requires network access. Preserve the
   Astro font cache for offline rebuilds, use local files for checked-in assets,
   or select `theme.fontLoading.google: "remote"` for CDN delivery. See
-  [fonts](./theme-and-components.md#change-font-families).
+  [fonts](./fonts-and-typography.md#change-font-families).
 - **Colors:** body tone 0 and heading tone 4 remain the reading defaults.
   The default logo uses fixed Glaze colors (`logo-surface` and `logo-mark`), so
   its book stays light in dark mode. Customize these independently of accents.
@@ -100,8 +114,8 @@ These changes were introduced in 0.18:
   browser scripts and `client:*` islands cannot import Cookbook styling, Tasty,
   or Glaze. Attach interaction scripts to the static markup. Isolated,
   sandboxed `Preview` content is the
-  documented exception. The new surface inventory is in the
-  [theme reference](./theme-and-components.md).
+  documented exception. The new surface inventory is in
+  [Component styles](./component-styles.md).
 - **Page text:** the footer offers copy/download Markdown by default. Set
   `site.seo.copyPage: false` to disable the controls and generated page files.
   Configure static host headers if raw Markdown must be excluded from indexing;

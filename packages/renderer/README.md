@@ -10,7 +10,7 @@ collections remain independent.
 
 `@tenphi/renderer/styling` exports `tasty`, `useGlobalStyles`, `mergeStyles`,
 the `Styles` type, and the `defineComponent` and `resolveComponentStyles`
-helpers for merging `theme.styles` into custom components. The facade exposes
+helpers for merging `theme.customStyles` into custom components. The facade exposes
 the same API through `@tenphi/cookbook/styling`.
 
 `@tenphi/renderer/eslint-plugin` exports the default Tasty ESLint plugin,
@@ -19,5 +19,5 @@ the same API through `@tenphi/cookbook/styling`.
 Use `extends: "@tenphi/renderer"` in `tasty.config.ts` to inherit this preset
 and list only your additional tokens, states, or presets.
 It matches `@tenphi/cookbook/eslint-plugin`; see
-[Linting custom styles](https://cookbook.tenphi.me/theme-and-components/#linting-custom-styles)
+[Linting custom styles](https://cookbook.tenphi.me/custom-components/#linting-custom-styles)
 for ESLint and oxlint setup.

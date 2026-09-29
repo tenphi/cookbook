@@ -38,7 +38,7 @@
     "check:authoring": "node scripts/smoke-authoring.mjs",
     "check:browser": "playwright test",
     "check:benchmark": "node scripts/benchmark-corpus.mjs",
-    "check:recipes": "node scripts/smoke-recipes.mjs"
+    "check:recipes": "node scripts/check-component-reference.mjs && node scripts/smoke-recipes.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

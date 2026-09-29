@@ -75,7 +75,10 @@ any static host. [See the validation workflow](./quality-checks.md).
   customization model alongside other options.
 - [Working examples](./examples.md) show repository, monorepo, package, and
   shared-theme configurations.
+- [Search and navigation](./site-navigation.md) explains how readers find pages.
 - [Authoring](./authoring.mdx) covers pages, components, and interactive examples.
+- [Theme and components](./theme-and-components.md) starts with brand and tokens,
+  then points to fonts, built-in styles, and custom components.
 - [Deployment](./deployment.md) covers validation and static hosting.
 
 For agent-assisted setup, see the [AI agent workflow](./ai-agents.md). The

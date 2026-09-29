@@ -58,9 +58,23 @@ export default defineDocsConfig({
           },
           {
             label: "Author",
-            items: ["/content-sources", "/authoring", "/examples"],
+            items: [
+              "/content-sources",
+              "/site-navigation",
+              "/authoring",
+              "/examples",
+            ],
           },
-          { label: "Customize", items: ["/recipes", "/customization-rules"] },
+          {
+            label: "Customize",
+            items: [
+              "/recipes",
+              "/theme-and-components",
+              "/fonts-and-typography",
+              "/custom-components",
+              "/customization-rules",
+            ],
+          },
           { label: "Extend", items: ["/plugins"] },
           { label: "Publish", items: ["/deployment"] },
           {
@@ -74,7 +88,7 @@ export default defineDocsConfig({
         link: "/configuration",
         items: [
           "/configuration",
-          "/theme-and-components",
+          "/component-styles",
           "/publishing",
           "/cli",
           "/architecture",

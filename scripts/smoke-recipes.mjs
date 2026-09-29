@@ -72,7 +72,7 @@ try {
   }
   assert.equal(
     recipes.length,
-    7,
+    8,
     "Every documented verified recipe must remain covered",
   );
   await writeFile(

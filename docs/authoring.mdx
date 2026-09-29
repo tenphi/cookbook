@@ -5,7 +5,15 @@ sidebar:
   order: 4
 ---
 
-import { Callout, CodeGroup, Tab, Tabs } from "@tenphi/cookbook/components";
+import {
+  Callout,
+  Card,
+  CodeGroup,
+  Preview,
+  Steps,
+  Tab,
+  Tabs,
+} from "@tenphi/cookbook/components";
 
 Write ordinary Markdown for most pages. Use MDX when a page needs components,
 and import them from `@tenphi/cookbook/components`. Local MDX is supported by
@@ -73,7 +81,73 @@ Each panel retains keyboard-accessible tabs and readable fallback content.
   ]}
 />
 
-## Other components
+## Cards, steps, and previews
+
+Use a card to link to another page, or omit `href` to present a standalone
+summary. `Steps` renders an ordered list; put ordinary `li` elements inside it.
+
+```mdx
+import { Card, Steps } from "@tenphi/cookbook/components";
+
+<Card title="On-page navigation" href="#on-page-navigation">
+  Offer a compact contents list on smaller screens.
+</Card>
+
+<Steps>
+  <li>Choose a content source.</li>
+  <li>Configure the navigation.</li>
+  <li>Build and check the output.</li>
+</Steps>
+```
+
+<Card title="On-page navigation" href="#on-page-navigation">
+  Offer a compact contents list on smaller screens.
+</Card>
+
+<Steps>
+  <li>Choose a content source.</li>
+  <li>Configure the navigation.</li>
+  <li>Build and check the output.</li>
+</Steps>
+
+`Preview` runs HTML and optional JavaScript in a sandboxed iframe with a source
+disclosure. It cannot access the documentation page's origin. Its `css` prop is
+for the isolated preview document; style the documentation shell with Tasty.
+
+```mdx
+import { Preview } from "@tenphi/cookbook/components";
+
+<Preview
+  title="A simple button"
+  html={'<button type="button">Try it</button>'}
+  css={"button { padding: 0.75rem; }"}
+/>
+```
+
+<Preview
+  title="A simple button"
+  html={'<button type="button">Try it</button>'}
+  css={"button { padding: 0.75rem; }"}
+/>
+
+## Cookbook logo
+
+`Logo` renders the Cookbook mark. Use `label` when it carries meaning or
+`decorative` beside nearby text that already names the site. To display your
+own artwork in the header and drawer, configure
+[`site.logo`](./configuration.md#site-logo).
+
+## Diff snippets
+
+Use a `diff` code fence to highlight additions and deletions. The `+` and `-`
+markers remain visible independently of their theme-aware backgrounds:
+
+```diff
+-formatOkhsl(v.h, v.s * 100, l * 100);
++formatOkhsl(v.h, v.s, l);
+```
+
+## Component props
 
 | Component | Props and behavior                                                                                  |
 | --------- | --------------------------------------------------------------------------------------------------- |
@@ -84,7 +158,7 @@ Each panel retains keyboard-accessible tabs and readable fallback content.
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are
-listed in [Theme and components](./theme-and-components.md#style-customization).
+listed in [Component styles](./component-styles.md#style-customization).
 
 ## On-page navigation
 
