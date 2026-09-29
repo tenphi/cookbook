@@ -4,6 +4,7 @@ import { content } from "virtual:cookbook/config";
 import type { DocsRoute, SiteVersion } from "@tenphi/docs";
 import { versionLinks } from "../versioning.js";
 import { VersionSwitcherRoot } from "./LayoutComponents.js";
+import SelectPopover from "./SelectPopover.astro";
 
 interface Props {
   versions: SiteVersion[];
@@ -23,22 +24,14 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
 <VersionSwitcherRoot data-tasty-anatomy="VersionSwitcher">
-  <summary
-    aria-label={`${ui.documentationVersion}: ${current?.label ?? ui.versions}`}
-    >{current?.label ?? ui.versions}</summary
-  >
-  <nav aria-label={ui.documentationVersions}>
-    {
-      links.map((version) => (
-        <a
-          href={version.href}
-          aria-current={
-            version.routeBase === current?.routeBase ? "page" : undefined
-          }
-        >
-          {version.label}
-        </a>
-      ))
-    }
-  </nav>
+  <SelectPopover
+    triggerLabel={`${ui.documentationVersion}: ${current?.label ?? ui.versions}`}
+    selectedLabel={current?.label ?? ui.versions}
+    title={ui.documentationVersions}
+    options={links.map((version) => ({
+      href: version.href,
+      label: version.label,
+      current: version.routeBase === current?.routeBase,
+    }))}
+  />
 </VersionSwitcherRoot>

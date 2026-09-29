@@ -17,6 +17,7 @@ export default defineConfig({
     navigation: "src/navigation.ts",
     versioning: "src/versioning.ts",
     "client/appearance": "src/client/appearance.ts",
+    "client/popover-motion": "src/client/popover-motion.ts",
     "client/mobile-toc": "src/client/mobile-toc.ts",
     "client/page-copy": "src/client/page-copy.ts",
     "client/code-copy": "src/client/code-copy.ts",

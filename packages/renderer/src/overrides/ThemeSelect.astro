@@ -82,6 +82,7 @@ const contrasts = [
     parseScheme,
     parseContrast,
   } from "../components/appearance-preferences.js";
+  import { initializePopoverMotion } from "../client/popover-motion.js";
 
   let current = loadPreferences();
   const systemScheme = matchMedia("(prefers-color-scheme: light)");
@@ -127,6 +128,7 @@ const contrasts = [
     connectedCallback(): void {
       if (this.dataset.ready) return;
       this.dataset.ready = "true";
+      initializePopoverMotion(this.querySelector<HTMLElement>("[popover]")!);
       this.addEventListener("change", (event) => {
         const input = event.target;
         if (!(input instanceof HTMLInputElement)) return;

@@ -45,8 +45,9 @@ for (const name of entries) {
 // The heading color's four modes and configurable Heading style tree add 1 KiB.
 // The full customization registry, semantic syntax classes, owned search,
 // page actions, and mobile contents add ~23 KiB to the previous 163 KiB limit.
-// Current measured maximum: 189,666 bytes; keep a small explicit growth margin.
-const cssBudget = 192 * 1024;
+// The configurable language popover and mobile placement add about 8 KiB.
+// Current measured maximum: 198,287 bytes; keep a small explicit growth margin.
+const cssBudget = 200 * 1024;
 if (largestCss > cssBudget)
   throw new Error(`Shared CSS is ${largestCss} bytes (budget: ${cssBudget}).`);
 if (!sharedCssPath) throw new Error("The shared Tasty stylesheet is missing.");
@@ -169,12 +170,16 @@ for (const transition of [
   }
 }
 if (
-  !/\[popover\]:popover-open\s*\{\s*@starting-style\s*\{[^}]*opacity:\s*0;[^}]*scale:\s*1 0\.96/.test(
-    sharedCss,
-  )
+  (
+    sharedCss.match(
+      /\[popover\]:popover-open\[data-open\]\s*\{\s*opacity:\s*1;\s*scale:\s*1;/g,
+    ) ?? []
+  ).length < 2 ||
+  !sharedCss.includes("scale: 1 0.96") ||
+  !sharedCss.includes("display var(--popover-transition) allow-discrete")
 ) {
   throw new Error(
-    "The appearance popover must preserve its native fade and scale entry styles.",
+    "The appearance and language popovers must preserve their fade and scale transitions.",
   );
 }
 const home = await readFile(join(output, "index.html"), "utf8");

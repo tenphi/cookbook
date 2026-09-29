@@ -1,5 +1,6 @@
 import { defineDocsConfig } from "@tenphi/cookbook/config";
 import cookbookPackage from "../../packages/facade/package.json" with { type: "json" };
+import { translations } from "./translations.js";
 
 export default defineDocsConfig({
   root: "../..",
@@ -42,6 +43,15 @@ export default defineDocsConfig({
     baseUrl: "https://github.com/tenphi/cookbook/edit/main/",
   },
   lastUpdated: true,
+  locales: {
+    root: { label: "English", lang: "en" },
+    es: { label: "Español", lang: "es" },
+    ru: { label: "Русский", lang: "ru" },
+    ja: { label: "日本語", lang: "ja" },
+    zh: { label: "简体中文", lang: "zh-Hans" },
+  },
+  defaultLocale: "root",
+  translations,
   content: {
     sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }],
   },

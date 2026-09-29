@@ -176,7 +176,7 @@ try {
   }
   assert.ok(
     (await page("fr/v1/guide")).querySelector(
-      'summary[aria-label="Version de la documentation: v1"]',
+      'button[aria-label="Version de la documentation: v1"]',
     ),
   );
   assert.equal(

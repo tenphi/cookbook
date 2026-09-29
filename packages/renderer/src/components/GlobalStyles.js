@@ -9,6 +9,7 @@ import closeIcon from "../icons/close.svg?raw";
 import copyIcon from "../icons/copy.svg?raw";
 import searchIcon from "../icons/search.svg?raw";
 import { resolveComponentStyles } from "./component-styles.js";
+import { selectPopoverStyles } from "./select-popover-styles.js";
 import { svgIconUrl } from "./svg-icon.js";
 import { configureCookbookStates } from "./tasty-states.js";
 import { getDefaultFontUsage, getFontFaces } from "../theme/fonts.js";
@@ -1432,47 +1433,85 @@ export default function GlobalStyles() {
     }),
   );
 
+  const languageSelectStyles = selectPopoverStyles();
   useGlobalStyles(
     "cookbook-language-select",
     resolveComponentStyles("LanguageSelect", {
-      display: "block",
-      Label: {
-        $: "label",
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        color: "#text-soft",
+      display: "flex",
+      flexShrink: "0",
+      "$popover-transition": languageSelectStyles["$popover-transition"],
+      Compact: {
+        $: "&[data-compact]",
       },
-      HoverLabel: { $: "label:hover", color: "#text" },
-      LabelIcon: {
-        $: ".label-icon",
-        position: "absolute",
-        zIndex: "1",
-        insetInlineStart: "$gap",
-        pointerEvents: "none",
-      },
-      Select: {
-        $: "select",
-        appearance: "none",
+      Trigger: {
+        ...languageSelectStyles.Trigger,
         inlineSize: "8rem",
-        minBlockSize: "$control-height",
-        paddingInlineStart: "($gap * 3.5)",
-        paddingInlineEnd: "($gap * 3.5)",
-        color: "#text-soft",
-        border: "0",
-        radius: "$header-control-radius",
+        blockSize: "$control-height",
+        padding: "0 $gap",
         fill: "#clear",
-        preset: "small",
-        cursor: "pointer",
-        textOverflow: "ellipsis",
+        border: "0",
+        transition: "color $transition, fill $transition",
       },
-      Caret: {
-        $: ".caret",
-        position: "absolute",
-        insetInlineEnd: "$gap",
-        pointerEvents: "none",
+      HoverTrigger: languageSelectStyles.HoverTrigger,
+      ActiveTrigger: {
+        $: "> button:active",
+        color: "#text",
+        fill: "#surface-2-pressed",
       },
-      Option: { $: "option", color: "#text", fill: "#surface-2" },
+      LabelIcon: {
+        $: "> button > .label-icon",
+        display: "block",
+        flexShrink: "0",
+        inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
+        blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
+      },
+      TriggerLabel: languageSelectStyles.TriggerLabel,
+      Caret: languageSelectStyles.Caret,
+      CompactTrigger: {
+        $: "&[data-compact] > button",
+        inlineSize: "$docs-menu-button-size",
+        blockSize: "$docs-menu-button-size",
+        padding: "0",
+      },
+      CompactLabel: {
+        $: "&[data-compact] > button > .trigger-label",
+        hide: true,
+      },
+      CompactCaret: { $: "&[data-compact] > button > .caret", hide: true },
+      Label: { $: "> button" },
+      HoverLabel: { $: "> button:hover" },
+      Select: { $: "> button" },
+      CompactSelect: { $: "&[data-compact] > button" },
+      CompactLabelIcon: { $: "&[data-compact] > button > .label-icon" },
+      SidebarTrigger: {
+        $: "&[data-sidebar] > button",
+        anchorName: "--language-trigger",
+      },
+      Panel: {
+        ...languageSelectStyles.Panel,
+        blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
+        inlineInset:
+          "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
+      },
+      SidebarPanel: {
+        $: "&[data-sidebar] > [popover]",
+        positionAnchor: "--language-trigger",
+        blockInset: "auto start, anchor(top) end",
+        blockMargin: "$gap end",
+        inlineInset: "$gap start, auto end",
+        inlineSize: "min(20rem, calc(100vw - 4rem))",
+        blockSize: "max (100dvh - 8rem)",
+        transformOrigin: "bottom",
+      },
+      OpenPanel: languageSelectStyles.OpenPanel,
+      PanelTitle: languageSelectStyles.PanelTitle,
+      Options: languageSelectStyles.Options,
+      Option: languageSelectStyles.Option,
+      HoverOption: languageSelectStyles.HoverOption,
+      CurrentOption: languageSelectStyles.CurrentOption,
+      Fallback: { $: ".fallback-label", color: "#text-muted" },
+      Checkmark: languageSelectStyles.Checkmark,
+      SelectedCheckmark: languageSelectStyles.SelectedCheckmark,
     }),
   );
 

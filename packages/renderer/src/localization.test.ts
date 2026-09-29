@@ -21,7 +21,7 @@ const routes = ["/", "/guide", "/missing", "/fr/guide"].map((route) => ({
   sourcePath: `${route}.md`,
 }));
 describe("locale routing", () => {
-  it("passes a single locale's relative routes to the sidebar", () => {
+  it("keeps available English pages in localized navigation", () => {
     const nav = localizedNavigation(
       resolveNavigationLayout(["/", "/guide", "/missing"]),
       routes,
@@ -29,7 +29,9 @@ describe("locale routing", () => {
       options,
     );
     expect(pageSidebar(nav.layout, nav.routes)).toEqual([
+      { label: "/", link: "/" },
       { label: "/fr/guide", link: "/guide" },
+      { label: "/missing", link: "/missing" },
     ]);
     expect(
       localizedNavigation(
@@ -39,6 +41,33 @@ describe("locale routing", () => {
         options,
       ).routes.map((route) => route.route),
     ).toEqual(["/guide"]);
+  });
+  it("omits groups with no available pages", () => {
+    const nav = localizedNavigation(
+      resolveNavigationLayout({
+        tabs: [
+          {
+            label: "Guide",
+            link: "/",
+            items: [
+              { label: "Translated", items: ["/guide"] },
+              { label: "English", items: ["/missing"] },
+              { label: "Unavailable", items: ["/absent"] },
+            ],
+          },
+        ],
+      }),
+      routes,
+      "/fr/guide",
+      options,
+    );
+    expect(nav.layout.tabs[0]?.items).toEqual([
+      { label: "Translated", items: ["/guide"] },
+      {
+        label: "English",
+        items: [{ label: "/missing", link: "/missing" }],
+      },
+    ]);
   });
   it("resolves missing translations and missing locale homes to real routes", () => {
     expect(localeTarget("/missing", "fr", routes, options)).toBe("/missing");

@@ -1,4 +1,4 @@
-export {};
+import { initializePopoverMotion } from "./popover-motion.js";
 
 class CookbookSidebarPane extends HTMLElement {
   #listeners?: AbortController;
@@ -140,18 +140,7 @@ class CookbookHeaderLinks extends HTMLElement {
     const close = () => {
       if (panel?.matches(":popover-open")) panel.hidePopover();
     };
-    panel?.addEventListener(
-      "toggle",
-      () => {
-        if (panel.matches(":popover-open")) {
-          panel.getBoundingClientRect();
-          panel.setAttribute("data-open", "");
-        } else {
-          panel.removeAttribute("data-open");
-        }
-      },
-      { signal },
-    );
+    if (panel) initializePopoverMotion(panel, signal);
     desktop.addEventListener(
       "change",
       () => {
