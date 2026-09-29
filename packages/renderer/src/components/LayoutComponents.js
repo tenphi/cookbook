@@ -196,7 +196,7 @@ export const TopNavigationRoot = customizeComponent(
         flexGrow: "0",
         flexShrink: "0",
         flexBasis: "auto",
-        blockPadding: "($gap * 0.75) start, ($gap * 1.5) end",
+        blockPadding: "($gap * 1.25) start, $gap end",
         color: "#text-soft",
         preset: "navigation",
         textDecoration: "none",
