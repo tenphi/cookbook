@@ -33,9 +33,10 @@ const translations = {
   </button>
   <dialog aria-label={label}>
     <div class="dialog-frame">
-      <button type="button" data-close-modal
-        >{Astro.locals.t("search.cancelLabel")}</button
-      >
+      <button
+        type="button"
+        data-close-modal
+        aria-label={Astro.locals.t("search.cancelLabel")}></button>
       {
         import.meta.env.DEV ? (
           <p data-search-status dir="ltr">

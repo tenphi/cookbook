@@ -16,6 +16,132 @@ test("keyboard search focuses the input and returns focus on close", async ({
   await expect(trigger).toBeFocused();
 });
 
+for (const width of [390, 1440]) {
+  test(`search keeps its controls visible while results scroll at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 420 });
+    await page.goto("/manual/guide/");
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    const input = page.getByRole("textbox", { name: "Search", exact: true });
+    await input.fill("configuration");
+    await expect(page.locator(".pagefind-ui__message")).toHaveText(
+      /^\d+ results?$/,
+    );
+    await expect(input).not.toHaveAttribute("style");
+
+    const results = page.locator(".pagefind-ui__results-area");
+    const inputTop = (await input.boundingBox())!.y;
+    const close = page.getByRole("button", { name: "Cancel", exact: true });
+    const closeTop = width < 800 ? (await close.boundingBox())!.y : undefined;
+    await results.evaluate((element) => (element.scrollTop = 150));
+    expect(
+      await results.evaluate((element) => element.scrollTop),
+    ).toBeGreaterThan(0);
+    expect((await input.boundingBox())!.y).toBeCloseTo(inputTop, 0);
+    if (closeTop !== undefined) {
+      const box = (await close.boundingBox())!;
+      expect(box.y).toBeCloseTo(closeTop, 0);
+      expect(box.width).toBe(box.height);
+      const dialog = (await page.locator("site-search dialog").boundingBox())!;
+      const pane = (await results.boundingBox())!;
+      const field = (await input.boundingBox())!;
+      const sideInset = field.x - dialog.x;
+      const closeGap = field.y - box.y - box.height;
+      const resultsGap = pane.y - field.y - field.height;
+      expect(Math.abs(sideInset - closeGap)).toBeLessThan(2);
+      expect(Math.abs(sideInset - resultsGap)).toBeLessThan(2);
+      expect(Math.abs(pane.x - dialog.x)).toBeLessThan(2);
+      expect(
+        Math.abs(pane.x + pane.width - dialog.x - dialog.width),
+      ).toBeLessThan(2);
+      expect(
+        Math.abs(pane.y + pane.height - dialog.y - dialog.height),
+      ).toBeLessThan(2);
+      expect(
+        await results.evaluate(
+          (element) => getComputedStyle(element).borderTopWidth,
+        ),
+      ).not.toBe("0px");
+      const more = page.locator(".pagefind-ui__button");
+      if (await more.isVisible()) {
+        const button = (await more.boundingBox())!;
+        const list = (await page
+          .locator(".pagefind-ui__results")
+          .boundingBox())!;
+        expect(
+          Math.abs(button.x + button.width - list.x - list.width),
+        ).toBeLessThan(2);
+      }
+      await close.click();
+      await expect(page.locator("site-search dialog")).not.toBeVisible();
+    }
+  });
+}
+
+test("search and mobile header menu fade on open and close", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/manual/guide/");
+
+  for (const { trigger, panel, close } of [
+    {
+      trigger: page.getByRole("button", { name: "Search", exact: true }),
+      panel: page.locator("site-search dialog"),
+      close: page.getByRole("button", { name: "Cancel", exact: true }),
+    },
+    {
+      trigger: page.getByRole("button", { name: "More", exact: true }),
+      panel: page.locator(".td-header-links__panel"),
+      close: page.getByRole("button", {
+        name: "Close more menu",
+        exact: true,
+      }),
+    },
+  ]) {
+    await trigger.click();
+    await expect(panel).toHaveAttribute("data-open", "");
+    expect(
+      await panel.evaluate((element) => getComputedStyle(element).transition),
+    ).toContain("opacity 0.12s");
+    await expect(panel).toHaveCSS("opacity", "1");
+    await close.click();
+    await expect(panel).not.toHaveAttribute("data-open");
+    await expect(panel).toHaveCSS("display", "none");
+  }
+});
+
+test("search and mobile header menu respect reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/manual/guide/");
+
+  for (const { trigger, panel, close } of [
+    {
+      trigger: page.getByRole("button", { name: "Search", exact: true }),
+      panel: page.locator("site-search dialog"),
+      close: page.getByRole("button", { name: "Cancel", exact: true }),
+    },
+    {
+      trigger: page.getByRole("button", { name: "More", exact: true }),
+      panel: page.locator(".td-header-links__panel"),
+      close: page.getByRole("button", {
+        name: "Close more menu",
+        exact: true,
+      }),
+    },
+  ]) {
+    await trigger.click();
+    await expect(panel).toHaveCSS("transition-property", "none");
+    await expect(panel).toHaveCSS("opacity", "1");
+    await close.click();
+    await expect(panel).toHaveCSS("display", "none");
+  }
+});
+
 test("code group keyboard navigation and copying share the fence controls", async ({
   page,
   context,

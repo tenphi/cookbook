@@ -70,7 +70,12 @@ export function initializeSearch(
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : open;
+    dialog.removeAttribute("data-open");
     dialog.showModal();
+    // Establish the initial state after entering the top layer. The global
+    // style renderer does not preserve @starting-style in server output.
+    dialog.getBoundingClientRect();
+    dialog.setAttribute("data-open", "");
     document.body.setAttribute("data-search-modal-open", "");
     if (!development && status) status.hidden = true;
     try {
@@ -92,6 +97,7 @@ export function initializeSearch(
       dialog.close();
   });
   dialog.addEventListener("close", () => {
+    dialog.removeAttribute("data-open");
     document.body.removeAttribute("data-search-modal-open");
     returnFocus?.focus();
   });
