@@ -91,8 +91,8 @@ available at `@tenphi/renderer/content` for renderer-only projects.
 
 Component overrides receive page data from `Astro.locals.cookbookRoute`,
 including the current entry, locale, navigation, table of contents, and head
-tags. See [theme and components](./theme-and-components.md) for Tasty styling
-and [configuration](./configuration.md) for structural overrides.
+tags. See [Custom components](./custom-components.md) for Tasty styling and
+[configuration](./configuration.md#components) for structural overrides.
 
 Use Astro's Markdown plugin APIs for content transforms, and Cookbook's graph
 and built-output checks for link validation. Extensions tied to another

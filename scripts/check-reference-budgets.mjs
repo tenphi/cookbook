@@ -106,6 +106,14 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
+  !/\.td-code-block pre\.td-diff > code > \.line\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+    sharedCss,
+  ) ||
+  /\.td-code-block pre\.td-diff\.line\s*\{/.test(sharedCss)
+) {
+  throw new Error("Diff lines lost their padding or typography rules.");
+}
+if (
   !/\.td-footer__credit\s*\{[^}]*color:\s*var\(--text-color\)/.test(
     sharedCss,
   ) ||
@@ -234,7 +242,11 @@ for (const section of [
 for (const route of [
   "getting-started",
   "ai-agents",
+  "site-navigation",
   "recipes",
+  "theme-and-components",
+  "fonts-and-typography",
+  "custom-components",
   "plugins",
   "deployment",
   "migration",
@@ -244,24 +256,26 @@ for (const route of [
   if (!initialSidebar.includes(`href="/${route}"`))
     throw new Error(`Missing guide journey: ${route}`);
 }
-const themeSidebar = sidebarHtml(
-  await readFile(join(output, "theme-and-components/index.html"), "utf8"),
+const referenceSidebar = sidebarHtml(
+  await readFile(join(output, "component-styles/index.html"), "utf8"),
 );
 if (
-  !/<a\b[^>]*href="\/theme-and-components"[^>]*aria-current="page"/.test(
-    themeSidebar,
+  !/<a\b[^>]*href="\/component-styles"[^>]*aria-current="page"/.test(
+    referenceSidebar,
   )
 ) {
-  throw new Error("The theme reference must be current in the Reference tab.");
+  throw new Error(
+    "The component reference must be current in the Reference tab.",
+  );
 }
 for (const route of [
   "configuration",
-  "theme-and-components",
+  "component-styles",
   "publishing",
   "cli",
   "architecture",
 ]) {
-  if (!themeSidebar.includes(`href="/${route}"`))
+  if (!referenceSidebar.includes(`href="/${route}"`))
     throw new Error(`Missing reference page: ${route}`);
 }
 for (const [pattern, label] of [

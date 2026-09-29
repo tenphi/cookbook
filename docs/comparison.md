@@ -27,7 +27,7 @@ set of selectors to override after rendering:
   responsive `theme.states` once. Components consume those roles consistently.
 - Change a built-in component through a **partial**
   `theme.styles.<ComponentName>` Tasty object. Cookbook merges it into the full
-  base style before extracting CSS. Its [named component parts](./theme-and-components.md#style-customization)
+  base style before extracting CSS. Its [named component parts](./component-styles.md#style-customization)
   are published so a header title, search field, or sidebar item can be changed
   without copying an entire component.
 - Add a styled component with `defineComponent()` or replace markup and behavior
@@ -52,9 +52,9 @@ export default defineDocsConfig({
 ```
 
 This style contract is specific to Cookbook's Tasty and Glaze system. Structural
-changes still require an Astro override. Read the [customization rules](./customization-rules.md)
-and [theme reference](./theme-and-components.md) for the supported names and
-the full design-system API.
+changes still require an Astro override. Read the [customization rules](./customization-rules.md),
+[theme guide](./theme-and-components.md), and [component styles reference](./component-styles.md)
+for the supported configuration and names.
 
 ## Start with the material you have
 

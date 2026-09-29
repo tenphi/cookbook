@@ -15,7 +15,7 @@ registries or internal helpers.
 Inspect `docs.config.ts`, `tasty.config.ts`, and the components you are changing.
 Reuse the site's existing semantic colors, tokens, presets, responsive states,
 and named sub-elements. Do not invent configuration names. Consult the complete
-[component anatomy reference](./theme-and-components.md#style-customization)
+[component anatomy reference](./component-styles.md#style-customization)
 before overriding a built-in component.
 
 ## Choose the customization surface
@@ -77,8 +77,9 @@ belong in `docs.config.ts`.
   of spreading component anatomy across unrelated global rules.
 - Use semantic color tokens such as `#text`, `#surface`, and `#accent-text`
   in component styles. Configure Glaze color declarations through `theme.brand`
-  and the supported `theme.palette` roles so Glaze can resolve every scheme and
-  contrast mode. Do not hard-code component colors or invent palette keys.
+  and `theme.palette` so Glaze can resolve every scheme and contrast mode.
+  Declare any new semantic color role in `theme.palette` before using its
+  `#name` token. Do not hard-code component colors.
 - Apply semantic typography with `preset`, for example `"small"` or
   `"h2 / strong"`. Do not reconstruct presets from individual font tokens or
   wire modifier internals such as `$bold-font-weight` yourself.
@@ -89,7 +90,7 @@ belong in `docs.config.ts`.
 - When replacing a component, own its markup and behavior. Keep keyboard
   access, focus, semantics, responsive behavior, and appearance modes intact.
 
-The [custom component examples](./theme-and-components.md#authoring-custom-components)
+The [custom component examples](./custom-components.md#authoring-custom-components)
 show both a component root and a global style tree using these APIs.
 
 ## Read the underlying references
@@ -152,7 +153,7 @@ cookbook doctor, and build commands after changes.
 
 ## Check the result
 
-Adopt the [Cookbook Tasty lint configuration](./theme-and-components.md#linting-custom-styles)
+Adopt the [Cookbook Tasty lint configuration](./custom-components.md#linting-custom-styles)
 and extend its built-in vocabulary in `tasty.config.ts`:
 
 ```ts

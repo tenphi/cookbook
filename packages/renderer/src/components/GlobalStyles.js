@@ -935,8 +935,9 @@ export default function GlobalStyles() {
         marginBlockStart: "0",
         marginBlockEnd: "0",
       },
+      // Linked Cards are block content even though their root is an anchor.
       BlockSpacing: {
-        $: ":not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br) + :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br):not(li):not(dt):not(dd):not(.not-content *)",
+        $: ":not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br) + :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br):not(li):not(dt):not(dd):not(.not-content *), :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br) + a.td-card, a.td-card + :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br):not(li):not(dt):not(dd):not(.not-content *), a.td-card + a.td-card",
         marginBlockStart: "($gap * 3)",
       },
       HeadingSpacing: {
@@ -1173,21 +1174,21 @@ export default function GlobalStyles() {
         lineHeight: "0",
       },
       DiffLine: {
-        $: "pre.td-diff .line",
+        $: "pre.td-diff > code > .line",
         display: "block",
         inlinePadding: "1rem",
         preset: "code",
       },
       EmptyDiffLine: {
-        $: "pre.td-diff .line:empty::before",
+        $: "pre.td-diff > code > .line:empty::before",
         content: '"\\200b"',
       },
       InsertedLine: {
-        $: "pre.td-diff .td-diff-line--inserted",
+        $: "pre.td-diff > code > .td-diff-line--inserted",
         fill: "#green-surface",
       },
       DeletedLine: {
-        $: "pre.td-diff .td-diff-line--deleted",
+        $: "pre.td-diff > code > .td-diff-line--deleted",
         fill: "#red-surface",
       },
     }),

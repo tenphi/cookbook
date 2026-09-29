@@ -39,8 +39,9 @@ export default defineDocsConfig({
 
 For local fonts, place files in `public/fonts/` and use
 `fonts: { body: { family: "My Font", files: [{ src: "/fonts/my-font.woff2" }] } }`.
-See [Theme and components](./docs/theme-and-components.md) for all named
-sub-elements and the custom component flow.
+See [Component styles](./docs/component-styles.md) for all named
+sub-elements and [Custom components](./docs/custom-components.md) for the
+custom component flow.
 
 Without configuration, a root `README.md` becomes `/` and
 `docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes its Astro renderer,
@@ -61,7 +62,7 @@ export const ProjectBadge = defineComponent("ProjectBadge", {
 Customize this component's root through `theme.customStyles.ProjectBadge`; it has no
 named sub-elements. The `/styling` entry point also exports `tasty`, `useGlobalStyles`,
 `resolveComponentStyles`, `mergeStyles`, and the `Styles` type. Cookbook extracts
-the CSS automatically. See [Theme and components](https://cookbook.tenphi.me/theme-and-components/)
+the CSS automatically. See [Custom components](https://cookbook.tenphi.me/custom-components/)
 for a complete custom logo and site title example.
 
 Lint these styles with the plugin and Cookbook validation preset from
@@ -79,5 +80,5 @@ The entry point exports the default Tasty ESLint plugin, `recommended` and `stri
 rule maps, and the upstream configuration types. The preset recognizes Cookbook's
 theme names and custom styling helpers, including `defineComponent`. `extends`
 merges your additional tokens, states, and presets with these built-ins.
-See [Linting custom styles](https://cookbook.tenphi.me/theme-and-components/#linting-custom-styles)
+See [Linting custom styles](https://cookbook.tenphi.me/custom-components/#linting-custom-styles)
 for ESLint and oxlint configuration examples.

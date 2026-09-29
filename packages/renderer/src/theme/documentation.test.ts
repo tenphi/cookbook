@@ -48,23 +48,27 @@ function firstStylesObject(source: string): string | undefined {
 describe("Tasty documentation examples", () => {
   it("documents every configurable surface and named sub-element", async () => {
     const markdown = await readFile(
-      `${docsDirectory}/theme-and-components.md`,
+      `${docsDirectory}/component-styles.md`,
       "utf8",
     );
-    const tableRows = markdown
-      .split("\n")
-      .filter((line) => line.startsWith("| `"));
+    const anatomy = markdown
+      .split("<!-- component-anatomy:start -->")[1]
+      ?.split("<!-- component-anatomy:end -->")[0];
+    expect(anatomy).toBeDefined();
+    const rows = [...(anatomy ?? "").matchAll(/^- `([^`]+)`: (.+)$/gm)];
+    expect(rows.map((row) => row[1]).toSorted()).toEqual(
+      [...COOKBOOK_COMPONENT_NAMES].toSorted(),
+    );
 
     for (const name of COOKBOOK_COMPONENT_NAMES) {
-      const row = tableRows.find((line) => line.startsWith(`| \`${name}\``));
-      expect(row, `Missing documentation row for ${name}`).toBeDefined();
+      const row = rows.find((match) => match[1] === name)?.[2];
+      expect(row, `Missing documentation entry for ${name}`).toBeDefined();
       const subElements = COOKBOOK_COMPONENT_SUB_ELEMENTS[name];
-      if (subElements.length === 0) {
-        expect(row).toContain("None");
-      }
-      for (const subElement of subElements) {
-        expect(row).toContain(`\`${subElement}\``);
-      }
+      expect(row).toBe(
+        subElements.length
+          ? subElements.map((subElement) => `\`${subElement}\``).join(", ")
+          : "None",
+      );
     }
   });
 

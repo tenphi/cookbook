@@ -24,6 +24,13 @@ Start with a complete [configuration recipe](./recipes.md) for common tasks.
 This page documents the available options; [working examples](./examples.md)
 covers repository layouts and shared presets.
 
+For a focused explanation, use [content sources](./content-sources.md),
+[theme basics](./theme-and-components.md),
+[fonts and typography](./fonts-and-typography.md),
+[component styles](./component-styles.md), or
+[publishing metadata](./publishing.md). The sections below are the complete
+configuration reference.
+
 ## Project resolution and presets
 
 `cookbook()` and CLI commands discover the same `docs.config.ts`. Set `root`
@@ -105,7 +112,7 @@ single-version site can continue using `site.version` for a simple label.
 with `src` (one image) or `light` and `dark` (appearance variants). Optional
 `alt`, `decorative`, `href`, `width`, and `height` control accessible text,
 destination, and intrinsic sizing. It applies to the header and mobile drawer.
-See the [shared logo guide](./theme-and-components.md#a-shared-site-logo).
+See the [shared logo guide](./custom-components.md#a-shared-site-logo).
 The logo and favicon are independent.
 
 ## Site icons
@@ -216,6 +223,10 @@ with the page's other local assets. Unrecognized frontmatter is preserved as gra
 renderer frontmatter. Use `content.frontmatter: "reject"` to reject unrelated
 fields. Other supported fields include `aliases`, `template`, `hero`, `editUrl`,
 `lastUpdated`, `prev`, `next`, `head`, `draft`, and `slug`.
+
+Set `pagefind: false` to omit an individual published page from search while
+keeping its normal route and navigation. A draft is excluded from search
+regardless of `pagefind`.
 
 ### Draft pages
 
@@ -421,43 +432,47 @@ theme: {
   },
   styles: {
     ThemeSelect: {
-      Select: { border: "#border-strong" },
-      Picker: { shadow: "0 1rem 3rem #shadow" }
+      Trigger: { border: "#border-strong" },
+      Panel: { shadow: "0 1rem 3rem #shadow" }
     }
   },
   contrastLevel: "auto"
 }
 ```
 
-The default brand is `okhsl(266 68% 48%)`, a blue with 68% saturation; controls
-use an `8px` radius and cards use `16px`. Onest is the default body and heading family, while JetBrains Mono is
-used for code. `theme.fonts` loads Google families by name or local files from
-`public/`, and applies them to the body, heading, and code presets. See
-[Change font families](./theme-and-components.md#change-font-families) for both
-flows. The default layout is capped at `87.5rem` (1400px), matching the
-Tasty site, with a `58rem` reading column and a `17.5rem` sidebar. `brand.from`
-supplies the color seed. `palette` supplies semantic Glaze declarations that
-inherit its hue and saturation unless a role supplies its own `from`. `tone` and
-a saturation factor set the surface. Reading text uses absolute tones: body
-text starts at 0, and headings at 4. Glaze applies normal-mode tone boundaries
-and adapts the values for dark mode; `base` and `contrast` provide minimum
-contrast safeguards. `palette.heading` follows an explicit `palette.text`
-declaration unless customized separately. Glaze resolves light, dark, and both
-high-contrast modes independently. Literal color shorthand and structured
-brand hue/saturation/tone remain supported. A requested APCA floor below 45 requires the explicit
-`unsafeContrast: true` escape hatch. Learn more in
-[Theme and components](./theme-and-components.md).
+The default brand is `okhsl(266 68% 48%)`, a blue with 68% saturation.
+Controls use an `8px` radius and cards use `16px`. Onest is the default body
+and heading family; JetBrains Mono is used for code. `theme.fonts` loads Google
+families by name or local files from `public/`. See
+[Fonts and typography](./fonts-and-typography.md) for both flows.
+
+The default layout is capped at `87.5rem` (1400px), with a `58rem` reading
+column and a `17.5rem` sidebar. `brand.from` supplies the color seed.
+`theme.palette` supplies semantic Glaze declarations that inherit its hue and
+saturation unless a role has its own `from`. Reading text uses absolute tones:
+body text starts at 0 and headings at 4. Glaze applies normal-mode tone
+boundaries and adapts the values for dark mode; `base` and `contrast` supply
+minimum contrast safeguards. `palette.heading` follows an explicit
+`palette.text` declaration unless configured separately.
+
+Glaze resolves light, dark, and both high-contrast modes independently.
+Literal brand color shorthand and structured hue/saturation/tone declarations
+remain supported. An APCA floor below 45 requires `unsafeContrast: true`.
+See [Theme and components](./theme-and-components.md) for the color model and
+examples.
 
 `theme.styles` is keyed by Cookbook UI surface name. A plain Tasty style object
 contains only the properties to override; Cookbook deep-merges it into that
 surface's complete base object internally. Unknown built-in names and sub-elements are rejected. Register custom
 component names and their overrides in `theme.customStyles`. Structural Astro overrides under
 `components.overrides` remain available when styling alone is insufficient.
-`theme.states` registers additional Tasty state shorthands, and `contrastLevel`
-is forwarded to Glaze's palette resolution.
+`theme.states` registers additional Tasty state shorthands or replaces a
+built-in alias; see the [responsive state reference](./component-styles.md#responsive-states)
+for all nine defaults. `contrastLevel` is forwarded to Glaze's palette
+resolution.
 The built-in documentation navigation surfaces are available as `Sidebar`,
 `TableOfContents`, `MobileMenuToggle`, and `MobileNavigationTabs`; see
-[Theme and components](./theme-and-components.md#style-customization) for their
+[Component styles](./component-styles.md#style-customization) for their
 complete sub-element lists.
 
 ## Markdown
@@ -521,7 +536,11 @@ search: {
 ```
 
 Search is generated locally with Pagefind during a static build. Disable it
-for hosts or fixtures that do not need an index.
+for hosts or fixtures that do not need an index. Readers can open the search
+dialog with Ctrl+K (⌘+K on macOS), type a query, and close it with Escape.
+Search loads its index when opened, so a development server shows a notice
+instead of results. Build and preview the site to test actual results. See
+[Search and navigation](./site-navigation.md) for the reader experience.
 
 ## Components
 
@@ -536,6 +555,20 @@ components: {
 
 Component replacement is the advanced escape hatch. Prefer theme tokens and
 named styles for visual changes that do not need new structure.
+
+Cookbook uses these Astro component slots. A relative override path resolves
+from the project root; a package specifier resolves from the app's dependencies:
+
+| Area                    | Override names                                                                                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Page shell              | `Head`, `PageFrame`, `Header`, `Footer`, `Sidebar`, `Hero`, `SiteTitle`                                                                                    |
+| Navigation and controls | `Search`, `LanguageSelect`, `ThemeSelect`, `SocialIcons`, `MobileMenuToggle`, `MobileMenuFooter`, `MobileTableOfContents`, `TableOfContents`, `Pagination` |
+| Content and metadata    | `MarkdownContent`, `DraftContentNotice`, `EditLink`, `LastUpdated`                                                                                         |
+
+An override owns its markup and interaction behavior. Page overrides can read
+the validated route and navigation data from `Astro.locals.cookbookRoute`;
+see [Extending Cookbook](./plugins.md#read-the-content-graph). Use
+[Custom components](./custom-components.md) for a complete site title example.
 
 Cookbook uses its built-in footer by default, including the “Generated with
 Cookbook” credit. Replace the complete footer with the `Footer` component path

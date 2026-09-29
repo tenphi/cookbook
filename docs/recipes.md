@@ -7,8 +7,8 @@ These are complete `docs.config.ts` files. Start with a generated Cookbook
 project, keep its `astro.config` integration, and replace the documentation
 configuration with one recipe. Add the files listed above each example.
 [Working examples](./examples.md) covers repository and npm source layouts;
-[configuration](./configuration.md) and the [theme reference](./theme-and-components.md)
-cover every option.
+[configuration](./configuration.md) lists the available fields, while the
+[theme guide](./theme-and-components.md) explains the customization path.
 
 The repository's `pnpm check:recipes` extracts the marked examples below and in
 Working examples verbatim, type-checks them, builds actual consumer sites, and
@@ -38,7 +38,33 @@ export default defineDocsConfig({
 
 The header token also covers the mobile sidebar close control. Copy buttons and
 page navigation keep the base radius. Built-in element overrides merge into the
-complete defaults. See the [named style anatomy](./theme-and-components.md).
+complete defaults. See the [named style anatomy](./component-styles.md).
+
+## Built-in component styles
+
+Supply only the properties you want to change. Cookbook merges these partial
+objects into the base style trees before extracting CSS. The example uses the
+current named parts of the Appearance panel and search input:
+
+```ts cookbook-verify=component-styles
+import { defineDocsConfig } from "@tenphi/cookbook/config";
+
+export default defineDocsConfig({
+  site: { title: "Acme docs" },
+  theme: {
+    brand: { from: "#315efb" },
+    styles: {
+      ThemeSelect: {
+        Trigger: { border: "#border-strong" },
+        Panel: { shadow: "0 1rem 3rem #shadow" },
+      },
+      SearchResults: { Input: { radius: "12px" } },
+    },
+  },
+});
+```
+
+Find all supported names in [Component styles](./component-styles.md).
 
 ## Local variable font
 
@@ -65,7 +91,7 @@ export default defineDocsConfig({
 
 For Google Fonts use `fonts: { body: "Inter", heading: "Newsreader" }` instead.
 Cookbook downloads and self-hosts the required weights and italics at build time.
-See [fonts](./theme-and-components.md#change-font-families) for caching,
+See [fonts](./fonts-and-typography.md#change-font-families) for caching,
 explicit ranges, styles, and remote delivery.
 
 ## English and French
