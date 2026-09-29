@@ -1440,8 +1440,6 @@ export default function GlobalStyles() {
       "$popover-transition": "120ms",
       Compact: {
         $: "&[data-compact]",
-        inlineSize: "$docs-menu-button-size",
-        blockSize: "$docs-menu-button-size",
       },
       Trigger: {
         $: "> button",
