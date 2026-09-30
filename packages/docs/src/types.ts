@@ -477,6 +477,8 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   SearchResults: [
     "UI",
     "Form",
+    "Field",
+    "EngineControls",
     "Drawer",
     "Input",
     "Clear",

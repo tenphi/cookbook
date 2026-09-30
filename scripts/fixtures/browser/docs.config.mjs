@@ -1,4 +1,6 @@
 export default {
+  // The renderer owns the responsive viewport, even with legacy custom head tags.
+  head: [{ tag: "meta", attrs: { name: "VIEWPORT", content: "width=980" } }],
   site: {
     title: "Browser fixture",
     url: "https://example.com",

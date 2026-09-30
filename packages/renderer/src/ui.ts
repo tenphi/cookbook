@@ -18,6 +18,7 @@ const english: Record<string, string> = {
   "page.lastUpdated": "Last updated",
   "page.skipToContent": "Skip to content",
   "pagefind.search": "Search for",
+  "pagefind.clear_search": "Clear search",
   "pagefind.zero_results": "No results",
   "pagefind.many_results": "[COUNT] results",
   "pagefind.one_result": "[COUNT] result",
@@ -36,6 +37,7 @@ const french: Record<string, string> = {
   "search.devWarning":
     "La recherche est disponible après la génération du site.",
   "pagefind.search": "Rechercher",
+  "pagefind.clear_search": "Effacer la recherche",
   "pagefind.zero_results": "Aucun résultat",
   "pagefind.many_results": "[COUNT] résultats",
   "pagefind.one_result": "[COUNT] résultat",

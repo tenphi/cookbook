@@ -1,6 +1,175 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test.describe("mobile viewport", () => {
+  test.use({
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 3,
+    viewport: { width: 390, height: 844 },
+  });
+
+  test("uses the device width without shrinking text or disabling zoom", async ({
+    page,
+  }) => {
+    for (const route of ["/manual/", "/manual/guide/", "/manual/404.html"]) {
+      await page.goto(route);
+      const viewport = page.locator('meta[name="viewport"]');
+      await expect(viewport).toHaveCount(1);
+      await expect(viewport).toHaveAttribute(
+        "content",
+        "width=device-width, initial-scale=1",
+      );
+      expect(await page.evaluate(() => window.innerWidth)).toBe(390);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(390);
+      expect(await page.evaluate(() => window.visualViewport?.scale)).toBe(1);
+    }
+  });
+});
+
+test.describe("mobile search", () => {
+  test.use({
+    isMobile: true,
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+  });
+
+  test("search focuses immediately while its first bundle is still loading", async ({
+    page,
+  }) => {
+    let releaseBundle!: () => void;
+    const heldBundle = new Promise<void>((resolve) => {
+      releaseBundle = resolve;
+    });
+    await page.route("**/_astro/ui-core.*.js", async (route) => {
+      await heldBundle;
+      await route.continue();
+    });
+    await page.goto("/manual/guide/");
+    const trigger = page.getByRole("button", { name: "Search", exact: true });
+    await trigger.click();
+    const input = page.getByRole("textbox", { name: "Search", exact: true });
+    try {
+      await expect(input).toBeFocused();
+      await input.fill("configuration");
+      await expect(page.locator(".pagefind-ui__search-input")).toHaveCount(0);
+    } finally {
+      releaseBundle();
+    }
+    await expect(
+      page.locator(".pagefind-ui__result-link").first(),
+    ).toBeVisible();
+    await expect(input).toBeFocused();
+    await page
+      .getByRole("button", { name: "Clear search", exact: true })
+      .click();
+    await expect(input).toHaveValue("");
+    await expect(input).toBeFocused();
+    await expect(page.locator(".pagefind-ui__result-link")).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(trigger).toBeFocused();
+    await trigger.click();
+    await expect(input).toBeFocused();
+  });
+
+  test("search does not steal focus when loading finishes after dismissal", async ({
+    page,
+  }) => {
+    let releaseBundle!: () => void;
+    const heldBundle = new Promise<void>((resolve) => {
+      releaseBundle = resolve;
+    });
+    await page.route("**/_astro/ui-core.*.js", async (route) => {
+      await heldBundle;
+      await route.continue();
+    });
+    await page.goto("/manual/guide/");
+    const trigger = page.getByRole("button", { name: "Search", exact: true });
+    try {
+      await trigger.click();
+      await page.keyboard.press("Escape");
+      await expect(trigger).toBeFocused();
+    } finally {
+      releaseBundle();
+    }
+    await expect(page.locator(".pagefind-ui__search-input")).toHaveCount(1);
+    await expect(trigger).toBeFocused();
+    await expect(page.locator("site-search dialog")).not.toBeVisible();
+  });
+});
+
+for (const width of [390, 1440]) {
+  test(`search actually fades on entry and exit at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/manual/guide/");
+    const dialog = page.locator("site-search dialog");
+    // Slow the configured transition so the test can inspect it mid-flight.
+    await page.addStyleTag({
+      content: "site-search { --dialog-transition: 600ms; }",
+    });
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await expect
+      .poll(() =>
+        dialog.evaluate((element) =>
+          element
+            .getAnimations()
+            .some(
+              (animation) =>
+                animation instanceof CSSTransition &&
+                animation.transitionProperty === "opacity" &&
+                animation.playState === "running",
+            ),
+        ),
+      )
+      .toBe(true);
+    await expect(dialog).toHaveCSS("opacity", "1");
+    const backdrop = await dialog.evaluate((element) => {
+      const styles = getComputedStyle(element, "::backdrop");
+      return {
+        fill: styles.backgroundColor,
+        opacity: styles.opacity,
+        blur: styles.backdropFilter,
+        transition: styles.transitionProperty,
+      };
+    });
+    if (width < 800) {
+      expect(backdrop).toEqual({
+        fill: expect.stringMatching(/(?:,\s*0|\/\s*0)\)$/),
+        opacity: "0",
+        blur: "none",
+        transition: "none",
+      });
+    } else {
+      expect(backdrop.fill).not.toMatch(/(?:,\s*0|\/\s*0)\)$/);
+      expect(backdrop.opacity).toBe("1");
+      expect(backdrop.blur).toBe("blur(4px)");
+      expect(backdrop.transition).toContain("opacity");
+    }
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toHaveAttribute("data-open");
+    await expect(dialog).toHaveAttribute("open", "");
+    await expect
+      .poll(() =>
+        dialog.evaluate((element) =>
+          element
+            .getAnimations()
+            .some(
+              (animation) =>
+                animation instanceof CSSTransition &&
+                animation.transitionProperty === "opacity" &&
+                animation.playState === "running",
+            ),
+        ),
+      )
+      .toBe(true);
+    await expect(dialog).not.toHaveAttribute("open");
+  });
+}
+
 test("keyboard search focuses the input and returns focus on close", async ({
   page,
 }) => {
