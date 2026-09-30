@@ -1,5 +1,15 @@
 # @tenphi/renderer
 
+## 0.21.1
+
+### Patch Changes
+
+- [#133](https://github.com/tenphi/cookbook/pull/133) [`6c43a1f`](https://github.com/tenphi/cookbook/commit/6c43a1f9d20be4dfc05f1e3ef09c6b5b54ceb24e) Thanks [@tenphi](https://github.com/tenphi)! - Use the stronger semantic surface color for inline code so its background is
+  easier to distinguish from the page in light, dark, and high-contrast appearances.
+  Use the secondary reading text color to soften the inline-code foreground.
+- Updated dependencies []:
+  - @tenphi/docs@0.21.1
+
 ## 0.21.0
 
 ### Minor Changes
