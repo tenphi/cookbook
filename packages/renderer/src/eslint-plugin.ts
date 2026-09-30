@@ -18,12 +18,8 @@ export function createValidationConfig(
     ...validationConfig,
     tokens: [
       ...validationConfig.tokens,
-      ...Object.keys(theme.tokens ?? {}).map((name) =>
-        name.startsWith("--") ? `$${name.slice(2)}` : name,
-      ),
-      ...Object.keys(theme.palette ?? {}).map(
-        (name) => `#${name === "textSoft" ? "text-soft" : name}`,
-      ),
+      ...Object.keys(theme.tokens ?? {}),
+      ...Object.keys(theme.palette ?? {}).map((name) => `#${name}`),
     ],
     units: [...validationConfig.units, ...Object.keys(theme.units ?? {})],
     states: [...validationConfig.states, ...Object.keys(theme.states ?? {})],

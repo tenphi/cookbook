@@ -85,7 +85,7 @@ theme: {
       saturation: 0,
       contrast: { wcag: [7, 10] }
     },
-    textSoft: {
+    "text-soft": {
       base: "surface",
       tone: [25, 10],
       saturation: 0.05,
@@ -102,7 +102,7 @@ the second applies to high contrast. Use absolute tones for reading text:
 `text` starts at tone 0 and `heading` at tone 4, giving headings only a slight
 reduction in contrast. Glaze applies its tone boundaries in normal mode, so
 body text is not pure black, then inverts the tones for dark mode. High-contrast
-mode uses the full range. `textSoft` is reserved for secondary text.
+mode uses the full range. `text-soft` is reserved for secondary text.
 `heading` follows an explicitly configured `text` declaration unless it has
 its own declaration, preserving existing custom palettes.
 Contrast requirements are minimum safeguards: Glaze preserves the authored
@@ -169,8 +169,8 @@ high-contrast modes. Configuration diagnostics and rendering use the same graph.
 Missing references and cycles fail with the color name; layered configurations
 resolve references after merging.
 
-`textSoft` remains an alias for `text-soft`. Use either spelling, but do not
-configure both. The names `current`, `constructor`, and `prototype` are reserved.
+Palette names use lowercase letters, digits, and hyphens, such as `text-soft`.
+The names `current`, `constructor`, and `prototype` are reserved.
 Declaring a built-in name intentionally overrides that role; use a project
 prefix for additional roles to avoid future naming collisions.
 
@@ -219,7 +219,7 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 | Area                | Roles                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces            | `surface`, `header`, `overlay`, `surface-2`, `surface-3`, `surface-2-hover`, `surface-2-pressed`, `surface-3-hover`, `surface-3-pressed`                                                                        |
-| Reading             | `text`, `heading`, `text-soft` (alias `textSoft`), `text-muted`, `sidebar-text`                                                                                                                                 |
+| Reading             | `text`, `heading`, `text-soft`, `text-muted`, `sidebar-text`                                                                                                                                                    |
 | Brand and focus     | `accent-text`, `accent-surface`, `accent-surface-text`, `accent-surface-subtle`, `accent-surface-2-subtle`, `logo-surface`, `logo-mark`, `focus`                                                                |
 | Borders and effects | `border`, `border-strong`, `shadow`, `clear`                                                                                                                                                                    |
 | Status              | `info`, `success`, `warning`, `danger`, each with `-text` and `-surface` variants                                                                                                                               |
@@ -259,8 +259,7 @@ check does not replace keyboard, screen-reader, and rendered-page testing.
 
 Token names follow Tasty's
 [token and unit syntax](https://tasty.style/docs/dsl#built-in-units): `$name`
-becomes the CSS custom property `--name`. Existing `--name` keys are still
-accepted for compatibility.
+becomes the CSS custom property `--name`. Configure tokens with `$name` keys.
 
 ```ts
 theme: {

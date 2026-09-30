@@ -26,7 +26,7 @@ describe("theme extensions", () => {
           shadow: {
             type: "shadow",
             bg: "review-fill",
-            fg: "textSoft",
+            fg: "text-soft",
             intensity: [20, 40],
             tuning: { alphaMax: 0.5 },
           },
@@ -38,7 +38,7 @@ describe("theme extensions", () => {
     expect(theme.colorTokens["#shadow"]).not.toEqual(
       resolveColorTheme().colorTokens["#shadow"],
     );
-    expect(config.theme.palette?.shadow).toHaveProperty("fg", "textSoft");
+    expect(config.theme.palette?.shadow).toHaveProperty("fg", "text-soft");
   });
   it("preserves status mix/shadow graphs and gives derived text its own contrast floor", () => {
     for (const declaration of [

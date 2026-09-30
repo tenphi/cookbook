@@ -79,7 +79,7 @@ describe("Glaze theme adapter", () => {
           saturation: 0,
           contrast: { wcag: [7, 10] },
         },
-        textSoft: {
+        "text-soft": {
           base: "surface",
           tone: "-10",
           saturation: 0.05,
@@ -98,7 +98,7 @@ describe("Glaze theme adapter", () => {
       expect(theme.contrast[mode]).toBeGreaterThanOrEqual(minimum - 0.05);
       const surface = colorLuminance(theme.colors.surface[mode]!);
       const text = colorLuminance(theme.colors.text[mode]!);
-      const textSoft = colorLuminance(theme.colors.textSoft[mode]!);
+      const textSoft = colorLuminance(theme.colors["text-soft"][mode]!);
       expect(contrastRatioFromLuminance(text, surface)).toBeGreaterThanOrEqual(
         (mode.includes("Contrast") ? 10 : 7) - 0.01,
       );
@@ -158,11 +158,11 @@ describe("Glaze theme adapter", () => {
       expect(literalSurfaceWithRelativeText.colors.surface[mode]).toBe(
         literalSurface.colors.surface[mode],
       );
-      expect(literalSurfaceWithRelativeText.colors.surface2[mode]).toBe(
-        literalSurface.colors.surface2[mode],
+      expect(literalSurfaceWithRelativeText.colors["surface-2"][mode]).toBe(
+        literalSurface.colors["surface-2"][mode],
       );
-      expect(literalSurfaceWithRelativeText.colors.surface3[mode]).toBe(
-        literalSurface.colors.surface3[mode],
+      expect(literalSurfaceWithRelativeText.colors["surface-3"][mode]).toBe(
+        literalSurface.colors["surface-3"][mode],
       );
       expect(blue.colors.text[mode]).not.toBe(orange.colors.text[mode]);
       expect(Object.values(blue.colorTokens["#info"]!)[index]).not.toBe(
@@ -192,8 +192,12 @@ describe("Glaze theme adapter", () => {
       "darkContrast",
     ] as const) {
       const surfaceHue = colorHue(theme.colors.surface[mode]!);
-      expect(colorHue(theme.colors.surface2[mode]!)).toBeCloseTo(surfaceHue);
-      expect(colorHue(theme.colors.surface3[mode]!)).toBeCloseTo(surfaceHue);
+      expect(colorHue(theme.colors["surface-2"][mode]!)).toBeCloseTo(
+        surfaceHue,
+      );
+      expect(colorHue(theme.colors["surface-3"][mode]!)).toBeCloseTo(
+        surfaceHue,
+      );
     }
   });
   it("accepts declarations for header, underlay, and status roles", () => {
@@ -316,10 +320,10 @@ describe("Glaze theme adapter", () => {
         theme.colors.text.lightContrast,
       ]),
     );
-    expect(theme.colors.surface2.light).toBe("oklch(0.9789 0 0)");
-    expect(theme.colors.surface3.light).toBe("oklch(0.9581 0 0)");
-    expect(theme.colors.surface2.dark).toBe("oklch(0.2708 0.0003 0)");
-    expect(theme.colors.surface3.dark).toBe("oklch(0.287 0.0003 0)");
+    expect(theme.colors["surface-2"].light).toBe("oklch(0.9789 0 0)");
+    expect(theme.colors["surface-3"].light).toBe("oklch(0.9581 0 0)");
+    expect(theme.colors["surface-2"].dark).toBe("oklch(0.2708 0.0003 0)");
+    expect(theme.colors["surface-3"].dark).toBe("oklch(0.287 0.0003 0)");
     for (const [name, states] of Object.entries(tokens).filter(([name]) =>
       name.startsWith("#"),
     )) {
@@ -507,7 +511,7 @@ describe("Glaze theme adapter", () => {
         "$card-radius": "10px",
         "$border-width": "2px",
         "$layout-width": "72rem",
-        "--legacy-token": "3rem",
+        "$project-space": "3rem",
       },
       presets: {
         body: { fontFamily: "Inter, sans-serif" },
@@ -524,7 +528,7 @@ describe("Glaze theme adapter", () => {
     expect(tokens["$card-radius"]).toBe("10px");
     expect(tokens["$border-width"]).toBe("2px");
     expect(tokens["$layout-width"]).toBe("72rem");
-    expect(tokens).not.toHaveProperty("--legacy-token");
+    expect(tokens["$project-space"]).toBe("3rem");
   });
 
   it("applies font roles before explicit preset overrides", () => {
@@ -558,13 +562,13 @@ describe("Glaze theme adapter", () => {
     });
 
     expect(theme.colors.surface.light).toBe("oklch(0.9919 0.004 286.33)");
-    expect(theme.colors.surface2.light).toBe("oklch(0.9709 0.0123 286.33)");
-    expect(theme.colors.surface3.light).toBe("oklch(0.9503 0.0191 286.33)");
-    expect(theme.colors.surface2.lightContrast).toBe(
-      theme.colors.surface2.light,
+    expect(theme.colors["surface-2"].light).toBe("oklch(0.9709 0.0123 286.33)");
+    expect(theme.colors["surface-3"].light).toBe("oklch(0.9503 0.0191 286.33)");
+    expect(theme.colors["surface-2"].lightContrast).toBe(
+      theme.colors["surface-2"].light,
     );
-    expect(theme.colors.surface3.lightContrast).toBe(
-      theme.colors.surface3.light,
+    expect(theme.colors["surface-3"].lightContrast).toBe(
+      theme.colors["surface-3"].light,
     );
   });
 });

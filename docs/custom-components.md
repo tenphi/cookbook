@@ -262,9 +262,7 @@ useGlobalStyles(
 ```
 
 `defineComponent` and `resolveComponentStyles` read the same `theme.customStyles`
-configuration; user configuration contains only the properties to change. They do not require a
-`data-tasty-anatomy` attribute. That attribute remains available for older
-components using the compatibility bridge described above.
+configuration; user configuration contains only the properties to change. Each custom style name must match a call to one of these helpers.
 
 ## Linting custom styles
 

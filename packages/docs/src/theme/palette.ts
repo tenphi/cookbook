@@ -24,14 +24,14 @@ import type {
 export interface ResolvedColorTheme {
   colors: {
     surface: Record<string, string>;
-    surface2: Record<string, string>;
-    surface3: Record<string, string>;
+    "surface-2": Record<string, string>;
+    "surface-3": Record<string, string>;
     text: Record<string, string>;
     heading: Record<string, string>;
-    textSoft: Record<string, string>;
-    accentText: Record<string, string>;
-    accentSurface: Record<string, string>;
-    accentSurfaceText: Record<string, string>;
+    "text-soft": Record<string, string>;
+    "accent-text": Record<string, string>;
+    "accent-surface": Record<string, string>;
+    "accent-surface-text": Record<string, string>;
     focus: Record<string, string>;
     shadow: Record<string, string>;
   };
@@ -200,7 +200,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       contrast: { apca: [75, 90] },
       mode: "auto",
     }),
-    "text-soft": paletteDefinition(theme.palette?.textSoft, {
+    "text-soft": paletteDefinition(theme.palette?.["text-soft"], {
       from: "#626875",
       base: "surface",
       role: "text",
@@ -325,44 +325,24 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     "overlay",
     "text",
     "heading",
-    "textSoft",
+    "text-soft",
     "info",
     "success",
     "warning",
     "danger",
   ]);
-  const names = new Set<string>();
   for (const [name, input] of Object.entries(theme.palette ?? {})) {
     if (input === undefined) continue;
-    const canonical = name === "textSoft" ? "text-soft" : name;
     if (
-      !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(canonical) ||
-      ["current", "constructor", "prototype"].includes(canonical)
+      !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name) ||
+      ["current", "constructor", "prototype"].includes(name)
     )
       throw new Error(
         `theme.palette.${name}: use a lowercase color name with hyphens; current, constructor, and prototype are reserved.`,
       );
-    if (names.has(canonical))
-      throw new Error(
-        `theme.palette.${name}: duplicates the ${canonical} color role (textSoft is an alias of text-soft).`,
-      );
-    names.add(canonical);
     if (handled.has(name)) continue;
-    const defaults = definitions[canonical];
-    definitions[canonical] = paletteDefinition(
-      input,
-      defaults ?? { mode: "auto" },
-    );
-  }
-  for (const definition of Object.values(definitions)) {
-    if ("base" in definition && definition.base === "textSoft")
-      definition.base = "text-soft";
-    if ("target" in definition && definition.target === "textSoft")
-      definition.target = "text-soft";
-    if ("bg" in definition && definition.bg === "textSoft")
-      definition.bg = "text-soft";
-    if ("fg" in definition && definition.fg === "textSoft")
-      definition.fg = "text-soft";
+    const defaults = definitions[name];
+    definitions[name] = paletteDefinition(input, defaults ?? { mode: "auto" });
   }
   colorTheme.colors(definitions);
 
@@ -402,14 +382,14 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
   const colorTokens = colorTheme.tasty(tastyOptions);
   const colors = {
     surface: requiredJsonColor(resolvedPalette, "surface"),
-    surface2: requiredJsonColor(resolvedPalette, "surface-2"),
-    surface3: requiredJsonColor(resolvedPalette, "surface-3"),
+    "surface-2": requiredJsonColor(resolvedPalette, "surface-2"),
+    "surface-3": requiredJsonColor(resolvedPalette, "surface-3"),
     text: requiredJsonColor(resolvedPalette, "text"),
     heading: requiredJsonColor(resolvedPalette, "heading"),
-    textSoft: requiredJsonColor(resolvedPalette, "text-soft"),
-    accentText: requiredJsonColor(resolvedPalette, "accent-text"),
-    accentSurface: requiredJsonColor(resolvedPalette, "accent-surface"),
-    accentSurfaceText: requiredJsonColor(
+    "text-soft": requiredJsonColor(resolvedPalette, "text-soft"),
+    "accent-text": requiredJsonColor(resolvedPalette, "accent-text"),
+    "accent-surface": requiredJsonColor(resolvedPalette, "accent-surface"),
+    "accent-surface-text": requiredJsonColor(
       resolvedPalette,
       "accent-surface-text",
     ),

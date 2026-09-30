@@ -38,6 +38,28 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## Upcoming theme API cleanup
+
+Use canonical Glaze palette names throughout configuration and color
+references. Replace `theme.palette.textSoft` with `theme.palette["text-soft"]`
+and update any `base`, `target`, `bg`, or `fg` references to `"text-soft"`.
+Camel-case palette names now fail validation.
+
+The `colors` returned by `resolveColorTheme()` and `resolveDocsTheme()` also
+use canonical names: `surface-2`, `surface-3`, `text-soft`, `accent-text`,
+`accent-surface`, and `accent-surface-text`. Update property access to bracket
+notation, for example `theme.colors["accent-text"]`.
+
+Configure `theme.tokens` with `$name` keys, such as `$radius`. The old `--name`
+configuration keys now fail validation; the emitted CSS custom properties
+still use `--name`.
+
+Custom styles no longer target `data-tasty-anatomy` attributes automatically.
+For a custom component, use `defineComponent(name, options)`. For custom global
+rules, pass `resolveComponentStyles(name, baseStyles)` to `useGlobalStyles()`.
+Both merge `theme.customStyles[name]` into the complete base styles during
+server rendering. See [custom components](./custom-components.md).
+
 ## 0.19.x to 0.20
 
 Cookbook 0.20 generates a themed social preview image when a site has no

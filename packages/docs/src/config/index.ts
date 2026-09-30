@@ -735,12 +735,22 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     "tokens",
     "states",
     "presets",
-    "glaze",
-    "units",
-    "recipes",
   ] as const) {
     if (config.theme?.[field] !== undefined && !isRecord(config.theme[field]))
       invalid(diagnostics, `theme.${field} must be an object.`);
+  }
+  for (const [name, value] of Object.entries(config.theme?.tokens ?? {})) {
+    if (!/^\$[a-zA-Z0-9_-]+$/.test(name))
+      invalid(
+        diagnostics,
+        `theme.tokens.${name}: use a Tasty $name token key.`,
+      );
+    if (
+      value !== undefined &&
+      typeof value !== "string" &&
+      !(typeof value === "number" && Number.isFinite(value))
+    )
+      invalid(diagnostics, `theme.tokens.${name} must be a string or number.`);
   }
   for (const [name, value] of Object.entries(config.theme?.units ?? {})) {
     if (

@@ -7,12 +7,23 @@ import plugin, {
   recommended,
   strict,
   validationConfig,
+  createValidationConfig,
 } from "./eslint-plugin.js";
 import { cookbookStates } from "./components/tasty-states.js";
 import { resolveDocsTheme } from "./theme/index.js";
 import { TASTY_UNITS } from "./theme/tasty-config.js";
 
 describe("consumer style validation", () => {
+  it("registers canonical custom token and palette names", () => {
+    const config = createValidationConfig({
+      tokens: { "$project-gap": "2rem" },
+      palette: { "text-soft": { tone: 10 }, "project-ink": { tone: 0 } },
+    });
+    expect(config.tokens).toContain("$project-gap");
+    expect(config.tokens).toContain("#text-soft");
+    expect(config.tokens).toContain("#project-ink");
+    expect(config.tokens).not.toContain("#textSoft");
+  });
   it("preserves the upstream plugin and its rule maps", () => {
     expect(plugin).toBe(upstream);
     expect(recommended).toBe(upstreamRecommended);

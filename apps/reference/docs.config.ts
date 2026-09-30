@@ -122,7 +122,7 @@ export default defineDocsConfig({
         saturation: 0,
         contrast: { wcag: [7, 10] },
       },
-      textSoft: {
+      "text-soft": {
         base: "surface",
         tone: [25, 10],
         saturation: 0.05,
