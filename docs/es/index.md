@@ -6,7 +6,7 @@ seo:
   title: Cookbook — documentación junto al código y adaptada a tu producto
 hero:
   title: Documentación que permanece junto al código.
-  tagline: Crea un sitio de documentación estático con Astro a partir de archivos Markdown de tu repositorio o de un paquete npm fijado, y adapta los colores, la tipografía y los componentes a tu producto.
+  tagline: Cookbook es un kit de herramientas de documentación para Astro. Convierte el Markdown de tu repositorio o un paquete npm publicado en un sitio estático con búsqueda, y adapta los colores, la tipografía y los componentes a tu producto.
   image:
     html: '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'
   actions:
@@ -20,6 +20,18 @@ sidebar:
   label: Introducción
   order: 1
 ---
+
+## Qué incluye
+
+- **Usa la documentación que ya tienes.** Lee Markdown, MDX y recursos locales directamente desde tu repositorio, o genera el sitio a partir de un paquete npm fijado por versión e integridad. [Fuentes de contenido](../content-sources.md).
+- **Genera una referencia de API.** Convierte una especificación OpenAPI local en un resumen con búsqueda y una página por operación, con parámetros, cuerpos de petición, respuestas y ejemplos. [Referencias OpenAPI](../content-sources.md#openapi-references).
+- **Búsqueda integrada.** Pagefind indexa las páginas y los encabezados localmente, con un atajo de teclado y recursos de búsqueda que se cargan cuando hacen falta. [Búsqueda](../site-navigation.md#search).
+- **Navegación para documentación que crece.** Organiza secciones con pestañas y barras laterales agrupadas, añade índices de página y enlaces anterior/siguiente, y ofrece un menú de navegación móvil. [Búsqueda y navegación](../site-navigation.md).
+- **Componentes para documentación técnica.** Usa pestañas, avisos, tarjetas, pasos, grupos de código, código resaltado con controles de copia y ejemplos interactivos aislados en MDX. [Componentes de contenido](../authoring.mdx).
+- **Un tema adaptado a tu producto.** Configura colores de marca, paletas semánticas, fuentes, tipografía y partes de componentes con [Tasty](https://tasty.style) y [Glaze](https://glaze.tenphi.me). Los modos claro, oscuro y de alto contraste reciben CSS estático generado durante la compilación. [Tema y componentes](../theme-and-components.md).
+- **Idiomas y versiones.** Ofrece páginas traducidas y documentación versionada, con selectores que llevan a la página equivalente cuando existe. [Idiomas y versiones](../site-navigation.md#contents-languages-and-versions).
+- **Comprobaciones antes de publicar.** Detecta enlaces rotos, recursos ausentes, rutas duplicadas y navegación inválida con errores que señalan el archivo de origen. Publica HTML prerenderizado en cualquier alojamiento estático. [Comprobaciones de calidad](../quality-checks.md).
+- **Páginas listas para compartir y leer.** Publica URL canónicas, vistas previas para redes sociales, mapas del sitio, Markdown descargable y un índice `llms.txt` para agentes de programación. [Metadatos de publicación](../publishing.md).
 
 ## Empieza con tu repositorio
 
@@ -36,20 +48,6 @@ Cookbook lee los archivos donde ya están. También puedes [crear un sitio nuevo
 ## Este sitio es el ejemplo
 
 Esta página procede de [docs/es/index.md](https://github.com/tenphi/cookbook/blob/main/docs/es/index.md). Una pequeña [aplicación Astro](https://github.com/tenphi/cookbook/tree/main/apps/reference) genera el sitio directamente desde el directorio `docs/` del repositorio. La navegación, la búsqueda, los controles de código, los enlaces de edición y las fechas de Git están disponibles para cualquier sitio Cookbook.
-
-## Contenido y diseño a tu manera
-
-### Conserva los archivos en su lugar
-
-Usa los archivos Markdown y recursos locales de un repositorio sin copiarlos a un árbol de contenido de Astro. Cookbook también puede leer especificaciones OpenAPI o la documentación de un paquete npm fijado por versión e integridad. [Explora las fuentes de contenido](../content-sources.md).
-
-### Adapta el aspecto del sitio
-
-Empieza con un color de marca y configura paletas semánticas, fuentes, tipografía y partes de componentes mediante [Tasty](https://tasty.style) y [Glaze](https://glaze.tenphi.me). Las personalizaciones parciales de `theme.styles` se combinan con los valores predeterminados de Cookbook antes de extraer el CSS. El navegador recibe CSS estático. [Explora el tema](../theme-and-components.md).
-
-### Detecta problemas antes de publicar
-
-Los enlaces rotos, recursos ausentes, rutas duplicadas y errores de navegación detienen la validación con mensajes que indican el archivo de origen. El resultado es HTML prerenderizado con búsqueda local, listo para cualquier alojamiento estático. [Consulta el flujo de validación](../quality-checks.md).
 
 ## Explora la guía
 

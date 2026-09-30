@@ -193,7 +193,7 @@ it stays complete when a surface changes.
 #### Search
 
 - `Search`: `Status`, `Dialog`, `CloseIcon`, `OpenDialog`, `EnteredDialog`, `Backdrop`, `EnteredBackdrop`, `Frame`, `Container`, `Close`, `HoverClose`, `ActiveClose`
-- `SearchResults`: `UI`, `Form`, `Drawer`, `Input`, `Clear`, `Results`, `Result`, `ResultLink`, `SearchIcon`, `ClearIcon`, `SuppressedClear`, `Message`, `List`, `Title`, `Excerpt`, `NestedResult`, `Match`, `More`, `HoverMore`
+- `SearchResults`: `UI`, `Form`, `Field`, `EngineControls`, `Drawer`, `Input`, `Clear`, `Results`, `Result`, `ResultLink`, `SearchIcon`, `ClearIcon`, `SuppressedClear`, `Message`, `List`, `Title`, `Excerpt`, `NestedResult`, `Match`, `More`, `HoverMore`
 
 <!-- component-anatomy:end -->
 
@@ -352,7 +352,8 @@ theme: {
 `Document` owns resets, base typography, generic controls, responsive media,
 and accessibility utilities. `MainPane` and `MainContent` own the content
 layout. `Markdown` owns prose, lists, links, quotations, and disclosure
-anatomy. `Search` owns the dialog; `SearchResults` owns the Pagefind UI.
+anatomy. `Search` owns the dialog; `SearchResults` owns the search field and
+Pagefind results UI.
 `MarkdownAlert` styles rendered alert blockquotes; `Card`, `Callout`, and
 `Steps` style Cookbook components.
 
@@ -393,7 +394,12 @@ it cannot access its parent's origin. Configure its size with
 using that directive, authored previews must use style blocks rather than style
 attributes.
 
-Search uses an owned, keyboard-accessible dialog with Pagefind's indexing and
-results UI. Its clear-button sizing is adapted to `SearchResults.Input` styles,
-so the browser does not need inline layout declarations. The adapter is checked
-against the pinned Pagefind UI version during builds.
+Search uses an owned, keyboard-accessible dialog and server-rendered input so
+the first opening can focus the field immediately on mobile. Pagefind's indexing
+and results UI load lazily. Customize the field with `SearchResults.Field`,
+`Input`, and `Clear`; `EngineControls` hides Pagefind's duplicate controls.
+Closing waits for the dialog's fade transition, with reduced motion respected.
+The fullscreen mobile dialog has no dimmed or blurred backdrop; the backdrop
+transition applies only to wider layouts.
+The Pagefind sizing adapter prevents inline layout declarations and is checked
+against the pinned UI version during builds.

@@ -363,18 +363,18 @@ export default function GlobalStyles() {
       },
       Backdrop: {
         $: "dialog::backdrop",
-        fill: "#overlay",
-        backdropFilter: "blur(0.25rem)",
+        fill: { "": "#overlay", "@mobile": "#clear" },
+        backdropFilter: { "": "blur(0.25rem)", "@mobile": "none" },
         opacity: "0",
         transition: {
           "": "none",
-          "!@reduced-motion":
+          "!@reduced-motion & !@mobile":
             "opacity $dialog-transition ease-out, display $dialog-transition allow-discrete, overlay $dialog-transition allow-discrete",
         },
       },
       EnteredBackdrop: {
         $: "dialog[open][data-open]::backdrop",
-        opacity: "1",
+        opacity: { "": "1", "@mobile": "0" },
       },
       Frame: {
         $: ".dialog-frame",
@@ -1530,7 +1530,7 @@ export default function GlobalStyles() {
       "$pagefind-ui-tag": "#surface-3",
       preset: "body",
       UI: {
-        $: ".pagefind-ui",
+        $: ".pagefind-ui, [data-search-results]",
         display: "flex",
         flow: "column",
         flexGrow: "1",
@@ -1544,6 +1544,15 @@ export default function GlobalStyles() {
         flexGrow: "1",
         minBlockSize: "0",
       },
+      Field: {
+        $: ".cookbook-search-field",
+        position: "relative",
+        flexShrink: "0",
+      },
+      EngineControls: {
+        $: ".pagefind-ui__search-input, .pagefind-ui__search-clear",
+        display: "none",
+      },
       Drawer: {
         $: ".pagefind-ui__drawer",
         display: "flex",
@@ -1552,7 +1561,7 @@ export default function GlobalStyles() {
         minBlockSize: "0",
       },
       Input: {
-        $: ".pagefind-ui__search-input",
+        $: ".cookbook-search-input",
         flexShrink: "0",
         inlineSize: "100%",
         minBlockSize: "3rem",
@@ -1566,7 +1575,7 @@ export default function GlobalStyles() {
         boxShadow: "none",
       },
       Clear: {
-        $: ".pagefind-ui__search-clear",
+        $: ".cookbook-search-clear",
         position: "absolute",
         insetBlockStart: "0",
         insetInlineEnd: "0",
@@ -1654,7 +1663,7 @@ export default function GlobalStyles() {
       },
       HoverMore: { $: ".pagefind-ui__button:hover", fill: "#surface-2-hover" },
       SearchIcon: {
-        $: ".pagefind-ui__form::before",
+        $: ".cookbook-search-field::before",
         content: '""',
         position: "absolute",
         zIndex: "1",
@@ -1668,7 +1677,7 @@ export default function GlobalStyles() {
         pointerEvents: "none",
       },
       ClearIcon: {
-        $: ".pagefind-ui__search-clear::before",
+        $: ".cookbook-search-clear::before",
         content: '""',
         display: "block",
         inlineSize: "1rem",
@@ -1677,7 +1686,7 @@ export default function GlobalStyles() {
         mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
       },
       SuppressedClear: {
-        $: ".pagefind-ui__search-clear.pagefind-ui__suppressed",
+        $: ".cookbook-search-clear[hidden]",
         display: "none",
       },
     }),

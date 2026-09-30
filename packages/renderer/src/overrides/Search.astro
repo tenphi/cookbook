@@ -45,7 +45,31 @@ const translations = {
         ) : (
           <div class="search-container">
             <p data-search-status role="status" hidden />
-            <div id="cookbook__search" />
+            <div id="cookbook__search">
+              <div class="pagefind-ui" role="search" aria-label={label}>
+                <div class="cookbook-search-field">
+                  <input
+                    class="cookbook-search-input"
+                    data-search-input
+                    type="text"
+                    aria-label={label}
+                    placeholder={label}
+                    autocapitalize="none"
+                    autocomplete="off"
+                    enterkeyhint="search"
+                    autofocus
+                  />
+                  <button
+                    class="cookbook-search-clear"
+                    data-clear-search
+                    type="button"
+                    aria-label={Astro.locals.t("pagefind.clear_search")}
+                    hidden
+                  />
+                </div>
+                <div data-search-results />
+              </div>
+            </div>
           </div>
         )
       }
