@@ -1032,8 +1032,8 @@ export default function GlobalStyles() {
     ".cookbook-markdown-content code:not(:where(pre *, .not-content *))",
     resolveComponentStyles("MarkdownInlineCode", {
       padding: "0.125rem 0.375rem",
-      color: "#text",
-      fill: "#surface-2",
+      color: "#text-soft",
+      fill: "#surface-3",
       preset: "code",
       fontSize: "0.875em",
       radius: "($radius * 0.65)",
