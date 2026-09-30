@@ -1,5 +1,22 @@
 # @tenphi/cookbook
 
+## 0.21.0
+
+### Minor Changes
+
+- [#130](https://github.com/tenphi/cookbook/pull/130) [`299fa57`](https://github.com/tenphi/cookbook/commit/299fa572c5e12a336306b21813c922316050cbd2) Thanks [@tenphi](https://github.com/tenphi)! - Remove legacy theme compatibility paths. Palette configuration, dependencies,
+  and resolved color properties now use canonical lowercase Glaze names such as
+  `text-soft` and `accent-text`. Configure design tokens with Tasty `$name` keys;
+  the old `--name` keys now report a validation error. Custom style overrides must
+  be consumed through `defineComponent()` or `resolveComponentStyles()` instead of
+  the automatic `data-tasty-anatomy` bridge. See the upgrade guide for migration.
+
+### Patch Changes
+
+- Updated dependencies [[`338a8f5`](https://github.com/tenphi/cookbook/commit/338a8f56c4051bb9988fea9737b3de1df0ec5aaa), [`299fa57`](https://github.com/tenphi/cookbook/commit/299fa572c5e12a336306b21813c922316050cbd2)]:
+  - @tenphi/renderer@0.21.0
+  - @tenphi/docs@0.21.0
+
 ## 0.20.5
 
 ### Patch Changes
