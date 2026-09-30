@@ -95,7 +95,7 @@ describe("shared Glaze palette graph", () => {
       "#review-ink",
     );
   });
-  it("reports missing references, cycles, invalid names and alias collisions", () => {
+  it("reports missing references, cycles and invalid names", () => {
     for (const [palette, expected] of [
       [{ "review-ink": { base: "absent", tone: 0 } }, /absent/],
       [
@@ -104,7 +104,8 @@ describe("shared Glaze palette graph", () => {
       ],
       [{ "Review Ink": { tone: 10 } }, /lowercase/],
       [{ current: { tone: 10 } }, /reserved/],
-      [{ textSoft: { tone: 20 }, "text-soft": { tone: 30 } }, /duplicates/],
+      [{ textSoft: { tone: 20 } }, /lowercase/],
+      [{ textSoft: { tone: 20 }, "text-soft": { tone: 30 } }, /lowercase/],
     ] as const) {
       const diagnostics = validateConfig({
         theme: { palette: palette as ThemePaletteConfig },
@@ -117,12 +118,36 @@ describe("shared Glaze palette graph", () => {
       ).toThrow(expected);
     }
   });
-  it("accepts the public textSoft alias in dependencies", () => {
+  it("uses canonical names in palette declarations, dependencies and resolved colors", () => {
     const config = normalizeDocsConfig({
-      theme: { palette: { quiet: { base: "textSoft", tone: "+1" } } },
+      theme: {
+        palette: {
+          "text-soft": { base: "surface", tone: 0, saturation: 0 },
+          quiet: { base: "text-soft", tone: "+1" },
+        },
+      },
     });
-    expect(resolveColorTheme(config.theme).colorTokens).toHaveProperty(
-      "#quiet",
+    const resolved = resolveColorTheme(config.theme);
+    expect(resolved.colorTokens).toHaveProperty("#quiet");
+    expect(resolved.colors["text-soft"]).not.toEqual(
+      resolveColorTheme().colors["text-soft"],
     );
+    expect(
+      Object.keys(resolved.colors).every((name) =>
+        /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name),
+      ),
+    ).toBe(true);
+  });
+  it("rejects the removed camel-case name in every dependency field", () => {
+    for (const definition of [
+      { base: "textSoft", tone: "+1" },
+      { type: "mix", base: "surface", target: "textSoft", value: 50 },
+      { type: "shadow", bg: "textSoft", fg: "text", intensity: 20 },
+      { type: "shadow", bg: "surface", fg: "textSoft", intensity: 20 },
+    ] as const) {
+      const config = { theme: { palette: { quiet: definition } } };
+      expect(() => normalizeDocsConfig(config)).toThrow(/textSoft/);
+      expect(() => resolveColorTheme(config.theme)).toThrow(/textSoft/);
+    }
   });
 });

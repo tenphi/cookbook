@@ -218,8 +218,7 @@ export type BrandConfig =
 export type ThemeTokenValue = string | number;
 
 /**
- * Tasty design tokens. `$name` is emitted as `--name`; existing `--name`
- * custom-property keys remain supported for compatibility.
+ * Tasty design tokens. Configure `$name` to emit the CSS custom property `--name`.
  */
 export interface ThemeTokens {
   $gap?: ThemeTokenValue;
@@ -235,7 +234,6 @@ export interface ThemeTokens {
   "$sidebar-width"?: ThemeTokenValue;
   "$control-height"?: ThemeTokenValue;
   [name: `$${string}`]: ThemeTokenValue | undefined;
-  [customProperty: `--${string}`]: ThemeTokenValue | undefined;
 }
 
 export interface TypographyPreset {
@@ -378,7 +376,7 @@ export interface ThemePaletteConfig extends Partial<
   Record<CookbookPaletteName, ThemePaletteColor>
 > {
   /** Additional Glaze roles, exposed as Tasty #name tokens. Use lowercase hyphenated names. */
-  [name: string]: ThemePaletteColor | undefined;
+  [name: Lowercase<string>]: ThemePaletteColor | undefined;
   info?: ThemePaletteColor;
   success?: ThemePaletteColor;
   warning?: ThemePaletteColor;
@@ -394,7 +392,7 @@ export interface ThemePaletteConfig extends Partial<
   /** Heading text; follows an explicit `text` declaration unless configured. */
   heading?: ThemePaletteColor;
   /** Secondary reading text, resolved against `surface`. */
-  textSoft?: ThemePaletteColor;
+  "text-soft"?: ThemePaletteColor;
 }
 
 /** Cookbook UI surfaces whose default Tasty styles can be customized. */

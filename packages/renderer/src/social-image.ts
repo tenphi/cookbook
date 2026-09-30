@@ -26,9 +26,9 @@ export async function createDefaultSocialImage(
   const origin = site.url ? new URL(site.url).host : "";
   const surface = toHex(colors.surface.light);
   const heading = toHex(colors.heading.light);
-  const soft = toHex(colors.textSoft.light);
-  const accent = toHex(colors.accentText.light);
-  const accentSurface = toHex(colors.accentSurface.light);
+  const soft = toHex(colors["text-soft"].light);
+  const accent = toHex(colors["accent-text"].light);
+  const accentSurface = toHex(colors["accent-surface"].light);
 
   const artwork = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">

@@ -1,4 +1,5 @@
 import spawn from "cross-spawn";
+import assert from "node:assert/strict";
 import {
   cp,
   mkdir,
@@ -362,7 +363,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     !buildLog.includes("theme.customStyles.ConsumerUnused did not match") ||
     buildLog.includes("theme.customStyles.ConsumerSiteTitle did not match") ||
     buildLog.includes("theme.customStyles.ConsumerGlobal did not match") ||
-    buildLog.includes("theme.customStyles.ConsumerAnatomy did not match")
+    !buildLog.includes("theme.customStyles.ConsumerAnatomy did not match")
   ) {
     throw new Error(
       `Custom component style usage diagnostics were incorrect: ${buildLog}`,
@@ -418,6 +419,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       cssEntries.map((name) => readFile(join(site, "dist", name), "utf8")),
     )
   ).join("\n");
+  assert.doesNotMatch(css, /\[data-tasty-anatomy="ConsumerAnatomy"\]/);
   if (
     /--sl-|@layer\s+starlight|expressive-code|--ec-/i.test(`${html}\n${css}`)
   ) {

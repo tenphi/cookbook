@@ -32,7 +32,6 @@ import {
 import {
   configure,
   type ConfigTokens,
-  type Styles,
   type TypographyPreset,
 } from "@tenphi/tasty/core";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
@@ -62,7 +61,6 @@ import {
 import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
-  resolveLegacyAnatomyStyles,
   unusedCustomStyleNames,
 } from "./components/component-styles.js";
 import { resolveComponentOverrides } from "./component-overrides.js";
@@ -801,13 +799,10 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
       "astro:build:done": async (context) => {
         await callInner(inner, "astro:build:done", context);
         const output = fileURLToPath(context.dir);
-        const anatomyNames = new Set<string>();
         for (const relativePath of await readdir(output, { recursive: true })) {
           if (extname(relativePath) !== ".html") continue;
           const path = join(output, relativePath);
           const html = await readFile(path, "utf8");
-          for (const match of html.matchAll(/\bdata-tasty-anatomy="([^"]+)"/g))
-            anatomyNames.add(match[1]!);
           const sanitized = html
             .replace(
               /\s*<link\b(?=[^>]*rel="stylesheet")(?=[^>]*href="data:text\/css,")[^>]*>/g,
@@ -823,10 +818,9 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         }
         for (const name of unusedCustomStyleNames(
           options.config?.theme?.customStyles,
-          anatomyNames,
         )) {
           context.logger.warn(
-            `theme.customStyles.${name} did not match a component style resolver or rendered data-tasty-anatomy attribute. Check that its name matches defineComponent() or resolveComponentStyles().`,
+            `theme.customStyles.${name} did not match a component style resolver. Check that its name matches defineComponent() or resolveComponentStyles().`,
           );
         }
         if (graph?.config.search.enabled !== false) {
@@ -1035,7 +1029,6 @@ function configureTastyTheme(
   resolved: ReturnType<typeof resolveDocsTheme>,
 ): void {
   const tokens = tastyTokens(resolved) as ConfigTokens;
-  const globalStyles = resolveLegacyAnatomyStyles(theme?.customStyles);
 
   // Recipes and custom parser units are module-local in Tasty. Astro evaluates
   // renderer code in a separate server module graph. Share configuration only
@@ -1058,9 +1051,6 @@ function configureTastyTheme(
     recipes: theme?.recipes ?? {},
     tokens,
     presets: resolved.presets as Record<string, TypographyPreset>,
-    ...(globalStyles
-      ? { globalStyles: globalStyles as Record<string, Styles> }
-      : {}),
   });
 }
 

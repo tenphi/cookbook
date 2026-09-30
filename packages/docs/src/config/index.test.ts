@@ -534,6 +534,19 @@ describe("docs configuration", () => {
     ).not.toThrow();
   });
 
+  it("rejects CSS custom-property token keys instead of silently ignoring them", () => {
+    for (const name of ["--radius", "radius", "$"]) {
+      expect(() =>
+        normalizeDocsConfig({ theme: { tokens: { [name]: "4px" } } }),
+      ).toThrow(/use a Tasty \$name token key/);
+    }
+    for (const value of [true, null, NaN, Infinity]) {
+      expect(() =>
+        normalizeDocsConfig({ theme: { tokens: { $radius: value } } } as never),
+      ).toThrow(/must be a string or number/);
+    }
+  });
+
   it("preserves component style overrides", () => {
     const config = normalizeDocsConfig({
       theme: {

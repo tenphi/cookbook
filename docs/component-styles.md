@@ -233,11 +233,10 @@ same.
 
 Register custom names and their partial Tasty objects in `theme.customStyles`.
 Built-in names belong in `theme.styles` and reject misspelled sub-elements.
-Custom names can also target a matching user-authored `data-tasty-anatomy` attribute.
 The name must match the string passed to `defineComponent()` or
-`resolveComponentStyles()`, or the `data-tasty-anatomy` value. A production
+`resolveComponentStyles()`. A production
 build warns when a configured custom name has no matching component style
-resolver or rendered anatomy attribute.
+resolver.
 
 The default renderer runs Tasty in Astro extract mode. Direct components and
 the remaining document/vendor bridge styles are collected into shared static

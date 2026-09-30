@@ -331,7 +331,7 @@
         "palette": {
           "type": "object",
           "propertyNames": {
-            "pattern": "^(?:textSoft|[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
           "additionalProperties": {
             "$ref": "#/$defs/paletteColor"
@@ -514,9 +514,6 @@
             "heading": {
               "$ref": "#/$defs/paletteColor"
             },
-            "textSoft": {
-              "$ref": "#/$defs/paletteColor"
-            },
             "info": {
               "$ref": "#/$defs/paletteColor"
             },
@@ -635,7 +632,7 @@
         "tokens": {
           "type": "object",
           "propertyNames": {
-            "pattern": "^(\\$|--)[a-zA-Z0-9_-]+$"
+            "pattern": "^\\$[a-zA-Z0-9_-]+$"
           },
           "additionalProperties": {
             "type": ["string", "number"]

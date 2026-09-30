@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   configureComponentStyles,
-  resolveLegacyAnatomyStyles,
   resolveComponentStyleOverride,
   resolveComponentStyles,
   unusedCustomStyleNames,
@@ -97,19 +96,7 @@ describe("component style configuration", () => {
     });
   });
 
-  it("keeps custom anatomy styles on the compatibility bridge", () => {
-    expect(
-      resolveLegacyAnatomyStyles({
-        Footer: { color: "#text-muted" },
-        ThemeSelect: { padding: "1x" },
-        ProductBadge: { color: "#accent-text" },
-      }),
-    ).toEqual({
-      '[data-tasty-anatomy="ProductBadge"]': { color: "#accent-text" },
-    });
-  });
-
-  it("reports only custom style names without a component or anatomy match", () => {
+  it("reports only custom style names without a component style resolver", () => {
     const styles = {
       ProjectBadge: { color: "#accent-text" },
       ProjectNote: { color: "#text" },
@@ -117,13 +104,10 @@ describe("component style configuration", () => {
     };
     configureComponentStyles(styles);
     resolveComponentStyles("ProjectBadge", { color: "#text" });
+    resolveComponentStyles("ProjectNote", { color: "#text" });
 
-    expect(unusedCustomStyleNames(styles, new Set(["ProjectNote"]))).toEqual([
-      "ProjectBadg",
-    ]);
+    expect(unusedCustomStyleNames(styles)).toEqual(["ProjectBadg"]);
     configureComponentStyles(styles);
-    expect(unusedCustomStyleNames(styles, new Set())).toEqual(
-      Object.keys(styles),
-    );
+    expect(unusedCustomStyleNames(styles)).toEqual(Object.keys(styles));
   });
 });

@@ -6,6 +6,16 @@ import { Tab, Preview, Logo } from "../dist/components.js";
 defineDocsConfig({
   theme: { styles: { Sidebar: { LinkLabel: { whiteSpace: "normal" } } } },
 });
+defineDocsConfig({
+  theme: {
+    tokens: { "$project-gap": "2rem" },
+    palette: { "text-soft": { tone: 10 }, "project-ink": { tone: 0 } },
+  },
+});
+// @ts-expect-error Token configuration uses Tasty $name keys.
+defineDocsConfig({ theme: { tokens: { "--radius": "4px" } } });
+// @ts-expect-error Palette names must be lowercase.
+defineDocsConfig({ theme: { palette: { textSoft: { tone: 10 } } } });
 const localFont: ThemeFont = {
   family: "Project Mono",
   files: [{ src: "/fonts/project-mono.woff2", weight: "100 900" }],
