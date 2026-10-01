@@ -37,90 +37,96 @@ const globalOwners = new Set([
 function inventory(source: string) {
   const surfaces: { name: string; global: boolean; parts: string[] }[] = [];
   const failures: string[] = [];
-  const messages = new Linter().verify(source, [
-    {
-      plugins: {
-        ownership: {
-          rules: {
-            inspect: {
-              create() {
-                function parts(styles: any): string[] {
-                  const names = new Set<string>();
-                  for (const property of styles.properties) {
-                    if (property.type === "SpreadElement") {
-                      if (property.argument.name !== "versionSelectStyles") {
-                        failures.push(
-                          "Unknown style composition; extend the anatomy inventory",
-                        );
-                        continue;
-                      }
-                      for (const key of Object.keys(
-                        selectPopoverStyles({
-                          option: "Link",
-                          hoverOption: "HoverLink",
-                          currentOption: "CurrentLink",
-                        }),
-                      ))
+  const messages = new Linter().verify(
+    source,
+    [
+      {
+        plugins: {
+          ownership: {
+            rules: {
+              inspect: {
+                create() {
+                  function parts(styles: any): string[] {
+                    const names = new Set<string>();
+                    for (const property of styles.properties) {
+                      if (property.type === "SpreadElement") {
+                        if (property.argument.name !== "versionSelectStyles") {
+                          failures.push(
+                            "Unknown style composition; extend the anatomy inventory",
+                          );
+                          continue;
+                        }
+                        for (const key of Object.keys(
+                          selectPopoverStyles({
+                            option: "Link",
+                            hoverOption: "HoverLink",
+                            currentOption: "CurrentLink",
+                          }),
+                        ))
+                          if (/^[A-Z]/.test(key)) names.add(key);
+                      } else {
+                        const key = property.key.name ?? property.key.value;
                         if (/^[A-Z]/.test(key)) names.add(key);
-                    } else {
-                      const key = property.key.name ?? property.key.value;
-                      if (/^[A-Z]/.test(key)) names.add(key);
-                    }
-                  }
-                  return [...names].sort();
-                }
-                return {
-                  CallExpression(node: any) {
-                    if (node.callee.name === "useGlobalStyles") {
-                      const resolver = node.arguments[1];
-                      if (resolver?.callee?.name !== "resolveComponentStyles") {
-                        failures.push(
-                          "Global styles must resolve a named customization surface",
-                        );
-                        return;
                       }
-                      let owner = node.parent;
-                      while (owner && !/Function/.test(owner.type))
-                        owner = owner.parent;
-                      if (!owner)
+                    }
+                    return [...names].sort();
+                  }
+                  return {
+                    CallExpression(node: any) {
+                      if (node.callee.name === "useGlobalStyles") {
+                        const resolver = node.arguments[1];
+                        if (
+                          resolver?.callee?.name !== "resolveComponentStyles"
+                        ) {
+                          failures.push(
+                            "Global styles must resolve a named customization surface",
+                          );
+                          return;
+                        }
+                        let owner = node.parent;
+                        while (owner && !/Function/.test(owner.type))
+                          owner = owner.parent;
+                        if (!owner)
+                          failures.push(
+                            "Global styles must register during rendering",
+                          );
+                        surfaces.push({
+                          name: resolver.arguments[0].value,
+                          global: true,
+                          parts: parts(resolver.arguments[1]),
+                        });
+                      }
+                      if (node.callee.name === "customizeComponent") {
+                        const options = node.arguments[1].arguments[0];
+                        const styles = options.properties.find(
+                          (p: any) => p.key?.name === "styles",
+                        ).value;
+                        surfaces.push({
+                          name: node.arguments[0].value,
+                          global: false,
+                          parts: parts(styles),
+                        });
+                      }
+                      if (
+                        node.callee.name === "tasty" &&
+                        node.arguments.length === 1 &&
+                        node.parent?.callee?.name !== "customizeComponent"
+                      )
                         failures.push(
-                          "Global styles must register during rendering",
+                          "A built-in root must expose named theme customization",
                         );
-                      surfaces.push({
-                        name: resolver.arguments[0].value,
-                        global: true,
-                        parts: parts(resolver.arguments[1]),
-                      });
-                    }
-                    if (node.callee.name === "customizeComponent") {
-                      const options = node.arguments[1].arguments[0];
-                      const styles = options.properties.find(
-                        (p: any) => p.key?.name === "styles",
-                      ).value;
-                      surfaces.push({
-                        name: node.arguments[0].value,
-                        global: false,
-                        parts: parts(styles),
-                      });
-                    }
-                    if (
-                      node.callee.name === "tasty" &&
-                      node.arguments.length === 1 &&
-                      node.parent?.callee?.name !== "customizeComponent"
-                    )
-                      failures.push(
-                        "A built-in root must expose named theme customization",
-                      );
-                  },
-                };
+                    },
+                  };
+                },
               },
             },
           },
         },
+        rules: { "ownership/inspect": "error" },
       },
-      rules: { "ownership/inspect": "error" },
-    },
-  ]);
+    ],
+    { allowInlineConfig: false },
+  );
   failures.push(...messages.map((message) => message.message));
   return { surfaces, failures };
 }
