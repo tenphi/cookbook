@@ -1,10 +1,16 @@
 ---
 import { addHeadingPermalinks } from "../markdown/rendered-content.js";
+import MarkdownStyles from "../components/MarkdownContent.styles.js";
 
 const content = addHeadingPermalinks(await Astro.slots.render("default"));
 ---
 
-<div class="cookbook-markdown-content" set:html={content} />
+<MarkdownStyles />
+<div
+  class="cookbook-markdown-content"
+  data-tasty-anatomy="Markdown"
+  set:html={content}
+/>
 
 <script>
   import { initializeHeadingLinks } from "../client/heading-links.js";

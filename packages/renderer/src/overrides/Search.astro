@@ -1,6 +1,9 @@
 ---
 import { messages } from "../localization.js";
 import { content } from "virtual:cookbook/config";
+import { SearchRoot } from "../components/Search.styles.js";
+import { SearchButtonRoot } from "../components/SearchButton.styles.js";
+import { SearchResultsRoot } from "../components/SearchResults.styles.js";
 const label = Astro.locals.t("search.label");
 const translations = {
   placeholder: label,
@@ -13,13 +16,13 @@ const translations = {
 };
 ---
 
-<site-search
-  class={Astro.props.class}
+<SearchRoot
+  className={Astro.props.class}
   data-translations={JSON.stringify(translations)}
   data-strip-trailing-slash={import.meta.env.TRAILING_SLASH === "never" ||
     undefined}
 >
-  <button
+  <SearchButtonRoot
     type="button"
     data-open-modal
     disabled
@@ -30,7 +33,7 @@ const translations = {
     <kbd data-pending aria-hidden="true"
       ><kbd>{Astro.locals.t("search.ctrlKey")}</kbd><kbd>K</kbd></kbd
     >
-  </button>
+  </SearchButtonRoot>
   <dialog aria-label={label}>
     <div class="dialog-frame">
       <button
@@ -45,7 +48,7 @@ const translations = {
         ) : (
           <div class="search-container">
             <p data-search-status role="status" hidden />
-            <div id="cookbook__search">
+            <SearchResultsRoot id="cookbook__search">
               <div class="pagefind-ui" role="search" aria-label={label}>
                 <div class="cookbook-search-field">
                   <input
@@ -69,13 +72,13 @@ const translations = {
                 </div>
                 <div data-search-results />
               </div>
-            </div>
+            </SearchResultsRoot>
           </div>
         )
       }
     </div>
   </dialog>
-</site-search>
+</SearchRoot>
 <script>
   import { initializeSearch } from "../client/search.js";
   document.querySelectorAll<HTMLElement>("site-search").forEach((element) => {

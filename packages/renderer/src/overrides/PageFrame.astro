@@ -1,5 +1,7 @@
 ---
-import { PageFrameRoot } from "../components/LayoutComponents.js";
+import { PageFrameRoot } from "../components/PageFrame.styles.js";
+import { HeaderFrameRoot } from "../components/HeaderFrame.styles.js";
+import { SidebarRoot } from "../components/Sidebar.styles.js";
 const { hasSidebar } = Astro.locals.cookbookRoute;
 ---
 
@@ -8,15 +10,15 @@ const { hasSidebar } = Astro.locals.cookbookRoute;
   data-tasty-anatomy="PageFrame"
   data-has-sidebar={hasSidebar ? "" : undefined}
 >
-  <header class="header"><slot name="header" /></header>
+  <HeaderFrameRoot className="header"><slot name="header" /></HeaderFrameRoot>
   {
     hasSidebar && (
-      <cookbook-sidebar-pane
+      <SidebarRoot
         id="cookbook__sidebar"
-        class="sidebar-pane cookbook-print-hidden"
+        className="sidebar-pane cookbook-print-hidden"
         popover="auto"
         aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
-        tabindex="-1"
+        tabIndex={-1}
       >
         <nav
           class="sidebar-content"
@@ -24,7 +26,7 @@ const { hasSidebar } = Astro.locals.cookbookRoute;
         >
           <slot name="sidebar" />
         </nav>
-      </cookbook-sidebar-pane>
+      </SidebarRoot>
     )
   }
   <div class="main-frame"><slot /></div>

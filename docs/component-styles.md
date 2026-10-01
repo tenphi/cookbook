@@ -18,6 +18,12 @@ Cookbook merges your partial style object with the component's base styles
 before Tasty extracts CSS. The generated stylesheet contains the resolved
 style, so you can change an element without copying its full defaults.
 
+Each surface is registered by its owning component or generated-content bridge.
+Fonts and document defaults belong to the page shell, so replacing Header
+preserves the rest of the site's styling. Component-specific CSS is collected
+when its owner renders. See [Component ownership](./architecture.md#component-ownership)
+for the renderer authoring convention.
+
 Start with the area you want to change, then use the complete sub-element
 inventory below to find its exact anatomy:
 

@@ -2,13 +2,17 @@
 import { Code } from "astro:components";
 import Tabs from "./Tabs.astro";
 import Tab from "./Tab.astro";
-import { CodeGroupRoot } from "./TastyComponents.js";
+import { CodeGroupRoot } from "./CodeGroup.styles.js";
+import { MarkdownCodeBlockStyles } from "./MarkdownCodeBlock.styles.js";
+import { SyntaxHighlightStyles } from "./SyntaxHighlight.styles.js";
 import { codeGroupHighlighting } from "../theme/shiki-theme.js";
 import type { CodeGroupProps as Props } from "./props.js";
 const { label = "Code examples", items } = Astro.props;
 const highlight = codeGroupHighlighting();
 ---
 
+<MarkdownCodeBlockStyles />
+<SyntaxHighlightStyles />
 <CodeGroupRoot data-tasty-anatomy="CodeGroup">
   <Tabs label={label}>
     {

@@ -4,7 +4,7 @@ import { content } from "virtual:cookbook/config";
 import Icon from "../components/Icon.astro";
 import paletteIcon from "../icons/palette.svg?raw";
 import ContrastIcon from "../components/ContrastIcon.astro";
-import { ThemeSelectRoot } from "../components/LayoutComponents.js";
+import { ThemeSelectRoot } from "../components/ThemeSelect.styles.js";
 
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 const id = `appearance-${crypto.randomUUID()}`;

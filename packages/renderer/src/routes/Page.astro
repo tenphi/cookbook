@@ -14,6 +14,13 @@ import MarkdownContent from "virtual:cookbook/components/MarkdownContent";
 import MobileTableOfContents from "virtual:cookbook/components/MobileTableOfContents";
 import DraftContentNotice from "virtual:cookbook/components/DraftContentNotice";
 import TableOfContents from "virtual:cookbook/components/TableOfContents";
+import DocumentStyles from "../components/Document.styles.js";
+import { SkipLinkRoot } from "../components/SkipLink.styles.js";
+import { MainPaneRoot } from "../components/MainPane.styles.js";
+import { MainContentRoot } from "../components/MainContent.styles.js";
+import { BannerRoot } from "../components/Banner.styles.js";
+import { TableOfContentsLayoutRoot } from "../components/TableOfContentsLayout.styles.js";
+import { TableOfContentsRoot } from "../components/TableOfContents.styles.js";
 
 interface Props {
   frontmatter: Record<string, any>;
@@ -44,11 +51,12 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <DocumentStyles />
     <Head />
   </head>
   <body>
-    <a class="cookbook-skip-link" href="#main-content"
-      >{Astro.locals.t("page.skipToContent")}</a
+    <SkipLinkRoot className="cookbook-skip-link" href="#main-content"
+      >{Astro.locals.t("page.skipToContent")}</SkipLinkRoot
     >
     <PageFrame>
       <Header slot="header" />
@@ -56,23 +64,23 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
       <div>
         {
           route.toc && (
-            <aside class="right-sidebar-container cookbook-print-hidden">
+            <TableOfContentsLayoutRoot className="right-sidebar-container cookbook-print-hidden">
               <div class="right-sidebar">
                 <MobileTableOfContents />
-                <cookbook-table-of-contents class="right-sidebar-panel">
+                <TableOfContentsRoot className="right-sidebar-panel">
                   <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
                   <nav
                     aria-label={Astro.locals.t("tableOfContents.onThisPage")}
                   >
                     <TableOfContents items={route.toc.items} />
                   </nav>
-                </cookbook-table-of-contents>
+                </TableOfContentsRoot>
               </div>
-            </aside>
+            </TableOfContentsLayoutRoot>
           )
         }
-        <div class="main-pane">
-          <main
+        <MainPaneRoot className="main-pane">
+          <MainContentRoot
             id="main-content"
             data-pagefind-body={indexed ? "" : undefined}
             lang={route.entryMeta.lang}
@@ -80,7 +88,10 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
           >
             {
               data.banner && (
-                <div class="cookbook-banner" set:html={data.banner.content} />
+                <BannerRoot
+                  className="cookbook-banner"
+                  set:html={data.banner.content}
+                />
               )
             }
             {
@@ -113,8 +124,8 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
                 </>
               )
             }
-          </main>
-        </div>
+          </MainContentRoot>
+        </MainPaneRoot>
       </div>
     </PageFrame>
     <script>

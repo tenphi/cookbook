@@ -11,6 +11,7 @@ import {
 } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { styleOwnerSelector as rootSelector } from "./style-owner-selector.mjs";
 const root = process.cwd();
 const fixture = await mkdtemp(join(root, ".cookbook-theme-"));
 try {
@@ -107,8 +108,18 @@ try {
   assert.ok(html.includes("td-syntax-keyword"));
   assert.ok(html.includes('sandbox=""'));
   assert.match(css, /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/);
-  assert.match(css, /\.pagination-links a[^{}]*\{[^{}]*border-radius:\s*13px/);
-  assert.match(css, /site-search dialog[^{}]*\{[^{}]*max-inline-size:\s*31rem/);
+  assert.match(
+    css,
+    new RegExp(
+      `${rootSelector(html, "Pagination")} a[^{}]*\\{[^{}]*border-radius:\\s*13px`,
+    ),
+  );
+  assert.match(
+    css,
+    new RegExp(
+      `${rootSelector(html, "Search")} dialog[^{}]*\\{[^{}]*max-inline-size:\\s*31rem`,
+    ),
+  );
   assert.doesNotMatch(
     html,
     /__tenphiCookbookComponentStyles|__tenphiCookbookTastyRuntime/,
@@ -121,6 +132,44 @@ try {
   const disabledConfig = JSON.parse(
     originalConfig.slice("export default ".length, -1),
   );
+  // Replacing Header must preserve document foundations and other component owners.
+  await writeFile(
+    join(fixture, "Header.astro"),
+    "<div data-replacement-header>Custom header</div>",
+  );
+  await writeFile(
+    join(fixture, "docs.config.ts"),
+    `export default ${JSON.stringify({ ...disabledConfig, components: { overrides: { Header: "./Header.astro" } } })};`,
+  );
+  await buildSite();
+  const replacementHtml = await readFile(
+    join(fixture, "dist/showcase/index.html"),
+    "utf8",
+  );
+  assert.match(replacementHtml, /data-replacement-header/);
+  const replacementPaths = await readdir(join(fixture, "dist"), {
+    recursive: true,
+  });
+  const replacementCss = (
+    await Promise.all(
+      replacementPaths
+        .filter((path) => path.endsWith(".css"))
+        .map((path) => readFile(join(fixture, "dist", path), "utf8")),
+    )
+  ).join("\n");
+  assert.match(replacementCss, /@font-face/);
+  assert.match(replacementCss, /:where\(html\) body[^{}]*\{[^{}]*margin:\s*0/);
+  assert.match(
+    replacementCss,
+    /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/,
+  );
+  assert.match(
+    replacementCss,
+    new RegExp(
+      `${rootSelector(replacementHtml, "Pagination")} a[^{}]*\\{[^{}]*border-radius:\\s*13px`,
+    ),
+  );
+  assert.doesNotMatch(replacementHtml, /<style\b|__tenphiCookbook|__TASTY__/);
   disabledConfig.site.logo = false;
   disabledConfig.search = { enabled: false };
   await writeFile(

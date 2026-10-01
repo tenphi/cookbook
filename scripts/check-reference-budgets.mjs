@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { extname, join, posix } from "node:path";
 import { gzipSync } from "node:zlib";
+import { styleOwnerSelector } from "./style-owner-selector.mjs";
 
 const output = join(process.cwd(), "apps/reference/dist");
 const assets = join(output, "_astro");
@@ -31,7 +32,7 @@ for (const name of entries) {
 }
 // Semantic typography and the owned page affordances are emitted through
 // complete Tasty style trees so every configured field and sub-element reaches
-// its target, rather than being manually cherry-picked in GlobalStyles. Tasty
+// its target through its owning component or generated-content bridge. Tasty
 // 3.8 also emits typed custom-property registrations for configured tokens.
 // The four customizable callout palettes add 12 semantic roles in four modes.
 // The combined appearance panel, social buttons, and heading permalink targets
@@ -107,10 +108,10 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
-  !/\.td-code-block pre\.td-diff > code > \.line\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+  !/pre\.td-diff > code > \.line\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
     sharedCss,
   ) ||
-  /\.td-code-block pre\.td-diff\.line\s*\{/.test(sharedCss)
+  /pre\.td-diff\.line\s*\{/.test(sharedCss)
 ) {
   throw new Error("Diff lines lost their padding or typography rules.");
 }
@@ -126,23 +127,22 @@ if (
     "The footer credit must use body text with a brand-colored link.",
   );
 }
-for (const [selector, label] of [
-  ["#cookbook__sidebar a > span:first-child", "left navigation links"],
-  [
-    "#cookbook__sidebar .group-label > span:first-child",
-    "left navigation groups",
-  ],
-  [".right-sidebar-panel a > span", "desktop table of contents"],
-  [
-    ".cookbook-menu-button .td-menu-button__page",
-    "mobile navigation breadcrumb",
-  ],
+const home = await readFile(join(output, "index.html"), "utf8");
+const componentPage = await readFile(
+  join(output, "getting-started/index.html"),
+  "utf8",
+);
+for (const [name, descendant, label] of [
+  ["Sidebar", "a > span:first-child", "left navigation links"],
+  ["Sidebar", ".group-label > span:first-child", "left navigation groups"],
+  ["TableOfContents", "a > span", "desktop table of contents"],
+  ["MobileMenuToggle", ".td-menu-button__page", "mobile navigation breadcrumb"],
 ]) {
-  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedSelector = `${styleOwnerSelector(componentPage, name)} ${descendant.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`;
   if (
     !new RegExp(
       `${escapedSelector}\\s*\\{[^}]*overflow:\\s*hidden;[^}]*text-overflow:\\s*ellipsis;[^}]*white-space:\\s*nowrap`,
-    ).test(sharedCss)
+    ).test(allCss)
   ) {
     throw new Error(`Long ${label} must truncate with an ellipsis.`);
   }
@@ -155,15 +155,19 @@ if (
     "The header must use its semantic translucent surface and backdrop blur.",
   );
 }
-if (!/\.right-sidebar-panel\s*\{[^}]*display:\s*block/.test(sharedCss)) {
+if (
+  !new RegExp(
+    `${styleOwnerSelector(componentPage, "TableOfContents")}\\s*\\{[^}]*display:\\s*block`,
+  ).test(allCss)
+) {
   throw new Error("The desktop table of contents must be visible.");
 }
 for (const transition of [
-  "translate 120ms ease-out",
-  "display 120ms allow-discrete",
-  "overlay 120ms allow-discrete",
+  "translate var(--sidebar-transition) ease-out",
+  "display var(--sidebar-transition) allow-discrete",
+  "overlay var(--sidebar-transition) allow-discrete",
 ]) {
-  if (!sharedCss.includes(transition)) {
+  if (!allCss.includes(transition)) {
     throw new Error(
       `The mobile drawer is missing its ${transition} transition.`,
     );
@@ -182,7 +186,6 @@ if (
     "The appearance and language popovers must preserve their fade and scale transitions.",
   );
 }
-const home = await readFile(join(output, "index.html"), "utf8");
 const notFound = await readFile(join(output, "404.html"), "utf8");
 if (
   !/<title>\s*Page not found \| [^<]+<\/title>/.test(notFound) ||
@@ -329,7 +332,11 @@ if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
     "The default page unexpectedly contains a React or Tasty client runtime.",
   );
 }
-if (!home.includes('data-tasty-anatomy="Logo" class="td-header__logo')) {
+if (
+  !/<span\b(?=[^>]*data-tasty-anatomy="Logo")(?=[^>]*class="td-header__logo\b)[^>]*>/.test(
+    home,
+  )
+) {
   throw new Error("The project logo is missing from the documentation header.");
 }
 if (

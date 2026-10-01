@@ -3,6 +3,7 @@ import { content } from "virtual:cookbook/config";
 import { localeTarget, routeLocale, messages } from "../localization.js";
 import { navigationPath } from "../navigation.js";
 import SelectPopover from "../components/SelectPopover.astro";
+import { LanguageSelectRoot } from "../components/LanguageSelect.styles.js";
 interface Props {
   compact?: boolean;
   sidebar?: boolean;
@@ -34,7 +35,7 @@ const selectedOption = options.find((option) => option.locale === selected);
 
 {
   options.length > 1 && (
-    <cookbook-language-select
+    <LanguageSelectRoot
       data-compact={compact ? "" : undefined}
       data-sidebar={sidebar ? "" : undefined}
       data-tasty-anatomy="LanguageSelect"
@@ -52,6 +53,6 @@ const selectedOption = options.find((option) => option.locale === selected);
           current: option.locale === selected,
         }))}
       />
-    </cookbook-language-select>
+    </LanguageSelectRoot>
   )
 }
