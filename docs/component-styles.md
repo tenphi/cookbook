@@ -164,6 +164,7 @@ it stays complete when a surface changes.
 - `Header`: `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`, `MobileLanguage`
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
 - `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`
+- `Button`: None
 - `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
 - `MobileMenuToggle`: `Control`, `Icon`, `Section`, `Page`, `HoverControl`, `ActiveControl`
 - `MobileNavigationTabs`: `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`
@@ -249,7 +250,7 @@ same.
 
 Register custom names and their partial Tasty objects in `theme.customStyles`.
 Built-in names belong in `theme.styles` and reject misspelled sub-elements.
-The name must match the string passed to `defineComponent()` or
+The name must match the string passed to `defineComponent()`, `extendComponent()`, or
 `resolveComponentStyles()`. A production
 build warns when a configured custom name has no matching component style
 resolver.

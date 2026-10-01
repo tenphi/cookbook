@@ -19,5 +19,12 @@ export default {
     fr: { label: "Français" },
   },
   tableOfContents: { mobile: true },
-  theme: { brand: { from: "#d97706" } },
+  theme: {
+    brand: { from: "#d97706" },
+    styles: {
+      Button: { gap: "7px" },
+      SearchButton: { gap: "11px" },
+      Callout: { Title: { color: "#accent-text" } },
+    },
+  },
 };

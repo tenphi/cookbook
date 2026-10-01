@@ -21,6 +21,7 @@ export async function checkStyleLinting({ site, root, run }) {
     assert.equal(recommended, plugin.configs.recommended.rules);
     assert.equal(strict, plugin.configs.strict.rules);
     assert.equal(validationConfig.styleFunctions.mergeStyles.partial, true);
+    assert.deepEqual(validationConfig.styleFunctions.extendComponent, { argument: 2, kind: 'options', partial: true });
   `,
     ],
     { cwd: site },

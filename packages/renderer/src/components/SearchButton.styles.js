@@ -3,19 +3,16 @@ import { svgIconUrl } from "./svg-icon.js";
 import { configureCookbookStates } from "./tasty-states.js";
 import { tasty } from "@tenphi/tasty";
 import { customizeComponent } from "./customize-component.js";
+import { Button } from "./Button.styles.js";
 
 configureCookbookStates();
 
 export const SearchButtonRoot = customizeComponent(
   "SearchButton",
-  tasty({
-    as: "button",
+  tasty(Button, {
     "data-tasty-anatomy": "SearchButton",
     styles: {
-      display: "flex",
-      alignItems: "center",
       justifyContent: { "": "flex-start", "@mobile": "center" },
-      gap: "$gap",
       inlineSize: { "": "100%", "@mobile": "$docs-menu-button-size" },
       maxInlineSize: "22rem",
       marginInlineStart: {
@@ -23,15 +20,12 @@ export const SearchButtonRoot = customizeComponent(
         "@media(w >= 80rem)": "min(5rem, max(0px, calc(100% - 22rem)))",
       },
       blockSize: { "": "$control-height", "@mobile": "$docs-menu-button-size" },
-      minBlockSize: "0",
       padding: { "": "0 $gap 0 ($gap * 1.5)", "@mobile": "0" },
-      color: "#text-soft",
       border: { "": true, "@mobile": "0" },
       radius: "$header-control-radius",
       fill: { "": "#surface", "@mobile": "#clear" },
       preset: "small",
       shadow: "none",
-      cursor: "pointer",
       transition: "color $transition, fill $transition",
       Label: { $: "> span", hide: { "": false, "@mobile": true } },
       PendingShortcut: { $: "> kbd[data-pending]", visibility: "hidden" },

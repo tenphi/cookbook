@@ -17,6 +17,8 @@ responsive states. The renderer package also exposes them from
 | Export                   | Purpose                                                                            |
 | ------------------------ | ---------------------------------------------------------------------------------- |
 | `defineComponent`        | Create a named Tasty component with its `theme.customStyles[name]` overrides.      |
+| `extendComponent`        | Extend an existing Tasty component with a new name and its own theme overrides.    |
+| `Button`                 | Shared button foundation used by Cookbook controls and custom button components.   |
 | `tasty`                  | Use Tasty directly without binding a component to `theme.customStyles`.            |
 | `useGlobalStyles`        | Collect a global Tasty style tree while rendering a page.                          |
 | `resolveComponentStyles` | Merge `theme.customStyles[name]` into a complete base style tree for global rules. |
@@ -235,6 +237,49 @@ that does not need a configuration name. To define a named component around
 an existing React component that forwards `className`, pass it as `as` in the options. Use `className`
 when passing a class to a Tasty component from Astro.
 
+### Extending a component
+
+Use `extendComponent(name, base, options)` to inherit an existing Tasty
+component's styles, props, variants, and compound parts:
+
+```ts
+import { Button, extendComponent } from "@tenphi/cookbook/styling";
+
+export const ProjectButton = extendComponent("ProjectButton", Button, {
+  type: "button",
+  styles: {
+    padding: "1x 2x",
+    radius: "$radius",
+    fill: "#surface",
+    Hover: { $: "&:hover", fill: "#surface-2-hover" },
+  },
+});
+
+export const CompactButton = extendComponent("CompactButton", ProjectButton, {
+  styles: { padding: "0.5x 1x" },
+});
+```
+
+`theme.styles.Button` customizes the shared foundation, including Cookbook's
+search and mobile-menu buttons. `theme.customStyles.ProjectButton` and
+`CompactButton` customize each derived component independently. `Button` has
+no named sub-elements; this example adds `Hover` to both descendants.
+
+The merge order is the base component's configured styles and selected variant,
+the extension's styles, its named theme override, and styles passed while
+rendering. Tasty merges named sub-elements and state maps using its usual
+[extending and replacing rules](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
+Changing a descendant never mutates its base or siblings. If a base exposes
+parts such as `Button.Label`, the descendant exposes those same components.
+
+Extension options accept styles and default values for existing props. Define
+new `elements`, `variants`, `styleProps`, `modProps`, `tokenProps`, or an `as`
+type on the original factory; Tasty's wrapping API does not install new factory
+settings. Existing required props remain required in the derived component's
+type. To compose reusable style fragments without a component base, use
+`mergeStyles(baseStyles, extensionStyles)`; a shallow spread replaces entire
+nested sub-elements and state maps.
+
 ### Global style trees
 
 For markup you do not render through a Tasty component, call
@@ -261,7 +306,7 @@ useGlobalStyles(
 <aside class="project-note"><strong>Note</strong><slot /></aside>
 ```
 
-`defineComponent` and `resolveComponentStyles` read the same `theme.customStyles`
+`defineComponent`, `extendComponent`, and `resolveComponentStyles` read the same `theme.customStyles`
 configuration; user configuration contains only the properties to change. Each custom style name must match a call to one of these helpers.
 
 ## Linting custom styles
@@ -283,7 +328,7 @@ export default {
 Renderer-only consumers can use `extends: "@tenphi/renderer"` instead.
 The preset registers both Cookbook styling import paths, its built-in tokens,
 units, responsive states, and typography presets. It also describes
-`defineComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
+`defineComponent`, `extendComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
 style objects, variants, and named sub-elements receive the same checks as
 `tasty()` calls. Partial overrides passed to `mergeStyles` may omit default state
 values and retain the plugin's safeguards against fixes that replace base styles.

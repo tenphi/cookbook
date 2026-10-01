@@ -98,7 +98,8 @@ function inventory(source: string) {
                         });
                       }
                       if (node.callee.name === "customizeComponent") {
-                        const options = node.arguments[1].arguments[0];
+                        const factory = node.arguments[1];
+                        const options = factory.arguments.at(-1);
                         const styles = options.properties.find(
                           (p: any) => p.key?.name === "styles",
                         ).value;
@@ -141,6 +142,10 @@ describe("component style ownership", () => {
     [
       "Document.styles.js",
       'import { useGlobalStyles } from "@tenphi/tasty";\nimport { resolveComponentStyles } from "./component-styles.js";\nexport function CollectStyles() { useGlobalStyles(".test", resolveComponentStyles("Document", { maxInlineSize: "100%" })); }',
+    ],
+    [
+      "SearchButton.styles.js",
+      'import { extendComponent } from "../define-component.js";\nconst Button = () => null;\nexport const Root = extendComponent("ProjectButton", Button, { styles: { maxInlineSize: "100%" } });',
     ],
   ])(
     "reports native size constraints in %s with the actual lint configuration",

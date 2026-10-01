@@ -397,6 +397,7 @@ export interface ThemePaletteConfig extends Partial<
 
 /** Cookbook UI surfaces whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
+  "Button",
   "Card",
   "Callout",
   "CodeGroup",
@@ -452,6 +453,7 @@ export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  Button: [],
   SyntaxHighlight: [
     "Scroll",
     "Wrap",

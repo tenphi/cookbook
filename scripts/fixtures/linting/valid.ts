@@ -1,10 +1,12 @@
 import {
   defineComponent as component,
+  extendComponent,
   mergeStyles,
   resolveComponentStyles,
   tasty,
   useGlobalStyles,
   type Styles,
+  Button,
 } from "@tenphi/cookbook/styling";
 import { defineComponent as rendererComponent } from "@tenphi/renderer/styling";
 
@@ -43,3 +45,6 @@ useGlobalStyles(
 );
 tasty({ styles: { color: "#accent-text", padding: "1x" } });
 rendererComponent("RendererBadge", { styles: { color: "#syntax-string" } });
+extendComponent("ProjectButton", Button, {
+  styles: { padding: "1x", color: { ":hover": "#text" } },
+});

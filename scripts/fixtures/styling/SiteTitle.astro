@@ -1,5 +1,9 @@
 ---
-import { ConsumerGlobalStyles, SiteTitleRoot } from "./site-title.js";
+import {
+  ConsumerButton,
+  ConsumerGlobalStyles,
+  SiteTitleRoot,
+} from "./site-title.js";
 
 const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
 ---
@@ -16,5 +20,8 @@ const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
   </svg>
   <SiteTitleRoot.Label translate="no">{siteTitle}</SiteTitleRoot.Label>
 </SiteTitleRoot>
+<ConsumerButton data-consumer-button type="button"
+  >Inherited button</ConsumerButton
+>
 <span class="consumer-global"><span>Docs</span></span>
 <span data-tasty-anatomy="ConsumerAnatomy">Legacy anatomy</span>

@@ -1004,6 +1004,14 @@
                 }
               }
             },
+            "Button": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
             "SearchButton": {
               "type": "object",
               "propertyNames": {

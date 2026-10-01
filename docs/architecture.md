@@ -66,6 +66,12 @@ imports that definition directly. Rendered roots use
 overrides before extraction. Existing configuration names and sub-element
 lists remain the public customization contract.
 
+Use `customizeComponent(name, tasty(base, options))` for derived roots. `Button`
+owns shared button defaults; `SearchButton` and `MobileMenuToggle` extend it
+with their own layout and named anatomy. Base theme overrides are inherited,
+then the descendant's styles and theme overrides take precedence. Keep shared
+bases configurable and document their names and complete sub-element lists.
+
 The page shell owns fonts, document defaults, heading presets, and root layout
 variables. These foundations initialize during every page render, including
 404 pages, independently of replaceable Header and Head components. Layout

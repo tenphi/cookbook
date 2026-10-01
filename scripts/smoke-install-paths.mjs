@@ -232,7 +232,8 @@ try {
       join(site, ".yarnrc.yml"),
       // This fresh consumer deliberately has no lockfile yet. Keep the repo
       // install frozen; allow only this generated fixture to create its lock.
-      "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\n",
+      // Match the repository's reviewed release-age exceptions for this upgrade.
+      "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.9.3'\n  - '@tenphi/eslint-plugin-tasty@1.3.0'\n",
     );
   } else
     packageJson.overrides = Object.fromEntries(
@@ -272,9 +273,12 @@ const config = defineDocsConfig({
     },
     presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
     styles: {
+      Button: { gap: '9px' },
       Header: { Logo: { hide: true } },
     },
     customStyles: {
+      ConsumerButton: { gap: '13px' },
+      ConsumerTitleBase: { Label: { padding: '3px' } },
       ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
       ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
       ConsumerAnatomy: { color: '#text' },
@@ -362,6 +366,8 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
   if (
     !buildLog.includes("theme.customStyles.ConsumerUnused did not match") ||
     buildLog.includes("theme.customStyles.ConsumerSiteTitle did not match") ||
+    buildLog.includes("theme.customStyles.ConsumerTitleBase did not match") ||
+    buildLog.includes("theme.customStyles.ConsumerButton did not match") ||
     buildLog.includes("theme.customStyles.ConsumerGlobal did not match") ||
     !buildLog.includes("theme.customStyles.ConsumerAnatomy did not match")
   ) {
@@ -420,6 +426,22 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     )
   ).join("\n");
   assert.doesNotMatch(css, /\[data-tasty-anatomy="ConsumerAnatomy"\]/);
+  assert.match(html, /data-consumer-button[^>]*>Inherited button<\/button>/);
+  const buttonClasses = html.match(
+    /<button\b[^>]*data-consumer-button[^>]*class="([^"]+)"/,
+  )?.[1];
+  assert.ok(
+    buttonClasses,
+    "Inherited consumer button must have extracted style classes",
+  );
+  assert.match(
+    css,
+    new RegExp(
+      `\\.(?:${buttonClasses.split(" ").join("|")})[^{}]*\\{[^{}]*gap:\\s*13px`,
+    ),
+  );
+  assert.match(css, /> span[^{}]*\{[^{}]*padding:\s*3px/);
+  assert.match(css, /> span[^{}]*\{[^{}]*border-radius:\s*7px/);
   if (
     /--sl-|@layer\s+starlight|expressive-code|--ec-/i.test(`${html}\n${css}`)
   ) {

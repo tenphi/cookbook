@@ -5,6 +5,11 @@ import {
   tasty,
 } from "@tenphi/cookbook/styling";
 import { defineComponent as rendererComponent } from "@tenphi/renderer/styling";
+import { Button, extendComponent } from "@tenphi/cookbook/styling";
+
+extendComponent("BrokenExtension", Button, {
+  styles: { color: "#missing-extension-color" },
+});
 
 defineComponent("Broken", {
   styles: {

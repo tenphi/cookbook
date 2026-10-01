@@ -1,5 +1,20 @@
 import { expect, test } from "@playwright/test";
 
+test("button descendants inherit the shared theme and own their overrides", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const search = page.locator('[data-tasty-anatomy="SearchButton"]');
+  await expect(search).toBeVisible();
+  await expect(search).toHaveCSS("gap", "11px");
+  await page.setViewportSize({ width: 390, height: 844 });
+  const menu = page.locator('[data-tasty-anatomy="MobileMenuToggle"]');
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveCSS("display", "flex");
+  await expect(menu).toHaveCSS("gap", "7px");
+  await expect(search).toHaveCSS("gap", "11px");
+});
+
 test("replacing Header and Head preserves document foundations and component customization", async ({
   page,
 }) => {
