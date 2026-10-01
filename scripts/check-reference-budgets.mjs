@@ -108,7 +108,7 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
-  !/pre\.td-diff > code > \.line\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+  !/pre\.td-diff > code > (?:\.line|\[class~=["']line["']\])\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
     sharedCss,
   ) ||
   /pre\.td-diff\.line\s*\{/.test(sharedCss)

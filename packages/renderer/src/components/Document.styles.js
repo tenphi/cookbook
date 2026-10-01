@@ -50,6 +50,8 @@ export default function DocumentStyles() {
         display: "contents",
       },
       LockedPage: {
+        // This is a CSS ID selector, not a semantic color token.
+        // eslint-disable-next-line tasty/valid-color-token
         $: "&:has(#cookbook__sidebar:popover-open)",
         overflow: { "@mobile": "hidden" },
       },

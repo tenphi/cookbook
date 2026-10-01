@@ -1,9 +1,10 @@
-import { Linter } from "eslint";
+import { ESLint, Linter } from "eslint";
 import {
   COOKBOOK_COMPONENT_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "@tenphi/docs";
 import { readFile, readdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { selectPopoverStyles } from "../src/components/select-popover-styles.js";
 
@@ -132,6 +133,37 @@ function inventory(source: string) {
 }
 
 describe("component style ownership", () => {
+  it.each([
+    [
+      "Hero.styles.js",
+      'import { tasty } from "@tenphi/tasty";\nexport const Root = tasty({ styles: { maxInlineSize: "100%" } });',
+    ],
+    [
+      "Document.styles.js",
+      'import { useGlobalStyles } from "@tenphi/tasty";\nimport { resolveComponentStyles } from "./component-styles.js";\nexport function CollectStyles() { useGlobalStyles(".test", resolveComponentStyles("Document", { maxInlineSize: "100%" })); }',
+    ],
+  ])(
+    "reports native size constraints in %s with the actual lint configuration",
+    async (file, source) => {
+      const eslint = new ESLint({
+        cwd: fileURLToPath(new URL("../../../", import.meta.url)),
+      });
+      const [result] = await eslint.lintText(source, {
+        filePath: fileURLToPath(
+          new URL(`../src/components/${file}`, import.meta.url),
+        ),
+      });
+      expect(result.messages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ruleId: "tasty/prefer-shorthand-property",
+            message: expect.stringContaining("maxInlineSize"),
+          }),
+        ]),
+      );
+    },
+  );
+
   it("registers the complete public anatomy once, in component-owned modules", () => {
     const actual = [];
     for (const [file, source] of sources) {

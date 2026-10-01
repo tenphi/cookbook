@@ -217,7 +217,7 @@ export const SidebarRoot = customizeComponent(
         flexShrink: "0",
         inlineSize: "1rem",
         blockSize: "1rem",
-        // The pinned linter omits :dir(), which Tasty and the browser support.
+        // Tasty and browsers support :dir(); the lint rule's pseudo list omits it.
         // eslint-disable-next-line tasty/valid-state-key
         transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
       },

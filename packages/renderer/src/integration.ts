@@ -245,7 +245,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
     emptyFooterPath,
   );
   const navigation = resolveNavigationLayout(options.config?.navigation);
-  // Tasty 3.8's integration shape is structurally compatible with Astro 7;
+  // Tasty's integration shape is structurally compatible with Astro 7;
   // its published helper type still models `site` as URL-only.
   const tasty = tastyIntegration({
     islands: false,

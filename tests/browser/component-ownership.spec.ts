@@ -98,6 +98,32 @@ test("generated Markdown controls preserve spacing and link colors", async ({
   await expect(link).toHaveCSS("color", textMuted);
 });
 
+test("Markdown warning alerts use registered warning colors in every appearance", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const caution = page.locator(".cookbook-alert--caution");
+  await expect(caution).toBeVisible();
+  for (const scheme of ["light", "dark"]) {
+    for (const contrast of ["normal", "more"]) {
+      const colors = await page.evaluate(
+        ({ scheme, contrast }) => {
+          document.documentElement.dataset.theme = scheme;
+          document.documentElement.dataset.contrast = contrast;
+          const root = getComputedStyle(document.documentElement);
+          return ["warning", "warning-text", "warning-surface"].map((token) =>
+            root.getPropertyValue(`--${token}-color`).trim(),
+          );
+        },
+        { scheme, contrast },
+      );
+      await expect(caution).toHaveCSS("border-color", colors[0]);
+      await expect(caution).toHaveCSS("color", colors[1]);
+      await expect(caution).toHaveCSS("background-color", colors[2]);
+    }
+  }
+});
+
 for (const systemScheme of ["light", "dark"] as const) {
   test(`scheme aliases honor explicit choices over system ${systemScheme}`, async ({
     page,

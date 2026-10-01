@@ -55,9 +55,6 @@ export default [
       // Preserve native popover defaults and the generated-content cascade
       // while moving existing style trees into their owning modules.
       "tasty/require-default-state": "off",
-      // These migrated trees retain their existing longhand merge behavior
-      // so consumer overrides continue to resolve identically.
-      "tasty/prefer-shorthand-property": "off",
       "tasty/valid-transition": "off",
       "tasty/prefer-hide": "off",
     },

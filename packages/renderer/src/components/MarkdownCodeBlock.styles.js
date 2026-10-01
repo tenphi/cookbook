@@ -83,7 +83,7 @@ export function MarkdownCodeBlockStyles() {
         lineHeight: "0",
       },
       DiffLine: {
-        $: "pre.td-diff > code > .line",
+        $: "pre.td-diff > code > [class~='line']",
         display: "block",
         inlinePadding: "1rem",
         preset: "code",

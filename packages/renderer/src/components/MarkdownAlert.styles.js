@@ -27,9 +27,9 @@ export function MarkdownAlertStyles() {
       },
       Caution: {
         $: "&.cookbook-alert--caution",
-        fill: "#yellow-surface",
-        color: "#yellow-text",
-        border: "#yellow",
+        fill: "#warning-surface",
+        color: "#warning-text",
+        border: "#warning",
       },
       Danger: {
         $: "&.cookbook-alert--danger",

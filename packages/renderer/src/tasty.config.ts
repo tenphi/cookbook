@@ -1,7 +1,12 @@
 import type { TastyValidationConfig } from "@tenphi/eslint-plugin-tasty";
 
 export default {
-  importSources: ["@tenphi/cookbook/styling", "@tenphi/renderer/styling"],
+  importSources: [
+    "@tenphi/cookbook/styling",
+    "@tenphi/renderer/styling",
+    "./component-styles.js",
+    "../define-component.js",
+  ],
   styleFunctions: {
     defineComponent: { argument: 1, kind: "options" },
     resolveComponentStyles: { argument: 1, kind: "styles" },
