@@ -25,19 +25,11 @@ export const SiteLogoRoot = customizeComponent(
       },
       Light: {
         $: "> .td-site-logo__light",
-        hide: {
-          "": false,
-          "@parent(theme=dark)": true,
-          "!@parent(theme) & @media(prefers-color-scheme: dark)": true,
-        },
+        hide: { "": false, "@dark": true },
       },
       Dark: {
         $: "> .td-site-logo__dark",
-        hide: {
-          "": true,
-          "@parent(theme=dark)": false,
-          "!@parent(theme) & @media(prefers-color-scheme: dark)": false,
-        },
+        hide: { "": true, "@dark": false },
       },
     },
   }),

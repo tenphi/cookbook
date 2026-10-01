@@ -97,3 +97,35 @@ test("generated Markdown controls preserve spacing and link colors", async ({
   );
   await expect(link).toHaveCSS("color", textMuted);
 });
+
+for (const systemScheme of ["light", "dark"] as const) {
+  test(`scheme aliases honor explicit choices over system ${systemScheme}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: systemScheme });
+    await page.goto("/wide-logo/");
+    const darkHero = page.locator('.hero > img[data-hero-image="dark"]');
+    const lightHero = page.locator('.hero > img[data-hero-image="light"]');
+    const darkLogo = page.locator(".td-site-logo__dark").first();
+    const lightLogo = page.locator(".td-site-logo__light").first();
+    for (const selected of [undefined, "light", "dark"] as const) {
+      await page.evaluate((theme) => {
+        if (theme) document.documentElement.dataset.theme = theme;
+        else delete document.documentElement.dataset.theme;
+      }, selected);
+      const effective = selected ?? systemScheme;
+      await expect(page.locator("html")).toHaveCSS("color-scheme", effective);
+      if (effective === "dark") {
+        await expect(darkHero).toBeVisible();
+        await expect(lightHero).toBeHidden();
+        await expect(darkLogo).toBeVisible();
+        await expect(lightLogo).toBeHidden();
+      } else {
+        await expect(darkHero).toBeHidden();
+        await expect(lightHero).toBeVisible();
+        await expect(darkLogo).toBeHidden();
+        await expect(lightLogo).toBeVisible();
+      }
+    }
+  });
+}

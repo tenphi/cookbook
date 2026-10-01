@@ -2,7 +2,14 @@ import { configure, getGlobalPredefinedStates } from "@tenphi/tasty";
 import { resolveTypographyPresets } from "../theme/defaults.js";
 import { TASTY_UNITS } from "../theme/tasty-config.js";
 
+const systemLight = "@media(prefers-color-scheme: light)";
+const systemDark = "@media(prefers-color-scheme: dark)";
+
 export const cookbookStates = {
+  "@system-light": systemLight,
+  "@system-dark": systemDark,
+  "@light": `@root(theme=light) | (!@root(theme) & ${systemLight})`,
+  "@dark": `@root(theme=dark) | (!@root(theme) & ${systemDark})`,
   "@mobile": "@media(w < 50rem)",
   "@desktop": "@media(w >= 50rem)",
   "@small": "@media(w <= 40rem)",

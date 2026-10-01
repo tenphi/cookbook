@@ -36,11 +36,11 @@ export const HeroRoot = customizeComponent(
       },
       DarkVisual: {
         $: '> img[data-hero-image="dark"]',
-        hide: { "": false, "@parent(theme=light)": true },
+        hide: { "": false, "@light": true },
       },
       LightVisual: {
         $: '> img[data-hero-image="light"]',
-        hide: { "": true, "@parent(theme=light)": false },
+        hide: { "": true, "@light": false },
       },
       Stack: {
         $: "> [class~='stack']",

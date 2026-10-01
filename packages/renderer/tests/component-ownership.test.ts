@@ -135,6 +135,7 @@ describe("component style ownership", () => {
   it("registers the complete public anatomy once, in component-owned modules", () => {
     const actual = [];
     for (const [file, source] of sources) {
+      expect(source, file).not.toContain("@media(prefers-color-scheme:");
       const { surfaces, failures } = inventory(source);
       expect(failures, file).toEqual([]);
       for (const surface of surfaces) {

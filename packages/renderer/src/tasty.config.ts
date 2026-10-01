@@ -93,6 +93,10 @@ export default {
   ],
   units: ["x", "r", "cr", "bw"],
   states: [
+    "@system-light",
+    "@system-dark",
+    "@light",
+    "@dark",
     "@mobile",
     "@desktop",
     "@small",

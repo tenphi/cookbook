@@ -57,7 +57,7 @@ export default function DocumentStyles() {
       Auto: {
         $: "&:not([data-theme])",
         colorScheme: {
-          "@media(prefers-color-scheme: light)": "light",
+          "@system-light": "light",
         },
       },
     }),

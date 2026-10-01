@@ -904,7 +904,7 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
             .evaluate((e) => getComputedStyle(e).fontSize),
         ).toBe(width < 1440 ? "22px" : "28px");
         const artwork = (await page
-          .locator(".td-header__logo img")
+          .locator(".td-header__logo img:visible")
           .boundingBox())!;
         expect(artwork.width / artwork.height).toBeCloseTo(
           variant === "wide-logo" ? 3 : 1 / 3,

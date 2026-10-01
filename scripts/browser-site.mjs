@@ -85,7 +85,7 @@ import { CodeGroup } from "@tenphi/cookbook/components";
       const config = globalThis.structuredClone(originalConfig);
       config.site.title = "Custom documentation";
       delete config.site.versions;
-      config.site.logo = "./logo.svg";
+      config.site.logo = { light: "./logo.svg", dark: "./logo.svg" };
       config.theme.presets = {
         h4: {
           fontFamily: "serif",

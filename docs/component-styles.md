@@ -66,17 +66,21 @@ Cookbook registers these Tasty state aliases for `theme.styles`, custom
 components, and recipes. Widths use CSS `rem` units; their pixel values depend
 on the browser's font-size settings.
 
-| State             | Condition                        | Typical use                                        |
-| ----------------- | -------------------------------- | -------------------------------------------------- |
-| `@compact`        | width ≤ 23rem                    | Hide optional header controls in very narrow space |
-| `@small`          | width ≤ 40rem                    | Stack compact grids                                |
-| `@shell-mobile`   | width ≤ 48rem                    | Switch the page shell to its narrow arrangement    |
-| `@shell-desktop`  | width > 48rem                    | Restore the wider shell arrangement                |
-| `@mobile`         | width < 50rem                    | Mobile navigation and component layouts            |
-| `@desktop`        | width ≥ 50rem                    | Desktop navigation and component layouts           |
-| `@medium-layout`  | 50rem ≤ width < 72rem            | Intermediate two-column layouts                    |
-| `@narrow-layout`  | width < 72rem                    | Hide or reposition the desktop table of contents   |
-| `@reduced-motion` | `prefers-reduced-motion: reduce` | Remove optional motion                             |
+| State             | Condition                                                  | Typical use                                        |
+| ----------------- | ---------------------------------------------------------- | -------------------------------------------------- |
+| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space |
+| `@small`          | width ≤ 40rem                                              | Stack compact grids                                |
+| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement    |
+| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                |
+| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts            |
+| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts           |
+| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                    |
+| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents   |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                             |
+| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance        |
+| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance         |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly      |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly      |
 
 The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
 boundary serve different parts of the layout; their ranges intentionally
@@ -84,6 +88,12 @@ overlap. Use the default state key `""` for the value outside the listed
 condition. Add your own aliases with `theme.states`; redefining a built-in
 alias also changes the renderer's responsive layout, so check the whole site
 when doing so.
+
+Use `@light` and `@dark` in component styles. They check the page root's
+`data-theme` attribute and use the system preference only when that attribute
+is absent. Document rules that style the root itself use `@system-light` and
+`@system-dark` within their automatic-theme branch. Keep scheme media queries
+in the shared state definitions instead of repeating them in style objects.
 
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,
