@@ -4,7 +4,10 @@ import {
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "@tenphi/docs";
 import { readFile, readdir } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { execFile } from "node:child_process";
+import { createRequire } from "node:module";
+import { promisify } from "node:util";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 import { selectPopoverStyles } from "../src/components/select-popover-styles.js";
 
@@ -136,6 +139,40 @@ function inventory(source: string) {
 }
 
 describe("component style ownership", () => {
+  it("fails the repository lint command when a warning is introduced", async () => {
+    const root = new URL("../../../", import.meta.url);
+    const { scripts } = JSON.parse(
+      await readFile(new URL("package.json", root), "utf8"),
+    );
+    const [command, ...args] = scripts.lint.split(/\s+/);
+    expect(command).toBe("eslint");
+    const require = createRequire(import.meta.url);
+    const executable = new URL(
+      "./bin/eslint.js",
+      pathToFileURL(require.resolve("eslint/package.json")),
+    );
+    // Exercise the actual CLI warning gate without changing a workspace file.
+    const child = promisify(execFile)(
+      process.execPath,
+      [
+        fileURLToPath(executable),
+        ...args,
+        "--stdin",
+        "--stdin-filename",
+        "packages/renderer/src/components/Hero.styles.js",
+      ],
+      { cwd: fileURLToPath(root), encoding: "utf8" },
+    );
+    child.child.stdin!.end(
+      'import { defineComponent } from "../define-component.js";\nexport const Root = defineComponent("Hero", { styles: { maxInlineSize: "100%" } });',
+    );
+    await expect(child).rejects.toMatchObject({
+      code: 1,
+      stdout: expect.stringContaining("tasty/prefer-shorthand-property"),
+      stderr: expect.stringContaining("ESLint found too many warnings"),
+    });
+  });
+
   it("warns about both native padding edges in named sub-elements without autofixing them", async () => {
     const eslint = new ESLint({
       cwd: fileURLToPath(new URL("../../../", import.meta.url)),

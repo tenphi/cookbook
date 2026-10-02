@@ -11,8 +11,7 @@ export function MarkdownInlineCodeStyles() {
       padding: "0.125rem 0.375rem",
       color: "#text-soft",
       fill: "#surface-3",
-      preset: "code",
-      fontSize: "0.875em",
+      preset: "inline-code",
       radius: "($radius * 0.65)",
     }),
   );

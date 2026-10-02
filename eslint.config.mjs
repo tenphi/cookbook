@@ -12,6 +12,7 @@ export default [
       "**/*.astro",
     ],
   },
+  { linterOptions: { reportUnusedDisableDirectives: "error" } },
   {
     ...js.configs.recommended,
     files: ["**/*.{js,mjs}"],

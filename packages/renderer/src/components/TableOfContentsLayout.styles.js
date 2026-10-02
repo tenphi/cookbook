@@ -20,14 +20,14 @@ export const TableOfContentsLayoutRoot = defineComponent(
       Content: {
         $: ".right-sidebar",
         position: { "": "sticky", "@narrow-layout": "static" },
-        insetBlockStart: "$docs-nav-height",
+        blockInset: "$docs-nav-height start",
         inlineSize: "100%",
         blockSize: {
           "": "(100vh - $docs-nav-height)",
           "@narrow-layout": "auto",
         },
         overflowY: { "": "auto", "@narrow-layout": "visible" },
-        scrollbarWidth: "none",
+        scrollbar: "none",
       },
     },
   },

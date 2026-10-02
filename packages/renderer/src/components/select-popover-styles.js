@@ -74,7 +74,7 @@ export function selectPopoverStyles({
       display: "flex",
       alignItems: "center",
       gap: "$gap",
-      minBlockSize: "2.25rem",
+      blockSize: "min 2.25rem",
       padding: "($gap * 0.75) $gap",
       color: "#text-soft",
       preset: "small",

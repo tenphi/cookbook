@@ -12,10 +12,7 @@ export const PaginationRoot = defineComponent("Pagination", {
   styles: {
     display: { "": "grid", "@media:print": "none" },
     gap: "($gap * 2)",
-    gridTemplateColumns: {
-      "": "repeat(2, minmax(0, 1fr))",
-      "@small": "1fr",
-    },
+    gridColumns: { "": "repeat(2, minmax(0, 1fr))", "@small": "1fr" },
     Link: {
       $: "a",
       radius: "$radius",
@@ -25,10 +22,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gap: "$gap",
       inlineSize: "100%",
       padding: "($gap * 2)",
-      border: "$border-width solid #border",
+      // Recolor only; Link owns the border width and style, including theme overrides.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
+      borderColor: "#border",
       color: "#text-soft",
       fill: "#surface-2",
-      boxShadow: "none",
+      shadow: "none",
       transition: "color $transition, background-color $transition",
       textDecoration: "none",
       overflowWrap: "anywhere",
@@ -48,16 +47,18 @@ export const PaginationRoot = defineComponent("Pagination", {
     NextIcon: {
       $: 'a[rel="next"]::before',
       order: "1",
+      // The imported SVG is encoded at build time and never evaluated in the browser.
+      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextLabel: {
       $: 'a[rel="next"] > span',
-      marginInlineStart: "auto",
+      inlineMargin: "auto start",
       textAlign: "end",
     },
     HoverLink: {
       $: "a:hover",
-      borderColor: "#border",
+      border: "$border-width solid #border",
       fill: "#surface-2-hover",
     },
     ActiveLink: { $: "a:active", fill: "#surface-2-pressed" },
@@ -75,14 +76,20 @@ export const PaginationRoot = defineComponent("Pagination", {
       inlineSize: "1.25rem",
       blockSize: "1.25rem",
       fill: "#current",
+      // The imported SVG is encoded at build time and never evaluated in the browser.
+      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
     PreviousIconRtl: {
       $: '&:is([dir="rtl"] *) a[rel="prev"]::before',
+      // The imported SVG is encoded at build time and never evaluated in the browser.
+      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextIconRtl: {
       $: '&:is([dir="rtl"] *) a[rel="next"]::before',
+      // The imported SVG is encoded at build time and never evaluated in the browser.
+      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
   },

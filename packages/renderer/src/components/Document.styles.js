@@ -68,9 +68,9 @@ export default function DocumentStyles() {
   useGlobalStyles(
     ":where(html)",
     resolveComponentStyles("Document", {
-      minBlockSize: "100%",
-      scrollPaddingBlockStart:
-        "(1.5rem + $docs-nav-height + $docs-mobile-toc-height)",
+      blockSize: "min 100%",
+      blockScrollPadding:
+        "(1.5rem + $docs-nav-height + $docs-mobile-toc-height) start",
       All: {
         $: "&:where(*), &::before, &::after, *, *::before, *::after",
         boxSizing: "border-box",
@@ -83,8 +83,8 @@ export default function DocumentStyles() {
       },
       Body: {
         $: "body",
-        minInlineSize: "0",
-        minBlockSize: "100%",
+        inlineSize: "min 0",
+        blockSize: "min 100%",
         margin: "0",
         color: "#text",
         fill: "#surface",
@@ -93,9 +93,9 @@ export default function DocumentStyles() {
       Control: {
         $: ":where(button), :where(input), :where(select), :where(textarea)",
         preset: "body",
-        minBlockSize: "$control-height",
+        blockSize: "min $control-height",
         radius: "$radius",
-        boxShadow: "none",
+        shadow: "none",
       },
       Pointer: {
         $: ":where(button), :where(summary), :where(select)",
@@ -103,7 +103,7 @@ export default function DocumentStyles() {
       },
       ResponsiveWidth: {
         $: "img:not([width]), :where(picture), video:not([width]), canvas:not([width]), svg:not([width]), iframe:not([width])",
-        maxInlineSize: "100%",
+        inlineSize: "max 100%",
       },
       ResponsiveHeight: {
         $: "img:not([height]), :where(picture), video:not([height]), canvas:not([height]), svg:not([height])",
@@ -150,8 +150,7 @@ export default function DocumentStyles() {
       },
       FocusRing: {
         $: ":where(a):focus-visible, :where(button):focus-visible, :where(input):focus-visible, :where(select):focus-visible, :where(textarea):focus-visible, :where(summary):focus-visible",
-        outline: "$outline-width solid #focus",
-        outlineOffset: "$outline-offset",
+        outline: "$outline-width solid #focus / $outline-offset",
       },
       CurrentLink: { $: 'a[aria-current="page"]', radius: "$radius" },
       SearchOpen: { $: "body[data-search-modal-open]", overflow: "hidden" },
@@ -170,7 +169,11 @@ export default function DocumentStyles() {
       Level4: { $: "&:is(h4)", preset: "h4" },
       Level5: { $: "&:is(h5)", preset: "h5" },
       Level6: { $: "&:is(h6)", preset: "h6" },
-      PageTitle: { $: '&[id="_top"]', marginBlockStart: "($gap * 2)" },
+      PageTitle: {
+        $: '&[id="_top"]', // Keep the browser or theme end margin while adjusting only the page-title start edge.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
+        marginBlockStart: "($gap * 2)",
+      },
     }),
   );
 

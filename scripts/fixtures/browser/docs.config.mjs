@@ -25,6 +25,7 @@ export default {
       Button: { gap: "7px" },
       SearchButton: { gap: "11px" },
       Callout: { Title: { color: "#accent-text" } },
+      Hero: { Action: { border: "3px dashed #border" } },
     },
   },
 };

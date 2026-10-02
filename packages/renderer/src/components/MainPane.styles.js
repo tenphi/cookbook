@@ -8,8 +8,7 @@ export const MainPaneRoot = defineComponent("MainPane", {
   "data-tasty-anatomy": "MainPane",
   styles: {
     isolation: "isolate",
-    inlineSize: "100%",
-    minInlineSize: "0",
+    inlineSize: "0 100% initial",
     WithSidebars: {
       $: "&:is([data-has-sidebar][data-has-toc] .main-pane)",
       order: "1",

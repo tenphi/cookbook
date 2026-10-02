@@ -10,7 +10,7 @@ export function MermaidStyles() {
     resolveComponentStyles("Mermaid", {
       display: "grid",
       placeItems: "center",
-      minInlineSize: "0",
+      inlineSize: "min 0",
       padding: "($gap * 2)",
       overflowX: "auto",
       border: true,
@@ -38,12 +38,12 @@ export function MermaidStyles() {
         "$_inner-stroke": "#border",
         "$_key-badge": "#surface",
         display: "block",
-        maxInlineSize: "100%",
+        inlineSize: "max 100%",
         blockSize: "auto",
         margin: "auto",
       },
-      Text: { $: "text", fontFamily: "$body-font-family" },
-      MonoText: { $: "[class~='mono']", fontFamily: "$code-font-family" },
+      Text: { $: "text", font: "$body-font-family" },
+      MonoText: { $: "[class~='mono']", font: "$code-font-family" },
     }),
   );
   return null;

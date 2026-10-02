@@ -8,8 +8,41 @@ import {
 } from "@tenphi/glaze";
 import { resolveDocsTheme } from "./index.js";
 import { tastyTokens } from "./tasty-config.js";
+import validationConfig from "../tasty.config.js";
 
 describe("Glaze theme adapter", () => {
+  it("registers specialized typography and keeps it linked to customized base roles", () => {
+    const theme = resolveDocsTheme({
+      presets: {
+        body: {
+          fontFamily: "Georgia, serif",
+          fontStyle: "italic",
+          fontWeight: 500,
+        },
+        h1: { lineHeight: 1.2 },
+        code: { fontFamily: "Acme Mono", boldFontWeight: 700 },
+        "hero-title": { fontSize: "4rem" },
+      },
+    });
+    for (const name of Object.keys(theme.presets))
+      expect(validationConfig.presets).toContain(name);
+    expect(theme.presets["hero-title"]).toMatchObject({
+      fontSize: "4rem",
+      lineHeight: "var(--h1-line-height)",
+      fontFamily: "var(--h1-font-family)",
+    });
+    expect(theme.presets.prose).toMatchObject({
+      fontSize: "1.025rem",
+      fontWeight: "var(--body-font-weight)",
+      fontStyle: "var(--body-font-style, var(--default-font-style))",
+    });
+    expect(theme.presets["inline-code"]).toMatchObject({
+      fontSize: "0.875em",
+      fontFamily: "var(--code-font-family)",
+      boldFontWeight: "var(--code-bold-font-weight)",
+    });
+  });
+
   it("keeps reading text near the tone boundary with only slightly softer headings", () => {
     for (const theme of [
       resolveDocsTheme(),

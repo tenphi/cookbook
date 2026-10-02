@@ -9,9 +9,8 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
   styles: {
     display: "block",
     hide: { "": false, "@narrow-layout": true },
-    paddingBlockStart: "($gap * 4)",
-    paddingInlineStart: "$docs-sidebar-pad-x",
-    paddingInlineEnd: "$docs-sidebar-pad-x",
+    blockPadding: "($gap * 4) start",
+    inlinePadding: "$docs-sidebar-pad-x",
     Heading: {
       $: "h2",
       margin: "0 0 $gap",
@@ -21,8 +20,8 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
     List: {
       $: "ul",
       display: "grid",
-      gridTemplateColumns: "minmax(0, 1fr)",
-      minInlineSize: "0",
+      gridColumns: "minmax(0, 1fr)",
+      inlineSize: "min 0",
       gap: "1px",
       margin: "0",
       padding: "0",
@@ -30,7 +29,7 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
     },
     Item: {
       $: "li",
-      minInlineSize: "0",
+      inlineSize: "min 0",
       margin: "0",
       padding: "0",
       listStyle: "none",
@@ -38,10 +37,8 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
     Link: {
       $: "a",
       display: "block",
-      minInlineSize: "0",
-      maxInlineSize: "100%",
-      paddingBlockStart: "($gap * 0.5)",
-      paddingBlockEnd: "($gap * 0.5)",
+      inlineSize: "0 auto 100%",
+      blockPadding: "($gap * 0.5)",
       color: "#text-muted",
       preset: "small",
       textDecoration: "none",
@@ -50,7 +47,7 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
     LinkLabel: {
       $: "a > span",
       display: "block",
-      minInlineSize: "0",
+      inlineSize: "min 0",
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",

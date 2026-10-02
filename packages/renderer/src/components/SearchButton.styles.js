@@ -10,13 +10,18 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
   "data-tasty-anatomy": "SearchButton",
   styles: {
     justifyContent: { "": "flex-start", "@mobile": "center" },
-    inlineSize: { "": "100%", "@mobile": "$docs-menu-button-size" },
-    maxInlineSize: "22rem",
-    marginInlineStart: {
-      "": "0",
-      "@media(w >= 80rem)": "min(5rem, max(0px, calc(100% - 22rem)))",
+    inlineSize: {
+      "": "initial 100% 22rem",
+      "@mobile": "initial $docs-menu-button-size 22rem",
     },
-    blockSize: { "": "$control-height", "@mobile": "$docs-menu-button-size" },
+    inlineMargin: {
+      "": "0 start",
+      "@media(w >= 80rem)": "min(5rem, max(0px, calc(100% - 22rem))) start",
+    },
+    blockSize: {
+      "": "0 $control-height initial",
+      "@mobile": "0 $docs-menu-button-size initial",
+    },
     padding: { "": "0 $gap 0 ($gap * 1.5)", "@mobile": "0" },
     border: { "": true, "@mobile": "0" },
     radius: "$header-control-radius",
@@ -48,6 +53,8 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       inlineSize: { "": "1rem", "@mobile": "1.25rem" },
       blockSize: { "": "1rem", "@mobile": "1.25rem" },
       fill: "#current",
+      // The imported SVG is encoded at build time and never evaluated in the browser.
+      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
     },
   },

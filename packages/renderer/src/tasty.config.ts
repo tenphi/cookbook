@@ -125,5 +125,9 @@ export default {
     "navigation",
     "small",
     "code",
+    "hero-title",
+    "hero-tagline",
+    "prose",
+    "inline-code",
   ],
 } satisfies TastyValidationConfig;

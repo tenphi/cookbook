@@ -14,7 +14,7 @@ export function MarkdownCodeBlockStyles() {
       "$copy-button-size": "2rem",
       display: "block",
       position: "relative",
-      minInlineSize: "0",
+      inlineSize: "min 0",
       Pre: {
         $: "> pre",
         margin: "0",
@@ -33,15 +33,13 @@ export function MarkdownCodeBlockStyles() {
         $: "> [data-copy-code]",
         position: "absolute",
         zIndex: "1",
-        insetBlockStart: "$gap",
-        insetInlineEnd: "$gap",
+        blockInset: "$gap start",
+        inlineInset: "$gap end",
         margin: "0",
         display: "grid",
         placeItems: "center",
-        inlineSize: "$copy-button-size",
-        minInlineSize: "$copy-button-size",
-        blockSize: "$copy-button-size",
-        minBlockSize: "$copy-button-size",
+        inlineSize: "$copy-button-size $copy-button-size initial",
+        blockSize: "$copy-button-size $copy-button-size initial",
         padding: "0",
         color: "#text-soft",
         border: true,
@@ -59,6 +57,8 @@ export function MarkdownCodeBlockStyles() {
       CopiedButton: {
         $: '> [data-copy-code][data-copy-state="copied"]',
         color: "#green-text",
+        // Recolor only; CopyButton owns the border width and style, including theme overrides.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
         borderColor: "#green",
       },
       CopyIcon: {
@@ -67,10 +67,14 @@ export function MarkdownCodeBlockStyles() {
         inlineSize: "1rem",
         blockSize: "1rem",
         fill: "#current",
+        // The imported SVG is encoded at build time and never evaluated in the browser.
+        // eslint-disable-next-line tasty/no-runtime-styles-mutation
         mask: `url("${svgIconUrl(copyIcon)}") center / contain no-repeat`,
       },
       CopiedIcon: {
         $: '> [data-copy-code][data-copy-state="copied"] > [data-copy-icon]',
+        // The imported SVG is encoded at build time and never evaluated in the browser.
+        // eslint-disable-next-line tasty/no-runtime-styles-mutation
         mask: `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
       },
       Code: { $: "pre code", padding: "0", color: "inherit", fill: "#clear" },
@@ -78,8 +82,9 @@ export function MarkdownCodeBlockStyles() {
       DiffCode: {
         $: "pre.td-diff code",
         display: "block",
-        inlineSize: "max-content",
-        minInlineSize: "100%",
+        inlineSize: "100% max-content initial",
+        // Zero line height removes gaps between block diff lines; the tight modifier would not.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
         lineHeight: "0",
       },
       DiffLine: {

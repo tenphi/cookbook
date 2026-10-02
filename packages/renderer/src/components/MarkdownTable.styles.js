@@ -15,21 +15,22 @@ export function MarkdownTableStyles() {
         borderSpacing: "0",
         color: "#text-soft",
         preset: "small",
-        border: true,
-        borderColor: "#border",
+        border: "$border-width solid #border",
         radius: "$card-radius",
       },
       Cell: {
         $: "th, td",
         padding: "($gap * 1.5) ($gap * 2)",
         verticalAlign: "top",
+        // Change only color; border widths and styles belong to other rules or theme overrides.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
         borderColor: "#border",
       },
       LastBodyRowCell: {
         $: "tbody td",
-        borderBlockEnd: {
-          "@own(:is(tbody tr:last-child > td))": "0",
-        },
+        // Clear only the last row's end border; the theme may configure its start border.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
+        borderBlockEnd: { "@own(:is(tbody tr:last-child > td))": "0" },
       },
       HeaderCell: {
         $: "th",
@@ -47,10 +48,9 @@ export function MarkdownTableStyles() {
       },
       Scroll: {
         $: ".td-table-scroll",
-        inlineSize: "100%",
-        maxInlineSize: "100%",
+        inlineSize: "initial 100% 100%",
         overflow: "auto",
-        scrollbarWidth: "thin",
+        scrollbar: "thin",
       },
     }),
   );

@@ -15,3 +15,5 @@ Enable shorthand-property diagnostics for component-owned styles and register re
 Support named component inheritance through extendComponent(name, base, options), preserving inherited props and compound parts. Export a configurable Button foundation shared by search, mobile-menu, and consumer buttons.
 
 Unify built-in and consumer component creation and theme customization with defineComponent, removing the separate customizeComponent wrapper.
+
+Require zero ESLint warnings locally and in the CI and release gates. Migrate native properties to Tasty shorthands and specialized typography presets while preserving the cascade; document narrow exceptions for shared style composition and build-only SVG encoding.

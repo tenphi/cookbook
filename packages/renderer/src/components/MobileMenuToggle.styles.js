@@ -13,7 +13,7 @@ export const MobileMenuToggleRoot = extendComponent(
       display: { "": "none", "@mobile": "flex" },
       inlineSize: "(100% + ($docs-nav-pad-x * 2))",
       inlineMargin: "(-1 * $docs-nav-pad-x)",
-      blockSize: "3rem",
+      blockSize: "0 3rem initial",
       flexShrink: "0",
       padding: "0 $docs-nav-pad-x",
       border: "0",

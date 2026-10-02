@@ -1,5 +1,10 @@
 # Repository Instructions
 
+## Validation
+
+- Treat every ESLint warning as a required fix. Run `pnpm lint` and require zero errors and zero warnings before finishing changes; CI and the release gate enforce this through `--max-warnings 0`. The same requirement applies after `pnpm lint:fix`.
+- Fix the underlying issue instead of weakening rules or increasing the warning allowance. Narrow ignores are allowed for intentional shared-style spreads, build-only SVG encoding, and native properties whose suggested shorthand would change the cascade. Put a specific reason beside each ignore, preserve style ownership and customization, and verify the affected behavior. Do not add blanket file or rule exemptions to clear warnings.
+
 ## Styling architecture
 
 - Keep each built-in component's style definition in its owning `components/<Name>.styles.js` module. Use `defineComponent(name, options)` for rendered roots and `extendComponent(name, base, options)` for inheritance. Both helpers resolve partial theme overrides inside the engine before CSS extraction. Shared bases own their defaults and must expose a registered customization name. Component markup imports its owner directly; do not restore the `GlobalStyles`, `LayoutComponents`, or `TastyComponents` aggregators.

@@ -14,10 +14,14 @@ export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
   as: "div",
   "data-tasty-anatomy": "VersionSwitcher",
   styles: {
+    // Reuse the shared, server-only popover anatomy.
+    // eslint-disable-next-line tasty/no-style-spread
     ...versionSelectStyles,
     display: "inline-flex",
     flexShrink: "0",
     Trigger: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
       ...versionSelectStyles.Trigger,
       blockSize: "min $control-height",
       inlinePadding: "$gap",
@@ -27,6 +31,8 @@ export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
       anchorName: "--version-trigger",
     },
     Panel: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
       ...versionSelectStyles.Panel,
       positionAnchor: "--version-trigger",
       blockInset: "(anchor(bottom) + $gap) start, auto end",

@@ -261,6 +261,10 @@ export interface TypographyPresets {
   navigation?: TypographyPreset;
   small?: TypographyPreset;
   code?: TypographyPreset;
+  "hero-title"?: TypographyPreset;
+  "hero-tagline"?: TypographyPreset;
+  prose?: TypographyPreset;
+  "inline-code"?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;
 }
 

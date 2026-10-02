@@ -12,11 +12,15 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
   styles: {
     display: "flex",
     flexShrink: "0",
+    // Shared selector defaults are resolved once during server-side module evaluation.
+    // eslint-disable-next-line tasty/no-runtime-styles-mutation
     "$popover-transition": languageSelectStyles["$popover-transition"],
     Compact: {
       $: "&[data-compact]",
     },
     Trigger: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
       ...languageSelectStyles.Trigger,
       inlineSize: "8rem",
       blockSize: "$control-height",
@@ -25,7 +29,11 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       border: "0",
       transition: "color $transition, fill $transition",
     },
-    HoverTrigger: { ...languageSelectStyles.HoverTrigger },
+    HoverTrigger: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.HoverTrigger,
+    },
     ActiveTrigger: {
       $: "> button:active",
       color: "#text",
@@ -38,8 +46,16 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
       blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
     },
-    TriggerLabel: { ...languageSelectStyles.TriggerLabel },
-    Caret: { ...languageSelectStyles.Caret },
+    TriggerLabel: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.TriggerLabel,
+    },
+    Caret: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.Caret,
+    },
     CompactTrigger: {
       $: "&[data-compact] > button",
       inlineSize: "$docs-menu-button-size",
@@ -64,6 +80,8 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       anchorName: "--language-trigger",
     },
     Panel: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
       ...languageSelectStyles.Panel,
       blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
       inlineInset:
@@ -79,14 +97,46 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       blockSize: "max (100dvh - 8rem)",
       transformOrigin: "bottom",
     },
-    OpenPanel: { ...languageSelectStyles.OpenPanel },
-    PanelTitle: { ...languageSelectStyles.PanelTitle },
-    Options: { ...languageSelectStyles.Options },
-    Option: { ...languageSelectStyles.Option },
-    HoverOption: { ...languageSelectStyles.HoverOption },
-    CurrentOption: { ...languageSelectStyles.CurrentOption },
+    OpenPanel: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.OpenPanel,
+    },
+    PanelTitle: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.PanelTitle,
+    },
+    Options: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.Options,
+    },
+    Option: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.Option,
+    },
+    HoverOption: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.HoverOption,
+    },
+    CurrentOption: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.CurrentOption,
+    },
     Fallback: { $: ".fallback-label", color: "#text-muted" },
-    Checkmark: { ...languageSelectStyles.Checkmark },
-    SelectedCheckmark: { ...languageSelectStyles.SelectedCheckmark },
+    Checkmark: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.Checkmark,
+    },
+    SelectedCheckmark: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...languageSelectStyles.SelectedCheckmark,
+    },
   },
 });

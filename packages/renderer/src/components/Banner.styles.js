@@ -13,7 +13,7 @@ export const BannerRoot = defineComponent("Banner", {
     preset: "body / strong",
     textAlign: "center",
     textWrap: "balance",
-    boxShadow: "none",
+    shadow: "none",
     Link: { $: "a", color: "#accent-surface-text" },
   },
 });

@@ -59,7 +59,7 @@ export function SyntaxHighlightStyles() {
       Bg: { $: "&.td-syntax-bg, .td-syntax-bg", fill: "#syntax-bg" },
       Inserted: { $: "&.td-green-text, .td-green-text", color: "#green-text" },
       Deleted: { $: "&.td-red-text, .td-red-text", color: "#red-text" },
-      Italic: { $: ".td-syntax-italic", fontStyle: "italic" },
+      Italic: { $: ".td-syntax-italic", preset: "italic" },
       Strong: { $: ".td-syntax-strong", preset: "strong" },
       Underline: { $: ".td-syntax-underline", textDecoration: "underline" },
     }),

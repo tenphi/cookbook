@@ -8,17 +8,16 @@ export const HeroRoot = defineComponent("Hero", {
   "data-tasty-anatomy": "Hero",
   styles: {
     display: "grid",
-    gridTemplateColumns: {
+    gridColumns: {
       "": "minmax(0, 7fr) minmax(12rem, 4fr)",
       "@mobile": "minmax(0, 1fr)",
     },
     alignItems: "center",
     gap: "clamp(2rem, 5vw, 5rem)",
-    paddingBlockStart: {
-      "": "clamp(3rem, 8vw, 7rem)",
-      "@mobile": "($gap * 4)",
+    blockPadding: {
+      "": "clamp(3rem, 8vw, 7rem) start, clamp(2rem, 6vw, 5rem) end",
+      "@mobile": "($gap * 4) start, clamp(2rem, 6vw, 5rem) end",
     },
-    paddingBlockEnd: "clamp(2rem, 6vw, 5rem)",
     Visual: {
       $: "> img, > .hero-html",
       order: { "": "2", "@mobile": "0" },
@@ -27,8 +26,7 @@ export const HeroRoot = defineComponent("Hero", {
       inlineSize: "min(100%, 22rem)",
       blockSize: "auto",
       objectFit: "contain",
-      marginInlineStart: "auto",
-      marginInlineEnd: "auto",
+      inlineMargin: "auto",
       color: "#logo-surface",
     },
     DarkVisual: {
@@ -56,19 +54,17 @@ export const HeroRoot = defineComponent("Hero", {
     },
     Title: {
       $: "h1",
-      maxInlineSize: "16ch",
+      inlineSize: "max 16ch",
       margin: "0",
       color: "#heading",
-      preset: "h1",
-      fontSize: "clamp(2.75rem, 7vw, 4.75rem)",
+      preset: "hero-title",
       textWrap: "balance",
     },
     Tagline: {
       $: "[class~='tagline']",
-      maxInlineSize: "48ch",
+      inlineSize: "max 48ch",
       color: "#text-soft",
-      fontSize: "clamp(1.05rem, 2.5vw, 1.35rem)",
-      lineHeight: "1.55",
+      preset: "hero-tagline",
       textWrap: "balance",
     },
     Actions: {
@@ -82,7 +78,7 @@ export const HeroRoot = defineComponent("Hero", {
       $: ".cookbook-link-button",
       display: "inline-flex",
       alignItems: "center",
-      minBlockSize: "$control-height",
+      blockSize: "min $control-height",
       padding: "($gap * 1.25) ($gap * 2.5)",
       gap: "$gap",
       color: "#text",
@@ -101,12 +97,16 @@ export const HeroRoot = defineComponent("Hero", {
     PrimaryAction: {
       $: ".cookbook-link-button.primary",
       color: "#accent-surface-text",
+      // Recolor only; Action owns the border width and style, including theme overrides.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
       borderColor: "#accent-surface",
       fill: "#accent-surface",
     },
     SecondaryAction: {
       $: ".cookbook-link-button.secondary",
       color: "#accent-text",
+      // Recolor only; Action owns the border width and style, including theme overrides.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
       borderColor: "#border-strong",
     },
     MinimalAction: {

@@ -17,7 +17,7 @@ export function MarkdownHeadingStyles() {
         $: "> :first-child",
         color: "inherit",
         display: "inline",
-        paddingInlineEnd: { "": "0", "@mobile": "1.75rem" },
+        inlinePadding: { "": "0 end", "@mobile": "1.75rem end" },
       },
       Heading1: { $: "&.level-h1", preset: "h1" },
       Heading2: { $: "&.level-h2", preset: "h2" },
@@ -28,16 +28,16 @@ export function MarkdownHeadingStyles() {
       Link: {
         $: "> .cookbook-anchor-link",
         position: { "": "absolute", "@mobile": "relative" },
-        insetBlockStart: {
-          "": "((1lh - 1.75rem) / 2)",
-          "@mobile": "auto",
+        blockInset: {
+          "": "((1lh - 1.75rem) / 2) start",
+          "@mobile": "auto start",
         },
-        insetInlineStart: { "": "-2rem", "@mobile": "auto" },
+        inlineInset: { "": "-2rem start", "@mobile": "auto start" },
         display: "inline-grid",
         placeItems: "center",
         inlineSize: { "": "1.75rem", "@mobile": "1.5rem" },
         blockSize: { "": "1.75rem", "@mobile": "1.5rem" },
-        marginInlineStart: { "": "0", "@mobile": "-1.5rem" },
+        inlineMargin: { "": "0 start", "@mobile": "-1.5rem start" },
         verticalAlign: { "": "baseline", "@mobile": "middle" },
         color: "#text-muted",
         opacity: {
@@ -62,8 +62,10 @@ export function MarkdownHeadingStyles() {
       LinkIcon: {
         $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
         display: "block",
+        preset: "inherit / tight",
+        // Scale with the current heading without replacing its inherited typography.
+        // eslint-disable-next-line tasty/prefer-shorthand-property
         fontSize: "clamp(1rem, 0.65em, 1.5rem)",
-        lineHeight: "1",
         textAlign: "center",
         inlineSize: "1em",
         blockSize: "1em",
@@ -84,6 +86,8 @@ export function MarkdownHeadingStyles() {
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",
         blockSize: "clamp(1rem, 0.65em, 1.5rem)",
         fill: "#current",
+        // The imported SVG is encoded at build time and never evaluated in the browser.
+        // eslint-disable-next-line tasty/no-runtime-styles-mutation
         mask: `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
       },
     }),

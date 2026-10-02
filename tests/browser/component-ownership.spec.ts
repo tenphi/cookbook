@@ -1,5 +1,29 @@
 import { expect, test } from "@playwright/test";
 
+test("Hero color variants preserve the configured action border width and style", async ({
+  page,
+}) => {
+  await page.goto("/manual/");
+  await page.evaluate(() => {
+    const hero = document.querySelector(".hero")!;
+    for (const variant of ["primary", "secondary", "minimal"]) {
+      const action = document.createElement("a");
+      action.className = `cookbook-link-button ${variant}`;
+      action.textContent = variant;
+      hero.append(action);
+    }
+  });
+  for (const variant of ["primary", "secondary"]) {
+    const action = page.locator(`.hero .cookbook-link-button.${variant}`);
+    await expect(action).toHaveCSS("border-top-width", "3px");
+    await expect(action).toHaveCSS("border-top-style", "dashed");
+  }
+  await expect(page.locator(".hero .cookbook-link-button.minimal")).toHaveCSS(
+    "border-top-width",
+    "0px",
+  );
+});
+
 test("button descendants inherit the shared theme and own their overrides", async ({
   page,
 }) => {
@@ -7,11 +31,13 @@ test("button descendants inherit the shared theme and own their overrides", asyn
   const search = page.locator('[data-tasty-anatomy="SearchButton"]');
   await expect(search).toBeVisible();
   await expect(search).toHaveCSS("gap", "11px");
+  await expect(search).toHaveCSS("min-block-size", "0px");
   await page.setViewportSize({ width: 390, height: 844 });
   const menu = page.locator('[data-tasty-anatomy="MobileMenuToggle"]');
   await expect(menu).toBeVisible();
   await expect(menu).toHaveCSS("display", "flex");
   await expect(menu).toHaveCSS("gap", "7px");
+  await expect(menu).toHaveCSS("min-block-size", "0px");
   await expect(search).toHaveCSS("gap", "11px");
 });
 
@@ -101,6 +127,9 @@ test("generated Markdown controls preserve spacing and link colors", async ({
   page,
 }) => {
   await page.goto("/manual/guide/");
+  await expect(
+    page.locator('[data-tasty-anatomy="Callout"]').first(),
+  ).toHaveCSS("margin-block-end", "16px");
   await expect(
     page.locator(".td-code-block [data-copy-code]").first(),
   ).toHaveCSS("margin", "0px");
