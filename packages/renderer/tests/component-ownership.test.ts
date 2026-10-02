@@ -139,6 +139,47 @@ function inventory(source: string) {
 }
 
 describe("component style ownership", () => {
+  it("uses the released selector warning through Cookbook's lint configuration", async () => {
+    const eslint = new ESLint({
+      cwd: fileURLToPath(new URL("../../../", import.meta.url)),
+      fix: true,
+    });
+    const source = `import { defineComponent } from "../define-component.js";
+export const Root = defineComponent("Hero", { styles: {
+  ResponsiveWidth: { $: "img:not([width]), :where(picture)", inlineSize: "max 100%" },
+  ResponsiveHeight: { $: "img:not([height])", blockSize: "auto" },
+} });`;
+    const [result] = await eslint.lintText(source, {
+      filePath: fileURLToPath(
+        new URL("../src/components/Hero.styles.js", import.meta.url),
+      ),
+    });
+    expect(result.messages).toEqual([
+      expect.objectContaining({
+        ruleId: "tasty/no-state-in-selector",
+        severity: 1,
+      }),
+      expect.objectContaining({
+        ruleId: "tasty/no-state-in-selector",
+        severity: 1,
+      }),
+    ]);
+    expect(result.output).toBeUndefined();
+    const [valid] = await eslint.lintText(
+      `import { defineComponent } from "../define-component.js";
+export const Root = defineComponent("Hero", { styles: {
+  Media: { $: "img, :where(picture)", inlineSize: { "": null, "@own(![width] | :is(picture))": "max 100%" } },
+  Before: { $: "&::before", content: '""' },
+} });`,
+      {
+        filePath: fileURLToPath(
+          new URL("../src/components/Hero.styles.js", import.meta.url),
+        ),
+      },
+    );
+    expect(valid.messages).toEqual([]);
+  });
+
   it("fails the repository lint command when a warning is introduced", async () => {
     const root = new URL("../../../", import.meta.url);
     const { scripts } = JSON.parse(
@@ -287,11 +328,8 @@ describe("component style ownership", () => {
         `Level${level}: { $: "&:is(h${level})", preset: "h${level}" }`,
       );
     expect(document).not.toContain('"$bold-font-weight"');
-    for (const selector of [
-      "img:not([width])",
-      "video:not([width])",
-      "img:not([height])",
-    ])
-      expect(document).toContain(selector);
+    expect(document).toContain("@own(![width] | :is(picture))");
+    expect(document).toContain("@own(![height] | :is(picture))");
+    expect(document).toContain('$: "img, :where(picture), video, canvas, svg');
   });
 });

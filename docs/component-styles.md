@@ -77,6 +77,7 @@ on the browser's font-size settings.
 | `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts           |
 | `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                    |
 | `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents   |
+| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel      |
 | `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                             |
 | `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance        |
 | `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance         |
@@ -105,7 +106,22 @@ Provide only the root and named
 [sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
 override. Cookbook deep-merges that partial style object into the complete
 base style object inside the renderer, following Tasty's
-[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps):
+[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
+
+Keep `$` selectors structural and put attribute or pseudo-class conditions in
+property state maps. Use `@own(...)` for a descendant's state and ordinary
+state keys for the component root. A scalar override replaces the property's
+whole state map; use the matching state key without a default entry to change
+only that branch. `"": null` omits a declaration outside a condition. For
+conditional `display`, use `"": ""` because Tasty's flow handler currently
+does not accept a null display value.
+
+Cookbook temporarily retains selectors for pseudo-element states that Tasty
+cannot yet compile correctly and five empty legacy customization hooks whose
+conditional override scopes must remain compatible. Each has a narrow lint
+exception in its owning style module. Use state maps for new definitions.
+
+For example:
 
 ```ts
 theme: {
@@ -121,7 +137,7 @@ theme: {
     },
     TopNavigation: {
       Link: { preset: "body" },
-      CurrentLink: { color: "#accent-text" }
+      CurrentLink: { color: { '@own([aria-current="page"])': "#accent-text" } }
     },
     Sidebar: {
       LinkLabel: { whiteSpace: "normal" }

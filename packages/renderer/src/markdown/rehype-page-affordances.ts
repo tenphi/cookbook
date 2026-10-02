@@ -62,11 +62,18 @@ function codeBlockWithCopy(pre: HastNode): HastNode {
         "button",
         {
           type: "button",
+          dataElement: "CopyButton",
           dataCopyCode: "",
           ariaLabel: "Copy code",
           title: "Copy code",
         },
-        [element("span", { dataCopyIcon: "", ariaHidden: "true" }, [])],
+        [
+          element(
+            "span",
+            { dataElement: "CopyIcon", dataCopyIcon: "", ariaHidden: "true" },
+            [],
+          ),
+        ],
       ),
     ],
   );

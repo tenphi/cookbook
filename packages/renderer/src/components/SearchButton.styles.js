@@ -30,7 +30,10 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     shadow: "none",
     transition: "color $transition, fill $transition",
     Label: { $: "> span", hide: { "": false, "@mobile": true } },
-    PendingShortcut: { $: "> kbd[data-pending]", visibility: "hidden" },
+    PendingShortcut: {
+      $: "> kbd",
+      visibility: { "": null, "@own([data-pending])": "hidden" },
+    },
     Shortcut: {
       $: "> kbd",
       display: "flex",
@@ -42,8 +45,16 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       preset: "small",
       radius: "($radius * 0.75)",
     },
-    Hover: { $: "&:hover", color: "#text", fill: "#surface-2-hover" },
-    Active: { $: "&:active", color: "#text", fill: "#surface-2-pressed" },
+    Hover: {
+      $: "&:where(*)",
+      color: { "": null, ":hover": "#text" },
+      fill: { "": null, ":hover": "#surface-2-hover" },
+    },
+    Active: {
+      $: "&:where(*)",
+      color: { "": null, ":active": "#text" },
+      fill: { "": null, ":active": "#surface-2-pressed" },
+    },
     NativeIcon: { $: "> svg", hide: true },
     Icon: {
       $: "&::before",

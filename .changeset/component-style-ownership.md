@@ -8,7 +8,7 @@ Move built-in styles into component-owned modules and initialize document founda
 
 Use shared appearance states for scheme-dependent component styling, including automatic hero and logo selection with explicit theme choices taking precedence over system preferences.
 
-Upgrade Tasty to 3.9.3 and its ESLint plugin to 1.3.0.
+Upgrade Tasty to 3.9.3 and its ESLint plugin to 1.4.0.
 
 Enable shorthand-property diagnostics for component-owned styles and register renderer-local style helpers so global bridges receive the same validation. Use registered warning palette roles for Markdown warning alerts.
 
@@ -17,3 +17,5 @@ Support named component inheritance through extendComponent(name, base, options)
 Unify built-in and consumer component creation and theme customization with defineComponent, removing the separate customizeComponent wrapper.
 
 Require zero ESLint warnings locally and in the CI and release gates. Migrate native properties to Tasty shorthands and specialized typography presets while preserving the cascade; document narrow exceptions for shared style composition and build-only SVG encoding.
+
+Enable selector-state warnings and move supported attribute and pseudo-class conditions into property state maps. Give copy controls and popover panels explicit Tasty identities so partial anatomy overrides remain scoped. Preserve prose spacing and conditional omissions, with narrow documented exceptions for unsupported pseudo-element conditions and empty legacy customization hooks.

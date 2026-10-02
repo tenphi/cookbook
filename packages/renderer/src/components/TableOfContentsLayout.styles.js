@@ -11,7 +11,10 @@ export const TableOfContentsLayoutRoot = defineComponent(
     styles: {
       hide: { "": false, "@narrow-layout": true },
       order: { "": "2", "@narrow-layout": "0" },
-      WithMobile: { $: "&:has(cookbook-mobile-toc)", display: "block" },
+      WithMobile: {
+        $: "&:where(*)",
+        display: { "": "", ":has(cookbook-mobile-toc)": "block" },
+      },
       position: "relative",
       inlineSize: {
         "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",

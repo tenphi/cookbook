@@ -1,5 +1,113 @@
 import { expect, test } from "@playwright/test";
 
+test("document media states preserve explicit dimensions and unconditional picture rules", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  await page.evaluate(() => {
+    const fixture = document.createElement("section");
+    fixture.innerHTML =
+      '<img data-test-media="fluid"><img data-test-media="fixed" width="123" height="45"><picture data-test-media="picture" width="123" height="45"></picture><span data-test-media="hidden" hidden>hidden</span>';
+    document.body.append(fixture);
+  });
+  await expect(page.locator('[data-test-media="fluid"]')).toHaveCSS(
+    "max-width",
+    "100%",
+  );
+  const fixed = page.locator('[data-test-media="fixed"]');
+  await expect(fixed).toHaveCSS("max-width", "none");
+  await expect(fixed).toHaveCSS("width", "123px");
+  await expect(fixed).toHaveCSS("height", "45px");
+  await expect(page.locator('[data-test-media="picture"]')).toHaveCSS(
+    "max-width",
+    "100%",
+  );
+  await expect(page.locator('[data-test-media="hidden"]')).toHaveCSS(
+    "display",
+    "none",
+  );
+});
+
+test("current sidebar link retains its appearance while hovered", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const current = page
+    .locator('cookbook-sidebar a[aria-current="page"]')
+    .first();
+  const before = await current.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      color: style.color,
+      background: style.backgroundColor,
+      weight: style.fontWeight,
+    };
+  });
+  await current.hover();
+  await expect(current).toHaveCSS("color", before.color);
+  await expect(current).toHaveCSS("background-color", before.background);
+  await expect(current).toHaveCSS("font-weight", before.weight);
+});
+
+test("anatomy overrides stay scoped to copy controls and selector panels", async ({
+  page,
+}) => {
+  await page.goto("/custom-header/guide/");
+  const code = page.locator(".td-code-block").first();
+  await expect(code.locator('[data-element="CopyButton"]')).toHaveCSS(
+    "width",
+    "42px",
+  );
+  await expect(code.locator('[data-element="CopyButton"]')).toHaveCSS(
+    "padding",
+    "2px",
+  );
+  await expect(code.locator("pre")).toHaveCSS("position", "static");
+  await expect(code.locator("pre")).toHaveCSS("padding-inline-start", "16px");
+  const select = page.locator("cookbook-sidebar-pane cookbook-language-select");
+  await expect(select.locator('[data-element="Panel"]')).toHaveCSS(
+    "padding",
+    "13px",
+  );
+  await expect(select.locator('[data-element="Panel"]')).toHaveCSS(
+    "border-radius",
+    "19px",
+  );
+  await expect(select.locator(":scope > button")).toHaveCSS(
+    "position",
+    "static",
+  );
+  await expect(select.locator(":scope > button")).toHaveCSS(
+    "padding",
+    "0px 8px",
+  );
+  await expect(select).toHaveCSS("border-top-width", "0px");
+  await select.evaluate((element) => element.setAttribute("data-compact", ""));
+  await expect(select).toHaveCSS("border-top-width", "4px");
+  await select.evaluate((element) => element.removeAttribute("data-compact"));
+  await expect(select).toHaveCSS("border-top-width", "0px");
+});
+
+test("prose owns block spacing while tab controls retain their own margins", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  await expect(
+    page.locator('[data-tasty-anatomy="Callout"]').first(),
+  ).toHaveCSS("margin-block-start", "24px");
+  const heading = page.locator(".cookbook-heading-wrapper.level-h2").nth(1);
+  const spacing = await heading.evaluate(
+    (e) => `${parseFloat(getComputedStyle(e).fontSize) * 1.5}px`,
+  );
+  await expect(heading).toHaveCSS("margin-block-start", spacing);
+  await page.goto("/manual/");
+  await expect(page.locator('[role="tab"]').nth(1)).toHaveCSS("margin", "0px");
+  await expect(page.locator('[role="tabpanel"]').first()).toHaveCSS(
+    "margin-block-start",
+    "24px",
+  );
+});
+
 test("Hero color variants preserve the configured action border width and style", async ({
   page,
 }) => {

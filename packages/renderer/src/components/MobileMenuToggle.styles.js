@@ -44,8 +44,11 @@ export const MobileMenuToggleRoot = extendComponent(
         color: "#text",
         preset: "navigation / strong",
       },
-      HoverControl: { $: "&:hover", color: "#text" },
-      ActiveControl: { $: "&:active", color: "#accent-text" },
+      HoverControl: { $: "&:where(*)", color: { "": null, ":hover": "#text" } },
+      ActiveControl: {
+        $: "&:where(*)",
+        color: { "": null, ":active": "#accent-text" },
+      },
     },
   },
 );

@@ -19,6 +19,7 @@ export const cookbookStates = {
   "@narrow-layout": "@media(w < 72rem)",
   "@medium-layout": "@media(w >= 50rem) & @media(w < 72rem)",
   "@reduced-motion": "@media(prefers-reduced-motion: reduce)",
+  "@popover-open": ":is(:popover-open)",
 };
 
 let configured = false;

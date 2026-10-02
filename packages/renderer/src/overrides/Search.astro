@@ -38,16 +38,17 @@ const translations = {
     <div class="dialog-frame">
       <button
         type="button"
+        data-element="Close"
         data-close-modal
         aria-label={Astro.locals.t("search.cancelLabel")}></button>
       {
         import.meta.env.DEV ? (
-          <p data-search-status dir="ltr">
+          <p data-element="Status" data-search-status dir="ltr">
             {Astro.locals.t("search.devWarning")}
           </p>
         ) : (
           <div class="search-container">
-            <p data-search-status role="status" hidden />
+            <p data-element="Status" data-search-status role="status" hidden />
             <SearchResultsRoot id="cookbook__search">
               <div class="pagefind-ui" role="search" aria-label={label}>
                 <div class="cookbook-search-field">

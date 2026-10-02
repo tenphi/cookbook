@@ -51,12 +51,18 @@ export const PreviewRoot = defineComponent("Preview", {
       transition: "fill $transition",
     },
     HoverSummary: {
-      $: "> details > summary:hover",
-      fill: "#surface-2-hover",
+      $: "> details > summary",
+      fill: {
+        "": null,
+        "@own(:is(details > summary:hover))": "#surface-2-hover",
+      },
     },
     ActiveSummary: {
-      $: "> details > summary:active",
-      fill: "#surface-2-pressed",
+      $: "> details > summary",
+      fill: {
+        "": null,
+        "@own(:is(details > summary:active))": "#surface-2-pressed",
+      },
     },
     Pre: {
       margin: "0",

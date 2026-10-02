@@ -46,14 +46,16 @@ export const HeaderRoot = defineComponent("Header", {
       textDecoration: "none",
     },
     Logo: {
-      $: '.td-header__logo[data-tasty-anatomy="Logo"]',
+      $: ".td-header__logo",
       inlineSize: {
-        "": "2rem",
-        "@mobile": "1.75rem",
+        "": null,
+        '@own([data-tasty-anatomy="Logo"])': "2rem",
+        '(@own([data-tasty-anatomy="Logo"])) & (@mobile)': "1.75rem",
       },
       blockSize: {
-        "": "2rem",
-        "@mobile": "1.75rem",
+        "": null,
+        '@own([data-tasty-anatomy="Logo"])': "2rem",
+        '(@own([data-tasty-anatomy="Logo"])) & (@mobile)': "1.75rem",
       },
     },
     SiteTitle: {

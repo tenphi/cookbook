@@ -20,7 +20,7 @@ export const TabsRoot = defineComponent("Tabs", {
       fill: "#surface-2",
     },
     Button: {
-      $: "> [data-tabs-list] > button",
+      $: '> [data-element="List"] > button',
       margin: "0",
       preset: "navigation",
       padding: "1x 2x",
@@ -32,13 +32,22 @@ export const TabsRoot = defineComponent("Tabs", {
       whiteSpace: "nowrap",
     },
     SelectedButton: {
-      $: '> [data-tabs-list] > button[aria-selected="true"]',
-      color: "#accent-surface-text",
-      fill: "#accent-surface",
+      $: '> [data-element="List"] > button',
+      color: {
+        "": null,
+        '@own([aria-selected="true"])': "#accent-surface-text",
+      },
+      fill: {
+        "": null,
+        '@own([aria-selected="true"])': "#accent-surface",
+      },
     },
     FocusedButton: {
-      $: "> [data-tabs-list] > button:focus-visible",
-      outline: "2px #focus / -2px",
+      $: '> [data-element="List"] > button',
+      outline: {
+        "": null,
+        "@own(:focus-visible)": "2px #focus / -2px",
+      },
     },
   },
   elements: { List: "div" },

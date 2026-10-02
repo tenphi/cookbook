@@ -64,7 +64,14 @@ import { CodeGroup } from "@tenphi/cookbook/components";
         Pagination: { Link: { radius: "13px" } },
         Sidebar: { Link: { padding: "1x" } },
         Markdown: { Quote: { inlinePadding: "29px start" } },
-        MarkdownCodeBlock: { Pre: { radius: "17px" } },
+        MarkdownCodeBlock: {
+          Pre: { radius: "17px" },
+          CopyButton: { padding: "2px", inlineSize: "42px" },
+        },
+        LanguageSelect: {
+          Panel: { padding: "13px", radius: "19px" },
+          Compact: { border: "4px solid #border" },
+        },
       };
       const guide = join(site, "docs/guide.mdx");
       await writeFile(

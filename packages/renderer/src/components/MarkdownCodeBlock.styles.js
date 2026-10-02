@@ -30,7 +30,7 @@ export function MarkdownCodeBlockStyles() {
         tabSize: "2",
       },
       CopyButton: {
-        $: "> [data-copy-code]",
+        $: '> [data-element="CopyButton"]',
         position: "absolute",
         zIndex: "1",
         blockInset: "$gap start",
@@ -50,19 +50,28 @@ export function MarkdownCodeBlockStyles() {
         transition: "color $transition, fill $transition",
       },
       HoverCopyButton: {
-        $: "> [data-copy-code]:hover",
-        color: "#text",
-        fill: "#surface-2-hover",
+        $: '> [data-element="CopyButton"]',
+        color: { "": null, "@own(:hover)": "#text" },
+        fill: {
+          "": null,
+          "@own(:hover)": "#surface-2-hover",
+        },
       },
       CopiedButton: {
-        $: '> [data-copy-code][data-copy-state="copied"]',
-        color: "#green-text",
+        $: '> [data-element="CopyButton"]',
+        color: {
+          "": null,
+          '@own([data-copy-state="copied"])': "#green-text",
+        },
         // Recolor only; CopyButton owns the border width and style, including theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        borderColor: "#green",
+        borderColor: {
+          "": null,
+          '@own([data-copy-state="copied"])': "#green",
+        },
       },
       CopyIcon: {
-        $: "> [data-copy-code] > [data-copy-icon]",
+        $: '> [data-element="CopyButton"] > [data-element="CopyIcon"]',
         display: "block",
         inlineSize: "1rem",
         blockSize: "1rem",
@@ -72,10 +81,13 @@ export function MarkdownCodeBlockStyles() {
         mask: `url("${svgIconUrl(copyIcon)}") center / contain no-repeat`,
       },
       CopiedIcon: {
-        $: '> [data-copy-code][data-copy-state="copied"] > [data-copy-icon]',
-        // The imported SVG is encoded at build time and never evaluated in the browser.
-        // eslint-disable-next-line tasty/no-runtime-styles-mutation
-        mask: `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
+        $: '> [data-element="CopyButton"] > [data-element="CopyIcon"]',
+        mask: {
+          "": null,
+          // SVG encoding runs only during the server build.
+          // eslint-disable-next-line tasty/no-runtime-styles-mutation
+          '@own(:is([data-element="CopyButton"][data-copy-state="copied"] > [data-element="CopyIcon"]))': `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
+        },
       },
       Code: { $: "pre code", padding: "0", color: "inherit", fill: "#clear" },
       Diff: { $: "pre.td-diff", inlinePadding: "0" },
@@ -88,12 +100,14 @@ export function MarkdownCodeBlockStyles() {
         lineHeight: "0",
       },
       DiffLine: {
-        $: "pre.td-diff > code > [class~='line']",
+        $: "pre.td-diff > code > :is(.line)",
         display: "block",
         inlinePadding: "1rem",
         preset: "code",
       },
       EmptyDiffLine: {
+        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // eslint-disable-next-line tasty/no-state-in-selector
         $: "pre.td-diff > code > .line:empty::before",
         content: '"\\200b"',
       },

@@ -14,10 +14,14 @@ export function MarkdownHeadingStyles() {
       color: "#heading",
       preset: "heading",
       Heading: {
-        $: "> :first-child",
-        color: "inherit",
-        display: "inline",
-        inlinePadding: { "": "0 end", "@mobile": "1.75rem end" },
+        $: "> *",
+        color: { "": null, "@own(:first-child)": "inherit" },
+        display: { "": "", "@own(:first-child)": "inline" },
+        inlinePadding: {
+          "": null,
+          "@own(:first-child)": "0 end",
+          "(@own(:first-child)) & (@mobile)": "1.75rem end",
+        },
       },
       Heading1: { $: "&.level-h1", preset: "h1" },
       Heading2: { $: "&.level-h2", preset: "h2" },
@@ -51,13 +55,22 @@ export function MarkdownHeadingStyles() {
         transition: "color $transition, fill $transition, opacity $transition",
       },
       RevealedLink: {
-        $: "&:hover > .cookbook-anchor-link, > .cookbook-anchor-link:focus-visible",
-        opacity: "1",
+        $: "> .cookbook-anchor-link",
+        opacity: {
+          "": null,
+          ":hover | @own(:focus-visible)": "1",
+        },
       },
       HoverLink: {
-        $: "> .cookbook-anchor-link:hover, > .cookbook-anchor-link:focus-visible",
-        color: "#accent-text",
-        fill: "#surface-2-hover",
+        $: "> .cookbook-anchor-link",
+        color: {
+          "": null,
+          "@own(:hover | :focus-visible)": "#accent-text",
+        },
+        fill: {
+          "": null,
+          "@own(:hover | :focus-visible)": "#surface-2-hover",
+        },
       },
       LinkIcon: {
         $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
@@ -71,15 +84,21 @@ export function MarkdownHeadingStyles() {
         blockSize: "1em",
       },
       CopiedLink: {
-        $: '> .cookbook-anchor-link[data-copy-state="copied"]',
-        color: "#green-text",
-        opacity: "1",
+        $: "> .cookbook-anchor-link",
+        color: { "": null, '@own([data-copy-state="copied"])': "#green-text" },
+        opacity: { "": null, '@own([data-copy-state="copied"])': "1" },
       },
       CopiedLinkIcon: {
-        $: '> .cookbook-anchor-link[data-copy-state="copied"] > .cookbook-anchor-icon',
-        visibility: "hidden",
+        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
+        visibility: {
+          "": null,
+          '@own(:is(.cookbook-anchor-link[data-copy-state="copied"] > .cookbook-anchor-icon))':
+            "hidden",
+        },
       },
       CopiedIcon: {
+        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // eslint-disable-next-line tasty/no-state-in-selector
         $: '> .cookbook-anchor-link[data-copy-state="copied"]::after',
         content: '""',
         position: "absolute",

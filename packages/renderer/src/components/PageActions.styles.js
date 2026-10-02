@@ -25,12 +25,27 @@ export const PageActionsRoot = defineComponent("PageActions", {
       textDecoration: "none",
       cursor: "pointer",
     },
-    Hover: { $: "button:hover, a:hover", fill: "#surface-2" },
-    Focus: {
-      $: "button:focus-visible, a:focus-visible",
-      outline: "2px solid #focus / 2px",
+    Hover: {
+      $: "button, a",
+      fill: {
+        "": null,
+        "@own(:hover)": "#surface-2",
+      },
     },
-    Pending: { $: 'button[aria-disabled="true"]', cursor: "wait" },
-    Status: { $: "[role=status]", color: "#text-soft" },
+    Focus: {
+      $: "button, a",
+      outline: {
+        "": null,
+        "@own(:focus-visible)": "2px solid #focus / 2px",
+      },
+    },
+    Pending: {
+      $: "button",
+      cursor: { "": null, '@own([aria-disabled="true"])': "wait" },
+    },
+    Status: {
+      $: "*",
+      color: { "": null, "@own([role=status])": "#text-soft" },
+    },
   },
 });

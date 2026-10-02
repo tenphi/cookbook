@@ -33,18 +33,36 @@ export const PaginationRoot = defineComponent("Pagination", {
       overflowWrap: "anywhere",
     },
     PreviousLink: {
-      $: 'a[rel="prev"]',
-      gridColumn: { "": "1", "@small": "auto" },
-      gridRow: { "": "1", "@small": "auto" },
+      $: "a",
+      gridColumn: {
+        "": null,
+        '@own([rel="prev"])': "1",
+        '(@own([rel="prev"])) & (@small)': "auto",
+      },
+      gridRow: {
+        "": null,
+        '@own([rel="prev"])': "1",
+        '(@own([rel="prev"])) & (@small)': "auto",
+      },
     },
     NextLink: {
-      $: 'a[rel="next"]',
-      justifyContent: "flex-start",
-      textAlign: "end",
-      gridColumn: { "": "2", "@small": "auto" },
-      gridRow: { "": "1", "@small": "auto" },
+      $: "a",
+      justifyContent: { "": null, '@own([rel="next"])': "flex-start" },
+      textAlign: { "": null, '@own([rel="next"])': "end" },
+      gridColumn: {
+        "": null,
+        '@own([rel="next"])': "2",
+        '(@own([rel="next"])) & (@small)': "auto",
+      },
+      gridRow: {
+        "": null,
+        '@own([rel="next"])': "1",
+        '(@own([rel="next"])) & (@small)': "auto",
+      },
     },
     NextIcon: {
+      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[rel="next"]::before',
       order: "1",
       // The imported SVG is encoded at build time and never evaluated in the browser.
@@ -52,18 +70,26 @@ export const PaginationRoot = defineComponent("Pagination", {
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextLabel: {
-      $: 'a[rel="next"] > span',
-      inlineMargin: "auto start",
-      textAlign: "end",
+      $: "a > span",
+      inlineMargin: {
+        "": null,
+        '@own(:is(a[rel="next"] > span))': "auto start",
+      },
+      textAlign: { "": null, '@own(:is(a[rel="next"] > span))': "end" },
     },
     HoverLink: {
-      $: "a:hover",
-      border: "$border-width solid #border",
-      fill: "#surface-2-hover",
+      $: "a",
+      border: { "": null, "@own(:hover)": "$border-width solid #border" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
-    ActiveLink: { $: "a:active", fill: "#surface-2-pressed" },
+    ActiveLink: {
+      $: "a",
+      fill: { "": null, "@own(:active)": "#surface-2-pressed" },
+    },
     Title: { $: ".link-title", color: "#heading", preset: "h5" },
     LoneNextLink: {
+      // Preserve the conditional scope of this empty legacy customization hook.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[rel="next"]:only-child',
     },
     Icon: {
@@ -81,12 +107,16 @@ export const PaginationRoot = defineComponent("Pagination", {
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
     PreviousIconRtl: {
+      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: '&:is([dir="rtl"] *) a[rel="prev"]::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
       // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextIconRtl: {
+      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: '&:is([dir="rtl"] *) a[rel="next"]::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
       // eslint-disable-next-line tasty/no-runtime-styles-mutation

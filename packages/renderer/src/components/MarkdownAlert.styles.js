@@ -47,10 +47,13 @@ export function MarkdownAlertStyles() {
         preset: "strong",
       },
       FirstContent: {
-        $: ".cookbook-alert__content > :first-child",
+        $: ".cookbook-alert__content > *",
         // Keep the first content element's end margin while removing its start margin.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: "0",
+        marginBlockStart: {
+          "": null,
+          "@own(:is(.cookbook-alert__content > :first-child))": "0",
+        },
       },
     }),
   );

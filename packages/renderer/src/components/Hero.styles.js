@@ -30,15 +30,23 @@ export const HeroRoot = defineComponent("Hero", {
       color: "#logo-surface",
     },
     DarkVisual: {
-      $: '> img[data-hero-image="dark"]',
-      hide: { "": false, "@light": true },
+      $: "> img",
+      hide: {
+        "": null,
+        '@own([data-hero-image="dark"])': false,
+        '(@own([data-hero-image="dark"])) & (@light)': true,
+      },
     },
     LightVisual: {
-      $: '> img[data-hero-image="light"]',
-      hide: { "": true, "@light": false },
+      $: "> img",
+      hide: {
+        "": null,
+        '@own([data-hero-image="light"])': true,
+        '(@own([data-hero-image="light"])) & (@light)': false,
+      },
     },
     Stack: {
-      $: "> [class~='stack']",
+      $: "> :is(.stack)",
       display: "flex",
       flow: "column",
       alignItems: { "": "flex-start", "@mobile": "center" },
@@ -46,7 +54,7 @@ export const HeroRoot = defineComponent("Hero", {
       textAlign: { "": "start", "@mobile": "center" },
     },
     Copy: {
-      $: "> [class~='stack'] > [class~='copy']",
+      $: "> :is(.stack) > :is(.copy)",
       display: "flex",
       flow: "column",
       alignItems: "inherit",
@@ -61,14 +69,14 @@ export const HeroRoot = defineComponent("Hero", {
       textWrap: "balance",
     },
     Tagline: {
-      $: "[class~='tagline']",
+      $: ":is(.tagline)",
       inlineSize: "max 48ch",
       color: "#text-soft",
       preset: "hero-tagline",
       textWrap: "balance",
     },
     Actions: {
-      $: "[class~='actions']",
+      $: ":is(.actions)",
       display: "flex",
       flow: "row wrap",
       justifyContent: { "": "flex-start", "@mobile": "center" },
@@ -90,9 +98,9 @@ export const HeroRoot = defineComponent("Hero", {
       transition: "fill $transition, translate $transition",
     },
     HoverAction: {
-      $: ".cookbook-link-button:hover",
-      fill: "#surface-2-hover",
-      translate: "0 -1px",
+      $: ".cookbook-link-button",
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
+      translate: { "": null, "@own(:hover)": "0 -1px" },
     },
     PrimaryAction: {
       $: ".cookbook-link-button.primary",

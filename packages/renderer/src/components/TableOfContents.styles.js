@@ -52,11 +52,11 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
     },
-    HoverLink: { $: "a:hover", color: "#text" },
+    HoverLink: { $: "a", color: { "": null, "@own(:hover)": "#text" } },
     CurrentLink: {
-      $: 'a[aria-current="location"]',
-      color: "#accent-text",
-      preset: "small / strong",
+      $: "a",
+      color: { "": null, '@own([aria-current="location"])': "#accent-text" },
+      preset: { "": null, '@own([aria-current="location"])': "small / strong" },
     },
   },
 });

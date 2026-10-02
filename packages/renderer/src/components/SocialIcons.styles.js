@@ -22,9 +22,9 @@ export const SocialIconsRoot = defineComponent("SocialIcons", {
       textDecoration: "none",
     },
     HoverLink: {
-      $: "a:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "a",
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     Icon: {
       $: "a > svg",

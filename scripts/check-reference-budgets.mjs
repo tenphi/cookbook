@@ -108,7 +108,7 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
-  !/pre\.td-diff > code > (?:\.line|\[class~=["']line["']\])\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+  !/pre\.td-diff\s*>\s*code\s*>\s*:is\(\.line\)\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
     sharedCss,
   ) ||
   /pre\.td-diff\.line\s*\{/.test(sharedCss)
@@ -133,8 +133,16 @@ const componentPage = await readFile(
   "utf8",
 );
 for (const [name, descendant, label] of [
-  ["Sidebar", "a > span:first-child", "left navigation links"],
-  ["Sidebar", ".group-label > span:first-child", "left navigation groups"],
+  [
+    "Sidebar",
+    "a > span:where(:is(a > span:first-child))",
+    "left navigation links",
+  ],
+  [
+    "Sidebar",
+    ".group-label > span:where(:is(.group-label > span:first-child))",
+    "left navigation groups",
+  ],
   ["TableOfContents", "a > span", "desktop table of contents"],
   ["MobileMenuToggle", ".td-menu-button__page", "mobile navigation breadcrumb"],
 ]) {
@@ -176,7 +184,7 @@ for (const transition of [
 if (
   (
     sharedCss.match(
-      /\[popover\]:popover-open\[data-open\]\s*\{\s*opacity:\s*1;\s*scale:\s*1;/g,
+      /\[data-element="Panel"\]:where\(\[data-open\]:popover-open\)\s*\{\s*opacity:\s*1;\s*scale:\s*1;/g,
     ) ?? []
   ).length < 2 ||
   !sharedCss.includes("scale: 1 0.96") ||

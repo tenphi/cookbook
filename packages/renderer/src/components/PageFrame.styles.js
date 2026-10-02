@@ -18,8 +18,12 @@ export const PageFrameRoot = defineComponent("PageFrame", {
       inlinePadding: "0 start",
     },
     SidebarFrame: {
-      $: "&[data-has-sidebar] > .main-frame",
-      inlinePadding: { "": "$sidebar-width start", "@mobile": "0 start" },
+      $: "& > .main-frame",
+      inlinePadding: {
+        "": null,
+        "[data-has-sidebar]": "$sidebar-width start",
+        "([data-has-sidebar]) & (@mobile)": "0 start",
+      },
     },
     Columns: {
       $: "> .main-frame > div",

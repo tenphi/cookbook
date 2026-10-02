@@ -41,10 +41,18 @@ export const MobileTableOfContentsRoot = defineComponent(
         radius: "$radius",
         textDecoration: "none",
       },
-      HoverLink: { $: "a:hover", fill: "#surface-2", color: "#text" },
+      HoverLink: {
+        $: "a",
+        fill: { "": null, "@own(:hover)": "#surface-2" },
+        color: { "": null, "@own(:hover)": "#text" },
+      },
       Focus: {
-        $: "a:focus-visible, summary:focus-visible",
-        outline: "2px solid #focus / 2px",
+        $: "a, summary",
+        outline: {
+          "": null,
+          "@own(:is(a:focus-visible)) | @own(:is(summary:focus-visible))":
+            "2px solid #focus / 2px",
+        },
       },
     },
   },

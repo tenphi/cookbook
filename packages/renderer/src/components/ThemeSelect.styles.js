@@ -30,14 +30,20 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       transition: "color $transition, fill $transition",
     },
     HoverTrigger: {
-      $: "> button:hover, &:has([popover]:popover-open) > button",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "> button",
+      color: {
+        "": null,
+        "@own(:hover) | :has([popover]:popover-open)": "#text",
+      },
+      fill: {
+        "": null,
+        "@own(:hover) | :has([popover]:popover-open)": "#surface-2-hover",
+      },
     },
     ActiveTrigger: {
-      $: "> button:active",
-      color: "#text",
-      fill: "#surface-2-pressed",
+      $: "> button",
+      color: { "": null, "@own(:active)": "#text" },
+      fill: { "": null, "@own(:active)": "#surface-2-pressed" },
     },
     Icon: {
       $: "> button svg",
@@ -46,7 +52,7 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
     },
     Panel: {
-      $: "[popover]",
+      $: '[data-element="Panel"]',
       position: "fixed",
       inset: "auto",
       blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
@@ -72,9 +78,12 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       },
     },
     OpenPanel: {
-      $: "[popover]:popover-open[data-open]",
-      opacity: "1",
-      scale: "1",
+      $: '[data-element="Panel"]',
+      opacity: {
+        "": null,
+        "@own(@popover-open & [data-open])": "1",
+      },
+      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
     },
     Section: {
       $: "fieldset",
@@ -112,18 +121,24 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       cursor: "pointer",
     },
     HoverOption: {
-      $: "label:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "label",
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     CheckedOption: {
-      $: "label:has(input:checked)",
-      color: "#accent-text",
-      fill: "#accent-surface-2-subtle",
+      $: "label",
+      color: { "": null, "@own(:has(input:checked))": "#accent-text" },
+      fill: {
+        "": null,
+        "@own(:has(input:checked))": "#accent-surface-2-subtle",
+      },
     },
     FocusedOption: {
-      $: "label:has(input:focus-visible)",
-      outline: "$outline-width solid #focus / -2px",
+      $: "label",
+      outline: {
+        "": null,
+        "@own(:has(input:focus-visible))": "$outline-width solid #focus / -2px",
+      },
     },
     Input: {
       $: "input",
@@ -144,13 +159,19 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       blockSize: "1rem",
     },
     Checkmark: {
-      $: "label > svg:last-child",
-      inlineMargin: "auto start",
-      visibility: "hidden",
+      $: "label > svg",
+      inlineMargin: {
+        "": null,
+        "@own(:is(label > svg:last-child))": "auto start",
+      },
+      visibility: { "": null, "@own(:is(label > svg:last-child))": "hidden" },
     },
     SelectedCheckmark: {
-      $: "label:has(input:checked) > svg:last-child",
-      visibility: "visible",
+      $: "label > svg",
+      visibility: {
+        "": null,
+        "@own(:is(label:has(input:checked) > svg:last-child))": "visible",
+      },
     },
   },
 });

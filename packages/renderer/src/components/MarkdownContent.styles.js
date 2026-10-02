@@ -15,90 +15,154 @@ import { configureCookbookStates } from "./tasty-states.js";
 configureCookbookStates();
 
 export default function MarkdownStyles() {
+  // Match component-root specificity so prose owns spacing inside Markdown.
   useGlobalStyles(
-    ".cookbook-markdown-content",
+    ".cookbook-markdown-content.cookbook-markdown-content",
     resolveComponentStyles("Markdown", {
       preset: "prose",
       Block: {
-        $: ":where(p):not(.not-content *), :where(ul):not(.not-content *), :where(ol):not(.not-content *), :where(dl):not(.not-content *), :where(blockquote):not(.not-content *), :where(pre):not(.not-content *), :where(table):not(.not-content *), :where(hr):not(.not-content *), :where(details):not(.not-content *)",
-        blockMargin: "0",
+        $: ":where(p), :where(ul), :where(ol), :where(dl), :where(blockquote), :where(pre), :where(table), :where(hr), :where(details)",
+        blockMargin: {
+          "": null,
+          "@own(!:is(.not-content *))": "0",
+        },
       },
       // Linked Cards are block content even though their root is an anchor.
       BlockSpacing: {
-        $: ":not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br) + :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br):not(li):not(dt):not(dd):not(.not-content *), :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br) + a.td-card, a.td-card + :not(a):not(strong):not(em):not(del):not(span):not(input):not(code):not(br):not(li):not(dt):not(dd):not(.not-content *), a.td-card + a.td-card",
+        // Prose spacing must win over each block component's root margin.
+        $: "&.cookbook-markdown-content * + *",
         // Keep owned components such as Callout's end margin while applying prose spacing.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: "($gap * 3)",
+        marginBlockStart: {
+          "": null,
+          "(@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is(a.td-card + *))) & (@own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd,.not-content *)) | @own(:is(a.td-card)))":
+            "($gap * 3)",
+        },
       },
       HeadingSpacing: {
-        $: ":not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h1):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h2):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h3):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h4):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h5):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(h6):not(.not-content *), :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.cookbook-heading-wrapper) + :where(.cookbook-heading-wrapper):not(.not-content *)",
-        blockMargin: "1.5em start",
+        $: "* + h1, * + h2, * + h3, * + h4, * + h5, * + h6, * + .cookbook-heading-wrapper",
+        blockMargin: {
+          "": null,
+          "@own(:is(:not(h1,h2,h3,h4,h5,h6,.cookbook-heading-wrapper) + *)) & @own(!:is(.not-content *))":
+            "1.5em start",
+        },
       },
       List: {
-        $: ":where(ul):not(.not-content *), :where(ol):not(.not-content *)",
-        inlinePadding: "1.5rem start",
+        $: ":where(ul), :where(ol)",
+        inlinePadding: {
+          "": null,
+          "@own(!:is(.not-content *))": "1.5rem start",
+        },
       },
       CompactItem: {
-        $: ":where(li + li):not(.not-content *), :where(dt + dt):not(.not-content *), :where(dt + dd):not(.not-content *), :where(dd + dd):not(.not-content *)",
-        blockMargin: "($gap * 0.5) start",
+        $: ":where(li + li), :where(dt + dt), :where(dt + dd), :where(dd + dd)",
+        blockMargin: {
+          "": null,
+          "@own(!:is(.not-content *))": "($gap * 0.5) start",
+        },
       },
       ListItem: {
-        $: "li:not(.not-content *)",
-        overflowWrap: "anywhere",
+        $: "li",
+        overflowWrap: { "": null, "@own(!:is(.not-content *))": "anywhere" },
       },
-      DefinitionTerm: { $: "dt:not(.not-content *)", preset: "strong" },
+      DefinitionTerm: {
+        $: "dt",
+        preset: { "": null, "@own(!:is(.not-content *))": "strong" },
+      },
       DefinitionDescription: {
-        $: "dd:not(.not-content *)",
-        inlinePadding: "($gap * 2) start",
+        $: "dd",
+        inlinePadding: {
+          "": null,
+          "@own(!:is(.not-content *))": "($gap * 2) start",
+        },
       },
       Link: {
-        $: "a:not(.not-content *)",
-        color: "#accent-text",
-        textUnderlineOffset: "0.15em",
+        $: "a",
+        color: { "": null, "@own(!:is(.not-content *))": "#accent-text" },
+        textUnderlineOffset: {
+          "": null,
+          "@own(!:is(.not-content *))": "0.15em",
+        },
       },
-      HoverLink: { $: "a:hover:not(.not-content *)", color: "#text" },
+      HoverLink: {
+        $: "a",
+        color: {
+          "": null,
+          "@own(:hover) & @own(!:is(.not-content *))": "#text",
+        },
+      },
       Quote: {
-        $: "blockquote:not(.not-content *)",
-        inlinePadding: "2x start",
-        color: "#text-soft",
-        inlineBorder: "1bw solid #border start",
+        $: "blockquote",
+        inlinePadding: { "": null, "@own(!:is(.not-content *))": "2x start" },
+        color: { "": null, "@own(!:is(.not-content *))": "#text-soft" },
+        inlineBorder: {
+          "": null,
+          "@own(!:is(.not-content *))": "1bw solid #border start",
+        },
       },
       Rule: {
-        $: "hr:not(.not-content *)",
-        border: "0",
-        blockBorder: "$border-width solid #border end",
+        $: "hr",
+        border: { "": null, "@own(!:is(.not-content *))": "0" },
+        blockBorder: {
+          "": null,
+          "@own(!:is(.not-content *))": "$border-width solid #border end",
+        },
       },
       Details: {
-        $: "details:not(.not-content *)",
-        inlinePadding: "($gap * 2) start",
-        inlineBorder: "2px solid #border start",
+        $: "details",
+        inlinePadding: {
+          "": null,
+          "@own(!:is(.not-content *))": "($gap * 2) start",
+        },
+        inlineBorder: {
+          "": null,
+          "@own(!:is(.not-content *))": "2px solid #border start",
+        },
         // Change only color; border widths and styles belong to other rules or theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        borderColor: "#border",
+        borderColor: { "": null, "@own(!:is(.not-content *))": "#border" },
       },
       HoverDetails: {
-        $: "details:not([open]):hover:not(.not-content *), details:has(> summary:hover):not(.not-content *)",
+        $: "details",
         // Change only color; border widths and styles belong to other rules or theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        borderColor: "#accent-text",
+        borderColor: {
+          "": null,
+          "(@own(![open] & :hover) | @own(:has(> summary:hover))) & @own(!:is(.not-content *))":
+            "#accent-text",
+        },
       },
       Summary: {
-        $: "summary:not(.not-content *)",
-        display: "block",
-        inlineMargin: "-0.5rem start",
-        inlinePadding: "0.5rem start",
-        color: "#text",
-        preset: "strong",
+        $: "summary",
+        display: { "": "", "@own(!:is(.not-content *))": "block" },
+        inlineMargin: {
+          "": null,
+          "@own(!:is(.not-content *))": "-0.5rem start",
+        },
+        inlinePadding: {
+          "": null,
+          "@own(!:is(.not-content *))": "0.5rem start",
+        },
+        color: { "": null, "@own(!:is(.not-content *))": "#text" },
+        preset: { "": null, "@own(!:is(.not-content *))": "strong" },
       },
       OpenSummary: {
-        $: "details[open] > summary:not(.not-content *)",
-        blockMargin: "($gap * 2) end",
+        $: "details > summary",
+        blockMargin: {
+          "": null,
+          "@own(:is(details[open] > summary)) & @own(!:is(.not-content *))":
+            "($gap * 2) end",
+        },
       },
       SummaryMarker: {
+        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // eslint-disable-next-line tasty/no-state-in-selector
         $: "summary:not(.not-content *)::marker, summary:not(.not-content *)::-webkit-details-marker",
         hide: true,
       },
       SummaryIcon: {
+        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // eslint-disable-next-line tasty/no-state-in-selector
         $: "summary:not(.not-content *)::before",
         content: '""',
         display: "inline-block",
@@ -113,12 +177,14 @@ export default function MarkdownStyles() {
         transition: "rotate $transition",
       },
       OpenSummaryIcon: {
+        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // eslint-disable-next-line tasty/no-state-in-selector
         $: "details[open] > summary:not(.not-content *)::before",
         rotate: "90deg",
       },
       Code: {
-        $: ":where(code):not(.not-content *)",
-        radius: "($radius * 0.65)",
+        $: ":where(code)",
+        radius: { "": null, "@own(!:is(.not-content *))": "($radius * 0.65)" },
       },
     }),
   );

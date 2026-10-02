@@ -39,7 +39,13 @@ export const MobileNavigationTabsRoot = defineComponent(
         hide: true,
       },
       Caret: { $: "summary > svg", flexShrink: "0" },
-      ExpandedCaret: { $: "details[open] > summary > svg", rotate: "180deg" },
+      ExpandedCaret: {
+        $: "details > summary > svg",
+        rotate: {
+          "": null,
+          "@own(:is(details[open] > summary > svg))": "180deg",
+        },
+      },
       List: {
         $: "ul",
         display: "grid",
@@ -65,14 +71,17 @@ export const MobileNavigationTabsRoot = defineComponent(
         radius: "$radius",
       },
       HoverLink: {
-        $: "a:hover",
-        color: "#text",
-        fill: "#surface-2-hover",
+        $: "a",
+        color: { "": null, "@own(:hover)": "#text" },
+        fill: { "": null, "@own(:hover)": "#surface-2-hover" },
       },
       CurrentLink: {
-        $: 'a[aria-current="page"]',
-        color: "#accent-text",
-        fill: "#accent-surface-subtle",
+        $: "a",
+        color: { "": null, '@own([aria-current="page"])': "#accent-text" },
+        fill: {
+          "": null,
+          '@own([aria-current="page"])': "#accent-surface-subtle",
+        },
       },
     },
   },

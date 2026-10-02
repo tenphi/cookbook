@@ -50,16 +50,21 @@ export default function DocumentStyles() {
         display: "contents",
       },
       LockedPage: {
-        // This is a CSS ID selector, not a semantic color token.
-        // eslint-disable-next-line tasty/valid-color-token
-        $: "&:has(#cookbook__sidebar:popover-open)",
-        overflow: { "@mobile": "hidden" },
+        $: "&:where(*)",
+        overflow: {
+          "": null,
+          ":has(#cookbook__sidebar:popover-open) & @mobile": "hidden",
+        },
       },
-      Light: { $: '&[data-theme="light"]', colorScheme: "light" },
+      Light: {
+        $: "&:where(*)",
+        colorScheme: { "": null, '[data-theme="light"]': "light" },
+      },
       Auto: {
-        $: "&:not([data-theme])",
+        $: "&:where(*)",
         colorScheme: {
-          "@system-light": "light",
+          "": null,
+          "![data-theme] & @system-light": "light",
         },
       },
     }),
@@ -102,24 +107,36 @@ export default function DocumentStyles() {
         cursor: "pointer",
       },
       ResponsiveWidth: {
-        $: "img:not([width]), :where(picture), video:not([width]), canvas:not([width]), svg:not([width]), iframe:not([width])",
-        inlineSize: "max 100%",
+        $: "img, :where(picture), video, canvas, svg, iframe",
+        inlineSize: {
+          "": null,
+          "@own(![width] | :is(picture))": "max 100%",
+        },
       },
       ResponsiveHeight: {
-        $: "img:not([height]), :where(picture), video:not([height]), canvas:not([height]), svg:not([height])",
-        blockSize: "auto",
+        $: "img, :where(picture), video, canvas, svg",
+        blockSize: {
+          "": null,
+          "@own(![height] | :is(picture))": "auto",
+        },
       },
-      Hidden: { $: ":where([hidden]), :where(.cookbook-hidden)", hide: true },
+      Hidden: {
+        $: ":where(*), :where(.cookbook-hidden)",
+        hide: {
+          "": null,
+          "@own([hidden] | .cookbook-hidden)": true,
+        },
+      },
       PrintHidden: {
         $: ".cookbook-print-hidden",
         display: { "@media:print": "none" },
       },
       DesktopBlock: {
-        $: '[class~="md:cookbook-block"]',
+        $: ":is(.md\\:cookbook-block)",
         display: { "": "block", "@mobile": "none" },
       },
       DesktopFlex: {
-        $: '[class~="md:cookbook-flex"]',
+        $: ":is(.md\\:cookbook-flex)",
         display: { "": "flex", "@mobile": "none" },
       },
       ScreenReaderOnly: {
@@ -137,11 +154,11 @@ export default function DocumentStyles() {
       Strong: { $: ":where(strong), :where(b)", preset: "strong" },
       Link: { $: "a", color: "#accent-text" },
       NarrowBlock: {
-        $: '[class~="lg:cookbook-hidden"]',
+        $: ":is(.lg\\:cookbook-hidden)",
         display: { "": "none", "@narrow-layout": "block" },
       },
       MobileBlock: {
-        $: '[class~="md:cookbook-hidden"]',
+        $: ":is(.md\\:cookbook-hidden)",
         display: { "": "none", "@mobile": "block" },
       },
       Code: {
@@ -149,11 +166,21 @@ export default function DocumentStyles() {
         preset: "code",
       },
       FocusRing: {
-        $: ":where(a):focus-visible, :where(button):focus-visible, :where(input):focus-visible, :where(select):focus-visible, :where(textarea):focus-visible, :where(summary):focus-visible",
-        outline: "$outline-width solid #focus / $outline-offset",
+        $: ":where(a), :where(button), :where(input), :where(select), :where(textarea), :where(summary)",
+        outline: {
+          "": null,
+          "@own(:focus-visible)":
+            "$outline-width solid #focus / $outline-offset",
+        },
       },
-      CurrentLink: { $: 'a[aria-current="page"]', radius: "$radius" },
-      SearchOpen: { $: "body[data-search-modal-open]", overflow: "hidden" },
+      CurrentLink: {
+        $: "a",
+        radius: { "": null, '@own([aria-current="page"])': "$radius" },
+      },
+      SearchOpen: {
+        $: "body",
+        overflow: { "": null, "@own([data-search-modal-open])": "hidden" },
+      },
     }),
   );
 
@@ -170,9 +197,9 @@ export default function DocumentStyles() {
       Level5: { $: "&:is(h5)", preset: "h5" },
       Level6: { $: "&:is(h6)", preset: "h6" },
       PageTitle: {
-        $: '&[id="_top"]', // Keep the browser or theme end margin while adjusting only the page-title start edge.
+        $: "&:where(*)", // Keep the browser or theme end margin while adjusting only the page-title start edge.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: "($gap * 2)",
+        marginBlockStart: { "": null, '[id="_top"]': "($gap * 2)" },
       },
     }),
   );

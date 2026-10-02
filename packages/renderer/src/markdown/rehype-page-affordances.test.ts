@@ -35,6 +35,7 @@ describe("Markdown page affordances", () => {
         {
           tagName: "button",
           properties: {
+            dataElement: "CopyButton",
             dataCopyCode: "",
             ariaLabel: "Copy code",
             title: "Copy code",
@@ -42,7 +43,11 @@ describe("Markdown page affordances", () => {
           children: [
             {
               tagName: "span",
-              properties: { dataCopyIcon: "", ariaHidden: "true" },
+              properties: {
+                dataElement: "CopyIcon",
+                dataCopyIcon: "",
+                ariaHidden: "true",
+              },
             },
           ],
         },

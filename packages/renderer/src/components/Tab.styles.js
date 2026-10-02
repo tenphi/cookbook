@@ -10,8 +10,11 @@ export const TabRoot = defineComponent("Tab", {
     margin: "0",
     padding: "2x",
     Heading: { margin: "0 0 1x", preset: "h3" },
-    Hidden: { $: "&[hidden]", hide: true },
-    HiddenHeading: { $: "> [data-tab-heading][hidden]", hide: true },
+    Hidden: { $: "&:where(*)", hide: { "": null, "[hidden]": true } },
+    HiddenHeading: {
+      $: "> *",
+      hide: { "": null, "@own([data-tab-heading] & [hidden])": true },
+    },
   },
   elements: { Heading: "h3" },
 });

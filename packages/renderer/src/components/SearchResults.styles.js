@@ -22,11 +22,23 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
     "$pagefind-ui-tag": "#surface-3",
     preset: "body",
     UI: {
-      $: ".pagefind-ui, [data-search-results]",
-      display: "flex",
-      flow: "column",
-      flexGrow: "1",
-      blockSize: "min 0",
+      $: ".pagefind-ui, *",
+      display: {
+        "": "",
+        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "flex",
+      },
+      flow: {
+        "": null,
+        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "column",
+      },
+      flexGrow: {
+        "": null,
+        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "1",
+      },
+      blockSize: {
+        "": null,
+        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "min 0",
+      },
     },
     Form: {
       $: ".pagefind-ui__form",
@@ -149,7 +161,10 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       fill: "#surface-2",
       preset: "navigation",
     },
-    HoverMore: { $: ".pagefind-ui__button:hover", fill: "#surface-2-hover" },
+    HoverMore: {
+      $: ".pagefind-ui__button",
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
+    },
     SearchIcon: {
       $: ".cookbook-search-field::before",
       content: '""',
@@ -178,8 +193,8 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
     },
     SuppressedClear: {
-      $: ".cookbook-search-clear[hidden]",
-      display: "none",
+      $: ".cookbook-search-clear",
+      display: { "": "", "@own([hidden])": "none" },
     },
   },
 });

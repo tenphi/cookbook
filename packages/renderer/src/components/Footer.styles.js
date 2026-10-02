@@ -21,8 +21,11 @@ export const FooterRoot = defineComponent("Footer", {
       preset: "small",
     },
     LoneMetaItem: {
-      $: ".td-footer__meta > :only-child",
-      inlineMargin: "auto start",
+      $: ".td-footer__meta > *",
+      inlineMargin: {
+        "": null,
+        "@own(:is(.td-footer__meta > :only-child))": "auto start",
+      },
     },
     MetaLink: {
       $: ".td-footer__meta a",
@@ -33,8 +36,8 @@ export const FooterRoot = defineComponent("Footer", {
       textDecoration: "none",
     },
     HoverMetaLink: {
-      $: ".td-footer__meta a:hover",
-      color: "#text",
+      $: ".td-footer__meta a",
+      color: { "": null, "@own(:is(.td-footer__meta a:hover))": "#text" },
     },
     Credit: {
       $: ".td-footer__credit",
@@ -50,8 +53,8 @@ export const FooterRoot = defineComponent("Footer", {
       textDecoration: "none",
     },
     HoverCreditLink: {
-      $: ".td-footer__credit a:hover",
-      color: "#text",
+      $: ".td-footer__credit a",
+      color: { "": null, "@own(:is(.td-footer__credit a:hover))": "#text" },
     },
   },
 });

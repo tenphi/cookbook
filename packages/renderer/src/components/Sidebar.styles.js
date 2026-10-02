@@ -47,7 +47,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
           "opacity $sidebar-transition ease-out, display $sidebar-transition allow-discrete, overlay $sidebar-transition allow-discrete",
       },
     },
-    OpenBackdrop: { $: "&:popover-open[data-open]::backdrop", opacity: "1" },
+    OpenBackdrop: {
+      $: "&::backdrop",
+      opacity: { "": null, "@popover-open & [data-open]": "1" },
+    },
     MobileHeading: {
       $: ".td-sidebar-heading",
       display: "flex",
@@ -68,15 +71,32 @@ export const SidebarRoot = defineComponent("Sidebar", {
       preset: "h4",
     },
     HomeLogo: {
-      $: '.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]',
-      inlineSize: "2rem",
-      blockSize: "2rem",
+      $: ".td-sidebar-heading__home > *",
+      inlineSize: {
+        "": null,
+        '@own(:is(.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]))':
+          "2rem",
+      },
+      blockSize: {
+        "": null,
+        '@own(:is(.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]))':
+          "2rem",
+      },
     },
     HomeLabel: {
-      $: ".td-sidebar-heading__home > [data-site-title]",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
+      $: ".td-sidebar-heading__home > *",
+      overflow: {
+        "": null,
+        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "hidden",
+      },
+      textOverflow: {
+        "": null,
+        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "ellipsis",
+      },
+      whiteSpace: {
+        "": null,
+        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "nowrap",
+      },
     },
     Close: {
       $: ".td-sidebar-heading > button",
@@ -92,9 +112,15 @@ export const SidebarRoot = defineComponent("Sidebar", {
       radius: "$header-control-radius",
     },
     HoverClose: {
-      $: ".td-sidebar-heading > button:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: ".td-sidebar-heading > button",
+      color: {
+        "": null,
+        "@own(:is(.td-sidebar-heading > button:hover))": "#text",
+      },
+      fill: {
+        "": null,
+        "@own(:is(.td-sidebar-heading > button:hover))": "#surface-2-hover",
+      },
     },
     CloseIcon: {
       $: ".td-sidebar-heading > button > svg",
@@ -102,15 +128,27 @@ export const SidebarRoot = defineComponent("Sidebar", {
       blockSize: "1.25rem",
     },
     CurrentLink: {
-      $: 'cookbook-sidebar a[aria-current="page"], cookbook-sidebar a[aria-current="page"]:hover, cookbook-sidebar a[aria-current="page"]:focus',
-      color: "#accent-text",
-      fill: "#accent-surface-subtle",
-      preset: "navigation / strong",
+      $: "cookbook-sidebar a",
+      color: {
+        "": null,
+        '@own([aria-current="page"])': "#accent-text",
+      },
+      fill: {
+        "": null,
+        '@own([aria-current="page"])': "#accent-surface-subtle",
+      },
+      preset: {
+        "": null,
+        '@own([aria-current="page"])': "navigation / strong",
+      },
     },
-    OpenPane: { $: "&:popover-open", visibility: { "@mobile": "visible" } },
+    OpenPane: {
+      $: "&:where(*)",
+      visibility: { "": null, "@popover-open & @mobile": "visible" },
+    },
     EnteredPane: {
-      $: "&:popover-open[data-open]",
-      translate: { "@mobile": "0" },
+      $: "&:where(*)",
+      translate: { "": null, "@popover-open & [data-open] & @mobile": "0" },
     },
     Content: {
       $: ".sidebar-content",
@@ -137,8 +175,12 @@ export const SidebarRoot = defineComponent("Sidebar", {
     Item: { $: "cookbook-sidebar li", overflowWrap: "anywhere" },
     TopLevelSpacing: { $: ".top-level > li + li", blockMargin: "0 start" },
     GroupSpacing: {
-      $: ".top-level > li + li:has(> .sidebar-section-label)",
-      blockMargin: "($gap * 2.5) start",
+      $: ".top-level > li + li",
+      blockMargin: {
+        "": null,
+        "@own(:is(.top-level > li + li:has(> .sidebar-section-label)))":
+          "($gap * 2.5) start",
+      },
     },
     NestedItem: {
       $: "cookbook-sidebar details > ul > li",
@@ -178,11 +220,23 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "0.25em",
     },
     GroupLabelText: {
-      $: ".group-label > span:first-child",
-      inlineSize: "min 0",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
+      $: ".group-label > span",
+      inlineSize: {
+        "": null,
+        "@own(:is(.group-label > span:first-child))": "min 0",
+      },
+      overflow: {
+        "": null,
+        "@own(:is(.group-label > span:first-child))": "hidden",
+      },
+      textOverflow: {
+        "": null,
+        "@own(:is(.group-label > span:first-child))": "ellipsis",
+      },
+      whiteSpace: {
+        "": null,
+        "@own(:is(.group-label > span:first-child))": "nowrap",
+      },
     },
     Link: {
       $: "cookbook-sidebar a",
@@ -194,16 +248,23 @@ export const SidebarRoot = defineComponent("Sidebar", {
       preset: "navigation",
     },
     LinkLabel: {
-      $: "a > span:first-child",
-      inlineSize: "min 0",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
+      $: "a > span",
+      inlineSize: { "": null, "@own(:is(a > span:first-child))": "min 0" },
+      overflow: { "": null, "@own(:is(a > span:first-child))": "hidden" },
+      textOverflow: { "": null, "@own(:is(a > span:first-child))": "ellipsis" },
+      whiteSpace: { "": null, "@own(:is(a > span:first-child))": "nowrap" },
     },
     InteractiveControl: {
-      $: "cookbook-sidebar a:hover, cookbook-sidebar a:focus-visible, cookbook-sidebar summary:hover, cookbook-sidebar summary:focus-visible",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "cookbook-sidebar a, cookbook-sidebar summary",
+      color: {
+        "": null,
+        '@own((:hover | :focus-visible) & ![aria-current="page"])': "#text",
+      },
+      fill: {
+        "": null,
+        '@own((:hover | :focus-visible) & ![aria-current="page"])':
+          "#surface-2-hover",
+      },
     },
     SummaryMarker: {
       $: "cookbook-sidebar summary::marker, summary::-webkit-details-marker",
@@ -219,19 +280,34 @@ export const SidebarRoot = defineComponent("Sidebar", {
       transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
     },
     ExpandedCaret: {
-      $: "details[open] > summary > .sidebar-caret, details[open] > summary > a > .sidebar-caret",
-      transform: "rotate(90deg)",
+      $: "details > summary > .sidebar-caret, details > summary > a > .sidebar-caret",
+      transform: {
+        "": null,
+        "@own(:is(details[open] > summary > .sidebar-caret)) | @own(:is(details[open] > summary > a > .sidebar-caret))":
+          "rotate(90deg)",
+      },
     },
-    LinkedSummary: { $: "summary:has(> a)", padding: "0" },
+    LinkedSummary: {
+      $: "summary",
+      padding: { "": null, "@own(:has(> a))": "0" },
+    },
     GroupLink: { $: "summary > a", justifyContent: "space-between" },
     LinkedSectionHeading: {
-      $: ".sidebar-section-label:has(> a)",
-      padding: "0",
+      $: ".sidebar-section-label",
+      padding: { "": null, "@own(:has(> a))": "0" },
     },
     SectionLink: {
-      $: '.sidebar-section-label > a:not([aria-current="page"])',
-      color: "#text",
-      preset: "small / strong",
+      $: ".sidebar-section-label > a",
+      color: {
+        "": null,
+        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
+          "#text",
+      },
+      preset: {
+        "": null,
+        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
+          "small / strong",
+      },
     },
     Badge: {
       $: ".sidebar-badge",
@@ -244,9 +320,9 @@ export const SidebarRoot = defineComponent("Sidebar", {
       preset: "small",
     },
     TopLevelLink: {
-      $: 'a.large:not([aria-current="page"])',
-      color: "#sidebar-text",
-      preset: "navigation",
+      $: "a.large",
+      color: { "": null, '@own(:not([aria-current="page"]))': "#sidebar-text" },
+      preset: { "": null, '@own(:not([aria-current="page"]))': "navigation" },
     },
   },
 });

@@ -37,15 +37,25 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       radius: "$header-control-radius",
       inlinePadding: "($gap * 2)",
     },
-    HoverLink: { $: "a:hover", color: "#text", fill: "#surface-2-hover" },
+    HoverLink: {
+      $: "a",
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
+    },
     PrimaryLink: {
-      $: 'a[data-variant="primary"]',
-      color: "#accent-surface-text",
-      fill: "#accent-surface",
+      $: "a",
+      color: {
+        "": null,
+        '@own([data-variant="primary"])': "#accent-surface-text",
+      },
+      fill: { "": null, '@own([data-variant="primary"])': "#accent-surface" },
     },
     HoverPrimaryLink: {
-      $: 'a[data-variant="primary"]:hover',
-      filter: "brightness(1.1)",
+      $: "a",
+      filter: {
+        "": null,
+        '@own([data-variant="primary"] & :hover)': "brightness(1.1)",
+      },
     },
     Trigger: {
       $: ".td-header-links__trigger",
@@ -61,9 +71,9 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       fill: "#clear",
     },
     HoverTrigger: {
-      $: ".td-header-links__trigger:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: ".td-header-links__trigger",
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     Panel: {
       $: ".td-header-links__panel",
@@ -89,9 +99,9 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       },
     },
     OpenPanel: {
-      $: ".td-header-links__panel:popover-open[data-open]",
-      opacity: "1",
-      scale: "1",
+      $: ".td-header-links__panel",
+      opacity: { "": null, "@own(@popover-open & [data-open])": "1" },
+      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
     },
     PanelNavigation: {
       $: ".td-header-links__panel nav",
@@ -109,8 +119,12 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       overflowWrap: "anywhere",
     },
     FirstPanelLink: {
-      $: ".td-header-links__panel a:first-child",
-      inlinePadding: "($gap * 1.5) start, ($docs-menu-button-size + $gap) end",
+      $: ".td-header-links__panel a",
+      inlinePadding: {
+        "": null,
+        "@own(:is(.td-header-links__panel a:first-child))":
+          "($gap * 1.5) start, ($docs-menu-button-size + $gap) end",
+      },
     },
     Close: {
       $: ".td-header-links__close",
@@ -127,9 +141,9 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       radius: "$header-control-radius",
     },
     HoverClose: {
-      $: ".td-header-links__close:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: ".td-header-links__close",
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
   },
 });

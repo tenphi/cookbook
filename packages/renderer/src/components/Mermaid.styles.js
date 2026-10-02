@@ -43,7 +43,7 @@ export function MermaidStyles() {
         margin: "auto",
       },
       Text: { $: "text", font: "$body-font-family" },
-      MonoText: { $: "[class~='mono']", font: "$code-font-family" },
+      MonoText: { $: ":is(.mono)", font: "$code-font-family" },
     }),
   );
   return null;

@@ -12,7 +12,7 @@ export const SearchRoot = defineComponent("Search", {
     display: "contents",
     "$dialog-transition": "120ms",
     Status: {
-      $: "[data-search-status]",
+      $: '[data-element="Status"]',
       margin: "auto",
       textAlign: "center",
       whiteSpace: "pre-line",
@@ -41,7 +41,7 @@ export const SearchRoot = defineComponent("Search", {
       },
     },
     CloseIcon: {
-      $: "button[data-close-modal]::before",
+      $: 'button[data-element="Close"]::before',
       content: '""',
       display: "block",
       flexGrow: "0",
@@ -54,11 +54,11 @@ export const SearchRoot = defineComponent("Search", {
       // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
     },
-    OpenDialog: { $: "dialog[open]", display: "flex" },
+    OpenDialog: { $: "dialog", display: { "": "", "@own([open])": "flex" } },
     EnteredDialog: {
-      $: "dialog[open][data-open]",
-      opacity: "1",
-      scale: "1",
+      $: "dialog",
+      opacity: { "": null, "@own([open] & [data-open])": "1" },
+      scale: { "": null, "@own([open] & [data-open])": "1" },
     },
     Backdrop: {
       $: "dialog::backdrop",
@@ -72,6 +72,8 @@ export const SearchRoot = defineComponent("Search", {
       },
     },
     EnteredBackdrop: {
+      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: "dialog[open][data-open]::backdrop",
       opacity: { "": "1", "@mobile": "0" },
     },
@@ -94,7 +96,7 @@ export const SearchRoot = defineComponent("Search", {
       blockSize: "min 0",
     },
     Close: {
-      $: "button[data-close-modal]",
+      $: 'button[data-element="Close"]',
       display: { "": "none", "@mobile": "grid" },
       placeItems: "center",
       alignSelf: "flex-end",
@@ -111,14 +113,20 @@ export const SearchRoot = defineComponent("Search", {
       transition: "color $transition, background-color $transition",
     },
     HoverClose: {
-      $: "button[data-close-modal]:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: 'button[data-element="Close"]',
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: {
+        "": null,
+        "@own(:hover)": "#surface-2-hover",
+      },
     },
     ActiveClose: {
-      $: "button[data-close-modal]:active",
-      color: "#text",
-      fill: "#surface-2-pressed",
+      $: 'button[data-element="Close"]',
+      color: { "": null, "@own(:active)": "#text" },
+      fill: {
+        "": null,
+        "@own(:active)": "#surface-2-pressed",
+      },
     },
   },
 });

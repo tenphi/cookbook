@@ -18,9 +18,15 @@ export function selectPopoverStyles({
       cursor: "pointer",
     },
     HoverTrigger: {
-      $: "> button:hover, &:has([popover]:popover-open) > button",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "> button",
+      color: {
+        "": null,
+        "@own(:hover) | :has([popover]:popover-open)": "#text",
+      },
+      fill: {
+        "": null,
+        "@own(:hover) | :has([popover]:popover-open)": "#surface-2-hover",
+      },
     },
     TriggerLabel: {
       $: ".trigger-label",
@@ -35,7 +41,7 @@ export function selectPopoverStyles({
       blockSize: "0.875rem",
     },
     Panel: {
-      $: "> [popover]",
+      $: '> [data-element="Panel"]',
       position: "fixed",
       inset: "auto",
       inlineSize: "min(15rem, calc(100vw - 2 * $docs-nav-pad-x))",
@@ -58,9 +64,12 @@ export function selectPopoverStyles({
       },
     },
     OpenPanel: {
-      $: "> [popover]:popover-open[data-open]",
-      opacity: "1",
-      scale: "1",
+      $: '> [data-element="Panel"]',
+      opacity: {
+        "": null,
+        "@own(@popover-open & [data-open])": "1",
+      },
+      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
     },
     PanelTitle: {
       $: ".panel-title",
@@ -82,14 +91,20 @@ export function selectPopoverStyles({
       radius: "$radius",
     },
     [hoverOption]: {
-      $: "nav a:hover",
-      color: "#text",
-      fill: "#surface-2-hover",
+      $: "nav a",
+      color: { "": null, "@own(:is(nav a:hover))": "#text" },
+      fill: { "": null, "@own(:is(nav a:hover))": "#surface-2-hover" },
     },
     [currentOption]: {
-      $: 'nav a[aria-current="page"]',
-      color: "#accent-text",
-      fill: "#accent-surface-2-subtle",
+      $: "nav a",
+      color: {
+        "": null,
+        '@own(:is(nav a[aria-current="page"]))': "#accent-text",
+      },
+      fill: {
+        "": null,
+        '@own(:is(nav a[aria-current="page"]))': "#accent-surface-2-subtle",
+      },
     },
     Checkmark: {
       $: "nav a > .checkmark",
@@ -100,8 +115,11 @@ export function selectPopoverStyles({
       visibility: "hidden",
     },
     SelectedCheckmark: {
-      $: 'nav a[aria-current="page"] > .checkmark',
-      visibility: "visible",
+      $: "nav a > .checkmark",
+      visibility: {
+        "": null,
+        '@own(:is(nav a[aria-current="page"] > .checkmark))': "visible",
+      },
     },
   };
 }

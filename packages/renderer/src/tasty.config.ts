@@ -112,6 +112,7 @@ export default {
     "@narrow-layout",
     "@medium-layout",
     "@reduced-motion",
+    "@popover-open",
   ],
   presets: [
     "body",

@@ -29,7 +29,13 @@ const contrasts = [
   >
     <span aria-hidden="true" set:html={paletteIcon} />
   </button>
-  <div id={id} popover="auto" role="group" aria-label={ui.appearance}>
+  <div
+    data-element="Panel"
+    id={id}
+    popover="auto"
+    role="group"
+    aria-label={ui.appearance}
+  >
     <fieldset>
       <legend>{ui.colorScheme}</legend>
       {

@@ -32,9 +32,14 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
       textDecoration: "none",
       whiteSpace: "nowrap",
     },
-    HoverLink: { $: "a:hover", color: "#text" },
-    CurrentLink: { $: 'a[aria-current="page"]', color: "#accent-text" },
+    HoverLink: { $: "a", color: { "": null, "@own(:hover)": "#text" } },
+    CurrentLink: {
+      $: "a",
+      color: { "": null, '@own([aria-current="page"])': "#accent-text" },
+    },
     ActiveIndicator: {
+      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[aria-current="page"]::after',
       content: '""',
       position: "absolute",

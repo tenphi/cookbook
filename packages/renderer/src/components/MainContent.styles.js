@@ -8,8 +8,9 @@ export const MainContentRoot = defineComponent("MainContent", {
   "data-tasty-anatomy": "MainContent",
   styles: {
     padding: "0 0 5rem",
+    // Layout spacing is a default; generated Markdown owns prose spacing.
     ContentSpacing: {
-      $: ".content-panel > .cookbook-container > * + *",
+      $: ":where(.content-panel > .cookbook-container) > * + *",
       // Keep each child's owned end margin while applying spacing before it.
       // eslint-disable-next-line tasty/prefer-shorthand-property
       marginBlockStart: "($gap * 3)",
@@ -21,14 +22,17 @@ export const MainContentRoot = defineComponent("MainContent", {
     },
     Panel: { $: ".content-panel", padding: "($gap * 3) $docs-content-pad-x" },
     FirstPanel: {
-      $: "> .content-panel:first-of-type",
-      blockPadding: "($gap * 3) start, ($gap * 2) end",
+      $: "> .content-panel",
+      blockPadding: {
+        "": null,
+        "@own(:first-of-type)": "($gap * 3) start, ($gap * 2) end",
+      },
     },
     BodyPanel: {
-      $: "> .content-panel:nth-of-type(2)",
+      $: "> .content-panel",
       // Patch only the start edge; the Panel rule owns the end padding.
       // eslint-disable-next-line tasty/prefer-shorthand-property
-      paddingBlockStart: "($gap * 2)",
+      paddingBlockStart: { "": null, "@own(:nth-of-type(2))": "($gap * 2)" },
     },
   },
 });

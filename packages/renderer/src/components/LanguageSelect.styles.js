@@ -16,6 +16,8 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
     // eslint-disable-next-line tasty/no-runtime-styles-mutation
     "$popover-transition": languageSelectStyles["$popover-transition"],
     Compact: {
+      // Preserve the conditional scope of this empty legacy customization hook.
+      // eslint-disable-next-line tasty/no-state-in-selector
       $: "&[data-compact]",
     },
     Trigger: {
@@ -35,9 +37,9 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       ...languageSelectStyles.HoverTrigger,
     },
     ActiveTrigger: {
-      $: "> button:active",
-      color: "#text",
-      fill: "#surface-2-pressed",
+      $: "> button",
+      color: { "": null, "@own(:active)": "#text" },
+      fill: { "": null, "@own(:active)": "#surface-2-pressed" },
     },
     LabelIcon: {
       $: "> button > .label-icon",
@@ -57,27 +59,39 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       ...languageSelectStyles.Caret,
     },
     CompactTrigger: {
-      $: "&[data-compact] > button",
-      inlineSize: "$docs-menu-button-size",
-      blockSize: "$docs-menu-button-size",
-      padding: "0",
+      $: "& > button",
+      inlineSize: { "": null, "[data-compact]": "$docs-menu-button-size" },
+      blockSize: { "": null, "[data-compact]": "$docs-menu-button-size" },
+      padding: { "": null, "[data-compact]": "0" },
     },
     CompactLabel: {
-      $: "&[data-compact] > button > .trigger-label",
-      hide: true,
+      $: "& > button > .trigger-label",
+      hide: { "": null, "[data-compact]": true },
     },
     CompactCaret: {
-      $: "&[data-compact] > button > [class~='caret']",
-      hide: true,
+      $: "& > button > :is(.caret)",
+      hide: { "": null, "[data-compact]": true },
     },
     Label: { $: "> button" },
-    HoverLabel: { $: "> button:hover" },
+    HoverLabel: {
+      // Preserve the conditional scope of this empty legacy customization hook.
+      // eslint-disable-next-line tasty/no-state-in-selector
+      $: "> button:hover",
+    },
     Select: { $: "> button" },
-    CompactSelect: { $: "&[data-compact] > button" },
-    CompactLabelIcon: { $: "&[data-compact] > button > .label-icon" },
+    CompactSelect: {
+      // Preserve the conditional scope of this empty legacy customization hook.
+      // eslint-disable-next-line tasty/no-state-in-selector
+      $: "&[data-compact] > button",
+    },
+    CompactLabelIcon: {
+      // Preserve the conditional scope of this empty legacy customization hook.
+      // eslint-disable-next-line tasty/no-state-in-selector
+      $: "&[data-compact] > button > .label-icon",
+    },
     SidebarTrigger: {
-      $: "&[data-sidebar] > button",
-      anchorName: "--language-trigger",
+      $: "& > button",
+      anchorName: { "": null, "[data-sidebar]": "--language-trigger" },
     },
     Panel: {
       // Reuse the shared, server-only popover anatomy.
@@ -88,14 +102,32 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
         "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
     },
     SidebarPanel: {
-      $: "&[data-sidebar] > [popover]",
-      positionAnchor: "--language-trigger",
-      blockInset: "auto start, anchor(top) end",
-      blockMargin: "$gap end",
-      inlineInset: "$gap start, auto end",
-      inlineSize: "min(20rem, calc(100vw - 4rem))",
-      blockSize: "max (100dvh - 8rem)",
-      transformOrigin: "bottom",
+      $: '& > [data-element="Panel"]',
+      positionAnchor: {
+        "": null,
+        "[data-sidebar]": "--language-trigger",
+      },
+      blockInset: {
+        "": null,
+        "[data-sidebar]": "auto start, anchor(top) end",
+      },
+      blockMargin: { "": null, "[data-sidebar]": "$gap end" },
+      inlineInset: {
+        "": null,
+        "[data-sidebar]": "$gap start, auto end",
+      },
+      inlineSize: {
+        "": null,
+        "[data-sidebar]": "min(20rem, calc(100vw - 4rem))",
+      },
+      blockSize: {
+        "": null,
+        "[data-sidebar]": "max (100dvh - 8rem)",
+      },
+      transformOrigin: {
+        "": null,
+        "[data-sidebar]": "bottom",
+      },
     },
     OpenPanel: {
       // Reuse the shared, server-only popover anatomy.
