@@ -97,9 +97,12 @@ function inventory(source: string) {
                           parts: parts(resolver.arguments[1]),
                         });
                       }
-                      if (node.callee.name === "customizeComponent") {
-                        const factory = node.arguments[1];
-                        const options = factory.arguments.at(-1);
+                      if (
+                        ["defineComponent", "extendComponent"].includes(
+                          node.callee.name,
+                        )
+                      ) {
+                        const options = node.arguments.at(-1);
                         const styles = options.properties.find(
                           (p: any) => p.key?.name === "styles",
                         ).value;
@@ -111,8 +114,7 @@ function inventory(source: string) {
                       }
                       if (
                         node.callee.name === "tasty" &&
-                        node.arguments.length === 1 &&
-                        node.parent?.callee?.name !== "customizeComponent"
+                        node.arguments.length === 1
                       )
                         failures.push(
                           "A built-in root must expose named theme customization",
@@ -138,6 +140,10 @@ describe("component style ownership", () => {
     [
       "Hero.styles.js",
       'import { tasty } from "@tenphi/tasty";\nexport const Root = tasty({ styles: { maxInlineSize: "100%" } });',
+    ],
+    [
+      "Hero.styles.js",
+      'import { defineComponent } from "../define-component.js";\nexport const Root = defineComponent("Hero", { styles: { maxInlineSize: "100%" } });',
     ],
     [
       "Document.styles.js",
@@ -173,6 +179,7 @@ describe("component style ownership", () => {
     const actual = [];
     for (const [file, source] of sources) {
       expect(source, file).not.toContain("@media(prefers-color-scheme:");
+      expect(source, file).not.toContain("customizeComponent");
       const { surfaces, failures } = inventory(source);
       expect(failures, file).toEqual([]);
       for (const surface of surfaces) {

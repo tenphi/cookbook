@@ -1,12 +1,11 @@
 import { configureCookbookStates } from "./tasty-states.js";
-import { tasty } from "@tenphi/tasty";
-import { customizeComponent } from "./customize-component.js";
+import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
-export const MobileNavigationTabsRoot = customizeComponent(
+export const MobileNavigationTabsRoot = defineComponent(
   "MobileNavigationTabs",
-  tasty({
+  {
     as: "nav",
     "data-tasty-anatomy": "MobileNavigationTabs",
     styles: {
@@ -76,5 +75,5 @@ export const MobileNavigationTabsRoot = customizeComponent(
         fill: "#accent-surface-subtle",
       },
     },
-  }),
+  },
 );

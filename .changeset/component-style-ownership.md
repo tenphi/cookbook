@@ -13,3 +13,5 @@ Upgrade Tasty to 3.9.3 and its ESLint plugin to 1.3.0.
 Enable shorthand-property diagnostics for component-owned styles and register renderer-local style helpers so global bridges receive the same validation. Use registered warning palette roles for Markdown warning alerts.
 
 Support named component inheritance through extendComponent(name, base, options), preserving inherited props and compound parts. Export a configurable Button foundation shared by search, mobile-menu, and consumer buttons.
+
+Unify built-in and consumer component creation and theme customization with defineComponent, removing the separate customizeComponent wrapper.

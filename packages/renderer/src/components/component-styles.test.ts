@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   configureComponentStyles,
-  resolveComponentStyleOverride,
   resolveComponentStyles,
   unusedCustomStyleNames,
 } from "./component-styles.js";
@@ -24,15 +23,6 @@ describe("component style configuration", () => {
       color: "#text",
       padding: "3x",
       Label: { color: "#accent-text", fontWeight: 500 },
-    });
-  });
-
-  it("returns the user override for Tasty component composition", () => {
-    expect(resolveComponentStyleOverride("Card")).toBeUndefined();
-
-    configureComponentStyles({ Card: { padding: "3x" } });
-    expect(resolveComponentStyleOverride("Card")).toEqual({
-      padding: "3x",
     });
   });
 

@@ -75,7 +75,7 @@ export function extendComponent<C extends ComponentType<any>>(
     InheritedParts<C>;
 }
 
-/** Create a named Tasty component with theme.customStyles[name] merged into its defaults. */
+/** Create a named component with its built-in or custom theme styles merged into its defaults. */
 export function defineComponent<
   K extends readonly (keyof StylesInterface)[],
   V extends VariantMap,

@@ -1,51 +1,47 @@
 import { configureCookbookStates } from "./tasty-states.js";
-import { tasty } from "@tenphi/tasty";
-import { customizeComponent } from "./customize-component.js";
+import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
-export const TopNavigationRoot = customizeComponent(
-  "TopNavigation",
-  tasty({
-    as: "nav",
-    "data-tasty-anatomy": "TopNavigation",
-    styles: {
-      display: "flex",
-      hide: { "": false, "@mobile": true },
-      alignItems: "stretch",
-      gap: "clamp(1.25rem, 2.5vw, 2.5rem)",
-      inlineSize: "100%",
-      blockSize: "min 2.75rem",
-      blockBorder: "1bw solid #border start",
-      overflowX: "auto",
-      scrollbar: "none",
+export const TopNavigationRoot = defineComponent("TopNavigation", {
+  as: "nav",
+  "data-tasty-anatomy": "TopNavigation",
+  styles: {
+    display: "flex",
+    hide: { "": false, "@mobile": true },
+    alignItems: "stretch",
+    gap: "clamp(1.25rem, 2.5vw, 2.5rem)",
+    inlineSize: "100%",
+    blockSize: "min 2.75rem",
+    blockBorder: "1bw solid #border start",
+    overflowX: "auto",
+    scrollbar: "none",
 
-      Scrollbar: { $: "&::-webkit-scrollbar", hide: true },
-      Link: {
-        $: "a",
-        position: "relative",
-        display: "inline-flex",
-        alignItems: "center",
-        flexGrow: "0",
-        flexShrink: "0",
-        flexBasis: "auto",
-        blockPadding: "($gap * 1.25) start, $gap end",
-        color: "#text-soft",
-        preset: "navigation",
-        textDecoration: "none",
-        whiteSpace: "nowrap",
-      },
-      HoverLink: { $: "a:hover", color: "#text" },
-      CurrentLink: { $: 'a[aria-current="page"]', color: "#accent-text" },
-      ActiveIndicator: {
-        $: 'a[aria-current="page"]::after',
-        content: '""',
-        position: "absolute",
-        inset: "auto 0 0",
-        blockSize: "2px",
-        radius: "999px",
-        fill: "#accent-surface",
-      },
+    Scrollbar: { $: "&::-webkit-scrollbar", hide: true },
+    Link: {
+      $: "a",
+      position: "relative",
+      display: "inline-flex",
+      alignItems: "center",
+      flexGrow: "0",
+      flexShrink: "0",
+      flexBasis: "auto",
+      blockPadding: "($gap * 1.25) start, $gap end",
+      color: "#text-soft",
+      preset: "navigation",
+      textDecoration: "none",
+      whiteSpace: "nowrap",
     },
-  }),
-);
+    HoverLink: { $: "a:hover", color: "#text" },
+    CurrentLink: { $: 'a[aria-current="page"]', color: "#accent-text" },
+    ActiveIndicator: {
+      $: 'a[aria-current="page"]::after',
+      content: '""',
+      position: "absolute",
+      inset: "auto 0 0",
+      blockSize: "2px",
+      radius: "999px",
+      fill: "#accent-surface",
+    },
+  },
+});

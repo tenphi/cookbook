@@ -9,7 +9,8 @@ For color roles and design tokens, start with the
 
 ## Style customization
 
-Cookbook-owned interface elements are direct `tasty()` components. Supported
+Cookbook-owned interface elements use `defineComponent()` to create Tasty components
+and merge their named theme overrides. Shared bases use `extendComponent()`.
 Cookbook components and generated Markdown surfaces use Tasty style trees.
 Customize them by name under `theme.styles`; the configuration is resolved
 before CSS generation, so this is not a selector-based CSS override.

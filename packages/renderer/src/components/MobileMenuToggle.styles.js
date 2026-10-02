@@ -1,13 +1,13 @@
 import { configureCookbookStates } from "./tasty-states.js";
-import { tasty } from "@tenphi/tasty";
-import { customizeComponent } from "./customize-component.js";
+import { extendComponent } from "../define-component.js";
 import { Button } from "./Button.styles.js";
 
 configureCookbookStates();
 
-export const MobileMenuToggleRoot = customizeComponent(
+export const MobileMenuToggleRoot = extendComponent(
   "MobileMenuToggle",
-  tasty(Button, {
+  Button,
+  {
     "data-tasty-anatomy": "MobileMenuToggle",
     styles: {
       display: { "": "none", "@mobile": "flex" },
@@ -47,5 +47,5 @@ export const MobileMenuToggleRoot = customizeComponent(
       HoverControl: { $: "&:hover", color: "#text" },
       ActiveControl: { $: "&:active", color: "#accent-text" },
     },
-  }),
+  },
 );

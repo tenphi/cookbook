@@ -43,9 +43,12 @@ for (const file of await walk(rendererSource)) {
     );
   }
   if (
-    ["GlobalStyles.js", "LayoutComponents.js", "TastyComponents.js"].includes(
-      basename(file),
-    )
+    [
+      "GlobalStyles.js",
+      "LayoutComponents.js",
+      "TastyComponents.js",
+      "customize-component.js",
+    ].includes(basename(file))
   )
     throw new Error(
       `Component styles must live in their owning modules: ${file}`,

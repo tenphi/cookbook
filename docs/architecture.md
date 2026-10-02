@@ -62,11 +62,11 @@ asset during the build; no Tasty styling runtime ships to the browser.
 Each built-in component has an owning `components/<Name>.styles.js` module
 with its complete base style tree and named sub-elements. Its Astro markup
 imports that definition directly. Rendered roots use
-`customizeComponent(name, tasty(options))` to apply partial `theme.styles`
+`defineComponent(name, options)` to apply partial `theme.styles`
 overrides before extraction. Existing configuration names and sub-element
 lists remain the public customization contract.
 
-Use `customizeComponent(name, tasty(base, options))` for derived roots. `Button`
+Use `extendComponent(name, base, options)` for derived roots. `Button`
 owns shared button defaults; `SearchButton` and `MobileMenuToggle` extend it
 with their own layout and named anatomy. Base theme overrides are inherited,
 then the descendant's styles and theme overrides take precedence. Keep shared

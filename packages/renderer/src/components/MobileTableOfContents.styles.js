@@ -1,12 +1,11 @@
 import { configureCookbookStates } from "./tasty-states.js";
-import { tasty } from "@tenphi/tasty";
-import { customizeComponent } from "./customize-component.js";
+import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
-export const MobileTableOfContentsRoot = customizeComponent(
+export const MobileTableOfContentsRoot = defineComponent(
   "MobileTableOfContents",
-  tasty({
+  {
     as: "cookbook-mobile-toc",
     "data-tasty-anatomy": "MobileTableOfContents",
     styles: {
@@ -48,5 +47,5 @@ export const MobileTableOfContentsRoot = customizeComponent(
         outline: "2px solid #focus / 2px",
       },
     },
-  }),
+  },
 );

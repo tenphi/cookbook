@@ -8,6 +8,7 @@ export default defineConfig({
     "components/props": "src/components/props.ts",
     "client/tabs": "src/client/tabs.ts",
     styling: "src/styling.ts",
+    "define-component": "src/define-component.ts",
     "eslint-plugin": "src/eslint-plugin.ts",
     "theme/shiki-theme": "src/theme/shiki-theme.ts",
     "page-metadata": "src/page-metadata.ts",

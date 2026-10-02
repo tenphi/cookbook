@@ -1,12 +1,11 @@
 import { configureCookbookStates } from "./tasty-states.js";
-import { tasty } from "@tenphi/tasty";
-import { customizeComponent } from "./customize-component.js";
+import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
-export const TableOfContentsLayoutRoot = customizeComponent(
+export const TableOfContentsLayoutRoot = defineComponent(
   "TableOfContentsLayout",
-  tasty({
+  {
     as: "aside",
     "data-tasty-anatomy": "TableOfContentsLayout",
     styles: {
@@ -31,5 +30,5 @@ export const TableOfContentsLayoutRoot = customizeComponent(
         scrollbarWidth: "none",
       },
     },
-  }),
+  },
 );

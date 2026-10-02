@@ -36,10 +36,3 @@ export function unusedCustomStyleNames(
       !sharedConfiguration.__tenphiCookbookUsedComponentStyles?.has(name),
   );
 }
-
-export function resolveComponentStyleOverride(
-  name: string,
-): Styles | undefined {
-  return sharedConfiguration.__tenphiCookbookComponentStyles?.[name] as
-    Styles | undefined;
-}
