@@ -111,8 +111,7 @@ export const HeroRoot = defineComponent("Hero", {
     },
     MinimalAction: {
       $: ".cookbook-link-button.minimal",
-      paddingInlineStart: "0",
-      paddingInlineEnd: "0",
+      inlinePadding: "0",
       color: "#accent-text",
       border: "0",
       fill: "#clear",

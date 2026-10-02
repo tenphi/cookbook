@@ -136,6 +136,33 @@ function inventory(source: string) {
 }
 
 describe("component style ownership", () => {
+  it("warns about both native padding edges in named sub-elements without autofixing them", async () => {
+    const eslint = new ESLint({
+      cwd: fileURLToPath(new URL("../../../", import.meta.url)),
+      fix: true,
+    });
+    const [result] = await eslint.lintText(
+      'import { defineComponent } from "../define-component.js";\nexport const Root = defineComponent("Hero", { styles: { MinimalAction: { $: ".minimal", paddingInlineStart: "0", paddingInlineEnd: "0" } } });',
+      {
+        filePath: fileURLToPath(
+          new URL("../src/components/Hero.styles.js", import.meta.url),
+        ),
+      },
+    );
+    for (const property of ["paddingInlineStart", "paddingInlineEnd"]) {
+      expect(result.messages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ruleId: "tasty/prefer-shorthand-property",
+            severity: 1,
+            message: expect.stringContaining(property),
+          }),
+        ]),
+      );
+    }
+    expect(result.output).toBeUndefined();
+  });
+
   it.each([
     [
       "Hero.styles.js",
