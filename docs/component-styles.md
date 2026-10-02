@@ -134,8 +134,8 @@ instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
 A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change
 only that branch. `"": null` omits a declaration outside a condition. For
-conditional `display`, use `"": ""` because Tasty's flow handler currently
-does not accept a null display value.
+conditional `display`, `"": null` is also supported, including styles with
+`flow` or `gap`.
 
 For a compact language selector, customize the root with
 `LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
