@@ -10,7 +10,7 @@ minimumReleaseAgeExclude:
   - astro@7.3.2
   - "@astrojs/language-server@2.16.15"
   - "@tenphi/tasty@3.9.3"
-  - "@tenphi/eslint-plugin-tasty@1.4.0"
+  - "@tenphi/eslint-plugin-tasty@1.5.0"
   - "@tenphi/glaze@2.0.0"
   - typescript@7.0.2
   - sharp@0.35.4

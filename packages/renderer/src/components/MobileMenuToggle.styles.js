@@ -10,6 +10,7 @@ export const MobileMenuToggleRoot = extendComponent(
   {
     "data-element": "MobileMenuToggle",
     styles: {
+      color: { ":hover": "#text", ":active": "#accent-text" },
       display: { "": "none", "@mobile": "flex" },
       inlineSize: "(100% + ($docs-nav-pad-x * 2))",
       inlineMargin: "(-1 * $docs-nav-pad-x)",
@@ -22,7 +23,6 @@ export const MobileMenuToggleRoot = extendComponent(
       fill: "#clear",
       preset: "navigation",
       textAlign: "start",
-      Control: { $: "&.td-menu-button", cursor: "pointer" },
       Icon: {
         $: "> svg",
         flexShrink: "0",
@@ -43,11 +43,6 @@ export const MobileMenuToggleRoot = extendComponent(
         whiteSpace: "nowrap",
         color: "#text",
         preset: "navigation / strong",
-      },
-      HoverControl: { $: "&:where(*)", color: { "": null, ":hover": "#text" } },
-      ActiveControl: {
-        $: "&:where(*)",
-        color: { "": null, ":active": "#accent-text" },
       },
     },
   },

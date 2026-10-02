@@ -9,12 +9,13 @@ export const TableOfContentsLayoutRoot = defineComponent(
     as: "aside",
     "data-element": "TableOfContentsLayout",
     styles: {
-      hide: { "": false, "@narrow-layout": true },
-      order: { "": "2", "@narrow-layout": "0" },
-      WithMobile: {
-        $: "&:where(*)",
-        display: { "": "", ":has(cookbook-mobile-toc)": "block" },
+      display: { "": "", ":has(cookbook-mobile-toc)": "block" },
+      hide: {
+        "": false,
+        "@narrow-layout": true,
+        ":has(cookbook-mobile-toc)": false,
       },
+      order: { "": "2", "@narrow-layout": "0" },
       position: "relative",
       inlineSize: {
         "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",

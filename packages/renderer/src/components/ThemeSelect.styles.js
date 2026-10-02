@@ -52,7 +52,7 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
     },
     Panel: {
-      $: '[data-element="Panel"]',
+      $: "Panel",
       position: "fixed",
       inset: "auto",
       blockInset: { "": "4rem start", "@mobile": "3.5rem start" },

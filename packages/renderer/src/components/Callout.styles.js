@@ -7,9 +7,24 @@ export const CalloutRoot = defineComponent("Callout", {
   as: "aside",
   "data-element": "Callout",
   styles: {
-    "#callout-border": "#info",
-    "#callout-text": "#info-text",
-    "#callout-surface": "#info-surface",
+    "#callout-border": {
+      "": "#info",
+      '[data-kind="tip"]': "#success",
+      '[data-kind="caution"]': "#warning",
+      '[data-kind="danger"]': "#danger",
+    },
+    "#callout-text": {
+      "": "#info-text",
+      '[data-kind="tip"]': "#success-text",
+      '[data-kind="caution"]': "#warning-text",
+      '[data-kind="danger"]': "#danger-text",
+    },
+    "#callout-surface": {
+      "": "#info-surface",
+      '[data-kind="tip"]': "#success-surface",
+      '[data-kind="caution"]': "#warning-surface",
+      '[data-kind="danger"]': "#danger-surface",
+    },
     "$margin-block-start": "2x",
     "$margin-block-end": "2x",
     blockMargin: "$margin-block-start $margin-block-end",
@@ -33,30 +48,6 @@ export const CalloutRoot = defineComponent("Callout", {
       "$margin-block-end": "0",
       blockMargin: "$margin-block-start $margin-block-end",
       inlineMargin: "0",
-    },
-    Tip: {
-      $: "&:where(*)",
-      "#callout-border": { "": null, '[data-kind="tip"]': "#success" },
-      "#callout-text": { "": null, '[data-kind="tip"]': "#success-text" },
-      "#callout-surface": { "": null, '[data-kind="tip"]': "#success-surface" },
-    },
-    Caution: {
-      $: "&:where(*)",
-      "#callout-border": { "": null, '[data-kind="caution"]': "#warning" },
-      "#callout-text": { "": null, '[data-kind="caution"]': "#warning-text" },
-      "#callout-surface": {
-        "": null,
-        '[data-kind="caution"]': "#warning-surface",
-      },
-    },
-    Danger: {
-      $: "&:where(*)",
-      "#callout-border": { "": null, '[data-kind="danger"]': "#danger" },
-      "#callout-text": { "": null, '[data-kind="danger"]': "#danger-text" },
-      "#callout-surface": {
-        "": null,
-        '[data-kind="danger"]': "#danger-surface",
-      },
     },
   },
   elements: { Title: "p", Body: "div" },

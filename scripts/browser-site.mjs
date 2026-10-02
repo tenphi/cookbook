@@ -72,7 +72,7 @@ import { CodeGroup } from "@tenphi/cookbook/components";
         },
         LanguageSelect: {
           Panel: { padding: "13px", radius: "19px" },
-          Compact: { border: "4px solid #border" },
+          border: { "": null, "[data-compact]": "4px solid #border" },
         },
       };
       const guide = join(site, "docs/guide.mdx");

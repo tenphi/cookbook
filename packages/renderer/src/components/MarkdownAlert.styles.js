@@ -9,33 +9,27 @@ export function MarkdownAlertStyles() {
     ".cookbook-alert",
     resolveComponentStyles("MarkdownAlert", {
       padding: "($gap * 2) ($gap * 2.5)",
-      color: "#text-soft",
-      border: true,
+      color: {
+        "": "#text-soft",
+        ".cookbook-alert--note": "#blue-text",
+        ".cookbook-alert--tip": "#green-text",
+        ".cookbook-alert--caution": "#warning-text",
+        ".cookbook-alert--danger": "#red-text",
+      },
+      border: {
+        "": true,
+        ".cookbook-alert--note": "#blue",
+        ".cookbook-alert--tip": "#green",
+        ".cookbook-alert--caution": "#warning",
+        ".cookbook-alert--danger": "#red",
+      },
       radius: "$card-radius",
-      fill: "#surface-2",
-      Note: {
-        $: "&.cookbook-alert--note",
-        fill: "#blue-surface",
-        color: "#blue-text",
-        border: "#blue",
-      },
-      Tip: {
-        $: "&.cookbook-alert--tip",
-        fill: "#green-surface",
-        color: "#green-text",
-        border: "#green",
-      },
-      Caution: {
-        $: "&.cookbook-alert--caution",
-        fill: "#warning-surface",
-        color: "#warning-text",
-        border: "#warning",
-      },
-      Danger: {
-        $: "&.cookbook-alert--danger",
-        fill: "#red-surface",
-        color: "#red-text",
-        border: "#red",
+      fill: {
+        "": "#surface-2",
+        ".cookbook-alert--note": "#blue-surface",
+        ".cookbook-alert--tip": "#green-surface",
+        ".cookbook-alert--caution": "#warning-surface",
+        ".cookbook-alert--danger": "#red-surface",
       },
       Title: {
         $: ".cookbook-alert__title",

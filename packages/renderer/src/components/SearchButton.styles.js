@@ -9,6 +9,7 @@ configureCookbookStates();
 export const SearchButtonRoot = extendComponent("SearchButton", Button, {
   "data-element": "SearchButton",
   styles: {
+    color: { ":hover": "#text", ":active": "#text" },
     justifyContent: { "": "flex-start", "@mobile": "center" },
     inlineSize: {
       "": "initial 100% 22rem",
@@ -25,7 +26,12 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     padding: { "": "0 $gap 0 ($gap * 1.5)", "@mobile": "0" },
     border: { "": true, "@mobile": "0" },
     radius: "$header-control-radius",
-    fill: { "": "#surface", "@mobile": "#clear" },
+    fill: {
+      "": "#surface",
+      "@mobile": "#clear",
+      ":hover": "#surface-2-hover",
+      ":active": "#surface-2-pressed",
+    },
     preset: "small",
     shadow: "none",
     transition: "color $transition, fill $transition",
@@ -44,16 +50,6 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       fill: "#surface-3",
       preset: "small",
       radius: "($radius * 0.75)",
-    },
-    Hover: {
-      $: "&:where(*)",
-      color: { "": null, ":hover": "#text" },
-      fill: { "": null, ":hover": "#surface-2-hover" },
-    },
-    Active: {
-      $: "&:where(*)",
-      color: { "": null, ":active": "#text" },
-      fill: { "": null, ":active": "#surface-2-pressed" },
     },
     NativeIcon: { $: "> svg", hide: true },
     Icon: {

@@ -6,62 +6,81 @@ configureCookbookStates();
 
 export function SyntaxHighlightStyles() {
   useGlobalStyles(
-    ".tasty-code",
+    // State conditions add no specificity; preserve the former root category weight.
+    ".tasty-code.tasty-code",
     resolveComponentStyles("SyntaxHighlight", {
-      Scroll: { $: "&.td-syntax-scroll", overflowX: "auto" },
-      Wrap: {
-        $: "&.td-syntax-wrap",
-        whiteSpace: "pre-wrap",
-        overflowWrap: "break-word",
+      color: {
+        "": null,
+        ".td-syntax-comment": "#syntax-comment",
+        ".td-syntax-punctuation": "#syntax-punctuation",
+        ".td-syntax-keyword": "#syntax-keyword",
+        ".td-syntax-string": "#syntax-string",
+        ".td-syntax-token": "#syntax-token",
+        ".td-syntax-property": "#syntax-property",
+        ".td-syntax-number": "#syntax-number",
+        ".td-syntax-function": "#syntax-function",
+        ".td-syntax-value": "#syntax-value",
+        ".td-syntax-operator": "#syntax-operator",
+        ".td-syntax-text": "#syntax-text",
+        ".td-green-text": "#green-text",
+        ".td-red-text": "#red-text",
       },
-      Marker: { $: ".td-syntax-marker", userSelect: "none" },
+      fill: { "": null, ".td-syntax-bg": "#syntax-bg" },
+      overflowX: { "": null, ".td-syntax-scroll": "auto" },
+      whiteSpace: { "": null, ".td-syntax-wrap": "pre-wrap" },
+      overflowWrap: { "": null, ".td-syntax-wrap": "break-word" },
+      // Descendant identities stay neutral so these rules retain their original weight.
+      Marker: { $: ":where(.td-syntax-marker)", userSelect: "none" },
       Comment: {
-        $: "&.td-syntax-comment, .td-syntax-comment",
+        $: ":where(.td-syntax-comment)",
         color: "#syntax-comment",
       },
       Punctuation: {
-        $: "&.td-syntax-punctuation, .td-syntax-punctuation",
+        $: ":where(.td-syntax-punctuation)",
         color: "#syntax-punctuation",
       },
       Keyword: {
-        $: "&.td-syntax-keyword, .td-syntax-keyword",
+        $: ":where(.td-syntax-keyword)",
         color: "#syntax-keyword",
       },
       String: {
-        $: "&.td-syntax-string, .td-syntax-string",
+        $: ":where(.td-syntax-string)",
         color: "#syntax-string",
       },
       Token: {
-        $: "&.td-syntax-token, .td-syntax-token",
+        $: ":where(.td-syntax-token)",
         color: "#syntax-token",
       },
       Property: {
-        $: "&.td-syntax-property, .td-syntax-property",
+        $: ":where(.td-syntax-property)",
         color: "#syntax-property",
       },
       Number: {
-        $: "&.td-syntax-number, .td-syntax-number",
+        $: ":where(.td-syntax-number)",
         color: "#syntax-number",
       },
       Function: {
-        $: "&.td-syntax-function, .td-syntax-function",
+        $: ":where(.td-syntax-function)",
         color: "#syntax-function",
       },
       Value: {
-        $: "&.td-syntax-value, .td-syntax-value",
+        $: ":where(.td-syntax-value)",
         color: "#syntax-value",
       },
       Operator: {
-        $: "&.td-syntax-operator, .td-syntax-operator",
+        $: ":where(.td-syntax-operator)",
         color: "#syntax-operator",
       },
-      Text: { $: "&.td-syntax-text, .td-syntax-text", color: "#syntax-text" },
-      Bg: { $: "&.td-syntax-bg, .td-syntax-bg", fill: "#syntax-bg" },
-      Inserted: { $: "&.td-green-text, .td-green-text", color: "#green-text" },
-      Deleted: { $: "&.td-red-text, .td-red-text", color: "#red-text" },
-      Italic: { $: ".td-syntax-italic", preset: "italic" },
-      Strong: { $: ".td-syntax-strong", preset: "strong" },
-      Underline: { $: ".td-syntax-underline", textDecoration: "underline" },
+      Text: { $: ":where(.td-syntax-text)", color: "#syntax-text" },
+      Bg: { $: ":where(.td-syntax-bg)", fill: "#syntax-bg" },
+      Inserted: { $: ":where(.td-green-text)", color: "#green-text" },
+      Deleted: { $: ":where(.td-red-text)", color: "#red-text" },
+      Italic: { $: ":where(.td-syntax-italic)", preset: "italic" },
+      Strong: { $: ":where(.td-syntax-strong)", preset: "strong" },
+      Underline: {
+        $: ":where(.td-syntax-underline)",
+        textDecoration: "underline",
+      },
     }),
   );
   return null;

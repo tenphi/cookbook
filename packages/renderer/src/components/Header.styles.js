@@ -51,7 +51,7 @@ export const HeaderRoot = defineComponent("Header", {
       textOverflow: "ellipsis",
     },
     Search: {
-      $: '[data-element="Primary"] > [data-element="Search"]',
+      $: "Primary > Search",
       display: "flex",
       alignItems: "center",
       flexGrow: { "": "1", "@mobile": "0" },
@@ -60,7 +60,7 @@ export const HeaderRoot = defineComponent("Header", {
       inlineMargin: { "": "auto", "@mobile": "0" },
     },
     SearchElement: {
-      $: '[data-element="Search"] site-search',
+      $: "Search site-search",
       inlineSize: "0 100% 28rem",
       inlineMargin: "auto",
     },

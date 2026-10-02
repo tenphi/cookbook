@@ -7,6 +7,8 @@ export const TabRoot = defineComponent("Tab", {
   as: "section",
   "data-element": "Tab",
   styles: {
+    hide: { "": null, "[hidden]": true },
+
     "$margin-block-start": "0",
     "$margin-block-end": "0",
     blockMargin: "$margin-block-start $margin-block-end",
@@ -19,7 +21,6 @@ export const TabRoot = defineComponent("Tab", {
       inlineMargin: "0",
       preset: "h3",
     },
-    Hidden: { $: "&:where(*)", hide: { "": null, "[hidden]": true } },
     HiddenHeading: {
       $: "> *",
       hide: { "": null, "@own([data-tab-heading] & [hidden])": true },

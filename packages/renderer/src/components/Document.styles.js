@@ -27,7 +27,15 @@ export default function DocumentStyles() {
   useGlobalStyles(
     ":root",
     resolveComponentStyles("Layout", {
-      colorScheme: "dark",
+      overflow: {
+        "": null,
+        ":has(#cookbook__sidebar:popover-open) & @mobile": "hidden",
+      },
+      colorScheme: {
+        "": "dark",
+        '[data-theme="light"]': "light",
+        "![data-theme] & @system-light": "light",
+      },
       "$docs-nav-height": {
         "": "4.5rem",
         ":has(.td-top-tabs)": "7.25rem",
@@ -50,24 +58,6 @@ export default function DocumentStyles() {
         $: "astro-island, astro-slot, astro-static-slot",
         display: "contents",
       },
-      LockedPage: {
-        $: "&:where(*)",
-        overflow: {
-          "": null,
-          ":has(#cookbook__sidebar:popover-open) & @mobile": "hidden",
-        },
-      },
-      Light: {
-        $: "&:where(*)",
-        colorScheme: { "": null, '[data-theme="light"]': "light" },
-      },
-      Auto: {
-        $: "&:where(*)",
-        colorScheme: {
-          "": null,
-          "![data-theme] & @system-light": "light",
-        },
-      },
     }),
   );
 
@@ -75,11 +65,16 @@ export default function DocumentStyles() {
     ":where(html)",
     resolveComponentStyles("Document", {
       "@property": TASTY_SPACING_PROPERTIES,
+      boxSizing: "border-box",
+      scrollBehavior: { "@reduced-motion": "auto" },
+      transitionDuration: { "@reduced-motion": "0.01ms" },
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
       blockSize: "min 100%",
       blockScrollPadding:
         "(1.5rem + $docs-nav-height + $docs-mobile-toc-height) start",
       All: {
-        $: "&:where(*), &::before, &::after, *, *::before, *::after",
+        $: "&::before, &::after, *, *::before, *::after",
         boxSizing: "border-box",
         scrollBehavior: {
           "@reduced-motion": "auto",
@@ -89,7 +84,7 @@ export default function DocumentStyles() {
         },
       },
       BlockSpacing: {
-        $: "&:where(*), *",
+        $: "*",
         // Reset on each element: spacing tokens must never leak into its children.
         "$margin-block-start": {
           "": "0",

@@ -12,7 +12,7 @@ export const SearchRoot = defineComponent("Search", {
     display: "contents",
     "$dialog-transition": "120ms",
     Status: {
-      $: '[data-element="Status"]',
+      $: "Status",
       margin: "auto",
       textAlign: "center",
       whiteSpace: "pre-line",

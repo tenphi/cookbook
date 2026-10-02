@@ -9,7 +9,11 @@ export const SidebarRoot = defineComponent("Sidebar", {
   styles: {
     "$sidebar-transition": "120ms",
     display: { "@desktop": "block" },
-    visibility: { "": "visible", "@mobile": "hidden" },
+    visibility: {
+      "": "visible",
+      "@mobile": "hidden",
+      "@popover-open & @mobile": "visible",
+    },
     position: "fixed",
     zIndex: { "": "8", "@mobile": "12" },
     blockInset: { "": "$docs-nav-height start, 0 end", "@mobile": "0" },
@@ -31,7 +35,11 @@ export const SidebarRoot = defineComponent("Sidebar", {
     fill: "#surface",
     overscrollBehavior: "contain",
     shadow: { "": "none", "@mobile": "0.25rem 0 1rem #shadow" },
-    translate: { "": "0", "@mobile": "-100% 0" },
+    translate: {
+      "": "0",
+      "@mobile": "-100% 0",
+      "@popover-open & [data-open] & @mobile": "0",
+    },
     transition: {
       "": "none",
       "@mobile & !@reduced-motion":
@@ -70,7 +78,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       preset: "h4",
     },
     HomeLogo: {
-      $: '[data-element="HomeLink"] > [data-element="Logo"]',
+      $: 'HomeLink > [data-element="Logo"]',
       inlineSize: "2rem",
       blockSize: "2rem",
     },
@@ -122,14 +130,6 @@ export const SidebarRoot = defineComponent("Sidebar", {
         "": null,
         '@own([aria-current="page"])': "navigation / strong",
       },
-    },
-    OpenPane: {
-      $: "&:where(*)",
-      visibility: { "": null, "@popover-open & @mobile": "visible" },
-    },
-    EnteredPane: {
-      $: "&:where(*)",
-      translate: { "": null, "@popover-open & [data-open] & @mobile": "0" },
     },
     Content: {
       $: ".sidebar-content",

@@ -127,14 +127,26 @@ base style object inside the renderer, following Tasty's
 
 Keep `$` selectors structural and put attribute or pseudo-class conditions in
 property state maps. Use `@own(...)` for a descendant's state and ordinary
-state keys for the component root. A scalar override replaces the property's
+state keys for the component root. A sub-element cannot target its containing
+element: use root state maps for callout kinds, hover/active buttons, compact
+selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
+instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
+A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change
 only that branch. `"": null` omits a declaration outside a condition. For
 conditional `display`, use `"": ""` because Tasty's flow handler currently
 does not accept a null display value.
 
+For a compact language selector, customize the root with
+`LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
+The former `Compact` hook is now a root state. Likewise, customize code wrapping
+with `SyntaxHighlight: { whiteSpace: { ".td-syntax-wrap": "pre-wrap" } }`.
+Syntax category sub-elements such as `Keyword` target descendant spans; use
+`SyntaxHighlight.color[".td-syntax-keyword"]` when customizing the containing
+code element itself.
+
 Cookbook temporarily retains selectors for pseudo-element states that Tasty
-cannot yet compile correctly and five empty legacy customization hooks whose
+cannot yet compile correctly and four empty legacy customization hooks whose
 conditional override scopes must remain compatible. Each has a narrow lint
 exception in its owning style module. Use state maps for new definitions.
 
@@ -184,32 +196,32 @@ it stays complete when a surface changes.
 #### Page shell
 
 - `Document`: `All`, `BlockSpacing`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
-- `Layout`: `Islands`, `LockedPage`, `Light`, `Auto`
+- `Layout`: `Islands`
 - `PageFrame`: `MainFrame`, `SidebarFrame`, `Columns`
-- `MainPane`: `WithSidebars`
+- `MainPane`: None
 - `MainContent`: `ContentSpacing`, `Container`, `Panel`
 - `HeaderFrame`: None
 - `Heading`: None
 - `Banner`: `Link`
-- `SkipLink`: `Focus`
+- `SkipLink`: None
 
 #### Navigation and controls
 
 - `Header`: `Primary`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `Social`, `MobileTheme`, `MobileLanguage`
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
-- `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`
+- `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `NativeIcon`, `Icon`
 - `Button`: None
-- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
-- `MobileMenuToggle`: `Control`, `Icon`, `Section`, `Page`, `HoverControl`, `ActiveControl`
+- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
+- `MobileMenuToggle`: `Icon`, `Section`, `Page`
 - `MobileNavigationTabs`: `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`
 - `MobileMenuFooter`: `Social`
 - `TopNavigation`: `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`
-- `TableOfContentsLayout`: `WithMobile`, `Content`
+- `TableOfContentsLayout`: `Content`
 - `TableOfContents`: `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`
 - `MobileTableOfContents`: `Summary`, `List`, `NestedList`, `Item`, `Link`, `HoverLink`, `Focus`
 - `Pagination`: `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`
 - `VersionSwitcher`: `Trigger`, `HoverTrigger`, `TriggerLabel`, `Caret`, `Panel`, `OpenPanel`, `PanelTitle`, `Options`, `Link`, `HoverLink`, `CurrentLink`, `Checkmark`, `SelectedCheckmark`
-- `LanguageSelect`: `Compact`, `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
+- `LanguageSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
 - `SocialIcons`: `Link`, `HoverLink`, `Icon`
 - `ThemeSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`
 
@@ -220,17 +232,17 @@ it stays complete when a surface changes.
 - `MarkdownCodeBlock`: `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`, `Code`, `Diff`, `DiffCode`, `DiffLine`, `EmptyDiffLine`, `InsertedLine`, `DeletedLine`
 - `MarkdownInlineCode`: None
 - `MarkdownTable`: `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`, `Scroll`
-- `MarkdownAlert`: `Note`, `Tip`, `Caution`, `Danger`, `Title`, `FirstContent`
-- `SyntaxHighlight`: `Scroll`, `Wrap`, `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`
+- `MarkdownAlert`: `Title`, `FirstContent`
+- `SyntaxHighlight`: `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`
 - `Mermaid`: `Diagram`, `Text`, `MonoText`
 - `MermaidSource`: None
 
 #### Authoring components
 
 - `Card`: `Heading2`, `Heading3`, `Paragraph`
-- `Callout`: `Title`, `Body`, `Tip`, `Caution`, `Danger`
+- `Callout`: `Title`, `Body`
 - `CodeGroup`: `Caption`, `Pre`, `Code`
-- `Tab`: `Heading`, `Hidden`, `HiddenHeading`
+- `Tab`: `Heading`, `HiddenHeading`
 - `Tabs`: `List`, `Button`, `SelectedButton`, `FocusedButton`
 - `Steps`: `Item`, `Marker`
 - `Hero`: `Visual`, `DarkVisual`, `LightVisual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`

@@ -402,3 +402,91 @@ test("footer states style actual metadata parts without affecting unrelated chil
   });
   await expect(meta.locator("div")).toHaveCSS("margin-inline-start", "0px");
 });
+
+test("root button states preserve inherited defaults and interaction colors", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const colors = await page.evaluate(() => {
+    const root = getComputedStyle(document.documentElement);
+    return Object.fromEntries(
+      [
+        "text-soft",
+        "text",
+        "accent-text",
+        "surface-2-hover",
+        "surface-2-pressed",
+      ].map((name) => [name, root.getPropertyValue(`--${name}-color`).trim()]),
+    );
+  });
+  const search = page.locator('[data-element="SearchButton"]');
+  await expect(search).toHaveCSS("color", colors["text-soft"]);
+  await search.hover();
+  await expect(search).toHaveCSS("color", colors.text);
+  await expect(search).toHaveCSS("background-color", colors["surface-2-hover"]);
+  await page.mouse.down();
+  await expect(search).toHaveCSS(
+    "background-color",
+    colors["surface-2-pressed"],
+  );
+  await page.mouse.move(0, 0);
+  await page.mouse.up();
+  await expect(search).toHaveCSS("color", colors["text-soft"]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const menu = page.locator('[data-element="MobileMenuToggle"]');
+  await expect(menu).toHaveCSS("color", colors["text-soft"]);
+  await menu.hover();
+  await expect(menu).toHaveCSS("color", colors.text);
+  await page.mouse.down();
+  await expect(menu).toHaveCSS("color", colors["accent-text"]);
+  await page.mouse.move(0, 0);
+  await page.mouse.up();
+});
+
+test("callout kind states and syntax root states retain their semantic styles", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const callout = page.locator('[data-element="Callout"]').first();
+  for (const [kind, role] of [
+    ["note", "info"],
+    ["tip", "success"],
+    ["caution", "warning"],
+    ["danger", "danger"],
+  ]) {
+    const colors = await callout.evaluate(
+      (element, { kind, role }) => {
+        element.setAttribute("data-kind", kind);
+        const root = getComputedStyle(document.documentElement);
+        // The fixture customizes Title independently of the callout kind.
+        return [role, "accent-text", `${role}-surface`].map((name) =>
+          root.getPropertyValue(`--${name}-color`).trim(),
+        );
+      },
+      { kind, role },
+    );
+    await expect(callout).toHaveCSS("border-top-color", colors[0]);
+    await expect(callout.locator('[data-element="Title"]')).toHaveCSS(
+      "color",
+      colors[1],
+    );
+    await expect(callout).toHaveCSS("background-color", colors[2]);
+  }
+  const keywordColor = await page.evaluate(() => {
+    // Exercise the syntax bridge independently of MarkdownCodeBlock's owned defaults.
+    const code = document.createElement("pre");
+    code.dataset.testSyntax = "";
+    code.className =
+      "tasty-code td-syntax-scroll td-syntax-wrap td-syntax-keyword";
+    code.textContent = "const standalone = true;";
+    document.body.append(code);
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue("--syntax-keyword-color")
+      .trim();
+  });
+  const code = page.locator("[data-test-syntax]");
+  await expect(code).toHaveCSS("overflow-x", "auto");
+  await expect(code).toHaveCSS("white-space", "pre-wrap");
+  await expect(code).toHaveCSS("overflow-wrap", "break-word");
+  await expect(code).toHaveCSS("color", keywordColor);
+});

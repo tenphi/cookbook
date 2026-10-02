@@ -31,7 +31,8 @@ export async function checkStyleLinting({ site, root, run }) {
   const fixable = await readFile(fixablePath, "utf8");
   const expectedFixed = fixable
     .replace(" !important", "")
-    .replace('backgroundColor: "#surface-2"', 'fill: "#surface-2"');
+    .replace('backgroundColor: "#surface-2"', 'fill: "#surface-2"')
+    .replace('[data-element="Label"] > span', "Label > span");
   const validationPath = join(site, "linting/tasty.config.ts");
   const validation = await readFile(validationPath, "utf8");
 
@@ -113,6 +114,7 @@ export default {
           "valid-custom-unit",
           "valid-preset",
           "valid-state-key",
+          "valid-sub-element",
         ]) {
           assert.ok(
             invalid.includes(rule),

@@ -14,6 +14,7 @@ extendComponent("BrokenExtension", Button, {
 defineComponent("Broken", {
   styles: {
     paddding: "1x",
+    RootHeading: { $: "&:is(h1)", preset: "h1" },
     color: "#missing",
     padding: "1oops",
     preset: "missing",

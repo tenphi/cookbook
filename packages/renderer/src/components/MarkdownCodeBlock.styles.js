@@ -33,7 +33,7 @@ export function MarkdownCodeBlockStyles() {
         tabSize: "2",
       },
       CopyButton: {
-        $: '> [data-element="CopyButton"]',
+        $: "> CopyButton",
         position: "absolute",
         zIndex: "1",
         blockInset: "$gap start",
@@ -77,7 +77,7 @@ export function MarkdownCodeBlockStyles() {
         },
       },
       CopyIcon: {
-        $: '> [data-element="CopyButton"] > [data-element="CopyIcon"]',
+        $: "> CopyButton > CopyIcon",
         display: "block",
         inlineSize: "1rem",
         blockSize: "1rem",
@@ -87,7 +87,7 @@ export function MarkdownCodeBlockStyles() {
         mask: `url("${svgIconUrl(copyIcon)}") center / contain no-repeat`,
       },
       CopiedIcon: {
-        $: '> [data-element="CopyButton"] > [data-element="CopyIcon"]',
+        $: '> CopyButton > [data-element="CopyIcon"]',
         mask: {
           "": null,
           // SVG encoding runs only during the server build.

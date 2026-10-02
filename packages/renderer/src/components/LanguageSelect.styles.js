@@ -15,11 +15,6 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
     // Shared selector defaults are resolved once during server-side module evaluation.
     // eslint-disable-next-line tasty/no-runtime-styles-mutation
     "$popover-transition": languageSelectStyles["$popover-transition"],
-    Compact: {
-      // Preserve the conditional scope of this empty legacy customization hook.
-      // eslint-disable-next-line tasty/no-state-in-selector
-      $: "&[data-compact]",
-    },
     Trigger: {
       // Reuse the shared, server-only popover anatomy.
       // eslint-disable-next-line tasty/no-style-spread
