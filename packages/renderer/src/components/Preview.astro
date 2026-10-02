@@ -1,7 +1,7 @@
 ---
 import { messages, requestLanguage } from "../localization.js";
 import { content } from "virtual:cookbook/config";
-import { PreviewRoot } from "./TastyComponents.js";
+import { PreviewRoot } from "./Preview.styles.js";
 
 import type { PreviewProps as Props } from "./props.js";
 
@@ -13,11 +13,7 @@ const ui = messages(
 );
 ---
 
-<PreviewRoot
-  className="td-preview not-content"
-  aria-label={title}
-  data-tasty-anatomy="Preview"
->
+<PreviewRoot className="td-preview not-content" aria-label={title}>
   <PreviewRoot.Caption><strong>{title}</strong></PreviewRoot.Caption>
   <PreviewRoot.Stage className="td-preview__stage">
     <PreviewRoot.Frame

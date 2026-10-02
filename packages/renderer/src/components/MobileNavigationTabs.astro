@@ -8,7 +8,7 @@ import { messages } from "../localization.js";
 import { content } from "virtual:cookbook/config";
 import { layout as configuredLayout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
-import { MobileNavigationTabsRoot } from "./LayoutComponents.js";
+import { MobileNavigationTabsRoot } from "./MobileNavigationTabs.styles.js";
 
 interface Props {
   base?: string;
@@ -45,7 +45,6 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
     <MobileNavigationTabsRoot
       className="td-mobile-tabs cookbook-print-hidden"
       aria-label={ui.sections}
-      data-tasty-anatomy="MobileNavigationTabs"
     >
       <details>
         <summary aria-label={ui.chooseSection}>

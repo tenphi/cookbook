@@ -1,11 +1,12 @@
 ---
+import { PaginationRoot } from "./Pagination.styles.js";
 const { dir, pagination } = Astro.locals.cookbookRoute;
 const { prev, next } = pagination;
 ---
 
 {
   (next || prev) && (
-    <div class="pagination-links" dir={dir} data-tasty-anatomy="Pagination">
+    <PaginationRoot className="pagination-links" dir={dir}>
       {next && (
         <a href={next.href} rel="next">
           <span>
@@ -24,6 +25,6 @@ const { prev, next } = pagination;
           </span>
         </a>
       )}
-    </div>
+    </PaginationRoot>
   )
 }

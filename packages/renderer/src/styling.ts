@@ -5,5 +5,6 @@ configureCookbookStates();
 
 export { tasty, useGlobalStyles, mergeStyles } from "@tenphi/tasty";
 export type { Styles } from "@tenphi/tasty";
-export { defineComponent } from "./define-component.js";
+export { defineComponent, extendComponent } from "./define-component.js";
+export { Button } from "./components/Button.styles.js";
 export { resolveComponentStyles } from "./components/component-styles.js";

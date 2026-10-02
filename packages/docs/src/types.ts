@@ -261,6 +261,10 @@ export interface TypographyPresets {
   navigation?: TypographyPreset;
   small?: TypographyPreset;
   code?: TypographyPreset;
+  "hero-title"?: TypographyPreset;
+  "hero-tagline"?: TypographyPreset;
+  prose?: TypographyPreset;
+  "inline-code"?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;
 }
 
@@ -397,6 +401,7 @@ export interface ThemePaletteConfig extends Partial<
 
 /** Cookbook UI surfaces whose default Tasty styles can be customized. */
 export const COOKBOOK_COMPONENT_NAMES = [
+  "Button",
   "Card",
   "Callout",
   "CodeGroup",
@@ -452,9 +457,8 @@ export type CookbookComponentName = (typeof COOKBOOK_COMPONENT_NAMES)[number];
 
 /** Named Tasty sub-elements available on each configurable Cookbook surface. */
 export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
+  Button: [],
   SyntaxHighlight: [
-    "Scroll",
-    "Wrap",
     "Marker",
     "Comment",
     "Punctuation",
@@ -497,7 +501,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "More",
     "HoverMore",
   ],
-  MarkdownAlert: ["Note", "Tip", "Caution", "Danger", "Title", "FirstContent"],
+  MarkdownAlert: ["Title", "FirstContent"],
   MermaidSource: [],
   Markdown: [
     "Block",
@@ -549,18 +553,13 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "HoverClose",
     "ActiveClose",
   ],
-  SkipLink: ["Focus"],
+  SkipLink: [],
   Banner: ["Link"],
-  MainContent: [
-    "ContentSpacing",
-    "Container",
-    "Panel",
-    "FirstPanel",
-    "BodyPanel",
-  ],
-  MainPane: ["WithSidebars"],
+  MainContent: ["ContentSpacing", "Container", "Panel"],
+  MainPane: [],
   Document: [
     "All",
+    "BlockSpacing",
     "Body",
     "Control",
     "Pointer",
@@ -582,15 +581,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   PageFrame: ["MainFrame", "SidebarFrame", "Columns"],
   HeaderFrame: [],
-  Heading: [
-    "Level1",
-    "Level2",
-    "Level3",
-    "Level4",
-    "Level5",
-    "Level6",
-    "PageTitle",
-  ],
+  Heading: [],
   HeaderLinks: [
     "Desktop",
     "DesktopLink",
@@ -608,21 +599,13 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Close",
     "HoverClose",
   ],
-  Layout: ["Islands", "LockedPage", "Light", "Auto"],
-  SearchButton: [
-    "PendingShortcut",
-    "Label",
-    "Shortcut",
-    "Hover",
-    "Active",
-    "NativeIcon",
-    "Icon",
-  ],
-  TableOfContentsLayout: ["WithMobile", "Content"],
+  Layout: ["Islands"],
+  SearchButton: ["PendingShortcut", "Label", "Shortcut", "NativeIcon", "Icon"],
+  TableOfContentsLayout: ["Content"],
   Card: ["Heading2", "Heading3", "Paragraph"],
-  Callout: ["Title", "Body", "Tip", "Caution", "Danger"],
+  Callout: ["Title", "Body"],
   CodeGroup: ["Caption", "Pre", "Code"],
-  Tab: ["Heading", "Hidden", "HiddenHeading"],
+  Tab: ["Heading", "HiddenHeading"],
   MobileTableOfContents: [
     "Summary",
     "List",
@@ -633,15 +616,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Focus",
   ],
   PageActions: ["Control", "Hover", "Focus", "Pending", "Status"],
-  Footer: [
-    "Meta",
-    "LoneMetaItem",
-    "MetaLink",
-    "HoverMetaLink",
-    "Credit",
-    "CreditLink",
-    "HoverCreditLink",
-  ],
+  Footer: ["Meta", "MetaLink", "MetaUpdated", "Credit", "CreditLink"],
   Hero: [
     "Visual",
     "DarkVisual",
@@ -659,7 +634,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "ActionIcon",
   ],
   LanguageSelect: [
-    "Compact",
     "Trigger",
     "HoverTrigger",
     "ActiveTrigger",
@@ -706,12 +680,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   MarkdownHeading: [
     "Heading",
-    "Heading1",
-    "Heading2",
-    "Heading3",
-    "Heading4",
-    "Heading5",
-    "Heading6",
     "Link",
     "RevealedLink",
     "HoverLink",
@@ -724,14 +692,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   MarkdownInlineCode: [],
   Mermaid: ["Diagram", "Text", "MonoText"],
   MobileMenuFooter: ["Social"],
-  MobileMenuToggle: [
-    "Control",
-    "Icon",
-    "Section",
-    "Page",
-    "HoverControl",
-    "ActiveControl",
-  ],
+  MobileMenuToggle: ["Icon", "Section", "Page"],
   MobileNavigationTabs: [
     "Trigger",
     "Marker",
@@ -781,8 +742,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "HoverClose",
     "CloseIcon",
     "CurrentLink",
-    "OpenPane",
-    "EnteredPane",
     "Content",
     "Tree",
     "List",
@@ -848,7 +807,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   ],
   Header: [
     "Primary",
-    "TitleAndSearch",
     "Title",
     "LogoLink",
     "Logo",
@@ -856,7 +814,6 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "Search",
     "SearchElement",
     "Tools",
-    "ToolItem",
     "Social",
     "MobileTheme",
     "MobileLanguage",

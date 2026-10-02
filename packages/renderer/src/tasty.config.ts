@@ -1,14 +1,24 @@
 import type { TastyValidationConfig } from "@tenphi/eslint-plugin-tasty";
 
 export default {
-  importSources: ["@tenphi/cookbook/styling", "@tenphi/renderer/styling"],
+  importSources: [
+    "@tenphi/cookbook/styling",
+    "@tenphi/renderer/styling",
+    "./component-styles.js",
+    "../define-component.js",
+  ],
   styleFunctions: {
     defineComponent: { argument: 1, kind: "options" },
+    extendComponent: { argument: 2, kind: "options", partial: true },
     resolveComponentStyles: { argument: 1, kind: "styles" },
     mergeStyles: { argument: "all", kind: "styles", partial: true },
   },
   tokens: [
     "$gap",
+    "$margin-block-start",
+    "$margin-block-end",
+    "$padding-block-start",
+    "$padding-block-end",
     "$radius",
     "$header-control-radius",
     "$card-radius",
@@ -93,6 +103,10 @@ export default {
   ],
   units: ["x", "r", "cr", "bw"],
   states: [
+    "@system-light",
+    "@system-dark",
+    "@light",
+    "@dark",
     "@mobile",
     "@desktop",
     "@small",
@@ -102,6 +116,7 @@ export default {
     "@narrow-layout",
     "@medium-layout",
     "@reduced-motion",
+    "@popover-open",
   ],
   presets: [
     "body",
@@ -115,5 +130,9 @@ export default {
     "navigation",
     "small",
     "code",
+    "hero-title",
+    "hero-tagline",
+    "prose",
+    "inline-code",
   ],
 } satisfies TastyValidationConfig;

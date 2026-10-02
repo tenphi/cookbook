@@ -1,7 +1,7 @@
 ---
 import { content } from "virtual:cookbook/config";
 import Logo from "./Logo.astro";
-import { SiteLogoRoot } from "./LayoutComponents.js";
+import { SiteLogoRoot } from "./SiteLogo.styles.js";
 interface Props {
   class?: string;
 }
@@ -12,7 +12,6 @@ const logo = content.logo;
   logo === false ? null : logo ? (
     <SiteLogoRoot
       className={Astro.props.class}
-      data-tasty-anatomy="SiteLogo"
       aria-hidden={logo.decorative ? "true" : undefined}
     >
       <img

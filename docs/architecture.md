@@ -47,14 +47,59 @@ Theme resolution has three deliberately separate layers:
    colors.
 2. The Glaze values, design tokens, typography presets, states, and units are
    registered directly with Tasty.
-3. Cookbook components use `tasty()` and the Tasty selector bridge styles DOM
-   owned by Astro, Pagefind, and rendered Markdown.
+3. Cookbook interface components use `tasty()` roots. Component-owned Tasty
+   bridges style generated Markdown and syntax markup. Search owns a styled
+   results root whose named descendants cover Pagefind's dynamic content.
 
 The palette owns color relationships. Components never choose raw light/dark
 colors, and shape tokens never contain palette logic. This keeps a palette
 change, a density change, and a typography change independent. Astro runs
 Tasty in extract mode, so these runtime style calls become a shared static CSS
 asset during the build; no Tasty styling runtime ships to the browser.
+
+## Component ownership
+
+Each built-in component has an owning `components/<Name>.styles.js` module
+with its complete base style tree and named sub-elements. Its Astro markup
+imports that definition directly. Rendered roots use
+`defineComponent(name, options)` to apply partial `theme.styles`
+overrides before extraction. The published component names and sub-element
+lists define the public customization contract.
+
+Owned markup uses Tasty’s `data-element` identities; a named part usually needs
+no explicit `$` selector. Keep structural selectors for generated content and
+relationships between parts. Put conditions, including heading levels, in
+property state maps. Each actual part owns its complete styles; avoid broad
+selectors that also style parts with separate definitions.
+
+Use paired tokens for block margins and padding. Contextual spacing rules change
+only the relevant token; the owning shorthand consumes both edges. Spacing tokens
+are registered with `inherits: false` and reset in document foundations so nested
+content never inherits another element’s spacing.
+
+Use `extendComponent(name, base, options)` for derived roots. `Button`
+owns shared button defaults; `SearchButton` and `MobileMenuToggle` extend it
+with their own layout and named anatomy. Base theme overrides are inherited,
+then the descendant's styles and theme overrides take precedence. Keep shared
+bases configurable and document their names and complete sub-element lists.
+
+The page shell owns fonts, document defaults, heading presets, and root layout
+variables. These foundations initialize during every page render, including
+404 pages, independently of replaceable Header and Head components. Layout
+roots own frame positioning; the components inside them own their contents.
+
+`useGlobalStyles()` is reserved for document foundations and generated-content
+bridges, each using `resolveComponentStyles(name, baseStyles)`. MarkdownContent
+collects its prose, code, table, heading, alert, and Mermaid bridges during
+rendering. Generated prose retains its established selector scope and
+specificity so partial theme overrides and styled components inside Markdown
+continue to compose. CodeGroup collects its code and syntax bridges itself,
+including when rendered outside MarkdownContent.
+
+Optional browser behavior remains in `src/client/` and imports no styling
+modules. Custom elements attach behavior to the server-rendered markup.
+The ownership checks verify every public style name and sub-element, while
+consumer and browser tests exercise theme overrides and component replacements.
 
 ## Public graph API
 

@@ -21,6 +21,7 @@ export async function checkStyleLinting({ site, root, run }) {
     assert.equal(recommended, plugin.configs.recommended.rules);
     assert.equal(strict, plugin.configs.strict.rules);
     assert.equal(validationConfig.styleFunctions.mergeStyles.partial, true);
+    assert.deepEqual(validationConfig.styleFunctions.extendComponent, { argument: 2, kind: 'options', partial: true });
   `,
     ],
     { cwd: site },
@@ -30,7 +31,8 @@ export async function checkStyleLinting({ site, root, run }) {
   const fixable = await readFile(fixablePath, "utf8");
   const expectedFixed = fixable
     .replace(" !important", "")
-    .replace('backgroundColor: "#surface-2"', 'fill: "#surface-2"');
+    .replace('backgroundColor: "#surface-2"', 'fill: "#surface-2"')
+    .replace('[data-element="Label"] > span', "Label > span");
   const validationPath = join(site, "linting/tasty.config.ts");
   const validation = await readFile(validationPath, "utf8");
 
@@ -60,7 +62,7 @@ export default {
 };
 `,
         );
-        async function lint(file, fix = false) {
+        async function lint(file, fix = false, includeMessages = false) {
           let result;
           try {
             result = await run(
@@ -85,15 +87,17 @@ export default {
             result = error;
           }
           const output = JSON.parse(result.stdout);
-          return linter === "eslint"
-            ? output.flatMap((file) =>
-                file.messages.map((message) =>
-                  message.ruleId?.replace("tasty/", ""),
-                ),
-              )
-            : output.diagnostics.map((message) =>
-                message.code.replace(/^tasty[(/]/, "").replace(/\)$/, ""),
-              );
+          const diagnostics =
+            linter === "eslint"
+              ? output.flatMap((file) => file.messages)
+              : output.diagnostics;
+          return diagnostics.map((message) => {
+            const rule =
+              linter === "eslint"
+                ? message.ruleId?.replace("tasty/", "")
+                : message.code.replace(/^tasty[(/]/, "").replace(/\)$/, "");
+            return includeMessages ? { rule, message: message.message } : rule;
+          });
         }
 
         assert.deepEqual(
@@ -106,12 +110,30 @@ export default {
           [],
           `${label}: import boundaries`,
         );
+        const composition = await lint("composition", false, true);
+        assert.equal(
+          composition.length,
+          1,
+          `${label}: one composition warning`,
+        );
+        assert.equal(composition[0].rule, "no-style-spread");
+        assert.match(composition[0].message, /mergeStyles/);
+        assert.match(composition[0].message, /shallow/);
+        const compositionPath = join(site, "linting/composition.ts");
+        const beforeComposition = await readFile(compositionPath, "utf8");
+        await lint("composition", true);
+        assert.equal(
+          await readFile(compositionPath, "utf8"),
+          beforeComposition,
+          `${label}: semantic merge remains an explicit choice`,
+        );
         const invalid = await lint("invalid");
         for (const rule of [
           "valid-color-token",
           "valid-custom-unit",
           "valid-preset",
           "valid-state-key",
+          "valid-sub-element",
         ]) {
           assert.ok(
             invalid.includes(rule),

@@ -3,7 +3,7 @@ import { messages } from "../localization.js";
 import { localeHref, routeLocale } from "../localization.js";
 import { navigationPath } from "../navigation.js";
 import { content } from "virtual:cookbook/config";
-import { HeaderLinksRoot } from "./LayoutComponents.js";
+import { HeaderLinksRoot } from "./HeaderLinks.styles.js";
 
 const links = content.site.headerLinks ?? [];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -22,7 +22,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 {
   links.length > 0 && (
-    <HeaderLinksRoot data-tasty-anatomy="HeaderLinks">
+    <HeaderLinksRoot>
       <nav class="td-header-links__desktop" aria-label={ui.headerLinks}>
         {links.map((link) => (
           <a

@@ -3,6 +3,7 @@ import {
   type ElementsDefinition,
   type ModPropsInput,
   type StylesInterface,
+  type Styles,
   type SubElementProps,
   type TastyElementOptions,
   type TastyPolymorphicComponent,
@@ -10,6 +11,8 @@ import {
   type VariantMap,
 } from "@tenphi/tasty";
 import type {
+  ComponentProps,
+  ComponentType,
   ElementType,
   ForwardRefExoticComponent,
   JSX,
@@ -17,6 +20,19 @@ import type {
   RefAttributes,
 } from "react";
 import { resolveComponentStyles } from "./components/component-styles.js";
+import { inheritComponentParts } from "./components/inherit-component-parts.js";
+
+type InheritedParts<C> = {
+  [
+    Name in keyof C as Name extends string
+      ? Name extends Capitalize<Name>
+        ? C[Name] extends ComponentType<any>
+          ? Name
+          : never
+        : never
+      : never
+  ]: C[Name];
+};
 
 type SubElementTag<Definition extends ElementsDefinition[string]> =
   Definition extends string
@@ -39,7 +55,27 @@ type SubElements<E extends ElementsDefinition> = {
   >;
 };
 
-/** Create a named Tasty component with theme.styles[name] merged into its defaults. */
+/** Extend a component's styles and defaults, preserving its props and compound parts. */
+export function extendComponent<C extends ComponentType<any>>(
+  name: string,
+  base: C,
+  options: Partial<Omit<ComponentProps<C>, "as" | "styles">> & {
+    styles?: Styles;
+  },
+): ComponentType<ComponentProps<C>> & InheritedParts<C> {
+  const extended = tasty(base, {
+    ...options,
+    styles: resolveComponentStyles(name, options.styles ?? {}),
+  });
+  // Tasty's wrapper type erases compound exports and makes every prop optional.
+  // Restore the copied parts and conservatively keep the base's required props.
+  return inheritComponentParts(base, extended) as unknown as ComponentType<
+    ComponentProps<C>
+  > &
+    InheritedParts<C>;
+}
+
+/** Create a named component with its built-in or custom theme styles merged into its defaults. */
 export function defineComponent<
   K extends readonly (keyof StylesInterface)[],
   V extends VariantMap,

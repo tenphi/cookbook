@@ -135,8 +135,10 @@ try {
     }
     if (manifest.name === "@tenphi/renderer") {
       for (const required of [
-        "package/dist/components/GlobalStyles.js",
-        "package/dist/components/TastyComponents.js",
+        "package/dist/components/Document.styles.js",
+        "package/dist/components/Pagination.styles.js",
+        "package/dist/components/MarkdownContent.styles.js",
+        "package/dist/components/MarkdownCodeBlock.styles.js",
         "package/dist/routes/DocsPage.astro",
       ]) {
         if (!files.has(required))

@@ -257,7 +257,7 @@ test("header popovers fade on open and close", async ({ page }) => {
       trigger: page.getByRole("button", {
         name: "Documentation version: Current",
       }),
-      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+      panel: page.locator('[data-element="VersionSwitcher"] [popover]'),
       close: page.getByRole("button", {
         name: "Documentation version: Current",
       }),
@@ -278,7 +278,7 @@ test("header popovers fade on open and close", async ({ page }) => {
     {
       trigger: page.getByRole("button", { name: "Appearance", exact: true }),
       panel: page.locator(
-        ".td-header__mobile-theme cookbook-appearance-menu [popover]",
+        '[data-element="MobileTheme"] cookbook-appearance-menu [popover]',
       ),
       close: page.getByRole("button", { name: "Appearance", exact: true }),
     },
@@ -319,7 +319,7 @@ test("header popovers respect reduced motion", async ({ page }) => {
       trigger: page.getByRole("button", {
         name: "Documentation version: Current",
       }),
-      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+      panel: page.locator('[data-element="VersionSwitcher"] [popover]'),
       close: page.getByRole("button", {
         name: "Documentation version: Current",
       }),
@@ -340,7 +340,7 @@ test("header popovers respect reduced motion", async ({ page }) => {
     {
       trigger: page.getByRole("button", { name: "Appearance", exact: true }),
       panel: page.locator(
-        ".td-header__mobile-theme cookbook-appearance-menu [popover]",
+        '[data-element="MobileTheme"] cookbook-appearance-menu [popover]',
       ),
       close: page.getByRole("button", { name: "Appearance", exact: true }),
     },
@@ -376,18 +376,18 @@ test("selection popovers dismiss on Escape and outside click", async ({
       trigger: page.getByRole("button", {
         name: "Documentation version: Current",
       }),
-      panel: page.locator('[data-tasty-anatomy="VersionSwitcher"] [popover]'),
+      panel: page.locator('[data-element="VersionSwitcher"] [popover]'),
     },
     {
       trigger: page.getByRole("button", { name: "Appearance", exact: true }),
       panel: page.locator(
-        ".td-header__tools cookbook-appearance-menu [popover]",
+        '[data-element="Tools"] cookbook-appearance-menu [popover]',
       ),
     },
     {
       trigger: page.getByRole("button", { name: "Select language: English" }),
       panel: page.locator(
-        ".td-header__tools cookbook-language-select [popover]",
+        '[data-element="Tools"] cookbook-language-select [popover]',
       ),
     },
   ]) {
@@ -571,10 +571,11 @@ for (const scheme of ["Light", "Dark"])
         scheme.toLowerCase(),
       );
       const logo = await page
-        .locator('.td-header__logo[data-tasty-anatomy="Logo"]')
+        .locator('[data-element="Header"] [data-element="Logo"]')
         .evaluate((e) => ({
           background: getComputedStyle(e).color,
-          mark: getComputedStyle(e.querySelector(".td-logo__mark")!).color,
+          mark: getComputedStyle(e.querySelector('[data-element="Mark"]')!)
+            .color,
         }));
       // Glaze emits OKLCH: fixed logo colors retain a light book on a darker brand fill.
       const lightness = (color: string) =>
@@ -681,7 +682,7 @@ test("version popover dismisses and switches matching pages on desktop and mobil
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const switcher = page.locator('[data-tasty-anatomy="VersionSwitcher"]');
+  const switcher = page.locator('[data-element="VersionSwitcher"]');
   const trigger = switcher.getByRole("button", {
     name: "Documentation version: Current",
   });
@@ -741,7 +742,9 @@ test("language popover is styled and switches pages on desktop and mobile", asyn
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const desktop = page.locator(".td-header__tools cookbook-language-select");
+  const desktop = page.locator(
+    '[data-element="Tools"] cookbook-language-select',
+  );
   await desktop
     .getByRole("button", { name: "Select language: English" })
     .click();
@@ -794,7 +797,7 @@ test("footer credit keeps its space and pagination uses heading weight", async (
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const credit = page.locator(".td-footer__credit");
+  const credit = page.locator('[data-element="Credit"]');
   await expect(credit).toHaveText("Generated with Cookbook.");
   const gap = await credit.evaluate((element) => {
     const label = element.firstChild!;
@@ -889,7 +892,9 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`/${variant}/guide/`);
       await page.evaluate(() => document.fonts.ready);
-      const logo = (await page.locator(".td-header__logo").boundingBox())!;
+      const logo = (await page
+        .locator('[data-element="Header"] [data-element="LogoLink"] > span')
+        .boundingBox())!;
       const title = (await page.locator(".site-title").boundingBox())!;
       expect(
         Math.abs(logo.y + logo.height / 2 - title.y - title.height / 2),
@@ -904,7 +909,9 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
             .evaluate((e) => getComputedStyle(e).fontSize),
         ).toBe(width < 1440 ? "22px" : "28px");
         const artwork = (await page
-          .locator(".td-header__logo img")
+          .locator(
+            '[data-element="Header"] [data-element="SiteLogo"] img:visible',
+          )
           .boundingBox())!;
         expect(artwork.width / artwork.height).toBeCloseTo(
           variant === "wide-logo" ? 3 : 1 / 3,
@@ -926,9 +933,7 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
         await page.getByRole("button", { name: /Menu/ }).click();
         const home = page.locator(".td-sidebar-heading__home");
         const mark = (await home
-          .locator(
-            '[data-tasty-anatomy="Logo"], [data-tasty-anatomy="SiteLogo"]',
-          )
+          .locator('[data-element="Logo"], [data-element="SiteLogo"]')
           .boundingBox())!;
         const label = (await home.locator("[data-site-title]").boundingBox())!;
         expect(

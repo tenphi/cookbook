@@ -4,7 +4,7 @@ import { content } from "virtual:cookbook/config";
 import Icon from "../components/Icon.astro";
 import paletteIcon from "../icons/palette.svg?raw";
 import ContrastIcon from "../components/ContrastIcon.astro";
-import { ThemeSelectRoot } from "../components/LayoutComponents.js";
+import { ThemeSelectRoot } from "../components/ThemeSelect.styles.js";
 
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 const id = `appearance-${crypto.randomUUID()}`;
@@ -20,7 +20,7 @@ const contrasts = [
 ] as const;
 ---
 
-<ThemeSelectRoot data-tasty-anatomy="ThemeSelect">
+<ThemeSelectRoot>
   <button
     type="button"
     popovertarget={id}
@@ -29,7 +29,13 @@ const contrasts = [
   >
     <span aria-hidden="true" set:html={paletteIcon} />
   </button>
-  <div id={id} popover="auto" role="group" aria-label={ui.appearance}>
+  <div
+    data-element="Panel"
+    id={id}
+    popover="auto"
+    role="group"
+    aria-label={ui.appearance}
+  >
     <fieldset>
       <legend>{ui.colorScheme}</legend>
       {

@@ -58,7 +58,11 @@ import {
   cookbookShikiConfig,
   configureCodeHighlighting,
 } from "./theme/shiki-theme.js";
-import { TASTY_UNITS, tastyTokens } from "./theme/tasty-config.js";
+import {
+  TASTY_UNITS,
+  tastyTokens,
+  TASTY_SPACING_PROPERTIES,
+} from "./theme/tasty-config.js";
 import {
   configureComponentStyles,
   unusedCustomStyleNames,
@@ -245,7 +249,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
     emptyFooterPath,
   );
   const navigation = resolveNavigationLayout(options.config?.navigation);
-  // Tasty 3.8's integration shape is structurally compatible with Astro 7;
+  // Tasty's integration shape is structurally compatible with Astro 7;
   // its published helper type still models `site` as URL-only.
   const tasty = tastyIntegration({
     islands: false,
@@ -1050,6 +1054,7 @@ function configureTastyTheme(
     units: { ...TASTY_UNITS, ...theme?.units },
     recipes: theme?.recipes ?? {},
     tokens,
+    properties: TASTY_SPACING_PROPERTIES,
     presets: resolved.presets as Record<string, TypographyPreset>,
   });
 }

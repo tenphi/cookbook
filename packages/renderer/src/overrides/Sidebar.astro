@@ -48,6 +48,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 <div class="td-sidebar-heading">
   <a
+    data-element="HomeLink"
     class="td-sidebar-heading__home"
     href={localeHref(
       (content.logo && content.logo.href) || "/",
@@ -58,7 +59,9 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
     )}
   >
     <Logo />
-    <span data-site-title>{Astro.locals.cookbookRoute.siteTitle}</span>
+    <span data-element="HomeLabel" data-site-title
+      >{Astro.locals.cookbookRoute.siteTitle}</span
+    >
   </a>
   <button
     type="button"

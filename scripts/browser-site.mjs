@@ -20,7 +20,7 @@ const originalConfig = (
 ).default;
 const outputs = new Map();
 try {
-  for (const name of ["manual", "wide-logo", "tall-logo"]) {
+  for (const name of ["manual", "wide-logo", "tall-logo", "custom-header"]) {
     const site = join(fixture, name);
     await cp(source, site, { recursive: true });
     await symlink(
@@ -33,7 +33,58 @@ try {
       join(site, "astro.config.mjs"),
       `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",integrations:[cookbook()]};`,
     );
-    if (name !== "manual") {
+    if (name === "custom-header") {
+      await writeFile(
+        join(site, "Header.astro"),
+        "<div data-custom-header>Replacement header</div>",
+      );
+      await writeFile(
+        join(site, "Head.astro"),
+        "<title>Replacement head</title>",
+      );
+      await writeFile(
+        join(site, "Hero.astro"),
+        `---
+import { CodeGroup } from "@tenphi/cookbook/components";
+---
+<section data-standalone-code-group>
+  <CodeGroup items={[{ label: "Example", language: "js", code: "const standalone = true;" }]} />
+</section>`,
+      );
+      const config = globalThis.structuredClone(originalConfig);
+      config.components = {
+        overrides: {
+          Header: "./Header.astro",
+          Head: "./Head.astro",
+          Hero: "./Hero.astro",
+        },
+      };
+      config.theme.presets = { body: { fontSize: "19px" } };
+      config.theme.styles = {
+        Pagination: { Link: { radius: "13px" } },
+        Callout: { "$margin-block-end": "37px" },
+        Heading: { textWrap: { "": "balance", ":is(h3)": "pretty" } },
+        Sidebar: { Link: { padding: "1x" } },
+        Markdown: { Quote: { inlinePadding: "29px start" } },
+        MarkdownCodeBlock: {
+          Pre: { radius: "17px" },
+          CopyButton: { padding: "2px", inlineSize: "42px" },
+        },
+        LanguageSelect: {
+          Panel: { padding: "13px", radius: "19px" },
+          border: { "": null, "[data-compact]": "4px solid #border" },
+        },
+      };
+      const guide = join(site, "docs/guide.mdx");
+      await writeFile(
+        guide,
+        `${(await readFile(guide, "utf8")).replace("title: Guide", "title: Guide\nbanner:\n  content: 'Read <a href=\"/custom-header/\">the home page</a>'")}\n> Component-owned quotation.\n`,
+      );
+      await writeFile(
+        join(site, "docs.config.mjs"),
+        `export default ${JSON.stringify(config)};`,
+      );
+    } else if (name !== "manual") {
       const width = name === "wide-logo" ? 96 : 32;
       const height = name === "wide-logo" ? 32 : 96;
       await writeFile(
@@ -43,7 +94,7 @@ try {
       const config = globalThis.structuredClone(originalConfig);
       config.site.title = "Custom documentation";
       delete config.site.versions;
-      config.site.logo = "./logo.svg";
+      config.site.logo = { light: "./logo.svg", dark: "./logo.svg" };
       config.theme.presets = {
         h4: {
           fontFamily: "serif",

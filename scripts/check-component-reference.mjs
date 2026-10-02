@@ -30,6 +30,7 @@ const groups = [
       "Header",
       "HeaderLinks",
       "SearchButton",
+      "Button",
       "Sidebar",
       "MobileMenuToggle",
       "MobileNavigationTabs",

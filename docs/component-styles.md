@@ -7,9 +7,27 @@ For color roles and design tokens, start with the
 [theme overview](./theme-and-components.md). For your own components, see
 [Custom components](./custom-components.md).
 
+Owned markup uses Tasty's built-in `data-element` identities for its named parts.
+For example, Header's `Logo` styles target `data-element="Logo"` directly;
+no anatomy class or separate marker is required. A configured image logo owns
+its dimensions under `SiteLogo`.
+
+Heading levels are states of the same element. Customize them through a root
+property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
+Markdown heading wrappers use `.level-h1` through `.level-h6` as root states.
+
+Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
+owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
+changes only the start token. For example, `Callout: { "$margin-block-end": "3x" }`
+changes the end spacing while retaining Markdown's spacing before the callout.
+Document foundations reset these tokens on every element to prevent inheritance
+into nested content. For content-panel padding, use `MainContent.Panel`'s
+`$padding-block-start` and `$padding-block-end` tokens in the same way.
+
 ## Style customization
 
-Cookbook-owned interface elements are direct `tasty()` components. Supported
+Cookbook-owned interface elements use `defineComponent()` to create Tasty components
+and merge their named theme overrides. Shared bases use `extendComponent()`.
 Cookbook components and generated Markdown surfaces use Tasty style trees.
 Customize them by name under `theme.styles`; the configuration is resolved
 before CSS generation, so this is not a selector-based CSS override.
@@ -17,6 +35,12 @@ before CSS generation, so this is not a selector-based CSS override.
 Cookbook merges your partial style object with the component's base styles
 before Tasty extracts CSS. The generated stylesheet contains the resolved
 style, so you can change an element without copying its full defaults.
+
+Each surface is registered by its owning component or generated-content bridge.
+Fonts and document defaults belong to the page shell, so replacing Header
+preserves the rest of the site's styling. Component-specific CSS is collected
+when its owner renders. See [Component ownership](./architecture.md#component-ownership)
+for the renderer authoring convention.
 
 Start with the area you want to change, then use the complete sub-element
 inventory below to find its exact anatomy:
@@ -60,17 +84,22 @@ Cookbook registers these Tasty state aliases for `theme.styles`, custom
 components, and recipes. Widths use CSS `rem` units; their pixel values depend
 on the browser's font-size settings.
 
-| State             | Condition                        | Typical use                                        |
-| ----------------- | -------------------------------- | -------------------------------------------------- |
-| `@compact`        | width ≤ 23rem                    | Hide optional header controls in very narrow space |
-| `@small`          | width ≤ 40rem                    | Stack compact grids                                |
-| `@shell-mobile`   | width ≤ 48rem                    | Switch the page shell to its narrow arrangement    |
-| `@shell-desktop`  | width > 48rem                    | Restore the wider shell arrangement                |
-| `@mobile`         | width < 50rem                    | Mobile navigation and component layouts            |
-| `@desktop`        | width ≥ 50rem                    | Desktop navigation and component layouts           |
-| `@medium-layout`  | 50rem ≤ width < 72rem            | Intermediate two-column layouts                    |
-| `@narrow-layout`  | width < 72rem                    | Hide or reposition the desktop table of contents   |
-| `@reduced-motion` | `prefers-reduced-motion: reduce` | Remove optional motion                             |
+| State             | Condition                                                  | Typical use                                        |
+| ----------------- | ---------------------------------------------------------- | -------------------------------------------------- |
+| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space |
+| `@small`          | width ≤ 40rem                                              | Stack compact grids                                |
+| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement    |
+| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                |
+| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts            |
+| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts           |
+| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                    |
+| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents   |
+| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel      |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                             |
+| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance        |
+| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance         |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly      |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly      |
 
 The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
 boundary serve different parts of the layout; their ranges intentionally
@@ -78,6 +107,12 @@ overlap. Use the default state key `""` for the value outside the listed
 condition. Add your own aliases with `theme.states`; redefining a built-in
 alias also changes the renderer's responsive layout, so check the whole site
 when doing so.
+
+Use `@light` and `@dark` in component styles. They check the page root's
+`data-theme` attribute and use the system preference only when that attribute
+is absent. Document rules that style the root itself use `@system-light` and
+`@system-dark` within their automatic-theme branch. Keep scheme media queries
+in the shared state definitions instead of repeating them in style objects.
 
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,
@@ -88,7 +123,34 @@ Provide only the root and named
 [sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
 override. Cookbook deep-merges that partial style object into the complete
 base style object inside the renderer, following Tasty's
-[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps):
+[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
+
+Keep `$` selectors structural and put attribute or pseudo-class conditions in
+property state maps. Use `@own(...)` for a descendant's state and ordinary
+state keys for the component root. A sub-element cannot target its containing
+element: use root state maps for callout kinds, hover/active buttons, compact
+selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
+instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
+A scalar override replaces the property's
+whole state map; use the matching state key without a default entry to change
+only that branch. `"": null` omits a declaration outside a condition. For
+conditional `display`, `"": null` is also supported, including styles with
+`flow` or `gap`.
+
+For a compact language selector, customize the root with
+`LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
+The former `Compact` hook is now a root state. Likewise, customize code wrapping
+with `SyntaxHighlight: { whiteSpace: { ".td-syntax-wrap": "pre-wrap" } }`.
+Syntax category sub-elements such as `Keyword` target descendant spans; use
+`SyntaxHighlight.color[".td-syntax-keyword"]` when customizing the containing
+code element itself.
+
+Cookbook temporarily retains selectors for pseudo-element states that Tasty
+cannot yet compile correctly and four empty legacy customization hooks whose
+conditional override scopes must remain compatible. Each has a narrow lint
+exception in its owning style module. Use state maps for new definitions.
+
+For example:
 
 ```ts
 theme: {
@@ -104,7 +166,7 @@ theme: {
     },
     TopNavigation: {
       Link: { preset: "body" },
-      CurrentLink: { color: "#accent-text" }
+      CurrentLink: { color: { '@own([aria-current="page"])': "#accent-text" } }
     },
     Sidebar: {
       LinkLabel: { whiteSpace: "normal" }
@@ -133,53 +195,54 @@ it stays complete when a surface changes.
 
 #### Page shell
 
-- `Document`: `All`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
-- `Layout`: `Islands`, `LockedPage`, `Light`, `Auto`
+- `Document`: `All`, `BlockSpacing`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
+- `Layout`: `Islands`
 - `PageFrame`: `MainFrame`, `SidebarFrame`, `Columns`
-- `MainPane`: `WithSidebars`
-- `MainContent`: `ContentSpacing`, `Container`, `Panel`, `FirstPanel`, `BodyPanel`
+- `MainPane`: None
+- `MainContent`: `ContentSpacing`, `Container`, `Panel`
 - `HeaderFrame`: None
-- `Heading`: `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`
+- `Heading`: None
 - `Banner`: `Link`
-- `SkipLink`: `Focus`
+- `SkipLink`: None
 
 #### Navigation and controls
 
-- `Header`: `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`, `MobileLanguage`
+- `Header`: `Primary`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `Social`, `MobileTheme`, `MobileLanguage`
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
-- `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`
-- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `OpenPane`, `EnteredPane`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
-- `MobileMenuToggle`: `Control`, `Icon`, `Section`, `Page`, `HoverControl`, `ActiveControl`
+- `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `NativeIcon`, `Icon`
+- `Button`: None
+- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
+- `MobileMenuToggle`: `Icon`, `Section`, `Page`
 - `MobileNavigationTabs`: `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`
 - `MobileMenuFooter`: `Social`
 - `TopNavigation`: `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`
-- `TableOfContentsLayout`: `WithMobile`, `Content`
+- `TableOfContentsLayout`: `Content`
 - `TableOfContents`: `Heading`, `List`, `Item`, `Link`, `LinkLabel`, `HoverLink`, `CurrentLink`
 - `MobileTableOfContents`: `Summary`, `List`, `NestedList`, `Item`, `Link`, `HoverLink`, `Focus`
 - `Pagination`: `Link`, `PreviousLink`, `NextLink`, `NextIcon`, `NextLabel`, `HoverLink`, `ActiveLink`, `Title`, `LoneNextLink`, `Icon`, `PreviousIconRtl`, `NextIconRtl`
 - `VersionSwitcher`: `Trigger`, `HoverTrigger`, `TriggerLabel`, `Caret`, `Panel`, `OpenPanel`, `PanelTitle`, `Options`, `Link`, `HoverLink`, `CurrentLink`, `Checkmark`, `SelectedCheckmark`
-- `LanguageSelect`: `Compact`, `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
+- `LanguageSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `LabelIcon`, `TriggerLabel`, `Caret`, `CompactTrigger`, `CompactLabel`, `CompactCaret`, `Label`, `HoverLabel`, `Select`, `CompactSelect`, `CompactLabelIcon`, `SidebarTrigger`, `Panel`, `SidebarPanel`, `OpenPanel`, `PanelTitle`, `Options`, `Option`, `HoverOption`, `CurrentOption`, `Fallback`, `Checkmark`, `SelectedCheckmark`
 - `SocialIcons`: `Link`, `HoverLink`, `Icon`
 - `ThemeSelect`: `Trigger`, `HoverTrigger`, `ActiveTrigger`, `Icon`, `Panel`, `OpenPanel`, `Section`, `SectionSpacing`, `SectionLabel`, `Option`, `HoverOption`, `CheckedOption`, `FocusedOption`, `Input`, `OptionIcon`, `Checkmark`, `SelectedCheckmark`
 
 #### Rendered content
 
 - `Markdown`: `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`
-- `MarkdownHeading`: `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`
+- `MarkdownHeading`: `Heading`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`
 - `MarkdownCodeBlock`: `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`, `Code`, `Diff`, `DiffCode`, `DiffLine`, `EmptyDiffLine`, `InsertedLine`, `DeletedLine`
 - `MarkdownInlineCode`: None
 - `MarkdownTable`: `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`, `Scroll`
-- `MarkdownAlert`: `Note`, `Tip`, `Caution`, `Danger`, `Title`, `FirstContent`
-- `SyntaxHighlight`: `Scroll`, `Wrap`, `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`
+- `MarkdownAlert`: `Title`, `FirstContent`
+- `SyntaxHighlight`: `Marker`, `Comment`, `Punctuation`, `Keyword`, `String`, `Token`, `Property`, `Number`, `Function`, `Value`, `Operator`, `Text`, `Bg`, `Inserted`, `Deleted`, `Italic`, `Strong`, `Underline`
 - `Mermaid`: `Diagram`, `Text`, `MonoText`
 - `MermaidSource`: None
 
 #### Authoring components
 
 - `Card`: `Heading2`, `Heading3`, `Paragraph`
-- `Callout`: `Title`, `Body`, `Tip`, `Caution`, `Danger`
+- `Callout`: `Title`, `Body`
 - `CodeGroup`: `Caption`, `Pre`, `Code`
-- `Tab`: `Heading`, `Hidden`, `HiddenHeading`
+- `Tab`: `Heading`, `HiddenHeading`
 - `Tabs`: `List`, `Button`, `SelectedButton`, `FocusedButton`
 - `Steps`: `Item`, `Marker`
 - `Hero`: `Visual`, `DarkVisual`, `LightVisual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`
@@ -187,7 +250,7 @@ it stays complete when a surface changes.
 - `SiteLogo`: `Image`, `Light`, `Dark`
 - `Logo`: `Svg`, `Mark`
 - `PageActions`: `Control`, `Hover`, `Focus`, `Pending`, `Status`
-- `Footer`: `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`
+- `Footer`: `Meta`, `MetaLink`, `MetaUpdated`, `Credit`, `CreditLink`
 - `PackageVersion`: None
 
 #### Search
@@ -233,7 +296,7 @@ same.
 
 Register custom names and their partial Tasty objects in `theme.customStyles`.
 Built-in names belong in `theme.styles` and reject misspelled sub-elements.
-The name must match the string passed to `defineComponent()` or
+The name must match the string passed to `defineComponent()`, `extendComponent()`, or
 `resolveComponentStyles()`. A production
 build warns when a configured custom name has no matching component style
 resolver.

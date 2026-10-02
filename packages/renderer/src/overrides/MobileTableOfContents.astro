@@ -1,7 +1,7 @@
 ---
 import { content } from "virtual:cookbook/config";
 import { navigationPath } from "../navigation.js";
-import { MobileTableOfContentsRoot } from "../components/LayoutComponents.js";
+import { MobileTableOfContentsRoot } from "../components/MobileTableOfContents.styles.js";
 import MobileTocList from "../components/MobileTocList.astro";
 const { toc } = Astro.locals.cookbookRoute;
 const entry = content.entries.find(
@@ -20,7 +20,7 @@ const label = Astro.locals.t("tableOfContents.onThisPage");
     toc.items.some(
       (item) => item.slug !== "_top" || item.children.length > 0,
     ) && (
-      <MobileTableOfContentsRoot data-tasty-anatomy="MobileTableOfContents">
+      <MobileTableOfContentsRoot>
         <details>
           <>
             <summary>{label}</summary>

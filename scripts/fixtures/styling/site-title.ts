@@ -1,9 +1,11 @@
 import {
   defineComponent,
+  extendComponent,
   mergeStyles,
   resolveComponentStyles,
   useGlobalStyles,
   type Styles,
+  Button,
 } from "@tenphi/cookbook/styling";
 
 const titleStyles = {
@@ -30,10 +32,22 @@ const titleStyles = {
   },
 } satisfies Styles;
 
-export const SiteTitleRoot = defineComponent("ConsumerSiteTitle", {
+const BaseSiteTitle = defineComponent("ConsumerTitleBase", {
   as: "a",
   elements: { Label: "span" },
   styles: titleStyles,
+});
+
+export const SiteTitleRoot = extendComponent(
+  "ConsumerSiteTitle",
+  BaseSiteTitle,
+  {
+    styles: { Label: { radius: "7px" } },
+  },
+);
+
+export const ConsumerButton = extendComponent("ConsumerButton", Button, {
+  styles: { padding: "5px", gap: "11px" },
 });
 
 export function ConsumerGlobalStyles() {

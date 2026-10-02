@@ -25,8 +25,6 @@ describe("component style metadata", () => {
       "HoverClose",
       "CloseIcon",
       "CurrentLink",
-      "OpenPane",
-      "EnteredPane",
       "Content",
       "Tree",
       "List",

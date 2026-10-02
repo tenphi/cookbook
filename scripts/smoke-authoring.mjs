@@ -125,7 +125,7 @@ try {
   assert.ok(!doc.querySelector("[style]"));
   assert.ok(
     !(await readFile(join(fixture, "dist/quiet/index.html"), "utf8")).includes(
-      'data-tasty-anatomy="MobileTableOfContents"',
+      'data-element="MobileTableOfContents"',
     ),
   );
   const apiWindow = new Window();
@@ -145,7 +145,7 @@ try {
   await build();
   assert.ok(
     !(await readFile(join(fixture, "dist/index.html"), "utf8")).includes(
-      'data-tasty-anatomy="MobileTableOfContents"',
+      'data-element="MobileTableOfContents"',
     ),
   );
   config.tableOfContents = { mobile: true };

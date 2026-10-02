@@ -40,6 +40,10 @@ describe("consumer style validation", () => {
       "$transition",
       "$sharp-radius",
       "$bold-font-weight",
+      "$margin-block-start",
+      "$margin-block-end",
+      "$padding-block-start",
+      "$padding-block-end",
     ];
     expect([...validationConfig.tokens].sort()).toEqual(
       [

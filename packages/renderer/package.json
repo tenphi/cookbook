@@ -68,7 +68,7 @@
     "@fontsource-variable/onest": "^5.3.0",
     "@pagefind/default-ui": "1.5.2",
     "@tenphi/docs": "workspace:*",
-    "@tenphi/eslint-plugin-tasty": "1.1.0",
+    "@tenphi/eslint-plugin-tasty": "1.5.1",
     "@tenphi/glaze": "catalog:",
     "@tenphi/tasty": "catalog:",
     "beautiful-mermaid": "^1.1.3",

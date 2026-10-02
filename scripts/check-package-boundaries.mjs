@@ -1,5 +1,5 @@
 import { readFile, readdir } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { basename, extname, join } from "node:path";
 
 const root = process.cwd();
 const facadeSource = join(root, "packages/facade/src");
@@ -41,6 +41,24 @@ for (const file of await walk(rendererSource)) {
     throw new Error(
       `Renderer styling must use Tasty style objects, not authored CSS: ${file}`,
     );
+  }
+  if (
+    [
+      "GlobalStyles.js",
+      "LayoutComponents.js",
+      "TastyComponents.js",
+      "customize-component.js",
+    ].includes(basename(file))
+  )
+    throw new Error(
+      `Component styles must live in their owning modules: ${file}`,
+    );
+  if ([".js", ".ts"].includes(extname(file)) && !file.endsWith(".test.ts")) {
+    const source = await readFile(file, "utf8");
+    if (/\buseGlobalStyles\s*\(/.test(source) && !file.endsWith(".styles.js"))
+      throw new Error(
+        `Global styles require an owning .styles.js module: ${file}`,
+      );
   }
 }
 

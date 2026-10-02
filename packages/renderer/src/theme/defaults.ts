@@ -70,7 +70,34 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
     fontWeight: 400,
     boldFontWeight: 650,
   },
+  "hero-title": derivedPreset("h1", {
+    fontSize: "clamp(2.75rem, 7vw, 4.75rem)",
+  }),
+  "hero-tagline": derivedPreset("body", {
+    fontSize: "clamp(1.05rem, 2.5vw, 1.35rem)",
+    lineHeight: 1.55,
+  }),
+  prose: derivedPreset("body", { fontSize: "1.025rem" }),
+  "inline-code": derivedPreset("code", { fontSize: "0.875em" }),
 };
+
+/** Keep specialized typography linked to user-configured base presets. */
+function derivedPreset(
+  base: string,
+  overrides: TypographyPreset,
+): TypographyPreset {
+  return {
+    fontFamily: `var(--${base}-font-family)`,
+    fontSize: `var(--${base}-font-size)`,
+    lineHeight: `var(--${base}-line-height)`,
+    letterSpacing: `var(--${base}-letter-spacing)`,
+    fontWeight: `var(--${base}-font-weight)`,
+    boldFontWeight: `var(--${base}-bold-font-weight)`,
+    fontStyle: `var(--${base}-font-style, var(--default-font-style))`,
+    textTransform: `var(--${base}-text-transform, var(--default-text-transform))`,
+    ...overrides,
+  };
+}
 
 export function resolveThemeTokens(tokens: ThemeTokens = {}): ThemeTokens {
   return { ...DEFAULT_THEME_TOKENS, ...tokens };

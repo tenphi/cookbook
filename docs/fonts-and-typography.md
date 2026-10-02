@@ -9,10 +9,22 @@ named presets to the rendered site.
 
 ## Typography presets
 
-The built-in [typography presets](https://tasty.style/docs/styles#preset) are
+The base [typography presets](https://tasty.style/docs/styles#preset) are
 `body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`. Onest
 is self-hosted and used for body and heading text by default; JetBrains Mono is
 self-hosted for code.
+
+Specialized roles preserve the component sizes while sharing their base typography:
+
+| Preset         | Used for          | Base typography                                     |
+| -------------- | ----------------- | --------------------------------------------------- |
+| `hero-title`   | Hero heading      | `h1`, with a larger responsive size                 |
+| `hero-tagline` | Hero description  | `body`, with a responsive size and 1.55 line height |
+| `prose`        | Markdown content  | `body`, at 1.025rem                                 |
+| `inline-code`  | Code within prose | `code`, at 0.875em                                  |
+
+Customize these through `theme.presets` as well. Changes to the base font family,
+weight, tracking, and other shared fields continue to flow into the derived roles.
 
 ### Change font families
 
