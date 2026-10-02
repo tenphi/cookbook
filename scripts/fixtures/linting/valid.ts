@@ -48,3 +48,7 @@ rendererComponent("RendererBadge", { styles: { color: "#syntax-string" } });
 extendComponent("ProjectButton", Button, {
   styles: { padding: "1x", color: { ":hover": "#text" } },
 });
+
+const outerStyles: Styles = { Label: { color: "#text", padding: "1x" } };
+const overrideStyles: Styles = { Label: { color: "#accent-text" } };
+const finalStyles: Styles = mergeStyles(outerStyles, overrideStyles);

@@ -8,7 +8,7 @@ Move built-in styles into component-owned modules and initialize document founda
 
 Use shared appearance states for scheme-dependent component styling, including automatic hero and logo selection with explicit theme choices taking precedence over system preferences.
 
-Upgrade Tasty to 3.9.6 and its ESLint plugin to 1.5.0.
+Upgrade Tasty to 3.9.6 and its ESLint plugin to 1.5.1.
 
 Enable shorthand-property diagnostics for component-owned styles and register renderer-local style helpers so global bridges receive the same validation. Use registered warning palette roles for Markdown warning alerts.
 
@@ -22,4 +22,4 @@ Enable selector-state warnings and move supported attribute and pseudo-class con
 
 Use built-in data-element identities for owned Header, Footer, and logo anatomy, and remove data-tasty-anatomy markers. Model heading levels as root states. Consume paired spacing tokens through blockMargin/blockPadding so single-edge state changes preserve the other edge without native longhand exceptions.
 
-Use Tasty ESLint plugin 1.5.0 and fix its containing-element diagnostics by moving root variants into property state maps. Use element-name selector shorthand, update the public anatomy reference, and verify both new rules in packed ESLint and Oxlint consumers.
+Use Tasty ESLint plugin 1.5.1, which recommends mergeStyles for shallow style composition, and fix its containing-element diagnostics by moving root variants into property state maps. Use element-name selector shorthand, update the public anatomy reference, and verify both new rules in packed ESLint and Oxlint consumers.
