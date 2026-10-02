@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export const CardRoot = defineComponent("Card", {
   as: "article",
-  "data-tasty-anatomy": "Card",
+  "data-element": "Card",
   styles: {
     display: "grid",
     gap: "1.5x",
@@ -21,15 +21,24 @@ export const CardRoot = defineComponent("Card", {
 
     Heading2: {
       $: "h2",
-      margin: "0",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
     },
     Heading3: {
       $: "h3",
-      margin: "0",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
     },
     Paragraph: {
       $: "p",
-      margin: "0",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
     },
   },
 });

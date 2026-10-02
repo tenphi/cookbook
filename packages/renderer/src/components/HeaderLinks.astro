@@ -22,7 +22,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 {
   links.length > 0 && (
-    <HeaderLinksRoot data-tasty-anatomy="HeaderLinks">
+    <HeaderLinksRoot>
       <nav class="td-header-links__desktop" aria-label={ui.headerLinks}>
         {links.map((link) => (
           <a

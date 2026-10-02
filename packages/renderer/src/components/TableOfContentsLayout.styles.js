@@ -7,7 +7,7 @@ export const TableOfContentsLayoutRoot = defineComponent(
   "TableOfContentsLayout",
   {
     as: "aside",
-    "data-tasty-anatomy": "TableOfContentsLayout",
+    "data-element": "TableOfContentsLayout",
     styles: {
       hide: { "": false, "@narrow-layout": true },
       order: { "": "2", "@narrow-layout": "0" },

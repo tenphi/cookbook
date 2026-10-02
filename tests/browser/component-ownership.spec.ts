@@ -92,9 +92,10 @@ test("prose owns block spacing while tab controls retain their own margins", asy
   page,
 }) => {
   await page.goto("/manual/guide/");
-  await expect(
-    page.locator('[data-tasty-anatomy="Callout"]').first(),
-  ).toHaveCSS("margin-block-start", "24px");
+  await expect(page.locator('[data-element="Callout"]').first()).toHaveCSS(
+    "margin-block-start",
+    "24px",
+  );
   const heading = page.locator(".cookbook-heading-wrapper.level-h2").nth(1);
   const spacing = await heading.evaluate(
     (e) => `${parseFloat(getComputedStyle(e).fontSize) * 1.5}px`,
@@ -136,12 +137,12 @@ test("button descendants inherit the shared theme and own their overrides", asyn
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const search = page.locator('[data-tasty-anatomy="SearchButton"]');
+  const search = page.locator('[data-element="SearchButton"]');
   await expect(search).toBeVisible();
   await expect(search).toHaveCSS("gap", "11px");
   await expect(search).toHaveCSS("min-block-size", "0px");
   await page.setViewportSize({ width: 390, height: 844 });
-  const menu = page.locator('[data-tasty-anatomy="MobileMenuToggle"]');
+  const menu = page.locator('[data-element="MobileMenuToggle"]');
   await expect(menu).toBeVisible();
   await expect(menu).toHaveCSS("display", "flex");
   await expect(menu).toHaveCSS("gap", "7px");
@@ -235,9 +236,10 @@ test("generated Markdown controls preserve spacing and link colors", async ({
   page,
 }) => {
   await page.goto("/manual/guide/");
-  await expect(
-    page.locator('[data-tasty-anatomy="Callout"]').first(),
-  ).toHaveCSS("margin-block-end", "16px");
+  await expect(page.locator('[data-element="Callout"]').first()).toHaveCSS(
+    "margin-block-end",
+    "16px",
+  );
   await expect(
     page.locator(".td-code-block [data-copy-code]").first(),
   ).toHaveCSS("margin", "0px");
@@ -307,3 +309,96 @@ for (const systemScheme of ["light", "dark"] as const) {
     }
   });
 }
+
+test("owned data-element identities replace legacy anatomy markers", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  await expect(page.locator("[data-tasty-anatomy]")).toHaveCount(0);
+  const header = page.locator('[data-element="Header"]');
+  await expect(header.locator('[data-element="Logo"]')).toHaveCount(1);
+  await expect(header.locator('[data-element="Logo"]')).not.toHaveAttribute(
+    "class",
+    /td-header__logo/,
+  );
+  await expect(
+    header.locator('[data-element="Search"] > site-search'),
+  ).toHaveCSS("display", "contents");
+  const mark = header.locator('[data-element="Logo"] [data-element="Mark"]');
+  await expect(mark).toHaveCount(2);
+});
+
+test("prose changes only the start token and preserves a custom end margin", async ({
+  page,
+}) => {
+  await page.goto("/custom-header/guide/");
+  const callout = page.locator('[data-element="Callout"]').first();
+  await expect(callout).toHaveCSS("margin-block-start", "24px");
+  await expect(callout).toHaveCSS("margin-block-end", "37px");
+  await expect(callout.locator('[data-element="Body"]')).toHaveCSS(
+    "margin-block-end",
+    "0px",
+  );
+  await callout.locator('[data-element="Body"]').evaluate((element) => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = "Nested prose";
+    element.append(paragraph);
+  });
+  await expect(callout.locator('[data-element="Body"] p')).toHaveCSS(
+    "margin-block-end",
+    "0px",
+  );
+  await page.evaluate(() => {
+    const heading = document.createElement("h3");
+    heading.dataset.testHeading = "";
+    heading.textContent = "Plain heading";
+    document.body.append(heading);
+  });
+  const heading = page.locator("[data-test-heading]");
+  await expect(heading).toHaveCSS("text-wrap-style", "pretty");
+});
+
+test("footer states style actual metadata parts without affecting unrelated children", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const meta = page.locator('[data-element="Footer"] [data-element="Meta"]');
+  await meta.evaluate((element) => {
+    element.replaceChildren();
+    const link = document.createElement("a");
+    link.dataset.element = "MetaLink";
+    link.href = "#metadata";
+    link.textContent = "Edit this page";
+    element.append(link);
+  });
+  const link = meta.locator('[data-element="MetaLink"]');
+  const single = await link.evaluate((element) =>
+    parseFloat(getComputedStyle(element).marginInlineStart),
+  );
+  expect(single).toBeGreaterThan(0);
+  await meta.evaluate((element) => {
+    const updated = document.createElement("p");
+    updated.dataset.element = "MetaUpdated";
+    updated.textContent = "Updated today";
+    element.append(updated);
+  });
+  await expect(link).toHaveCSS("margin-inline-start", "0px");
+  await expect(meta.locator('[data-element="MetaUpdated"]')).toHaveCSS(
+    "margin-inline-start",
+    "0px",
+  );
+  await link.evaluate((element) => element.remove());
+  expect(
+    await meta
+      .locator('[data-element="MetaUpdated"]')
+      .evaluate((element) =>
+        parseFloat(getComputedStyle(element).marginInlineStart),
+      ),
+  ).toBeGreaterThan(0);
+  await meta.evaluate((element) => {
+    const unknown = document.createElement("div");
+    unknown.textContent = "Unowned child";
+    element.replaceChildren(unknown);
+  });
+  await expect(meta.locator("div")).toHaveCSS("margin-inline-start", "0px");
+});

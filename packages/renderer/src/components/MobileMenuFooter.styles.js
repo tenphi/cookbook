@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const MobileMenuFooterRoot = defineComponent("MobileMenuFooter", {
   as: "div",
-  "data-tasty-anatomy": "MobileMenuFooter",
+  "data-element": "MobileMenuFooter",
   styles: {
     display: "flex",
     alignItems: "center",

@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const StepsRoot = defineComponent("Steps", {
   as: "ol",
-  "data-tasty-anatomy": "Steps",
+  "data-element": "Steps",
   styles: {
     display: "grid",
     gap: "2x",

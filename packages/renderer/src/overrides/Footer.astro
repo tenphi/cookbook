@@ -9,15 +9,16 @@ import { FooterRoot } from "../components/Footer.styles.js";
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
-<FooterRoot className="td-footer" data-tasty-anatomy="Footer">
-  <div class="td-footer__meta">
+<FooterRoot className="td-footer">
+  <div data-element="Meta">
     <EditLink />
     <LastUpdated />
   </div>
   <PageActions />
   <Pagination />
-  <p class="td-footer__credit">
+  <p data-element="Credit">
     {ui.generatedWith}{" "}
-    <a href="https://cookbook.tenphi.me/">Cookbook</a>.
+    <a data-element="CreditLink" href="https://cookbook.tenphi.me/">Cookbook</a
+    >.
   </p>
 </FooterRoot>

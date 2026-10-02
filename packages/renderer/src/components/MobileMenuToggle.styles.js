@@ -8,7 +8,7 @@ export const MobileMenuToggleRoot = extendComponent(
   "MobileMenuToggle",
   Button,
   {
-    "data-tasty-anatomy": "MobileMenuToggle",
+    "data-element": "MobileMenuToggle",
     styles: {
       display: { "": "none", "@mobile": "flex" },
       inlineSize: "(100% + ($docs-nav-pad-x * 2))",

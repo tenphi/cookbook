@@ -425,7 +425,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       cssEntries.map((name) => readFile(join(site, "dist", name), "utf8")),
     )
   ).join("\n");
-  assert.doesNotMatch(css, /\[data-tasty-anatomy="ConsumerAnatomy"\]/);
+  assert.doesNotMatch(css, /\[data-element="ConsumerAnatomy"\]/);
   assert.match(html, /data-consumer-button[^>]*>Inherited button<\/button>/);
   const buttonClasses = html.match(
     /<button\b[^>]*data-consumer-button[^>]*class="([^"]+)"/,

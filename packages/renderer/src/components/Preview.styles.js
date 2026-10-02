@@ -14,7 +14,7 @@ const previewElements = {
 
 export const PreviewRoot = defineComponent("Preview", {
   as: "figure",
-  "data-tasty-anatomy": "Preview",
+  "data-element": "Preview",
   styles: {
     margin: "0",
     overflow: "clip",

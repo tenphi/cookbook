@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const HeaderLinksRoot = defineComponent("HeaderLinks", {
   as: "cookbook-header-links",
-  "data-tasty-anatomy": "HeaderLinks",
+  "data-element": "HeaderLinks",
   styles: {
     display: "flex",
     flexShrink: "0",

@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const BannerRoot = defineComponent("Banner", {
   as: "div",
-  "data-tasty-anatomy": "Banner",
+  "data-element": "Banner",
   styles: {
     padding: "($gap * 1.5) $docs-nav-pad-x",
     color: "#accent-surface-text",

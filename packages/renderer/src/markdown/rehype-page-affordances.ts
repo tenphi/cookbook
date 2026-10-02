@@ -55,7 +55,7 @@ function isOrdinaryCodeBlock(node: HastNode): boolean {
 function codeBlockWithCopy(pre: HastNode): HastNode {
   return element(
     "cookbook-code-block",
-    { className: ["td-code-block"], dataTastyAnatomy: "MarkdownCodeBlock" },
+    { className: ["td-code-block"], dataElement: "MarkdownCodeBlock" },
     [
       pre,
       element(

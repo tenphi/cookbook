@@ -20,7 +20,7 @@ const label = Astro.locals.t("tableOfContents.onThisPage");
     toc.items.some(
       (item) => item.slug !== "_top" || item.children.length > 0,
     ) && (
-      <MobileTableOfContentsRoot data-tasty-anatomy="MobileTableOfContents">
+      <MobileTableOfContentsRoot>
         <details>
           <>
             <summary>{label}</summary>

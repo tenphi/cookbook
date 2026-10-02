@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const TableOfContentsRoot = defineComponent("TableOfContents", {
   as: "cookbook-table-of-contents",
-  "data-tasty-anatomy": "TableOfContents",
+  "data-element": "TableOfContents",
   styles: {
     display: "block",
     hide: { "": false, "@narrow-layout": true },

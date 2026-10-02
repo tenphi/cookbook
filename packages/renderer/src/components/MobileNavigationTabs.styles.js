@@ -7,7 +7,7 @@ export const MobileNavigationTabsRoot = defineComponent(
   "MobileNavigationTabs",
   {
     as: "nav",
-    "data-tasty-anatomy": "MobileNavigationTabs",
+    "data-element": "MobileNavigationTabs",
     styles: {
       display: "grid",
       hide: { "": false, "@desktop": true },

@@ -5,9 +5,16 @@ configureCookbookStates();
 
 export const CodeGroupRoot = defineComponent("CodeGroup", {
   as: "div",
-  "data-tasty-anatomy": "CodeGroup",
+  "data-element": "CodeGroup",
   styles: {
-    Caption: { preset: "small", color: "#text-soft", margin: "0 0 1x" },
+    Caption: {
+      preset: "small",
+      color: "#text-soft",
+      "$margin-block-start": "0",
+      "$margin-block-end": "1x",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
+    },
     Pre: { $: "pre" },
     Code: {
       $: "pre code",

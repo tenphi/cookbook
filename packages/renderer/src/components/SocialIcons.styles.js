@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const SocialIconsRoot = defineComponent("SocialIcons", {
   as: "div",
-  "data-tasty-anatomy": "SocialIcons",
+  "data-element": "SocialIcons",
   styles: {
     display: "flex",
     alignItems: "center",

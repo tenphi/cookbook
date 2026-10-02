@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const ThemeSelectRoot = defineComponent("ThemeSelect", {
   as: "cookbook-appearance-menu",
-  "data-tasty-anatomy": "ThemeSelect",
+  "data-element": "ThemeSelect",
   styles: {
     display: "flex",
     flexShrink: "0",

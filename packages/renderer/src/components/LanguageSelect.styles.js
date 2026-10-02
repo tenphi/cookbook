@@ -8,7 +8,7 @@ const languageSelectStyles = selectPopoverStyles();
 
 export const LanguageSelectRoot = defineComponent("LanguageSelect", {
   as: "cookbook-language-select",
-  "data-tasty-anatomy": "LanguageSelect",
+  "data-element": "LanguageSelect",
   styles: {
     display: "flex",
     flexShrink: "0",

@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const LogoRoot = defineComponent("Logo", {
   as: "span",
-  "data-tasty-anatomy": "Logo",
+  "data-element": "Logo",
   styles: {
     display: "inline-grid",
     flexGrow: "0",
@@ -21,7 +21,6 @@ export const LogoRoot = defineComponent("Logo", {
       blockSize: "100%",
     },
     Mark: {
-      $: "> svg > .td-logo__mark",
       color: "#logo-mark",
     },
   },

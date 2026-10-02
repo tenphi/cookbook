@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const PageFrameRoot = defineComponent("PageFrame", {
   as: "div",
-  "data-tasty-anatomy": "PageFrame",
+  "data-element": "PageFrame",
   styles: {
     display: "flex",
     flow: "column",

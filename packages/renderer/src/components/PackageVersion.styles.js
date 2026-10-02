@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const PackageVersionRoot = defineComponent("PackageVersion", {
   as: "span",
-  "data-tasty-anatomy": "PackageVersion",
+  "data-element": "PackageVersion",
   styles: {
     display: "inline-flex",
     hide: { "": false, "@compact": true },

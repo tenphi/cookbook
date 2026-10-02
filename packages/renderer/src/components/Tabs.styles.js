@@ -5,9 +5,12 @@ configureCookbookStates();
 
 export const TabsRoot = defineComponent("Tabs", {
   as: "div",
-  "data-tasty-anatomy": "Tabs",
+  "data-element": "Tabs",
   styles: {
-    margin: "2x 0",
+    "$margin-block-start": "2x",
+    "$margin-block-end": "2x",
+    blockMargin: "$margin-block-start $margin-block-end",
+    inlineMargin: "0",
     border: true,
     radius: "1cr",
     overflow: "clip",
@@ -21,7 +24,10 @@ export const TabsRoot = defineComponent("Tabs", {
     },
     Button: {
       $: '> [data-element="List"] > button',
-      margin: "0",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
       preset: "navigation",
       padding: "1x 2x",
       border: "0",

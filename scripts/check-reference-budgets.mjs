@@ -116,10 +116,10 @@ if (
   throw new Error("Diff lines lost their padding or typography rules.");
 }
 if (
-  !/\.td-footer__credit\s*\{[^}]*color:\s*var\(--text-color\)/.test(
+  !/\[data-element="Credit"\]\s*\{[^}]*color:\s*var\(--text-color\)/.test(
     sharedCss,
   ) ||
-  !/\.td-footer__credit a\s*\{[^}]*color:\s*var\(--accent-text-color\)/.test(
+  !/\[data-element="CreditLink"\][^{]*\{[^}]*color:\s*var\(--accent-text-color\)/.test(
     sharedCss,
   )
 ) {
@@ -340,15 +340,11 @@ if (/react-dom|tasty\/client|data-reactroot/i.test(home)) {
     "The default page unexpectedly contains a React or Tasty client runtime.",
   );
 }
-if (
-  !/<span\b(?=[^>]*data-tasty-anatomy="Logo")(?=[^>]*class="td-header__logo\b)[^>]*>/.test(
-    home,
-  )
-) {
+if (!/<span\b(?=[^>]*data-element="Logo")[^>]*>/.test(home)) {
   throw new Error("The project logo is missing from the documentation header.");
 }
 if (
-  !/>\s*svg\s*>\s*\.td-logo__mark\s*\{[^}]*color:\s*var\(--logo-mark-color\)/.test(
+  !/\[data-element="Mark"\]\s*\{[^}]*color:\s*var\(--logo-mark-color\)/.test(
     sharedCss,
   )
 ) {

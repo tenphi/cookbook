@@ -9,7 +9,7 @@ configureCookbookStates();
 
 export function MarkdownCodeBlockStyles() {
   useGlobalStyles(
-    ':is(.cookbook-markdown-content .td-code-block, .td-code-block[data-tasty-anatomy="MarkdownCodeBlock"])',
+    ':is(.cookbook-markdown-content .td-code-block, .td-code-block[data-element="MarkdownCodeBlock"])',
     resolveComponentStyles("MarkdownCodeBlock", {
       "$copy-button-size": "2rem",
       display: "block",
@@ -17,7 +17,10 @@ export function MarkdownCodeBlockStyles() {
       inlineSize: "min 0",
       Pre: {
         $: "> pre",
-        margin: "0",
+        "$margin-block-start": "0",
+        "$margin-block-end": "0",
+        blockMargin: "$margin-block-start $margin-block-end",
+        inlineMargin: "0",
         padding: "0 3.75rem 0 1rem",
         // Balance a single code line around the copy control, including the border.
         blockPadding:
@@ -35,7 +38,10 @@ export function MarkdownCodeBlockStyles() {
         zIndex: "1",
         blockInset: "$gap start",
         inlineInset: "$gap end",
-        margin: "0",
+        "$margin-block-start": "0",
+        "$margin-block-end": "0",
+        blockMargin: "$margin-block-start $margin-block-end",
+        inlineMargin: "0",
         display: "grid",
         placeItems: "center",
         inlineSize: "$copy-button-size $copy-button-size initial",

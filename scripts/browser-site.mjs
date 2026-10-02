@@ -62,6 +62,8 @@ import { CodeGroup } from "@tenphi/cookbook/components";
       config.theme.presets = { body: { fontSize: "19px" } };
       config.theme.styles = {
         Pagination: { Link: { radius: "13px" } },
+        Callout: { "$margin-block-end": "37px" },
+        Heading: { textWrap: { "": "balance", ":is(h3)": "pretty" } },
         Sidebar: { Link: { padding: "1x" } },
         Markdown: { Quote: { inlinePadding: "29px start" } },
         MarkdownCodeBlock: {

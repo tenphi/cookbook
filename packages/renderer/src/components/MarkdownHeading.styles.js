@@ -12,7 +12,15 @@ export function MarkdownHeadingStyles() {
     resolveComponentStyles("MarkdownHeading", {
       position: "relative",
       color: "#heading",
-      preset: "heading",
+      preset: {
+        "": "heading",
+        ".level-h1": "h1",
+        ".level-h2": "h2",
+        ".level-h3": "h3",
+        ".level-h4": "h4",
+        ".level-h5": "h5",
+        ".level-h6": "h6",
+      },
       Heading: {
         $: "> *",
         color: { "": null, "@own(:first-child)": "inherit" },
@@ -23,12 +31,6 @@ export function MarkdownHeadingStyles() {
           "(@own(:first-child)) & (@mobile)": "1.75rem end",
         },
       },
-      Heading1: { $: "&.level-h1", preset: "h1" },
-      Heading2: { $: "&.level-h2", preset: "h2" },
-      Heading3: { $: "&.level-h3", preset: "h3" },
-      Heading4: { $: "&.level-h4", preset: "h4" },
-      Heading5: { $: "&.level-h5", preset: "h5" },
-      Heading6: { $: "&.level-h6", preset: "h6" },
       Link: {
         $: "> .cookbook-anchor-link",
         position: { "": "absolute", "@mobile": "relative" },

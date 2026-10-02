@@ -4,7 +4,7 @@ const { lang, lastUpdated } = Astro.locals.cookbookRoute;
 
 {
   lastUpdated && (
-    <p>
+    <p data-element="MetaUpdated">
       {Astro.locals.t("page.lastUpdated")}{" "}
       <time datetime={lastUpdated.toISOString()}>
         {lastUpdated.toLocaleDateString(lang, {

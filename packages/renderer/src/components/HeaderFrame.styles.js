@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const HeaderFrameRoot = defineComponent("HeaderFrame", {
   as: "header",
-  "data-tasty-anatomy": "HeaderFrame",
+  "data-element": "HeaderFrame",
   styles: {
     position: "fixed",
     zIndex: "10",

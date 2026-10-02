@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const SkipLinkRoot = defineComponent("SkipLink", {
   as: "a",
-  "data-tasty-anatomy": "SkipLink",
+  "data-element": "SkipLink",
   styles: {
     position: "fixed",
     inset: "($gap * 1.5) auto auto ($gap * 1.5)",

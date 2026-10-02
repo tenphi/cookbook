@@ -7,7 +7,7 @@ configureCookbookStates();
 
 export const SearchRoot = defineComponent("Search", {
   as: "site-search",
-  "data-tasty-anatomy": "Search",
+  "data-element": "Search",
   styles: {
     display: "contents",
     "$dialog-transition": "120ms",

@@ -42,15 +42,21 @@ export function MarkdownAlertStyles() {
         display: "flex",
         alignItems: "center",
         gap: "$gap",
-        margin: "0 0 $gap",
+        "$margin-block-start": "0",
+        "$margin-block-end": "$gap",
+        blockMargin: "$margin-block-start $margin-block-end",
+        inlineMargin: "0",
         color: "inherit",
         preset: "strong",
       },
       FirstContent: {
         $: ".cookbook-alert__content > *",
-        // Keep the first content element's end margin while removing its start margin.
-        // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: {
+        blockMargin: {
+          "": null,
+          "@own(:is(.cookbook-alert__content > :first-child))":
+            "$margin-block-start $margin-block-end",
+        },
+        "$margin-block-start": {
           "": null,
           "@own(:is(.cookbook-alert__content > :first-child))": "0",
         },

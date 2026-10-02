@@ -13,7 +13,7 @@ const highlight = codeGroupHighlighting();
 
 <MarkdownCodeBlockStyles />
 <SyntaxHighlightStyles />
-<CodeGroupRoot data-tasty-anatomy="CodeGroup">
+<CodeGroupRoot>
   <Tabs label={label}>
     {
       items.map((item) => (
@@ -23,7 +23,7 @@ const highlight = codeGroupHighlighting();
           )}
           <cookbook-code-block
             class="td-code-block"
-            data-tasty-anatomy="MarkdownCodeBlock"
+            data-element="MarkdownCodeBlock"
           >
             <Code
               code={item.code}

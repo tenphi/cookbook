@@ -54,7 +54,13 @@ Configure `theme.tokens` with `$name` keys, such as `$radius`. The old `--name`
 configuration keys now fail validation; the emitted CSS custom properties
 still use `--name`.
 
-Custom styles no longer target `data-tasty-anatomy` attributes automatically.
+Built-in markup now uses Tasty’s `data-element` identities instead of
+`data-tasty-anatomy`. Custom styles resolve through each owning definition.
+Heading levels move from `Heading.Level1`–`Level6` to root property state maps
+(`:is(h1)`–`:is(h6)`); Markdown wrappers use `.level-h1`–`.level-h6`.
+Panel first/second-child padding moves into `MainContent.Panel` token state maps.
+Header’s shared title/search defaults live on `Title` and `Search`; Footer’s
+only-child and hover states live on `MetaLink`, `MetaUpdated`, and `CreditLink`.
 For a custom component, use `defineComponent(name, options)`. For custom global
 rules, pass `resolveComponentStyles(name, baseStyles)` to `useGlobalStyles()`.
 Both merge `theme.customStyles[name]` into the complete base styles during

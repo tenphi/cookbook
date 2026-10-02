@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const MainPaneRoot = defineComponent("MainPane", {
   as: "div",
-  "data-tasty-anatomy": "MainPane",
+  "data-element": "MainPane",
   styles: {
     isolation: "isolate",
     inlineSize: "0 100% initial",

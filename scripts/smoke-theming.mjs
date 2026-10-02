@@ -82,11 +82,11 @@ try {
     join(fixture, "dist/showcase/index.html"),
     "utf8",
   );
-  assert.equal((html.match(/data-tasty-anatomy="SiteLogo"/g) ?? []).length, 2);
+  assert.equal((html.match(/data-element="SiteLogo"/g) ?? []).length, 2);
   assert.equal((html.match(/class="td-site-logo__light"/g) ?? []).length, 2);
   assert.equal((html.match(/class="td-site-logo__dark"/g) ?? []).length, 2);
   assert.ok(html.includes('width="96" height="32"'));
-  assert.match(html, /class="td-header__logo-link" href="\/showcase"/);
+  assert.match(html, /data-element="LogoLink" href="\/showcase"/);
   assert.match(html, /class="td-sidebar-heading__home" href="\/showcase"/);
   assert.ok(html.includes("Review ready"));
   assert.ok(html.includes("data-demo-badge"));
@@ -183,7 +183,7 @@ try {
   );
   assert.doesNotMatch(
     disabledHtml,
-    /data-tasty-anatomy="(?:SiteLogo|Logo)"|data-open-modal|td-header__logo-link/,
+    /data-element="(?:SiteLogo|Logo)"|data-open-modal|data-element="LogoLink"/,
   );
   const showcasePath = join(fixture, "docs/showcase.mdx");
   const showcase = await readFile(showcasePath, "utf8");

@@ -7,7 +7,7 @@ import { Button } from "./Button.styles.js";
 configureCookbookStates();
 
 export const SearchButtonRoot = extendComponent("SearchButton", Button, {
-  "data-tasty-anatomy": "SearchButton",
+  "data-element": "SearchButton",
   styles: {
     justifyContent: { "": "flex-start", "@mobile": "center" },
     inlineSize: {

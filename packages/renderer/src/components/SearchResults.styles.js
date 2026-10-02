@@ -8,7 +8,7 @@ configureCookbookStates();
 
 export const SearchResultsRoot = defineComponent("SearchResults", {
   as: "div",
-  "data-tasty-anatomy": "SearchResults",
+  "data-element": "SearchResults",
   styles: {
     display: "flex",
     flow: "column",

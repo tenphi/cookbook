@@ -5,12 +5,15 @@ configureCookbookStates();
 
 export const CalloutRoot = defineComponent("Callout", {
   as: "aside",
-  "data-tasty-anatomy": "Callout",
+  "data-element": "Callout",
   styles: {
     "#callout-border": "#info",
     "#callout-text": "#info-text",
     "#callout-surface": "#info-surface",
-    margin: "2x 0",
+    "$margin-block-start": "2x",
+    "$margin-block-end": "2x",
+    blockMargin: "$margin-block-start $margin-block-end",
+    inlineMargin: "0",
     padding: "2x 3x",
     border: "1bw #callout-border",
     radius: "1cr",
@@ -19,9 +22,18 @@ export const CalloutRoot = defineComponent("Callout", {
     Title: {
       preset: "body / strong",
       color: "#callout-text",
-      margin: "0 0 1x",
+      "$margin-block-start": "0",
+      "$margin-block-end": "1x",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
     },
-    Body: { color: "#text", margin: "0" },
+    Body: {
+      color: "#text",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+      inlineMargin: "0",
+    },
     Tip: {
       $: "&:where(*)",
       "#callout-border": { "": null, '[data-kind="tip"]': "#success" },

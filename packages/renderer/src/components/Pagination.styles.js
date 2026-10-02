@@ -8,7 +8,7 @@ configureCookbookStates();
 
 export const PaginationRoot = defineComponent("Pagination", {
   as: "div",
-  "data-tasty-anatomy": "Pagination",
+  "data-element": "Pagination",
   styles: {
     display: { "": "grid", "@media:print": "none" },
     gap: "($gap * 2)",

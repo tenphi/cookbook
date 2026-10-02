@@ -51,15 +51,14 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 <HeaderRoot
   className={`td-header${layout.tabs.length ? " td-header--with-tabs" : ""}`}
-  data-tasty-anatomy="Header"
   data-has-sidebar={Astro.locals.cookbookRoute.hasSidebar ? "" : undefined}
 >
-  <div class="td-header__primary">
-    <div class="td-header__title">
+  <div data-element="Primary">
+    <div data-element="Title">
       {
         content.logo !== false && (
           <a
-            class="td-header__logo-link"
+            data-element="LogoLink"
             href={localeHref(
               content.logo ? (content.logo.href ?? "/") : "/",
               currentPath,
@@ -73,7 +72,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
                 : `${siteTitle}: ${ui.home}`
             }
           >
-            <Logo class="td-header__logo" />
+            <Logo />
           </a>
         )
       }
@@ -94,27 +93,29 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
         />
       )
     }
-    <div class="td-header__search cookbook-print-hidden">
+    <div data-element="Search" class="cookbook-print-hidden">
       {shouldRenderSearch && <Search />}
     </div>
     <HeaderLinks />
     <div
-      class="td-header__mobile-theme md:cookbook-hidden cookbook-print-hidden"
+      data-element="MobileTheme"
+      class="md:cookbook-hidden cookbook-print-hidden"
     >
       <ThemeSelect />
     </div>
     {
       !Astro.locals.cookbookRoute.hasSidebar &&
         Object.keys(content.locales ?? {}).length > 1 && (
-          <div class="td-header__mobile-language cookbook-print-hidden">
+          <div data-element="MobileLanguage" class="cookbook-print-hidden">
             <LanguageSelect compact />
           </div>
         )
     }
     <div
-      class="td-header__tools cookbook-hidden md:cookbook-flex cookbook-print-hidden"
+      data-element="Tools"
+      class="cookbook-hidden md:cookbook-flex cookbook-print-hidden"
     >
-      <div class="td-header__social"><SocialIcons /></div>
+      <div data-element="Social"><SocialIcons /></div>
       <ThemeSelect />
       <LanguageSelect />
     </div>
@@ -124,7 +125,6 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
       <TopNavigationRoot
         className="td-top-tabs cookbook-print-hidden"
         aria-label={ui.primary}
-        data-tasty-anatomy="TopNavigation"
       >
         {layout.tabs.map((tab, index) => (
           <a

@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const TopNavigationRoot = defineComponent("TopNavigation", {
   as: "nav",
-  "data-tasty-anatomy": "TopNavigation",
+  "data-element": "TopNavigation",
   styles: {
     display: "flex",
     hide: { "": false, "@mobile": true },

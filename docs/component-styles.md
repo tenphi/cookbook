@@ -7,6 +7,23 @@ For color roles and design tokens, start with the
 [theme overview](./theme-and-components.md). For your own components, see
 [Custom components](./custom-components.md).
 
+Owned markup uses Tasty's built-in `data-element` identities for its named parts.
+For example, Header's `Logo` styles target `data-element="Logo"` directly;
+no anatomy class or separate marker is required. A configured image logo owns
+its dimensions under `SiteLogo`.
+
+Heading levels are states of the same element. Customize them through a root
+property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
+Markdown heading wrappers use `.level-h1` through `.level-h6` as root states.
+
+Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
+owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
+changes only the start token. For example, `Callout: { "$margin-block-end": "3x" }`
+changes the end spacing while retaining Markdown's spacing before the callout.
+Document foundations reset these tokens on every element to prevent inheritance
+into nested content. For content-panel padding, use `MainContent.Panel`'s
+`$padding-block-start` and `$padding-block-end` tokens in the same way.
+
 ## Style customization
 
 Cookbook-owned interface elements use `defineComponent()` to create Tasty components
@@ -166,19 +183,19 @@ it stays complete when a surface changes.
 
 #### Page shell
 
-- `Document`: `All`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
+- `Document`: `All`, `BlockSpacing`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
 - `Layout`: `Islands`, `LockedPage`, `Light`, `Auto`
 - `PageFrame`: `MainFrame`, `SidebarFrame`, `Columns`
 - `MainPane`: `WithSidebars`
-- `MainContent`: `ContentSpacing`, `Container`, `Panel`, `FirstPanel`, `BodyPanel`
+- `MainContent`: `ContentSpacing`, `Container`, `Panel`
 - `HeaderFrame`: None
-- `Heading`: `Level1`, `Level2`, `Level3`, `Level4`, `Level5`, `Level6`, `PageTitle`
+- `Heading`: None
 - `Banner`: `Link`
 - `SkipLink`: `Focus`
 
 #### Navigation and controls
 
-- `Header`: `Primary`, `TitleAndSearch`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `ToolItem`, `Social`, `MobileTheme`, `MobileLanguage`
+- `Header`: `Primary`, `Title`, `LogoLink`, `Logo`, `SiteTitle`, `Search`, `SearchElement`, `Tools`, `Social`, `MobileTheme`, `MobileLanguage`
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
 - `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `Hover`, `Active`, `NativeIcon`, `Icon`
 - `Button`: None
@@ -199,7 +216,7 @@ it stays complete when a surface changes.
 #### Rendered content
 
 - `Markdown`: `Block`, `BlockSpacing`, `HeadingSpacing`, `List`, `CompactItem`, `ListItem`, `DefinitionTerm`, `DefinitionDescription`, `Link`, `HoverLink`, `Quote`, `Rule`, `Details`, `HoverDetails`, `Summary`, `OpenSummary`, `SummaryMarker`, `SummaryIcon`, `OpenSummaryIcon`, `Code`
-- `MarkdownHeading`: `Heading`, `Heading1`, `Heading2`, `Heading3`, `Heading4`, `Heading5`, `Heading6`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`
+- `MarkdownHeading`: `Heading`, `Link`, `RevealedLink`, `HoverLink`, `LinkIcon`, `CopiedLink`, `CopiedLinkIcon`, `CopiedIcon`
 - `MarkdownCodeBlock`: `Pre`, `CopyButton`, `HoverCopyButton`, `CopiedButton`, `CopyIcon`, `CopiedIcon`, `Code`, `Diff`, `DiffCode`, `DiffLine`, `EmptyDiffLine`, `InsertedLine`, `DeletedLine`
 - `MarkdownInlineCode`: None
 - `MarkdownTable`: `Table`, `Cell`, `LastBodyRowCell`, `HeaderCell`, `Scroll`
@@ -221,7 +238,7 @@ it stays complete when a surface changes.
 - `SiteLogo`: `Image`, `Light`, `Dark`
 - `Logo`: `Svg`, `Mark`
 - `PageActions`: `Control`, `Hover`, `Focus`, `Pending`, `Status`
-- `Footer`: `Meta`, `LoneMetaItem`, `MetaLink`, `HoverMetaLink`, `Credit`, `CreditLink`, `HoverCreditLink`
+- `Footer`: `Meta`, `MetaLink`, `MetaUpdated`, `Credit`, `CreditLink`
 - `PackageVersion`: None
 
 #### Search

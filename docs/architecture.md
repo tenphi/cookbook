@@ -63,8 +63,19 @@ Each built-in component has an owning `components/<Name>.styles.js` module
 with its complete base style tree and named sub-elements. Its Astro markup
 imports that definition directly. Rendered roots use
 `defineComponent(name, options)` to apply partial `theme.styles`
-overrides before extraction. Existing configuration names and sub-element
-lists remain the public customization contract.
+overrides before extraction. The published component names and sub-element
+lists define the public customization contract.
+
+Owned markup uses Tasty’s `data-element` identities; a named part usually needs
+no explicit `$` selector. Keep structural selectors for generated content and
+relationships between parts. Put conditions, including heading levels, in
+property state maps. Each actual part owns its complete styles; avoid broad
+selectors that also style parts with separate definitions.
+
+Use paired tokens for block margins and padding. Contextual spacing rules change
+only the relevant token; the owning shorthand consumes both edges. Spacing tokens
+are registered with `inherits: false` and reset in document foundations so nested
+content never inherits another element’s spacing.
 
 Use `extendComponent(name, base, options)` for derived roots. `Button`
 owns shared button defaults; `SearchButton` and `MobileMenuToggle` extend it

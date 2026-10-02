@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const HeroRoot = defineComponent("Hero", {
   as: "div",
-  "data-tasty-anatomy": "Hero",
+  "data-element": "Hero",
   styles: {
     display: "grid",
     gridColumns: {

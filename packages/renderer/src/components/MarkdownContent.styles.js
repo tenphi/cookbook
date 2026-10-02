@@ -22,18 +22,23 @@ export default function MarkdownStyles() {
       preset: "prose",
       Block: {
         $: ":where(p), :where(ul), :where(ol), :where(dl), :where(blockquote), :where(pre), :where(table), :where(hr), :where(details)",
+        "$margin-block-start": { "": null, "@own(!:is(.not-content *))": "0" },
+        "$margin-block-end": { "": null, "@own(!:is(.not-content *))": "0" },
         blockMargin: {
           "": null,
-          "@own(!:is(.not-content *))": "0",
+          "@own(!:is(.not-content *))": "$margin-block-start $margin-block-end",
         },
       },
       // Linked Cards are block content even though their root is an anchor.
       BlockSpacing: {
         // Prose spacing must win over each block component's root margin.
         $: "&.cookbook-markdown-content * + *",
-        // Keep owned components such as Callout's end margin while applying prose spacing.
-        // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: {
+        blockMargin: {
+          "": null,
+          "(@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is(a.td-card + *))) & (@own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd,.not-content *)) | @own(:is(a.td-card)))":
+            "$margin-block-start $margin-block-end",
+        },
+        "$margin-block-start": {
           "": null,
           "(@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is(a.td-card + *))) & (@own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd,.not-content *)) | @own(:is(a.td-card)))":
             "($gap * 3)",
@@ -41,10 +46,20 @@ export default function MarkdownStyles() {
       },
       HeadingSpacing: {
         $: "* + h1, * + h2, * + h3, * + h4, * + h5, * + h6, * + .cookbook-heading-wrapper",
+        "$margin-block-start": {
+          "": null,
+          "@own(:is(:not(h1,h2,h3,h4,h5,h6,.cookbook-heading-wrapper) + *)) & @own(!:is(.not-content *))":
+            "1.5em",
+        },
+        "$margin-block-end": {
+          "": null,
+          "@own(:is(:not(h1,h2,h3,h4,h5,h6,.cookbook-heading-wrapper) + *)) & @own(!:is(.not-content *))":
+            "0",
+        },
         blockMargin: {
           "": null,
           "@own(:is(:not(h1,h2,h3,h4,h5,h6,.cookbook-heading-wrapper) + *)) & @own(!:is(.not-content *))":
-            "1.5em start",
+            "$margin-block-start $margin-block-end",
         },
       },
       List: {
@@ -56,9 +71,14 @@ export default function MarkdownStyles() {
       },
       CompactItem: {
         $: ":where(li + li), :where(dt + dt), :where(dt + dd), :where(dd + dd)",
+        "$margin-block-start": {
+          "": null,
+          "@own(!:is(.not-content *))": "($gap * 0.5)",
+        },
+        "$margin-block-end": { "": null, "@own(!:is(.not-content *))": "0" },
         blockMargin: {
           "": null,
-          "@own(!:is(.not-content *))": "($gap * 0.5) start",
+          "@own(!:is(.not-content *))": "$margin-block-start $margin-block-end",
         },
       },
       ListItem: {
@@ -148,10 +168,20 @@ export default function MarkdownStyles() {
       },
       OpenSummary: {
         $: "details > summary",
+        "$margin-block-start": {
+          "": null,
+          "@own(:is(details[open] > summary)) & @own(!:is(.not-content *))":
+            "0",
+        },
+        "$margin-block-end": {
+          "": null,
+          "@own(:is(details[open] > summary)) & @own(!:is(.not-content *))":
+            "($gap * 2)",
+        },
         blockMargin: {
           "": null,
           "@own(:is(details[open] > summary)) & @own(!:is(.not-content *))":
-            "($gap * 2) end",
+            "$margin-block-start $margin-block-end",
         },
       },
       SummaryMarker: {

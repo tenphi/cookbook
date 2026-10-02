@@ -15,6 +15,10 @@ export default {
   },
   tokens: [
     "$gap",
+    "$margin-block-start",
+    "$margin-block-end",
+    "$padding-block-start",
+    "$padding-block-end",
     "$radius",
     "$header-control-radius",
     "$card-radius",

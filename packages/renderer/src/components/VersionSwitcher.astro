@@ -23,7 +23,7 @@ const { current, links } = versionLinks(
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
-<VersionSwitcherRoot data-tasty-anatomy="VersionSwitcher">
+<VersionSwitcherRoot>
   <SelectPopover
     triggerLabel={`${ui.documentationVersion}: ${current?.label ?? ui.versions}`}
     selectedLabel={current?.label ?? ui.versions}

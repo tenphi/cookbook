@@ -38,7 +38,6 @@ const selectedOption = options.find((option) => option.locale === selected);
     <LanguageSelectRoot
       data-compact={compact ? "" : undefined}
       data-sidebar={sidebar ? "" : undefined}
-      data-tasty-anatomy="LanguageSelect"
     >
       <SelectPopover
         triggerLabel={`${accessibleLabel}: ${selectedOption?.label ?? ""}`}

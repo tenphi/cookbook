@@ -168,7 +168,9 @@ describe("docs configuration", () => {
       tone: [4, 0] as [number, number],
       saturation: 0,
     };
-    const styles = { Heading: { Level1: { textWrap: "pretty" } } };
+    const styles = {
+      Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } },
+    };
     const theme = normalizeDocsConfig({
       theme: { palette: { heading }, styles },
     }).theme;

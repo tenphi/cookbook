@@ -12,7 +12,7 @@ const versionSelectStyles = selectPopoverStyles({
 
 export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
   as: "div",
-  "data-tasty-anatomy": "VersionSwitcher",
+  "data-element": "VersionSwitcher",
   styles: {
     // Reuse the shared, server-only popover anatomy.
     // eslint-disable-next-line tasty/no-style-spread

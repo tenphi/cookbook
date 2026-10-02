@@ -5,11 +5,7 @@ import { SidebarRoot } from "../components/Sidebar.styles.js";
 const { hasSidebar } = Astro.locals.cookbookRoute;
 ---
 
-<PageFrameRoot
-  className="page"
-  data-tasty-anatomy="PageFrame"
-  data-has-sidebar={hasSidebar ? "" : undefined}
->
+<PageFrameRoot className="page" data-has-sidebar={hasSidebar ? "" : undefined}>
   <HeaderFrameRoot className="header"><slot name="header" /></HeaderFrameRoot>
   {
     hasSidebar && (

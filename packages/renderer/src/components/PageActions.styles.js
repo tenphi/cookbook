@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const PageActionsRoot = defineComponent("PageActions", {
   as: "cookbook-page-actions",
-  "data-tasty-anatomy": "PageActions",
+  "data-element": "PageActions",
   styles: {
     display: "flex",
     flow: "row wrap",

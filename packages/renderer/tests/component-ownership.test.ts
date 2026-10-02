@@ -324,9 +324,7 @@ export const Root = defineComponent("Hero", { styles: {
         new RegExp(`${element}: \\{[^}]*preset: "${preset}"`),
       );
     for (const level of [1, 2, 3, 4, 5, 6])
-      expect(document).toContain(
-        `Level${level}: { $: "&:is(h${level})", preset: "h${level}" }`,
-      );
+      expect(document).toContain(`":is(h${level})": "h${level}"`);
     expect(document).not.toContain('"$bold-font-weight"');
     expect(document).toContain("@own(![width] | :is(picture))");
     expect(document).toContain("@own(![height] | :is(picture))");

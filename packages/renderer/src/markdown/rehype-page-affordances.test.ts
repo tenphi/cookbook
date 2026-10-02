@@ -28,7 +28,7 @@ describe("Markdown page affordances", () => {
       tagName: "cookbook-code-block",
       properties: {
         className: ["td-code-block"],
-        dataTastyAnatomy: "MarkdownCodeBlock",
+        dataElement: "MarkdownCodeBlock",
       },
       children: [
         { tagName: "pre" },

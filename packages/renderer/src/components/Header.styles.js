@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const HeaderRoot = defineComponent("Header", {
   as: "div",
-  "data-tasty-anatomy": "Header",
+  "data-element": "Header",
   styles: {
     display: "flex",
     flow: "column",
@@ -14,22 +14,15 @@ export const HeaderRoot = defineComponent("Header", {
     inlineMargin: "auto",
 
     Primary: {
-      $: ".td-header__primary",
       display: "flex",
       alignItems: "center",
       gap: { "": "clamp(0.5rem, 1.5vw, 1.5rem)", "@mobile": "0.5rem" },
       blockSize: { "": "4.5rem", "@mobile": "3.5rem" },
       flexShrink: "0",
     },
-    TitleAndSearch: {
-      $: ".td-header__title, .td-header__search",
+    Title: {
       display: "flex",
       alignItems: "center",
-      inlineSize: "min 0",
-    },
-    Title: {
-      $: ".td-header__title",
-      display: "flex",
       flow: "row",
       gap: "$gap",
       overflow: "hidden",
@@ -38,7 +31,6 @@ export const HeaderRoot = defineComponent("Header", {
       inlineMargin: { "": "0 end", "@mobile": "auto end" },
     },
     LogoLink: {
-      $: ".td-header__logo-link",
       display: "inline-grid",
       flexShrink: "0",
       placeItems: "center",
@@ -46,20 +38,10 @@ export const HeaderRoot = defineComponent("Header", {
       textDecoration: "none",
     },
     Logo: {
-      $: ".td-header__logo",
-      inlineSize: {
-        "": null,
-        '@own([data-tasty-anatomy="Logo"])': "2rem",
-        '(@own([data-tasty-anatomy="Logo"])) & (@mobile)': "1.75rem",
-      },
-      blockSize: {
-        "": null,
-        '@own([data-tasty-anatomy="Logo"])': "2rem",
-        '(@own([data-tasty-anatomy="Logo"])) & (@mobile)': "1.75rem",
-      },
+      inlineSize: { "": "2rem", "@mobile": "1.75rem" },
+      blockSize: { "": "2rem", "@mobile": "1.75rem" },
     },
     SiteTitle: {
-      $: ".site-title",
       inlineSize: "min 0",
       overflow: "hidden",
       color: "#text",
@@ -69,19 +51,20 @@ export const HeaderRoot = defineComponent("Header", {
       textOverflow: "ellipsis",
     },
     Search: {
-      $: ".td-header__search",
+      $: '[data-element="Primary"] > [data-element="Search"]',
+      display: "flex",
+      alignItems: "center",
       flexGrow: { "": "1", "@mobile": "0" },
       flexShrink: { "": "1", "@mobile": "0" },
-      inlineSize: { "": "min 8rem", "@mobile": "$docs-menu-button-size" },
+      inlineSize: { "": "min 0", "@mobile": "$docs-menu-button-size" },
       inlineMargin: { "": "auto", "@mobile": "0" },
     },
     SearchElement: {
-      $: ".td-header__search site-search",
+      $: '[data-element="Search"] site-search',
       inlineSize: "0 100% 28rem",
       inlineMargin: "auto",
     },
     Tools: {
-      $: ".td-header__tools",
       display: "flex",
       hide: { "": false, "@mobile": true },
       flow: "row",
@@ -89,17 +72,11 @@ export const HeaderRoot = defineComponent("Header", {
       justifyContent: "flex-end",
       gap: "($gap * 0.5)",
     },
-    ToolItem: {
-      $: ".td-header__tools > *",
-      margin: "0",
-    },
     Social: {
-      $: ".td-header__social",
       display: "flex",
       alignItems: "center",
     },
     MobileTheme: {
-      $: ".td-header__mobile-theme",
       display: "grid",
       hide: { "": true, "@mobile": false },
       flexShrink: "0",
@@ -108,7 +85,6 @@ export const HeaderRoot = defineComponent("Header", {
       blockSize: "$docs-menu-button-size",
     },
     MobileLanguage: {
-      $: ".td-header__mobile-language",
       display: "grid",
       hide: { "": true, "@mobile": false },
       flexShrink: "0",

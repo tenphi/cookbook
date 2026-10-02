@@ -6,11 +6,7 @@ const { prev, next } = pagination;
 
 {
   (next || prev) && (
-    <PaginationRoot
-      className="pagination-links"
-      dir={dir}
-      data-tasty-anatomy="Pagination"
-    >
+    <PaginationRoot className="pagination-links" dir={dir}>
       {next && (
         <a href={next.href} rel="next">
           <span>

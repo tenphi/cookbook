@@ -5,13 +5,12 @@ configureCookbookStates();
 
 export const FooterRoot = defineComponent("Footer", {
   as: "footer",
-  "data-tasty-anatomy": "Footer",
+  "data-element": "Footer",
   styles: {
     display: "flex",
     flow: "column",
     gap: "($gap * 3)",
     Meta: {
-      $: ".td-footer__meta",
       display: "flex",
       flow: "row wrap",
       justifyContent: "space-between",
@@ -20,41 +19,27 @@ export const FooterRoot = defineComponent("Footer", {
       color: "#text-muted",
       preset: "small",
     },
-    LoneMetaItem: {
-      $: ".td-footer__meta > *",
-      inlineMargin: {
-        "": null,
-        "@own(:is(.td-footer__meta > :only-child))": "auto start",
-      },
-    },
     MetaLink: {
-      $: ".td-footer__meta a",
       display: "flex",
       alignItems: "center",
       gap: "$gap",
-      color: "#text-muted",
+      inlineMargin: { "": "0", "@own(:only-child)": "auto start" },
+      color: { "": "#text-muted", "@own(:hover)": "#text" },
       textDecoration: "none",
     },
-    HoverMetaLink: {
-      $: ".td-footer__meta a",
-      color: { "": null, "@own(:is(.td-footer__meta a:hover))": "#text" },
+    MetaUpdated: {
+      inlineMargin: { "": "0", "@own(:only-child)": "auto start" },
     },
     Credit: {
-      $: ".td-footer__credit",
       margin: "($gap * 3) auto",
       color: "#text",
       preset: "small",
       textAlign: "center",
     },
     CreditLink: {
-      $: ".td-footer__credit a",
-      color: "#accent-text",
+      color: { "": "#accent-text", "@own(:hover)": "#text" },
       preset: "small / strong",
       textDecoration: "none",
-    },
-    HoverCreditLink: {
-      $: ".td-footer__credit a",
-      color: { "": null, "@own(:is(.td-footer__credit a:hover))": "#text" },
     },
   },
 });

@@ -100,11 +100,10 @@ try {
       await run("apps/convention/node_modules/astro/bin/astro.mjs", ["build"]);
       await run("packages/facade/dist/cli.js", ["check-build"]);
       const html = await readFile(join(fixture, "dist/index.html"), "utf8");
-      if (id === "branding")
-        assert.match(html, /data-tasty-anatomy="SiteLogo"/);
+      if (id === "branding") assert.match(html, /data-element="SiteLogo"/);
       if (id === "preview") {
         assert.match(html, /noindex/);
-        assert.ok(!html.includes('data-tasty-anatomy="PageActions"'));
+        assert.ok(!html.includes('data-element="PageActions"'));
       }
       if (id === "locales")
         assert.match(

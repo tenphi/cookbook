@@ -7,7 +7,7 @@ export const MobileTableOfContentsRoot = defineComponent(
   "MobileTableOfContents",
   {
     as: "cookbook-mobile-toc",
-    "data-tasty-anatomy": "MobileTableOfContents",
+    "data-element": "MobileTableOfContents",
     styles: {
       display: "block",
       hide: { "": true, "@narrow-layout": false },

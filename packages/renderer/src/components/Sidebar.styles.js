@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const SidebarRoot = defineComponent("Sidebar", {
   as: "cookbook-sidebar-pane",
-  "data-tasty-anatomy": "Sidebar",
+  "data-element": "Sidebar",
   styles: {
     "$sidebar-transition": "120ms",
     display: { "@desktop": "block" },
@@ -60,7 +60,6 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "$gap",
     },
     HomeLink: {
-      $: ".td-sidebar-heading__home",
       display: "flex",
       alignItems: "center",
       textDecoration: "none",
@@ -71,32 +70,14 @@ export const SidebarRoot = defineComponent("Sidebar", {
       preset: "h4",
     },
     HomeLogo: {
-      $: ".td-sidebar-heading__home > *",
-      inlineSize: {
-        "": null,
-        '@own(:is(.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]))':
-          "2rem",
-      },
-      blockSize: {
-        "": null,
-        '@own(:is(.td-sidebar-heading__home > [data-tasty-anatomy="Logo"]))':
-          "2rem",
-      },
+      $: '[data-element="HomeLink"] > [data-element="Logo"]',
+      inlineSize: "2rem",
+      blockSize: "2rem",
     },
     HomeLabel: {
-      $: ".td-sidebar-heading__home > *",
-      overflow: {
-        "": null,
-        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "hidden",
-      },
-      textOverflow: {
-        "": null,
-        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "ellipsis",
-      },
-      whiteSpace: {
-        "": null,
-        "@own(:is(.td-sidebar-heading__home > [data-site-title]))": "nowrap",
-      },
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
     },
     Close: {
       $: ".td-sidebar-heading > button",

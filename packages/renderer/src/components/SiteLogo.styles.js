@@ -5,7 +5,7 @@ configureCookbookStates();
 
 export const SiteLogoRoot = defineComponent("SiteLogo", {
   as: "span",
-  "data-tasty-anatomy": "SiteLogo",
+  "data-element": "SiteLogo",
   styles: {
     display: "inline-flex",
     alignItems: "center",

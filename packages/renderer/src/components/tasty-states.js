@@ -1,6 +1,9 @@
 import { configure, getGlobalPredefinedStates } from "@tenphi/tasty";
 import { resolveTypographyPresets } from "../theme/defaults.js";
-import { TASTY_UNITS } from "../theme/tasty-config.js";
+import {
+  TASTY_UNITS,
+  TASTY_SPACING_PROPERTIES,
+} from "../theme/tasty-config.js";
 
 const systemLight = "@media(prefers-color-scheme: light)";
 const systemDark = "@media(prefers-color-scheme: dark)";
@@ -33,6 +36,7 @@ export function configureCookbookStates() {
   if (configured && configuredRuntime === runtime) return;
   configure({
     presets: resolveTypographyPresets(),
+    properties: TASTY_SPACING_PROPERTIES,
     ...runtime,
     units: { ...TASTY_UNITS, ...runtime?.units },
   });

@@ -3,6 +3,7 @@ import jetBrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbra
 import onestLatin from "@fontsource-variable/onest/files/onest-latin-wght-normal.woff2?url";
 import { resolveComponentStyles } from "./component-styles.js";
 import { configureCookbookStates } from "./tasty-states.js";
+import { TASTY_SPACING_PROPERTIES } from "../theme/tasty-config.js";
 import { getDefaultFontUsage, getFontFaces } from "../theme/fonts.js";
 
 configureCookbookStates();
@@ -73,6 +74,7 @@ export default function DocumentStyles() {
   useGlobalStyles(
     ":where(html)",
     resolveComponentStyles("Document", {
+      "@property": TASTY_SPACING_PROPERTIES,
       blockSize: "min 100%",
       blockScrollPadding:
         "(1.5rem + $docs-nav-height + $docs-mobile-toc-height) start",
@@ -84,6 +86,32 @@ export default function DocumentStyles() {
         },
         transitionDuration: {
           "@reduced-motion": "0.01ms",
+        },
+      },
+      BlockSpacing: {
+        $: "&:where(*), *",
+        // Reset on each element: spacing tokens must never leak into its children.
+        "$margin-block-start": {
+          "": "0",
+          "@own(:is(p,ul,ol,dl,blockquote,pre,figure))": "1em",
+          "@own(:is(hr))": "0.5em",
+          "@own(:is(h1))": "0.67em",
+          "@own(:is(h2))": "0.83em",
+          "@own(:is(h3))": "1em",
+          "@own(:is(h4))": "1.33em",
+          "@own(:is(h5))": "1.67em",
+          "@own(:is(h6))": "2.33em",
+        },
+        "$margin-block-end": {
+          "": "0",
+          "@own(:is(p,ul,ol,dl,blockquote,pre,figure))": "1em",
+          "@own(:is(hr))": "0.5em",
+          "@own(:is(h1))": "0.67em",
+          "@own(:is(h2))": "0.83em",
+          "@own(:is(h3))": "1em",
+          "@own(:is(h4))": "1.33em",
+          "@own(:is(h5))": "1.67em",
+          "@own(:is(h6))": "2.33em",
         },
       },
       Body: {
@@ -188,19 +216,18 @@ export default function DocumentStyles() {
     ":where(h1, h2, h3, h4, h5, h6, .site-title)",
     resolveComponentStyles("Heading", {
       color: "#heading",
-      preset: "heading",
-      textWrap: "balance",
-      Level1: { $: "&:is(h1)", preset: "h1" },
-      Level2: { $: "&:is(h2)", preset: "h2" },
-      Level3: { $: "&:is(h3)", preset: "h3" },
-      Level4: { $: "&:is(h4)", preset: "h4" },
-      Level5: { $: "&:is(h5)", preset: "h5" },
-      Level6: { $: "&:is(h6)", preset: "h6" },
-      PageTitle: {
-        $: "&:where(*)", // Keep the browser or theme end margin while adjusting only the page-title start edge.
-        // eslint-disable-next-line tasty/prefer-shorthand-property
-        marginBlockStart: { "": null, '[id="_top"]': "($gap * 2)" },
+      preset: {
+        "": "heading",
+        ":is(h1)": "h1",
+        ":is(h2)": "h2",
+        ":is(h3)": "h3",
+        ":is(h4)": "h4",
+        ":is(h5)": "h5",
+        ":is(h6)": "h6",
       },
+      textWrap: "balance",
+      "$margin-block-start": { "": null, '[id="_top"]': "($gap * 2)" },
+      blockMargin: "$margin-block-start $margin-block-end",
     }),
   );
 
