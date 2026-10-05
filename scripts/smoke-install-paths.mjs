@@ -11,12 +11,16 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, extname, join, sep } from "node:path";
+import { performance } from "node:perf_hooks";
 import { checkStyleLinting } from "./smoke-style-linting.mjs";
 
 // cross-spawn handles Windows .cmd launchers and argument quoting without
 // executing arbitrary test arguments through a shell.
 const run = (command, args, options = {}) =>
   new Promise((resolve, reject) => {
+    const label = `${basename(options.cwd ?? process.cwd())}: ${basename(command)} ${args.slice(0, 2).join(" ")}`;
+    const startedAt = performance.now();
+    console.log(`Starting ${label}`);
     const child = spawn(command, args, {
       cwd: options.cwd,
       env: options.env ?? process.env,
@@ -36,8 +40,11 @@ const run = (command, args, options = {}) =>
     child.stdout.on("data", (chunk) => collect("stdout", chunk));
     child.stderr.on("data", (chunk) => collect("stderr", chunk));
     child.on("error", reject);
-    child.on("close", (code) =>
-      code === 0
+    child.on("close", (code) => {
+      console.log(
+        `${label}: ${((performance.now() - startedAt) / 1000).toFixed(1)}s`,
+      );
+      return code === 0
         ? resolve({ stdout, stderr })
         : reject(
             Object.assign(new Error(`${command} exited ${code}: ${stderr}`), {
@@ -45,8 +52,8 @@ const run = (command, args, options = {}) =>
               stderr,
               code,
             }),
-          ),
-    );
+          );
+    });
   });
 const manager = process.env.COOKBOOK_TEST_MANAGER ?? "npm";
 if (!["npm", "pnpm", "yarn"].includes(manager))
