@@ -662,10 +662,31 @@ translations: {
 
 `navigation.<configured label>` translates named tabs and navigation groups.
 Automatically generated links use the title from the translated page.
-Cookbook message keys are `appearance`, `colorScheme`, `contrast`,
-`normalContrast`, `highContrast`, `auto`, `closeNavigation`, `primary`, `sections`,
-`chooseSection`, `headerLinks`, `more`, `closeMore`, `moreLinks`, `versions`,
-`documentationVersion`, `documentationVersions`, `version`, `home`,
-`generatedWith`, `viewSource`, `copyCode`, `codeCopied`, `codeCopyError`,
-`copyHeading`, `linkCopied`, `linkCopyError`, `notFound`, `notFoundDescription`,
-and `fallback`. Preserve `{heading}` in the `copyHeading` message.
+The supported keys below keep independent overrides, including similar labels:
+`auto` controls contrast, while `themeSelect.auto` controls color scheme;
+`search.label` labels the search control, while `pagefind.search` supplies the
+search input prompt. No migration or key renaming is needed.
+
+| Keys                                                                                                                | Controls or feedback                                                            |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `copyPage`, `viewMarkdown`, `pageCopied`, `pageCopyError`                                                           | Page Markdown actions and copy status.                                          |
+| `draftTitle`, `draftNotice`                                                                                         | Draft-page notice.                                                              |
+| `searchError`                                                                                                       | Search loading failure.                                                         |
+| `appearance`, `colorScheme`, `contrast`, `normalContrast`, `highContrast`, `auto`                                   | Appearance and contrast controls.                                               |
+| `closeNavigation`, `primary`, `sections`, `chooseSection`                                                           | Primary and mobile navigation.                                                  |
+| `headerLinks`, `more`, `closeMore`, `moreLinks`                                                                     | Header links and overflow menu.                                                 |
+| `versions`, `documentationVersion`, `documentationVersions`, `version`                                              | Version selection and package labels.                                           |
+| `home`, `generatedWith`, `viewSource`                                                                               | Home, footer credit and preview source.                                         |
+| `copyCode`, `codeCopied`, `codeCopyError`                                                                           | Code copy action and status.                                                    |
+| `copyHeading`, `linkCopied`, `linkCopyError`                                                                        | Heading link action and status. Preserve `{heading}` in `copyHeading`.          |
+| `notFound`, `notFoundDescription`, `fallback`                                                                       | Missing-page and language fallback messages.                                    |
+| `sidebarNav.accessibleLabel`, `menuButton.accessibleLabel`                                                          | Sidebar navigation and menu accessible names.                                   |
+| `tableOfContents.onThisPage`, `languageSelect.accessibleLabel`                                                      | Contents heading and language selector.                                         |
+| `themeSelect.light`, `themeSelect.dark`, `themeSelect.auto`                                                         | Color-scheme options.                                                           |
+| `search.label`, `search.ctrlKey`, `search.cancelLabel`, `search.devWarning`                                         | Search control, shortcut, close action and development notice.                  |
+| `page.nextLink`, `page.previousLink`, `page.editLink`, `page.lastUpdated`, `page.skipToContent`                     | Pagination, edit/update labels and skip link.                                   |
+| `pagefind.search`, `pagefind.clear_search`, `pagefind.zero_results`, `pagefind.many_results`, `pagefind.one_result` | Search input, clearing and result counts. Preserve `[COUNT]` in count messages. |
+
+Custom component message keys are also preserved. Missing custom keys passed to
+`Astro.locals.t(key)` return the key itself. Changing an override does not alter
+other message keys, even when their default text is the same.
