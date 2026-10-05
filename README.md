@@ -36,3 +36,19 @@ The workspace contains four fixed-version packages:
 - `@tenphi/renderer` — the official static renderer and theme.
 
 Node.js 22.19 or newer is required.
+
+## Local agent review
+
+For work on this repository, follow [the repository instructions](AGENTS.md) and
+[the Entropy rule](.claude/rules/entropy.md). The policy covers code, public APIs,
+configuration, documentation workflows and UX; the review skills define the
+assessment and report format.
+
+Use `$review` in Codex or `/review` in Claude Code for a local review against
+the repository rules, including Entropy. Use `$entropy-review` or
+`/entropy-review` for a focused pass. Both agents use the same skill sources.
+
+A focused review can run in a read-only subagent with the diff, relevant sources
+and task requirements/accepted exceptions. It needs no dependency installation,
+services, tests or probes; claims needing unavailable runtime evidence remain
+unverified. Implementation checks still follow [the contributing guide](CONTRIBUTING.md).

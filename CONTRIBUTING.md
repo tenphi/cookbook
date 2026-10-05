@@ -3,6 +3,11 @@
 Use Node.js 22.19+ and pnpm 11. Run `pnpm install`, then `pnpm test`,
 `pnpm typecheck`, and `pnpm build`. Public package changes require a Changeset.
 
+Follow [the repository rules](AGENTS.md) and [the Entropy policy](.claude/rules/entropy.md).
+Before requesting review, use [the local review procedure](.claude/skills/review/SKILL.md)
+to check the diff against those rules and document material exceptions or required
+follow-up tasks. See [the README](README.md#local-agent-review) for agent commands.
+
 Keep consumer documentation in the root `docs/` directory. The facade build
 and prepack step generate `packages/facade/docs/` from those sources and the
 renderer dependencies' published Tasty and Glaze documentation. Do not edit or

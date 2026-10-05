@@ -1,5 +1,10 @@
 # Repository Instructions
 
+## Entropy — implementation and local reviews
+
+- Follow [the Entropy rule](.claude/rules/entropy.md) during implementation. Introduce only complexity justified by validated requirements, prefer safe simplification in the affected area, and record material tradeoffs and developer-accepted exceptions.
+- Every local code or UI review follows [the repository review procedure](.claude/skills/review/SKILL.md), including an Entropy assessment with a change level relative to the affected context. A [focused Entropy review](.claude/skills/entropy-review/SKILL.md) can run from the diff, repository sources and task context without environment setup, tests or probes. Existing implementation verification duties remain in force.
+
 ## Validation
 
 - Treat every ESLint warning as a required fix. Run `pnpm lint` and require zero errors and zero warnings before finishing changes; CI and the release gate enforce this through `--max-warnings 0`. The same requirement applies after `pnpm lint:fix`.
