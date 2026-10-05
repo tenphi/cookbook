@@ -268,13 +268,17 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
 
   async function loadGraph(refresh = false) {
     if (!graph || refresh) {
-      graph = await createDocsGraph({
+      const candidate = await createDocsGraph({
         ...(projectRoot ? { root: projectRoot } : {}),
         ...(graphConfig ? { config: graphConfig } : {}),
         base: graphBase,
       });
-      assertValidDocs(graph);
-      await validatePluginFrontmatter(graph.entries, options.frontmatterSchema);
+      assertValidDocs(candidate);
+      await validatePluginFrontmatter(
+        candidate.entries,
+        options.frontmatterSchema,
+      );
+      graph = candidate;
     }
     return graph;
   }
