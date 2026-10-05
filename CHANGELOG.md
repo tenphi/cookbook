@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.21.3
+
+### Patch Changes
+
+- [#137](https://github.com/tenphi/cookbook/pull/137) [`3536e94`](https://github.com/tenphi/cookbook/commit/3536e947b60b6004ceba772b8efc8d50b38b5dc4) Thanks [@tenphi](https://github.com/tenphi)! - Document the self-hosted Onest Variable and JetBrains Mono Variable defaults,
+  including their continuous weight ranges and bundled Latin subsets.
+
 ## 0.21.2
 
 ### Patch Changes
