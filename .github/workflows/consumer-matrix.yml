@@ -6,19 +6,43 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  packed-consumer:
+  consumer:
+    name: ${{ matrix.scenario }}-consumer (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.manager }})
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, node: "22.19", manager: npm }
-          - { os: ubuntu-latest, node: "24", manager: pnpm }
-          - { os: ubuntu-latest, node: "24", manager: yarn }
-          - { os: ubuntu-latest, node: "26", manager: npm }
-          - { os: macos-latest, node: "24", manager: npm }
-          - { os: windows-latest, node: "22.22", manager: npm }
-          - { os: windows-latest, node: "24", manager: pnpm }
+          - { os: ubuntu-latest, node: "22.19", manager: npm, scenario: packed }
+          - { os: ubuntu-latest, node: "24", manager: pnpm, scenario: packed }
+          - { os: ubuntu-latest, node: "24", manager: yarn, scenario: packed }
+          - { os: ubuntu-latest, node: "26", manager: npm, scenario: packed }
+          - { os: macos-latest, node: "24", manager: npm, scenario: packed }
+          - {
+              os: windows-latest,
+              node: "22.22",
+              manager: npm,
+              scenario: packed,
+            }
+          - { os: windows-latest, node: "24", manager: pnpm, scenario: packed }
+          # npm's generated and packed sites install independently in parallel.
+          - {
+              os: ubuntu-latest,
+              node: "22.19",
+              manager: npm,
+              scenario: generated,
+            }
+          - { os: ubuntu-latest, node: "26", manager: npm, scenario: generated }
+          - { os: macos-latest, node: "24", manager: npm, scenario: generated }
+          - {
+              os: windows-latest,
+              node: "22.22",
+              manager: npm,
+              scenario: generated,
+            }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -34,3 +58,4 @@ jobs:
       - run: pnpm check:install
         env:
           COOKBOOK_TEST_MANAGER: ${{ matrix.manager }}
+          COOKBOOK_TEST_SCENARIO: ${{ matrix.scenario }}
