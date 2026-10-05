@@ -2,6 +2,14 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.21.4
+
+### Patch Changes
+
+- [#140](https://github.com/tenphi/cookbook/pull/140) [`1f3adf7`](https://github.com/tenphi/cookbook/commit/1f3adf726238be1fc4ec2cc0b08ea769d563748e) Thanks [@tenphi](https://github.com/tenphi)! - Keep the last successful content graph when a refresh fails validation. Share
+  translation catalog ownership and language fallback logic while preserving existing
+  message keys, defaults and overrides, and document all supported control keys.
+
 ## 0.21.3
 
 ### Patch Changes
