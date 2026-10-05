@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { cp, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 /** Run from the clean npm consumer so workspace dependencies cannot mask exports. */
 export async function checkStyleLinting({ site, root, run }) {
@@ -62,7 +62,7 @@ export default {
 };
 `,
         );
-        async function lint(file, fix = false, includeMessages = false) {
+        async function lint(files, fix = false) {
           let result;
           try {
             result = await run(
@@ -78,7 +78,7 @@ export default {
                 ...(fix
                   ? [linter === "eslint" ? "--fix" : "--fix-suggestions"]
                   : []),
-                `linting/${file}.ts`,
+                ...files.map((file) => `linting/${file}.ts`),
               ],
               { cwd: site, maxBuffer: 8 * 1024 * 1024 },
             );
@@ -89,28 +89,42 @@ export default {
           const output = JSON.parse(result.stdout);
           const diagnostics =
             linter === "eslint"
-              ? output.flatMap((file) => file.messages)
+              ? output.flatMap((file) =>
+                  file.messages.map((message) => ({
+                    ...message,
+                    filename: file.filePath,
+                  })),
+                )
               : output.diagnostics;
-          return diagnostics.map((message) => {
+          const byFile = Object.fromEntries(files.map((file) => [file, []]));
+          for (const message of diagnostics) {
+            const file = basename(message.filename, ".ts");
+            assert.ok(
+              files.includes(file),
+              `${label}: unexpected diagnostic file ${message.filename}`,
+            );
             const rule =
               linter === "eslint"
                 ? message.ruleId?.replace("tasty/", "")
                 : message.code.replace(/^tasty[(/]/, "").replace(/\)$/, "");
-            return includeMessages ? { rule, message: message.message } : rule;
-          });
+            byFile[file].push({ rule, message: message.message });
+          }
+          return byFile;
         }
 
+        const baseline = await lint([
+          "valid",
+          "unrelated",
+          "composition",
+          "invalid",
+        ]);
         assert.deepEqual(
-          await lint("valid"),
+          baseline.valid,
           [],
           `${label}: inherited and custom theme names`,
         );
-        assert.deepEqual(
-          await lint("unrelated"),
-          [],
-          `${label}: import boundaries`,
-        );
-        const composition = await lint("composition", false, true);
+        assert.deepEqual(baseline.unrelated, [], `${label}: import boundaries`);
+        const composition = baseline.composition;
         assert.equal(
           composition.length,
           1,
@@ -121,13 +135,14 @@ export default {
         assert.match(composition[0].message, /shallow/);
         const compositionPath = join(site, "linting/composition.ts");
         const beforeComposition = await readFile(compositionPath, "utf8");
-        await lint("composition", true);
+        await writeFile(fixablePath, fixable);
+        await lint(["composition", "fixable"], true);
         assert.equal(
           await readFile(compositionPath, "utf8"),
           beforeComposition,
           `${label}: semantic merge remains an explicit choice`,
         );
-        const invalid = await lint("invalid");
+        const invalid = baseline.invalid.map((message) => message.rule);
         for (const rule of [
           "valid-color-token",
           "valid-custom-unit",
@@ -145,8 +160,6 @@ export default {
           5,
           `${label}: every styling helper must be recognized`,
         );
-        await writeFile(fixablePath, fixable);
-        await lint("fixable", true);
         assert.equal(
           await readFile(fixablePath, "utf8"),
           expectedFixed,
@@ -154,7 +167,7 @@ export default {
         );
         // Check diagnostics against the saved file after each linter applies fixes.
         assert.deepEqual(
-          await lint("fixable"),
+          (await lint(["fixable"])).fixable.map((message) => message.rule),
           ["prefer-shorthand-property"],
           `${label}: partial override stays report-only`,
         );
