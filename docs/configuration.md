@@ -441,8 +441,8 @@ theme: {
 ```
 
 The default brand is `okhsl(266 68% 48%)`, a blue with 68% saturation.
-Controls use an `8px` radius and cards use `16px`. Onest is the default body
-and heading family; JetBrains Mono is used for code. `theme.fonts` loads Google
+Controls use an `8px` radius and cards use `16px`. Onest Variable is the default body
+and heading family; JetBrains Mono Variable is used for code. `theme.fonts` loads Google
 families by name or local files from `public/`. See
 [Fonts and typography](./fonts-and-typography.md) for both flows.
 

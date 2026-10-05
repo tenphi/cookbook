@@ -11,8 +11,14 @@ named presets to the rendered site.
 
 The base [typography presets](https://tasty.style/docs/styles#preset) are
 `body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`. Onest
-is self-hosted and used for body and heading text by default; JetBrains Mono is
-self-hosted for code.
+Variable is self-hosted and used for body and heading text by default, with a
+continuous weight range from `100` to `900`. This supports intermediate preset
+weights such as `450` for navigation and `610` for headings. JetBrains Mono
+Variable is self-hosted for code with weights from `100` to `800`.
+
+Both default fonts bundle their Latin subset and require no Google Fonts
+requests at build time or in the browser. For other character sets, configure
+`theme.fonts` with a Google family or local files as described below.
 
 Specialized roles preserve the component sizes while sharing their base typography:
 
