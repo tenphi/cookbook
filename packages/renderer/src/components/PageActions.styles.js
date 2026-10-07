@@ -36,7 +36,7 @@ export const PageActionsRoot = defineComponent("PageActions", {
       $: "button, a",
       outline: {
         "": null,
-        "@own(:focus-visible)": "2px solid #focus / 2px",
+        "@own(:focus-visible)": "$outline-width solid #focus / $outline-offset",
       },
     },
     Pending: {

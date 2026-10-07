@@ -91,7 +91,7 @@ export const HeroRoot = defineComponent("Hero", {
       gap: "$gap",
       color: "#text",
       border: true,
-      radius: "999px",
+      radius: "round",
       fill: "#surface-2",
       preset: "navigation / strong",
       textDecoration: "none",
@@ -99,8 +99,9 @@ export const HeroRoot = defineComponent("Hero", {
     },
     HoverAction: {
       $: ".cookbook-link-button",
+      "$hover-offset": "-1px",
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
-      translate: { "": null, "@own(:hover)": "0 -1px" },
+      translate: { "": null, "@own(:hover)": "0 $hover-offset" },
     },
     PrimaryAction: {
       $: ".cookbook-link-button.primary",

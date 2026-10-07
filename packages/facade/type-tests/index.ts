@@ -96,9 +96,26 @@ void [tab, missingTabLabel, missingTitle, logo];
 
 defineDocsConfig({
   navigation: [
-    { label: "Guides", link: "/guides", items: ["/guide"] },
-    { label: "API", link: "/api", autogenerate: { directory: "/api" } },
+    {
+      label: "Guides",
+      link: "/guides",
+      badge: "NEW",
+      items: [{ label: "Guide", link: "/guide", badge: "BETA" }],
+    },
+    {
+      label: "API",
+      link: "/api",
+      badge: "PREVIEW",
+      autogenerate: { directory: "/api" },
+    },
   ],
+});
+defineDocsConfig({
+  // @ts-expect-error Sidebar badges contain text.
+  navigation: [{ label: "Guide", link: "/guide", badge: 123 }],
+});
+defineDocsConfig({
+  content: { sources: [{ file: "README.md", navigation: { badge: "NEW" } }] },
 });
 // @ts-expect-error Group page links must be strings.
 defineDocsConfig({ navigation: [{ label: "Guides", link: 123, items: [] }] });

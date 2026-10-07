@@ -16,7 +16,9 @@ export const CardRoot = defineComponent("Card", {
     border: true,
     radius: "1cr",
     fill: "#surface-2",
-    shadow: "0 1px 2px #shadow",
+    "$resting-shadow-offset": "1px",
+    "$resting-shadow-blur": "2px",
+    shadow: "0 $resting-shadow-offset $resting-shadow-blur #shadow",
     transition: "fill $transition, shadow $transition, translate $transition",
 
     Heading2: {
@@ -52,12 +54,13 @@ export const CardLink = tasty(CardRoot, {
       ":active": "#surface-2-pressed",
     },
     shadow: {
-      "": "0 1px 2px #shadow",
+      "": "0 $resting-shadow-offset $resting-shadow-blur #shadow",
       ":hover": "0 .75x 2x #shadow",
     },
+    "$hover-offset": "-1px",
     translate: {
       "": "0",
-      ":hover": "0 -1px",
+      ":hover": "0 $hover-offset",
       ":active": "0",
     },
   },

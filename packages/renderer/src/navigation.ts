@@ -17,9 +17,10 @@ export interface ResolvedNavigationLayout {
   sectioned: boolean;
 }
 
-export type PageSidebarItem =
+export type PageSidebarItem = { badge?: string } & (
   | { label: string; link: string; attrs?: Record<string, string> }
-  | { label: string; items: PageSidebarItem[] };
+  | { label: string; items: PageSidebarItem[] }
+);
 
 export function resolveNavigationLayout(
   navigation: DocsConfig["navigation"],
@@ -71,18 +72,22 @@ export function pageSidebar(
         left.route.localeCompare(right.route)
       );
     });
-  const titles = new Map(
-    visibleRoutes.map((route) => [
-      route.route,
-      typeof route.sidebar === "object" && route.sidebar.label
-        ? route.sidebar.label
-        : route.title,
-    ]),
-  );
-  const labelFor = (route: string) =>
-    titles.get(normalizeNavigationPath(route)) ??
-    normalizeNavigationPath(route).split("/").filter(Boolean).at(-1) ??
-    "Home";
+  const pages = new Map(visibleRoutes.map((route) => [route.route, route]));
+  const badgeFor = (link: string) => {
+    const sidebar = pages.get(normalizeNavigationPath(link))?.sidebar;
+    return typeof sidebar === "object" ? sidebar.badge : undefined;
+  };
+  const labelFor = (link: string) => {
+    const path = normalizeNavigationPath(link);
+    const page = pages.get(path);
+    return (
+      (typeof page?.sidebar === "object" && page.sidebar.label
+        ? page.sidebar.label
+        : page?.title) ??
+      path.split("/").filter(Boolean).at(-1) ??
+      "Home"
+    );
+  };
   const generatedItems = (directory: string) => {
     const root = normalizeNavigationPath(directory);
     return groupedRoutes(
@@ -95,9 +100,18 @@ export function pageSidebar(
     );
   };
   const convert = (item: NavigationItem): PageSidebarItem => {
+    const link = typeof item === "string" ? item : item.link;
+    const badge = link ? badgeFor(link) : undefined;
     if (typeof item === "string") {
-      return { label: labelFor(item), link: item };
+      return {
+        label: labelFor(item),
+        link: item,
+        ...(badge !== undefined ? { badge } : {}),
+      };
     }
+    const resolvedBadge = item.badge ?? badge;
+    const presentation =
+      resolvedBadge !== undefined ? { badge: resolvedBadge } : {};
     if ("items" in item || "autogenerate" in item) {
       let children =
         "items" in item
@@ -107,19 +121,22 @@ export function pageSidebar(
         children = withoutRoute(children, item.link);
         // Keep the parent in route resolution and pagination. The sidebar
         // promotes this marked entry into the group header.
-        if (!children.length) return { label: item.label, link: item.link };
+        if (!children.length)
+          return { label: item.label, link: item.link, ...presentation };
         children.unshift({
           label: item.label,
           link: item.link,
           attrs: { "data-cookbook-group-link": "" },
+          ...presentation,
         });
       }
       return {
         label: item.label,
         items: children,
+        ...presentation,
       };
     }
-    return item;
+    return { ...item, ...presentation };
   };
   const fallback = layout.items?.length
     ? layout.items.map(convert)
@@ -161,7 +178,13 @@ function withoutRoute(
       "link" in first &&
       first.attrs?.["data-cookbook-group-link"] !== undefined
     ) {
-      return [{ label: item.label, link: first.link }];
+      return [
+        {
+          label: item.label,
+          link: first.link,
+          ...(item.badge !== undefined ? { badge: item.badge } : {}),
+        },
+      ];
     }
     return children.length ? [{ ...item, items: children }] : [];
   });
@@ -177,6 +200,9 @@ function groupedRoutes(routes: DocsRoute[]): PageSidebarItem[] {
           ? route.sidebar.label
           : route.title,
       link: route.route,
+      ...(typeof route.sidebar === "object" && route.sidebar.badge !== undefined
+        ? { badge: route.sidebar.badge }
+        : {}),
     };
     const group =
       typeof route.sidebar === "object" ? route.sidebar.group : undefined;

@@ -1251,6 +1251,9 @@ function validateNavigationItems(
       continue;
     }
     const group = "items" in item || "autogenerate" in item;
+    if (item.badge !== undefined && typeof item.badge !== "string") {
+      invalid(diagnostics, `${itemPath}.badge must be a string.`);
+    }
     if (
       group &&
       item.link !== undefined &&

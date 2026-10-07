@@ -1626,7 +1626,7 @@ function validateFrontmatter(
   if (isPlainRecord(record.sidebar)) {
     validateOptionalStrings(
       record.sidebar,
-      ["label", "group"],
+      ["label", "group", "badge"],
       "sidebar",
       error,
     );

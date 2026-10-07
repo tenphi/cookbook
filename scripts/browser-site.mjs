@@ -2,6 +2,7 @@ import { URL, pathToFileURL } from "node:url";
 import { createServer } from "node:http";
 import {
   cp,
+  mkdir,
   mkdtemp,
   symlink,
   writeFile,
@@ -20,7 +21,14 @@ const originalConfig = (
 ).default;
 const outputs = new Map();
 try {
-  for (const name of ["manual", "wide-logo", "tall-logo", "custom-header"]) {
+  for (const name of [
+    "manual",
+    "wide-logo",
+    "tall-logo",
+    "custom-header",
+    "sidebar-badges",
+    "branded-badges",
+  ]) {
     const site = join(fixture, name);
     await cp(source, site, { recursive: true });
     await symlink(
@@ -33,7 +41,60 @@ try {
       join(site, "astro.config.mjs"),
       `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",integrations:[cookbook()]};`,
     );
-    if (name === "custom-header") {
+    if (name === "sidebar-badges" || name === "branded-badges") {
+      await mkdir(join(site, "badge-docs/reference"), { recursive: true });
+      for (const [path, content] of Object.entries({
+        "index.md": "# Cookbook\n\nBrowse the guides and API reference.\n",
+        "authentication.md":
+          "# Authentication\n\nConnect your account to get started.\n",
+        "offline-support.md":
+          "---\nsidebar:\n  badge: NEW\n---\n# Offline support\n\nKeep your documentation available when you are offline.\n\n## Getting started\n\nSave the pages you need before disconnecting.\n",
+        "deploying.md":
+          "---\nsidebar:\n  badge: UPDATED\n---\n# Deploying\n\nPublish your documentation.\n",
+        "reference/index.md": "# Reference\n\nExplore the API.\n",
+        "reference/experimental.md":
+          '---\nsidebar:\n  badge: "ALPHA < BETA"\n---\n# Experimental\n\nTry upcoming features.\n',
+      }))
+        await writeFile(join(site, "badge-docs", path), content);
+      const config = {
+        site: { title: "Cookbook", url: "https://example.com" },
+        content: {
+          sources: [{ glob: "badge-docs/**/*.md", base: "badge-docs" }],
+        },
+        navigation: [
+          {
+            label: "Guides",
+            items: [
+              "/authentication",
+              "/offline-support",
+              { label: "Deploying", link: "/deploying", badge: "" },
+            ],
+          },
+          {
+            label: "Reference",
+            link: "/reference",
+            badge: "BETA",
+            autogenerate: { directory: "/reference" },
+          },
+        ],
+        ...(name === "branded-badges"
+          ? {
+              theme: {
+                brand: { from: "#d97706" },
+                styles: {
+                  Sidebar: {
+                    Badge: { radius: "0.5rem", fontSize: "0.75rem" },
+                  },
+                },
+              },
+            }
+          : {}),
+      };
+      await writeFile(
+        join(site, "docs.config.mjs"),
+        `export default ${JSON.stringify(config)};`,
+      );
+    } else if (name === "custom-header") {
       await writeFile(
         join(site, "Header.astro"),
         "<div data-custom-header>Replacement header</div>",

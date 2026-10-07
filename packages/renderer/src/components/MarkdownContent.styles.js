@@ -130,13 +130,15 @@ export default function MarkdownStyles() {
       },
       Details: {
         $: "details",
+        "$details-border-width": "2px",
         inlinePadding: {
           "": null,
           "@own(!:is(.not-content *))": "($gap * 2) start",
         },
         inlineBorder: {
           "": null,
-          "@own(!:is(.not-content *))": "2px solid #border start",
+          "@own(!:is(.not-content *))":
+            "$details-border-width solid #border start",
         },
         // Change only color; border widths and styles belong to other rules or theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property

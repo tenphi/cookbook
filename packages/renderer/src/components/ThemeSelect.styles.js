@@ -137,14 +137,16 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       $: "label",
       outline: {
         "": null,
-        "@own(:has(input:focus-visible))": "$outline-width solid #focus / -2px",
+        "@own(:has(input:focus-visible))":
+          "$outline-width solid #focus / ($outline-offset * -1)",
       },
     },
     Input: {
       $: "input",
+      "$visually-hidden-size": "1px",
       position: "absolute",
-      inlineSize: "1px",
-      blockSize: "0 1px",
+      inlineSize: "$visually-hidden-size",
+      blockSize: "0 $visually-hidden-size",
       padding: "0",
       margin: "0",
       overflow: "hidden",

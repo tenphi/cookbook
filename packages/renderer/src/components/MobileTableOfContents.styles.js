@@ -24,11 +24,12 @@ export const MobileTableOfContentsRoot = defineComponent(
       },
       List: {
         $: "ul",
+        "$item-gap": "2px",
         listStyle: "none",
         padding: "0",
         margin: "0",
         display: "grid",
-        gap: "2px",
+        gap: "$item-gap",
       },
       NestedList: { $: "ul ul", inlinePadding: "($gap * 2) start" },
       Item: { $: "li", listStyle: "none", margin: "0", padding: "0" },
@@ -51,7 +52,7 @@ export const MobileTableOfContentsRoot = defineComponent(
         outline: {
           "": null,
           "@own(:is(a:focus-visible)) | @own(:is(summary:focus-visible))":
-            "2px solid #focus / 2px",
+            "$outline-width solid #focus / $outline-offset",
         },
       },
     },

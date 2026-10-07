@@ -249,7 +249,7 @@ try {
         // This fresh consumer deliberately has no lockfile yet. Keep the repo
         // install frozen; allow only this generated fixture to create its lock.
         // Match the repository's reviewed release-age exceptions for this upgrade.
-        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.9.6'\n  - '@tenphi/eslint-plugin-tasty@1.5.1'\n",
+        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.9.9'\n  - '@tenphi/eslint-plugin-tasty@1.6.0'\n  - '@tenphi/glaze@2.0.1'\n",
       );
     } else
       packageJson.overrides = Object.fromEntries(
@@ -291,6 +291,7 @@ const config = defineDocsConfig({
     styles: {
       Button: { gap: '9px' },
       Header: { Logo: { hide: true } },
+      Sidebar: { Badge: { radius: '0.5rem' } },
     },
     customStyles: {
       ConsumerButton: { gap: '13px' },
@@ -314,7 +315,7 @@ export default defineConfig({ base: '/manual/', integrations: [cookbook({ config
     await mkdir(join(site, "docs"), { recursive: true });
     await writeFile(
       join(site, "docs", "guide.md"),
-      "# Guide\n\nBuilt only from packed package artifacts.\n",
+      "---\nsidebar:\n  badge: NEW\n---\n# Guide\n\nBuilt only from packed package artifacts.\n",
     );
     await runManager(
       manager === "npm"
@@ -444,6 +445,19 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
         cssEntries.map((name) => readFile(join(site, "dist", name), "utf8")),
       )
     ).join("\n");
+    assert.match(html, /data-element="Badge">NEW<\/span>/);
+    assert.match(
+      css,
+      /\[data-element="Badge"\][^{}]*\{[^{}]*border-radius:\s*0?\.5rem/,
+    );
+    assert.match(
+      css,
+      /\[data-element="Badge"\][^{}]*\{[^{}]*color:\s*var\(--accent-text-color\)/,
+    );
+    assert.match(
+      css,
+      /\[data-element="Badge"\][^{}]*\{[^{}]*background(?:-color)?:\s*var\(--accent-surface-subtle-color\)/,
+    );
     assert.doesNotMatch(css, /\[data-element="ConsumerAnatomy"\]/);
     assert.match(html, /data-consumer-button[^>]*>Inherited button<\/button>/);
     const buttonClasses = html.match(

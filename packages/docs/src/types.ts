@@ -131,6 +131,8 @@ export interface NavigationPlacement {
   label?: string;
   order?: number;
   group?: string;
+  /** Plain-text badge displayed beside the sidebar label. */
+  badge?: string;
 }
 
 export type DocsSource = {
@@ -182,9 +184,11 @@ export interface ContentConfig {
 
 export type NavigationItem =
   | string
-  | { label: string; link?: string; items: NavigationItem[] }
-  | { label: string; link?: string; autogenerate: { directory: string } }
-  | { label: string; link: string };
+  | ({ badge?: string } & (
+      | { label: string; link?: string; items: NavigationItem[] }
+      | { label: string; link?: string; autogenerate: { directory: string } }
+      | { label: string; link: string }
+    ));
 
 export interface NavigationTab {
   label: string;
@@ -957,7 +961,7 @@ export interface DocsFrontmatter {
   description?: string;
   slug?: string;
   draft?: boolean;
-  sidebar?: false | { label?: string; order?: number; group?: string };
+  sidebar?: false | NavigationPlacement;
   tableOfContents?: false | TableOfContentsConfig;
   editUrl?: false | string;
   /** Cookbook page layout. */

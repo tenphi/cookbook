@@ -1744,6 +1744,10 @@
               "not": {
                 "pattern": "//|(^|/)\\.{1,2}(/|$)"
               }
+            },
+            "badge": {
+              "type": "string",
+              "description": "Plain-text sidebar badge. An empty string hides the badge."
             }
           }
         },
@@ -1772,6 +1776,10 @@
               "not": {
                 "pattern": "//|(^|/)\\.{1,2}(/|$)"
               }
+            },
+            "badge": {
+              "type": "string",
+              "description": "Plain-text sidebar badge. An empty string hides the badge."
             }
           }
         },
@@ -1785,6 +1793,10 @@
             },
             "link": {
               "type": "string"
+            },
+            "badge": {
+              "type": "string",
+              "description": "Plain-text sidebar badge. An empty string hides the badge."
             }
           }
         }
@@ -2001,6 +2013,10 @@
         },
         "group": {
           "type": "string"
+        },
+        "badge": {
+          "type": "string",
+          "description": "Plain-text sidebar badge. An empty string hides the badge."
         }
       }
     }

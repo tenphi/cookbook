@@ -16,7 +16,7 @@ export const PackageVersionRoot = defineComponent("PackageVersion", {
     color: "#text-soft",
     fill: "#surface-2",
     border: true,
-    radius: "999px",
+    radius: "round",
     preset: "small",
     whiteSpace: "nowrap",
   },

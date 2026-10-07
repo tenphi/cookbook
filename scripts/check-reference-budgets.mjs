@@ -156,7 +156,9 @@ for (const [name, descendant, label] of [
   }
 }
 if (
-  !/backdrop-filter:\s*blur\(16px\)/.test(sharedCss) ||
+  !new RegExp(
+    `${styleOwnerSelector(componentPage, "HeaderFrame")}\\s*\\{[^}]*--backdrop-blur:\\s*16px;[^}]*backdrop-filter:\\s*blur\\(var\\(--backdrop-blur\\)\\)`,
+  ).test(sharedCss) ||
   !sharedCss.includes("var(--header-color)")
 ) {
   throw new Error(

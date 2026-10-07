@@ -366,7 +366,12 @@ head:
             {
               file: "README.md",
               route: "/",
-              navigation: { label: "Start here", order: 1, group: "Guides" },
+              navigation: {
+                label: "Start here",
+                order: 1,
+                group: "Guides",
+                badge: "NEW",
+              },
             },
           ],
         },
@@ -377,7 +382,30 @@ head:
       label: "Start here",
       order: 1,
       group: "Guides",
+      badge: "NEW",
     });
+  });
+
+  it("carries sidebar badges from page frontmatter into routes", async () => {
+    const root = await createDocsFixture({
+      "README.md": "---\nsidebar:\n  badge: NEW\n---\n# Offline support\n",
+    });
+    const graph = await createDocsGraph({ root });
+    expect(graph.diagnostics).toEqual([]);
+    expect(graph.routes[0]?.sidebar).toEqual({ badge: "NEW" });
+  });
+
+  it("reports malformed sidebar badges in frontmatter", async () => {
+    const root = await createDocsFixture({
+      "README.md": "---\nsidebar:\n  badge: 42\n---\n# Offline support\n",
+    });
+    const graph = await createDocsGraph({ root });
+    expect(graph.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: "DOCS_FRONTMATTER_INVALID",
+        message: expect.stringContaining("sidebar.badge must be a string"),
+      }),
+    );
   });
 
   it("resolves edit links from original source paths and preserves page presentation", async () => {

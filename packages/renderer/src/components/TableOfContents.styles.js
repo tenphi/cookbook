@@ -19,10 +19,11 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
     },
     List: {
       $: "ul",
+      "$item-gap": "1px",
       display: "grid",
       gridColumns: "minmax(0, 1fr)",
       inlineSize: "min 0",
-      gap: "1px",
+      gap: "$item-gap",
       margin: "0",
       padding: "0",
       listStyle: "none",

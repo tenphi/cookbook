@@ -52,7 +52,8 @@ export const TabsRoot = defineComponent("Tabs", {
       $: "> List > button",
       outline: {
         "": null,
-        "@own(:focus-visible)": "2px #focus / -2px",
+        "@own(:focus-visible)":
+          "$outline-width #focus / ($outline-offset * -1)",
       },
     },
   },
