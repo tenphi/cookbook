@@ -41,11 +41,12 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
       // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
       // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[aria-current="page"]::after',
+      "$indicator-height": "2px",
       content: '""',
       position: "absolute",
       inset: "auto 0 0",
-      blockSize: "2px",
-      radius: "999px",
+      blockSize: "$indicator-height",
+      radius: "round",
       fill: "#accent-surface",
     },
   },

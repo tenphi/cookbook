@@ -22,7 +22,9 @@ export const PreviewRoot = defineComponent("Preview", {
     border: true,
     radius: "1cr",
     fill: "#surface",
-    shadow: "0 1px 2px #shadow",
+    "$resting-shadow-offset": "1px",
+    "$resting-shadow-blur": "2px",
+    shadow: "0 $resting-shadow-offset $resting-shadow-blur #shadow",
 
     Caption: {
       padding: "1.5x 2x",

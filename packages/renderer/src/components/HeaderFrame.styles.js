@@ -15,6 +15,7 @@ export const HeaderFrameRoot = defineComponent("HeaderFrame", {
     padding: "0 $docs-nav-pad-x",
     blockBorder: "$border-width solid #border end",
     fill: "#header",
-    backdropFilter: "blur(16px)",
+    "$backdrop-blur": "16px",
+    backdropFilter: "blur($backdrop-blur)",
   },
 });
