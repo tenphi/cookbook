@@ -149,9 +149,24 @@ export function localizedNavigation(
                 ? route.sidebar.label
                 : route.title,
             link: target,
+            ...(typeof route.sidebar === "object" &&
+            route.sidebar.badge !== undefined
+              ? { badge: route.sidebar.badge }
+              : {}),
           },
         ];
       }
+      const sidebar =
+        fallback && target === fallback
+          ? visibleRoutes.get(fallback)?.sidebar
+          : undefined;
+      const badge =
+        item.badge !== undefined
+          ? label(item.badge)
+          : typeof sidebar === "object"
+            ? sidebar.badge
+            : undefined;
+      const presentation = badge !== undefined ? { badge } : {};
       if ("items" in item || "autogenerate" in item) {
         const { link: _link, ...group } = item;
         const children = "items" in item ? convert(item.items) : undefined;
@@ -160,6 +175,7 @@ export function localizedNavigation(
           {
             ...group,
             label: label(group.label),
+            ...presentation,
             ...(target ? { link: target } : {}),
             ...("items" in item
               ? { items: children! }
@@ -172,7 +188,14 @@ export function localizedNavigation(
         ];
       }
       return target
-        ? [{ ...item, label: label(item.label), link: target }]
+        ? [
+            {
+              ...item,
+              label: label(item.label),
+              link: target,
+              ...presentation,
+            },
+          ]
         : [];
     });
   return {

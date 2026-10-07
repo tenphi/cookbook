@@ -15,6 +15,30 @@ const routes = [
 ];
 
 describe("owned route context", () => {
+  it("renders badges in navigation without adding them to pagination labels", () => {
+    const route = createRouteContext({
+      pathname: "/guide/",
+      frontmatter: { title: "Guide" },
+      headings: [],
+      layout: resolveNavigationLayout([
+        {
+          label: "Guides",
+          badge: "BETA",
+          items: ["/", { label: "Guide", link: "/guide", badge: "NEW" }],
+        },
+      ]),
+      content: { routes, base: "/", site: { title: "Docs" } },
+    });
+    expect(route.sidebar[0]).toMatchObject({
+      type: "group",
+      badge: "BETA",
+      entries: [
+        { type: "link", label: "Home" },
+        { type: "link", label: "Guide", badge: "NEW", isCurrent: true },
+      ],
+    });
+    expect(route.pagination.prev).toEqual({ href: "/", label: "Home" });
+  });
   it("omits automatic pagination for a direct-only draft", () => {
     const route = createRouteContext({
       pathname: "/draft/",

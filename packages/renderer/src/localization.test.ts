@@ -21,6 +21,52 @@ const routes = ["/", "/guide", "/missing", "/fr/guide"].map((route) => ({
   sourcePath: `${route}.md`,
 }));
 describe("locale routing", () => {
+  it("preserves fallback page badges and translates explicit badge text", () => {
+    const nav = localizedNavigation(
+      resolveNavigationLayout([
+        "/missing",
+        { label: "Missing", link: "/missing" },
+        { label: "Hidden", link: "/missing", badge: "" },
+        { label: "Missing group", link: "/missing", items: ["/guide"] },
+        { label: "Guide", link: "/guide", badge: "NEW" },
+        { label: "Guides", badge: "NEW", items: ["/guide"] },
+      ]),
+      routes.map((route) =>
+        route.route === "/missing"
+          ? { ...route, sidebar: { badge: "BETA" } }
+          : route,
+      ),
+      "/fr/guide",
+      {
+        ...options,
+        translations: { fr: { "navigation.NEW": "NOUVEAU" } },
+      },
+    );
+    expect(pageSidebar(nav.layout, nav.routes)).toEqual([
+      { label: "/missing", link: "/missing", badge: "BETA" },
+      { label: "Missing", link: "/missing", badge: "BETA" },
+      { label: "Hidden", link: "/missing", badge: "" },
+      {
+        label: "Missing group",
+        badge: "BETA",
+        items: [
+          {
+            label: "Missing group",
+            link: "/missing",
+            badge: "BETA",
+            attrs: { "data-cookbook-group-link": "" },
+          },
+          { label: "/fr/guide", link: "/guide" },
+        ],
+      },
+      { label: "Guide", link: "/guide", badge: "NOUVEAU" },
+      {
+        label: "Guides",
+        badge: "NOUVEAU",
+        items: [{ label: "/fr/guide", link: "/guide" }],
+      },
+    ]);
+  });
   it("keeps available English pages in localized navigation", () => {
     const nav = localizedNavigation(
       resolveNavigationLayout(["/", "/guide", "/missing"]),

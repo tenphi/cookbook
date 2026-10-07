@@ -25,13 +25,13 @@ export type SidebarEntry =
       href: string;
       isCurrent: boolean;
       attrs: Record<string, string>;
-      badge?: { text: string; variant?: string; class?: string };
+      badge?: string;
     }
   | {
       type: "group";
       label: string;
       entries: SidebarEntry[];
-      badge?: { text: string; variant?: string; class?: string };
+      badge?: string;
     };
 
 export interface TocItem {
@@ -176,12 +176,14 @@ function resolveSidebar(
             content.base,
           ) === currentPath,
         attrs: item.attrs ?? {},
+        ...(item.badge !== undefined ? { badge: item.badge } : {}),
       };
     }
     return {
       type: "group",
       label: item.label,
       entries: resolveSidebar(item.items, currentPath, content),
+      ...(item.badge !== undefined ? { badge: item.badge } : {}),
     };
   });
 }

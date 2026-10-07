@@ -639,6 +639,36 @@ describe("docs configuration", () => {
     );
   });
 
+  it("preserves plain-text badges on links and both group forms", () => {
+    const navigation = [
+      {
+        label: "Guides",
+        badge: "BETA",
+        items: [{ label: "Offline support", link: "/offline", badge: "NEW" }],
+      },
+      { label: "API", badge: "Preview", autogenerate: { directory: "/api" } },
+    ];
+    expect(normalizeDocsConfig({ navigation }).navigation.items).toEqual(
+      navigation,
+    );
+  });
+
+  it.each([42, null, false, { text: "NEW" }])(
+    "rejects non-text sidebar badges: %j",
+    (badge) => {
+      expect(() =>
+        normalizeDocsConfig({
+          navigation: [
+            {
+              label: "Guides",
+              items: [{ label: "Offline", link: "/offline", badge }],
+            },
+          ],
+        } as never),
+      ).toThrow("navigation[0].items[0].badge must be a string");
+    },
+  );
+
   it.each([
     42,
     null,

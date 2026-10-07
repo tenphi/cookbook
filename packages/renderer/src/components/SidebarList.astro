@@ -27,11 +27,7 @@ const containsCurrent = (items: SidebarEntry[]): boolean =>
         entry.type === "group" ? entry.entries.slice(groupLink ? 1 : 0) : [];
       const open = Boolean(groupLink?.isCurrent) || containsCurrent(children);
       const badge = entry.badge && (
-        <span
-          class:list={["sidebar-badge", entry.badge.variant, entry.badge.class]}
-        >
-          {entry.badge.text}
-        </span>
+        <span data-element="Badge">{entry.badge}</span>
       );
       const label = (
         <span class="group-label">
