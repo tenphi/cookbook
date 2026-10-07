@@ -1,5 +1,19 @@
 # @tenphi/docs
 
+## 0.22.0
+
+### Minor Changes
+
+- [#143](https://github.com/tenphi/cookbook/pull/143) [`a211d15`](https://github.com/tenphi/cookbook/commit/a211d15ccb61442e58459205637a1ad3eb8e1c33) Thanks [@tenphi](https://github.com/tenphi)! - Support plain-text sidebar badges on navigation links, groups, and page
+  frontmatter. Badges use the brand-derived accent palette by default and can be
+  customized through `theme.styles.Sidebar.Badge`.
+
+### Patch Changes
+
+- [#143](https://github.com/tenphi/cookbook/pull/143) [`a211d15`](https://github.com/tenphi/cookbook/commit/a211d15ccb61442e58459205637a1ad3eb8e1c33) Thanks [@tenphi](https://github.com/tenphi)! - Update Tasty to 3.9.9, the Tasty ESLint plugin to 1.6.0, and Glaze to 2.0.1.
+  Use component-owned tokens and shared focus tokens for lengths checked by the
+  updated plugin, and express fully rounded shapes with Tasty's `round` radius.
+
 ## 0.21.4
 
 ## 0.21.3
