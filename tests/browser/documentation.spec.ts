@@ -1,6 +1,73 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+for (const [site, contentWidth] of [
+  ["manual", 928],
+  ["custom-header", 1024],
+] as const) {
+  test(`${site} content stays centered while padding shrinks before prose`, async ({
+    page,
+  }) => {
+    await page.goto(`/${site}/landing/`);
+    const panel = page.locator(".content-panel").first();
+    async function measure(width: number) {
+      await page.setViewportSize({ width, height: 900 });
+      return panel.evaluate((element) => {
+        const container = element.querySelector(".cookbook-container")!;
+        const rect = container.getBoundingClientRect();
+        return {
+          left: rect.left,
+          right: window.innerWidth - rect.right,
+          width: rect.width,
+          padding: parseFloat(getComputedStyle(element).paddingInlineStart),
+          scrollWidth: document.documentElement.scrollWidth,
+        };
+      });
+    }
+
+    // Crossing the TOC breakpoint must not change the landing page's alignment.
+    const before = await measure(1152);
+    const after = await measure(1151);
+    expect(before.width).toBe(contentWidth);
+    expect(after.width).toBe(contentWidth);
+    expect(before.left - after.left).toBeCloseTo(0.5, 1);
+    expect(after.left).toBeCloseTo(after.right, 1);
+
+    // Keep the configured content width while progressively reducing padding.
+    let previousPadding = Infinity;
+    for (const width of [
+      contentWidth + 128,
+      contentWidth + 96,
+      contentWidth + 48,
+    ]) {
+      const size = await measure(width);
+      expect(size.width).toBe(contentWidth);
+      expect(size.padding).toBeLessThan(previousPadding);
+      expect(size.left).toBeCloseTo(size.right, 1);
+      expect(size.scrollWidth).toBe(width);
+      previousPadding = size.padding;
+    }
+    expect(previousPadding).toBe(24);
+
+    // Once padding is minimal, only the content width follows the viewport.
+    for (const width of [contentWidth + 47, 900, 800]) {
+      const size = await measure(width);
+      expect(size.padding).toBe(24);
+      expect(size.left).toBe(24);
+      expect(size.right).toBe(24);
+      expect(size.width).toBe(width - 48);
+      expect(size.scrollWidth).toBe(width);
+    }
+    for (const width of [799, 390]) {
+      const size = await measure(width);
+      expect(size.padding).toBe(16);
+      expect(size.left).toBeGreaterThanOrEqual(16);
+      expect(size.left).toBeCloseTo(size.right, 1);
+      expect(size.scrollWidth).toBe(width);
+    }
+  });
+}
+
 test.describe("mobile viewport", () => {
   test.use({
     isMobile: true,
