@@ -49,7 +49,7 @@ export default function DocumentStyles() {
       "$docs-nav-gap": { "": "0.75rem", "@mobile": "0.5rem" },
       "$docs-sidebar-pad-x": "1.5rem",
       "$docs-content-pad-x": {
-        "": "clamp(1.5rem, 4vw, 4rem)",
+        "": "clamp(1.5rem, calc((100% - $content-width) / 2), 4rem)",
         "@mobile": "1rem",
       },
       "$docs-menu-button-size": { "": "2.5rem", "@mobile": "2.25rem" },

@@ -279,7 +279,9 @@ theme: {
 ```
 
 `layout-width` caps and centers the complete documentation shell, while
-`content-width` limits the reading column inside it. `radius` is the control
+`content-width` limits the reading column inside it. The column stays centered
+as the viewport narrows: horizontal padding shrinks to 1.5rem before the column
+itself shrinks. Mobile layouts use 1rem padding. `radius` is the control
 and navigation radius; `card-radius` is the larger surface radius. Keeping
 those roles separate makes a sharp control theme or a soft card theme possible
 without one-off component overrides.

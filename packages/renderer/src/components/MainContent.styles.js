@@ -18,7 +18,7 @@ export const MainContentRoot = defineComponent("MainContent", {
     },
     Container: {
       $: ".content-panel > .cookbook-container",
-      inlineMargin: { "": "auto", "@narrow-layout": "0" },
+      inlineMargin: "auto",
       inlineSize: "max $content-width",
     },
     Panel: {
