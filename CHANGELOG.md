@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.22.1
+
+### Patch Changes
+
+- [#145](https://github.com/tenphi/cookbook/pull/145) [`ec93d99`](https://github.com/tenphi/cookbook/commit/ec93d997017431280a42de457ba6765ed301bb36) Thanks [@tenphi](https://github.com/tenphi)! - Keep content centered across the narrow-layout breakpoint and reduce horizontal padding to its minimum before shrinking the content width.
+
 ## 0.22.0
 
 ### Minor Changes
