@@ -17,8 +17,8 @@ export const cookbookStates = {
   "@md": "@media(w >= 50rem)",
   "@lg": "@media(w >= 72rem)",
   "@reduced-motion": "@media(prefers-reduced-motion: reduce)",
-  // Tasty 3.9.9 does not apply nested @parent() inside @own(). Keep this scoped
-  // ancestry check in one alias so nested isolated content stays untouched.
+  // Check each selected element's ancestry so isolated sections do not affect
+  // surrounding prose in the same Markdown root.
   "@prose": "@own(!:is([data-not-content] *))",
   "@prose-block":
     "@own(!:is([data-not-content] *)) & (@own(block) | @own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd))) & (@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is([data-block] + *)))",
