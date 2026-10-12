@@ -14,7 +14,10 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 {
   label && (
-    <PackageVersionRoot aria-label={`${ui.version} ${version}`}>
+    <PackageVersionRoot
+      className="td-package-version"
+      aria-label={`${ui.version} ${version}`}
+    >
       {label}
     </PackageVersionRoot>
   )

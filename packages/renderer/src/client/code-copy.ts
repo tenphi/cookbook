@@ -31,13 +31,13 @@ class CookbookCodeBlock extends HTMLElement {
     try {
       await writeClipboard(code);
     } catch {
-      button.dataset.copyState = "error";
+      this.dataset.copyState = "error";
       button.setAttribute("aria-label", message("codeCopyError"));
       button.title = message("codeCopyError");
       return;
     }
 
-    button.dataset.copyState = "copied";
+    this.dataset.copyState = "copied";
     button.setAttribute("aria-label", message("codeCopied"));
     button.title = message("codeCopied");
 
@@ -45,7 +45,7 @@ class CookbookCodeBlock extends HTMLElement {
       window.clearTimeout(this.#resetTimer);
     }
     this.#resetTimer = window.setTimeout(() => {
-      delete button.dataset.copyState;
+      delete this.dataset.copyState;
       button.setAttribute("aria-label", message("copyCode"));
       button.title = message("copyCode");
       this.#resetTimer = undefined;

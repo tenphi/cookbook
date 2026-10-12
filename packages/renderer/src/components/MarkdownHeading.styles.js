@@ -8,18 +8,18 @@ configureCookbookStates();
 
 export function MarkdownHeadingStyles() {
   useGlobalStyles(
-    "[data-element=Markdown] [data-element=MarkdownHeading]",
+    ".cookbook-markdown-content .cookbook-heading-wrapper",
     resolveComponentStyles("MarkdownHeading", {
       position: "relative",
       color: "#heading",
       preset: {
         "": "heading",
-        "[data-level=h1]": "h1",
-        "[data-level=h2]": "h2",
-        "[data-level=h3]": "h3",
-        "[data-level=h4]": "h4",
-        "[data-level=h5]": "h5",
-        "[data-level=h6]": "h6",
+        "level=h1": "h1",
+        "level=h2": "h2",
+        "level=h3": "h3",
+        "level=h4": "h4",
+        "level=h5": "h5",
+        "level=h6": "h6",
       },
       Heading: {
         $: "> *",
@@ -94,8 +94,7 @@ export function MarkdownHeadingStyles() {
         $: "> Anchor > [data-element=AnchorIcon]",
         visibility: {
           "": null,
-          '@own(:is([data-element=Anchor][data-copy-state="copied"] > [data-element=AnchorIcon]))':
-            "hidden",
+          '@own(:is([data-copy-state="copied"] >))': "hidden",
         },
       },
       CopiedIcon: {

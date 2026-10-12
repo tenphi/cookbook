@@ -117,6 +117,9 @@ export default {
     "@medium-layout",
     "@reduced-motion",
     "@popover-open",
+    "@prose",
+    "@prose-block",
+    "@prose-heading",
   ],
   presets: [
     "body",

@@ -108,7 +108,7 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
-  !/pre\s*>\s*code\s*>\s*\[data-element=Line\]:where\(:is\(pre\[data-diff]\s*>\s*code\s*>\s*\*\)\)\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+  !/\.td-code-block\.td-code-block:where\(\[data-diff\]\) pre\s*>\s*code\s*>\s*\[data-element=Line\]\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
     sharedCss,
   )
 ) {
@@ -132,11 +132,7 @@ const componentPage = await readFile(
   "utf8",
 );
 for (const [name, descendant, label] of [
-  [
-    "Sidebar",
-    "a > span:where(:is(a > span:first-child))",
-    "left navigation links",
-  ],
+  ["Sidebar", "a > span:where(:first-child)", "left navigation links"],
   [
     "Sidebar",
     '[data-element="GroupLabel"] > span:where(:first-child)',

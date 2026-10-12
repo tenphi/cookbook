@@ -18,12 +18,12 @@ describe("Mermaid Markdown rendering", () => {
     const { code } = await renderer.render(markdown, { frontmatter: {} });
 
     expect(code).toContain(
-      '<div data-element="Mermaid" data-mermaid-state="ready"><svg role="img" aria-label="Dream cycle"',
+      '<div class="td-mermaid" data-element="Mermaid" data-mermaid-state="ready"><svg role="img" aria-label="Dream cycle"',
     );
     expect(code).toContain("<title>Dream cycle</title>");
     expect(code).not.toMatch(/\sstyle=/);
     expect(code).not.toContain("<style>");
-    expect(code).not.toMatch(/\sclass=/);
+    expect(code).not.toMatch(/<(?!div\b)[^>]*\sclass=/);
   });
 
   it("drops diagram-authored style directives", async () => {
@@ -63,7 +63,7 @@ describe("Mermaid Markdown rendering", () => {
     expect(code).toContain("Dream");
     expect(code).toContain("planId");
     expect(code).toContain('data-mono=""');
-    expect(code).not.toMatch(/\sclass=/);
+    expect(code).not.toMatch(/<(?!div\b)[^>]*\sclass=/);
   });
 
   it.each([

@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export function MarkdownInlineCodeStyles() {
   useGlobalStyles(
-    "[data-element=Markdown] code:not(:where(pre *, [data-not-content] *))",
+    ".cookbook-markdown-content code:not(:where(pre *, [data-not-content] *))",
     resolveComponentStyles("MarkdownInlineCode", {
       padding: "0.125rem 0.375rem",
       color: "#text-soft",

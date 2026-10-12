@@ -3,10 +3,14 @@ import { LogoRoot } from "./Logo.styles.js";
 
 import type { LogoProps as Props } from "./props.js";
 
-const { label = "Cookbook", decorative = false } = Astro.props;
+const {
+  label = "Cookbook",
+  decorative = false,
+  class: className,
+} = Astro.props;
 ---
 
-<LogoRoot aria-hidden={decorative ? "true" : undefined}>
+<LogoRoot className={className} aria-hidden={decorative ? "true" : undefined}>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 64 64"

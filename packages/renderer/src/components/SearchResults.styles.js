@@ -24,27 +24,11 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
     "$pagefind-ui-tag": "#surface-3",
     preset: "body",
     UI: {
-      $: "UI, .pagefind-ui, *",
-      display: {
-        "": "",
-        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
-          "flex",
-      },
-      flow: {
-        "": null,
-        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
-          "column",
-      },
-      flexGrow: {
-        "": null,
-        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
-          "1",
-      },
-      blockSize: {
-        "": null,
-        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
-          "min 0",
-      },
+      $: "UI, [data-element=EngineUI], .pagefind-ui",
+      display: "flex",
+      flow: "column",
+      flexGrow: "1",
+      blockSize: "min 0",
     },
     Form: {
       $: ".pagefind-ui__form",

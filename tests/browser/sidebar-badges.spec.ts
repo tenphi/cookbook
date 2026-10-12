@@ -27,7 +27,7 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
   await page.goto("/sidebar-badges/reference/");
   await page.evaluate(() => document.fonts.ready);
   await sidebar
-    .locator("[data-top-level] > li")
+    .locator("li[data-top-level]")
     .first()
     .screenshot({
       path: testInfo.outputPath("sidebar-badges-light.png"),
@@ -37,7 +37,7 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
     document.documentElement.dataset.theme = "dark";
   });
   await sidebar
-    .locator("[data-top-level] > li")
+    .locator("li[data-top-level]")
     .first()
     .screenshot({
       path: testInfo.outputPath("sidebar-badges-dark.png"),

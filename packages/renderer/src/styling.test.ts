@@ -128,7 +128,7 @@ describe("consumer styling", () => {
     const collector = createServerStyleCollector();
     runWithCollector(collector, () => {
       useGlobalStyles(
-        "[data-element=ProjectNote]",
+        ".project-note",
         resolveComponentStyles(
           "ProjectNote",
           mergeStyles(
@@ -139,7 +139,7 @@ describe("consumer styling", () => {
       );
     });
     const css = collector.getCSS();
-    expect(css).toContain("[data-element=ProjectNote]");
+    expect(css).toContain(".project-note");
     expect(css).toContain("> strong");
     expect(css).toMatch(/padding:\s*1rem/);
     expect(css).toContain("var(--text-color)");

@@ -9,7 +9,7 @@ import { FooterRoot } from "../components/Footer.styles.js";
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
-<FooterRoot>
+<FooterRoot className="td-footer">
   <div data-element="Meta">
     <EditLink />
     <LastUpdated />

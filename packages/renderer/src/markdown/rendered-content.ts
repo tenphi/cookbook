@@ -23,7 +23,7 @@ export function addHeadingPermalinks(html: string): string {
       const title = escapeAttribute(
         decodeEntities(content.replace(tags, "").trim()),
       );
-      return `<div data-element="MarkdownHeading" data-level="h${level}">${heading}<a data-element="Anchor" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”"><span data-element="AnchorIcon" aria-hidden="true">#</span></a></div>`;
+      return `<div class="cookbook-heading-wrapper" data-element="MarkdownHeading" data-heading="" data-level="h${level}">${heading}<a data-element="Anchor" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”"><span data-element="AnchorIcon" aria-hidden="true">#</span></a></div>`;
     },
   );
 }

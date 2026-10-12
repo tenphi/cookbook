@@ -9,7 +9,7 @@ configureCookbookStates();
 
 export function MarkdownCodeBlockStyles() {
   useGlobalStyles(
-    ':is([data-element=Markdown] [data-element=MarkdownCodeBlock], [data-element=MarkdownCodeBlock][data-element="MarkdownCodeBlock"])',
+    ".td-code-block.td-code-block",
     resolveComponentStyles("MarkdownCodeBlock", {
       "$copy-button-size": "2rem",
       display: "block",
@@ -67,13 +67,13 @@ export function MarkdownCodeBlockStyles() {
         $: '> [data-element="CopyButton"]',
         color: {
           "": null,
-          '@own([data-copy-state="copied"])': "#green-text",
+          "copy-state=copied": "#green-text",
         },
         // Recolor only; CopyButton owns the border width and style, including theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property
         borderColor: {
           "": null,
-          '@own([data-copy-state="copied"])': "#green",
+          "copy-state=copied": "#green",
         },
       },
       CopyIcon: {
@@ -92,51 +92,49 @@ export function MarkdownCodeBlockStyles() {
           "": null,
           // SVG encoding runs only during the server build.
           // eslint-disable-next-line tasty/no-runtime-styles-mutation
-          '@own(:is([data-element="CopyButton"][data-copy-state="copied"] > [data-element="CopyIcon"]))': `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
+          "copy-state=copied": `url("${svgIconUrl(checkIcon)}") center / contain no-repeat`,
         },
       },
       Code: { $: "pre code", padding: "0", color: "inherit", fill: "#clear" },
-      Diff: { $: "pre", inlinePadding: { "": null, "@own(diff)": "0" } },
+      Diff: { $: "pre", inlinePadding: { "": null, diff: "0" } },
       DiffCode: {
         $: "pre code",
-        display: { "": null, "@own(:is(pre[data-diff] code))": "block" },
+        display: { "": null, diff: "block" },
         inlineSize: {
           "": null,
-          "@own(:is(pre[data-diff] code))": "100% max-content initial",
+          diff: "100% max-content initial",
         },
         // Zero line height removes gaps between block diff lines; the tight modifier would not.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        lineHeight: { "": null, "@own(:is(pre[data-diff] code))": "0" },
+        lineHeight: { "": null, diff: "0" },
       },
       DiffLine: {
         $: "pre > code > [data-element=Line]",
-        display: { "": null, "@own(:is(pre[data-diff] > code > *))": "block" },
+        display: { "": null, diff: "block" },
         inlinePadding: {
           "": null,
-          "@own(:is(pre[data-diff] > code > *))": "1rem",
+          diff: "1rem",
         },
-        preset: { "": null, "@own(:is(pre[data-diff] > code > *))": "code" },
+        preset: { "": null, diff: "code" },
       },
       EmptyDiffLine: {
         // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
         // eslint-disable-next-line tasty/no-state-in-selector
-        $: "pre[data-diff] > code > Line:empty::before",
-        content: '"\\200b"',
+        $: "pre > code > Line:empty::before",
+        content: { "": null, diff: '"\\200b"' },
       },
       InsertedLine: {
         $: "pre > code > [data-element=Line]",
         fill: {
           "": null,
-          "@own(inserted) & @own(:is(pre[data-diff] > code > *))":
-            "#green-surface",
+          "diff & @own(inserted)": "#green-surface",
         },
       },
       DeletedLine: {
         $: "pre > code > [data-element=Line]",
         fill: {
           "": null,
-          "@own(deleted) & @own(:is(pre[data-diff] > code > *))":
-            "#red-surface",
+          "diff & @own(deleted)": "#red-surface",
         },
       },
     }),

@@ -66,7 +66,7 @@ describe("Cookbook Shiki theme", () => {
     const { code } = await render(markdown);
 
     expect(code).toContain('data-diff=""');
-    expect(code).not.toMatch(/\sclass=/);
+    expect(code).not.toMatch(/<(?!pre\b)[^>]*\sclass=/);
     expect(code).toMatch(/data-deleted=""[^>]*>.*-.*old/);
     expect(code).toMatch(/data-inserted=""[^>]*>.*\+.*new/);
     expect(code).not.toMatch(
@@ -117,6 +117,25 @@ describe("Cookbook Shiki theme", () => {
     await expect(
       renderer.render("```js\nconst x=1;\n```", { frontmatter: {} }),
     ).rejects.toThrow("Use semantic data modifiers");
+  });
+
+  it("preserves classes that identify a custom code root", async () => {
+    const renderer = await createMarkdownProcessor({
+      shikiConfig: cookbookShikiConfig({
+        transformers: [
+          {
+            pre(node: { properties: Record<string, unknown> }) {
+              node.properties.class += " custom-code-root";
+            },
+          },
+        ],
+      }),
+    });
+    const { code } = await renderer.render("```js\nconst x=1;\n```", {
+      frontmatter: {},
+    });
+    expect(code).toContain('class="tasty-code custom-code-root"');
+    expect(code).not.toMatch(/<span[^>]*\sclass=/);
   });
 
   it("preserves consumer languages and transformers", () => {

@@ -51,7 +51,7 @@ export const MobileTableOfContentsRoot = defineComponent(
         $: "a, summary",
         outline: {
           "": null,
-          "@own(:is(a:focus-visible)) | @own(:is(summary:focus-visible))":
+          "@own(:focus-visible)":
             "$outline-width solid #focus / $outline-offset",
         },
       },

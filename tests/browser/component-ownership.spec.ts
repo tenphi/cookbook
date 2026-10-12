@@ -479,6 +479,7 @@ test("callout kind states and syntax root states retain their semantic styles", 
     // Exercise the syntax bridge independently of MarkdownCodeBlock's owned defaults.
     const code = document.createElement("pre");
     code.dataset.testSyntax = "";
+    code.className = "tasty-code";
     for (const modifier of [
       "syntax",
       "syntax-scroll",
@@ -542,16 +543,133 @@ test("hero actions keep their geometry on hover and minimal shares outline sizin
   }
 });
 
-test("built markup retains only extracted Tasty classes", async ({ page }) => {
+test("authored classes identify roots only", async ({ page }) => {
   for (const route of ["/manual/", "/manual/guide/", "/custom-header/guide/"]) {
     await page.goto(route);
-    const authored = await page
-      .locator("[class]")
-      .evaluateAll((elements) =>
-        elements.flatMap((element) =>
-          [...element.classList].filter((name) => !/^t[0-9a-z]+$/.test(name)),
+    const authored = await page.locator("[class]").evaluateAll((elements) => {
+      const roots: Record<string, string> = {
+        "cookbook-markdown-content": '[data-element="Markdown"]',
+        "cookbook-skip-link": '[data-element="SkipLink"]',
+        "right-sidebar-container": '[data-element="TableOfContentsLayout"]',
+        "right-sidebar-panel": '[data-element="TableOfContents"]',
+        "main-pane": '[data-element="MainPane"]',
+        "cookbook-banner": '[data-element="Banner"]',
+        page: '[data-element="PageFrame"]',
+        header: '[data-element="HeaderFrame"]',
+        "sidebar-pane": '[data-element="Sidebar"]',
+        "td-header": '[data-element="Header"]',
+        "td-top-tabs": '[data-element="TopNavigation"]',
+        "td-footer": '[data-element="Footer"]',
+        hero: '[data-element="Hero"]',
+        "td-mobile-preferences": '[data-element="MobileMenuFooter"]',
+        "td-menu-button": '[data-element="MobileMenuToggle"]',
+        "cookbook-menu-button": '[data-element="MobileMenuToggle"]',
+        "td-card": '[data-element="Card"]',
+        "td-steps": '[data-element="Steps"]',
+        "td-preview": '[data-element="Preview"]',
+        "pagination-links": '[data-element="Pagination"]',
+        "td-package-version": '[data-element="PackageVersion"]',
+        "td-mobile-tabs": '[data-element="MobileNavigationTabs"]',
+        "site-title": '[data-element="SiteTitle"]',
+        "cookbook-heading-wrapper": '[data-element="MarkdownHeading"]',
+        "td-code-block": "cookbook-code-block",
+        "tasty-code": "pre",
+        "cookbook-alert": '[data-element="MarkdownAlert"]',
+        "td-mermaid": '[data-element="Mermaid"]',
+      };
+      return elements.flatMap((element) =>
+        [...element.classList].filter(
+          (name) =>
+            !/^t[0-9a-z]+$/.test(name) &&
+            !(roots[name] && element.matches(roots[name])),
         ),
       );
+    });
     expect(authored).toEqual([]);
+  }
+});
+
+test("prose states preserve linked block spacing and nested isolation", async ({
+  page,
+}) => {
+  await page.goto("/manual/prose/");
+  const card = page.locator('[data-element="Card"]');
+  await expect(card).toHaveCSS("margin-block-start", "24px");
+  await expect(card.locator("p")).toHaveCSS("margin-block-start", "0px");
+  await expect(card.locator("p")).toHaveCSS("margin-block-end", "0px");
+  await expect(page.locator('[data-element="Card"] + p')).toHaveCSS(
+    "margin-block-start",
+    "24px",
+  );
+  const isolated = page.locator("[data-isolated-paragraph]");
+  const oneEm = await isolated.evaluate(
+    (element) => getComputedStyle(element).fontSize,
+  );
+  await expect(isolated).toHaveCSS("margin-block-start", oneEm);
+  await expect(page.locator("[data-isolated-code]")).toHaveCSS(
+    "padding",
+    "0px",
+  );
+  await expect(page.locator("[data-isolated-code]")).toHaveCSS(
+    "background-color",
+    "rgba(0, 0, 0, 0)",
+  );
+  const icons = await page
+    .locator("[data-isolated-details] summary")
+    .evaluate((element) => getComputedStyle(element, "::before").content);
+  expect(icons).toBe("none");
+  await expect(page.locator("[data-prose-details] summary")).toHaveCSS(
+    "margin-block-end",
+    "16px",
+  );
+});
+
+test("diff and copy state belong to code-block roots in fences and CodeGroup", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/manual/prose/");
+  const blocks = page.locator("cookbook-code-block[data-diff]");
+  await expect(blocks).toHaveCount(2);
+  for (const block of await blocks.all()) {
+    await expect(block.locator("pre")).toHaveCSS("padding-inline-start", "0px");
+    await expect(block.locator("pre code")).toHaveCSS("display", "block");
+    await expect(block.locator("pre code")).toHaveCSS("line-height", "0px");
+    await expect(block.locator('[data-element="Line"]').first()).toHaveCSS(
+      "display",
+      "block",
+    );
+    await expect(block.locator('[data-element="Line"]').first()).toHaveCSS(
+      "padding-inline-start",
+      "16px",
+    );
+    const emptyLine = block.locator('[data-element="Line"]:empty');
+    await expect(emptyLine).toHaveCount(1);
+    expect(
+      await emptyLine.evaluate(
+        (element) => getComputedStyle(element, "::before").content,
+      ),
+    ).not.toBe("none");
+    const insertedColor = await page.evaluate(() =>
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--green-surface-color")
+        .trim(),
+    );
+    await expect(block.locator("[data-inserted]")).toHaveCSS(
+      "background-color",
+      insertedColor,
+    );
+    await block.getByRole("button", { name: "Copy code", exact: true }).click();
+    await expect(block).toHaveAttribute("data-copy-state", "copied");
+    const copiedColor = await page.evaluate(() =>
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--green-text-color")
+        .trim(),
+    );
+    await expect(block.locator('[data-element="CopyButton"]')).toHaveCSS(
+      "color",
+      copiedColor,
+    );
   }
 });

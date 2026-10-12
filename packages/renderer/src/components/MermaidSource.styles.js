@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export function MermaidSourceStyles() {
   useGlobalStyles(
-    '[data-element=Markdown] pre[data-language="mermaid"]:not([data-not-content] *)',
+    '.cookbook-markdown-content pre[data-language="mermaid"]:not([data-not-content] *)',
     resolveComponentStyles("MermaidSource", {
       padding: "0.875rem 1rem",
       overflowX: "auto",

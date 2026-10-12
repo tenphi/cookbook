@@ -17,6 +17,7 @@ const translations = {
 ---
 
 <SearchRoot
+  className={Astro.props.class}
   data-translations={JSON.stringify(translations)}
   data-strip-trailing-slash={import.meta.env.TRAILING_SLASH === "never" ||
     undefined}
@@ -70,7 +71,7 @@ const translations = {
                     hidden
                   />
                 </div>
-                <div data-search-results />
+                <div data-element="EngineUI" data-search-results />
               </div>
             </SearchResultsRoot>
           </div>

@@ -50,6 +50,8 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
 <HeaderRoot
+  className="td-header"
+  data-with-tabs={layout.tabs.length ? "" : undefined}
   data-has-sidebar={Astro.locals.cookbookRoute.hasSidebar ? "" : undefined}
 >
   <div data-element="Primary">
@@ -115,7 +117,11 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
   </div>
   {
     layout.tabs.length > 0 && (
-      <TopNavigationRoot data-print-hidden="" aria-label={ui.primary}>
+      <TopNavigationRoot
+        className="td-top-tabs"
+        data-print-hidden=""
+        aria-label={ui.primary}
+      >
         {layout.tabs.map((tab, index) => (
           <a
             href={tabHref(tab.link)}

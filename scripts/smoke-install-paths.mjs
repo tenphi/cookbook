@@ -492,7 +492,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       );
     }
     const title = html.match(
-      /<a\b[^>]*data-element="SiteTitle"[^>]*>[\s\S]*?<\/a>/,
+      /<a\b[^>]*class="[^"]*consumer-title[^"]*"[^>]*>[\s\S]*?<\/a>/,
     )?.[0];
     if (
       !title?.includes('href="/manual/"') ||
@@ -518,7 +518,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       "43rem",
       "var(--gap)",
       "var(--accent-text-color)",
-      "[data-element=ConsumerGlobal]",
+      ".consumer-global",
       "/manual/fonts/consumer-mono.woff2",
     ]) {
       if (!css.includes(value)) {

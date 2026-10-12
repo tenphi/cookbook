@@ -122,7 +122,7 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       $: "Panel a",
       inlinePadding: {
         "": null,
-        "@own(:is([data-element=Panel] a:first-child))":
+        "@own(:first-child)":
           "($gap * 1.5) start, ($docs-menu-button-size + $gap) end",
       },
     },

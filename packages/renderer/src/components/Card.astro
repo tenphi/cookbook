@@ -7,7 +7,7 @@ const { title, href } = Astro.props;
 const Root = href ? CardLink : CardRoot;
 ---
 
-<Root href={href}>
+<Root className="td-card" href={href}>
   {title && <h3>{title}</h3>}
   <div><slot /></div>
 </Root>

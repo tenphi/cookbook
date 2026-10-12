@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export function MarkdownAlertStyles() {
   useGlobalStyles(
-    "[data-element=MarkdownAlert]",
+    ".cookbook-alert",
     resolveComponentStyles("MarkdownAlert", {
       padding: "($gap * 2) ($gap * 2.5)",
       color: {
@@ -47,12 +47,11 @@ export function MarkdownAlertStyles() {
         $: "Content > *",
         blockMargin: {
           "": null,
-          "@own(:is([data-element=Content] > :first-child))":
-            "$margin-block-start $margin-block-end",
+          "@own(:first-child)": "$margin-block-start $margin-block-end",
         },
         "$margin-block-start": {
           "": null,
-          "@own(:is([data-element=Content] > :first-child))": "0",
+          "@own(:first-child)": "0",
         },
       },
     }),

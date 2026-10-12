@@ -92,18 +92,18 @@ export function selectPopoverStyles({
     },
     [hoverOption]: {
       $: "nav a",
-      color: { "": null, "@own(:is(nav a:hover))": "#text" },
-      fill: { "": null, "@own(:is(nav a:hover))": "#surface-2-hover" },
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     [currentOption]: {
       $: "nav a",
       color: {
         "": null,
-        '@own(:is(nav a[aria-current="page"]))': "#accent-text",
+        '@own([aria-current="page"])': "#accent-text",
       },
       fill: {
         "": null,
-        '@own(:is(nav a[aria-current="page"]))': "#accent-surface-2-subtle",
+        '@own([aria-current="page"])': "#accent-surface-2-subtle",
       },
     },
     Checkmark: {
@@ -118,8 +118,7 @@ export function selectPopoverStyles({
       $: "nav a > [data-element=Checkmark]",
       visibility: {
         "": null,
-        '@own(:is(nav a[aria-current="page"] > [data-element=Checkmark]))':
-          "visible",
+        '@own(:is([aria-current="page"] >))': "visible",
       },
     },
   };

@@ -58,6 +58,7 @@ const bashPlaceholderTransformer = {
 type HastElement = {
   type?: string;
   tagName?: string;
+  value?: string;
   properties: Record<string, unknown>;
   children?: HastElement[];
 };
@@ -121,7 +122,8 @@ const tastyModifiersTransformer = {
         }
         delete node.properties.style;
       }
-      // Shiki owns these structural classes; normalize them before serialization.
+      // Keep the stable syntax root class; normalize line anatomy and reject
+      // authored token/modifier classes before serialization.
       const rawClasses = node.properties?.class;
       const classes =
         typeof rawClasses === "string" ? rawClasses.split(/\s+/) : rawClasses;
@@ -135,19 +137,42 @@ const tastyModifiersTransformer = {
             node.properties["data-syntax"] = "";
           } else if (name === "line") {
             node.properties.dataElement = "Line";
-          } else {
+          } else if (node.tagName !== "pre") {
             throw new Error(
               `Unsupported Shiki class ${JSON.stringify(name)}. Use semantic data modifiers and theme.styles.SyntaxHighlight for custom transformers.`,
             );
           }
         }
-        delete node.properties.class;
+        if (node.tagName === "pre") {
+          node.properties.class = [
+            "tasty-code",
+            ...classes.filter(
+              (name) => !["astro-code", "tasty-code", "shiki"].includes(name),
+            ),
+          ].join(" ");
+        } else {
+          delete node.properties.class;
+        }
       }
       node.children?.forEach(visit);
+      // Some grammars wrap empty lines in an empty token span. Canonicalize
+      // those lines so :empty works consistently in fences and CodeGroup.
+      if (
+        node.properties?.dataElement === "Line" &&
+        node.children?.every(emptyToken)
+      ) {
+        node.children = [];
+      }
     };
     visit(root);
   },
 };
+
+function emptyToken(node: HastElement): boolean {
+  return node.type === "text"
+    ? node.value === ""
+    : node.tagName === "span" && (node.children ?? []).every(emptyToken);
+}
 
 type DiffTransformerContext = {
   source: string;

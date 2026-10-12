@@ -23,6 +23,13 @@ export const cookbookStates = {
   "@medium-layout": "@media(w >= 50rem) & @media(w < 72rem)",
   "@reduced-motion": "@media(prefers-reduced-motion: reduce)",
   "@popover-open": ":is(:popover-open)",
+  // Tasty 3.9.3 does not apply nested @parent() inside @own(). Keep this scoped
+  // ancestry check in one alias so nested isolated content stays untouched.
+  "@prose": "@own(!:is([data-not-content] *))",
+  "@prose-block":
+    "@own(!:is([data-not-content] *)) & (@own(block) | @own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd))) & (@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is([data-block] + *)))",
+  "@prose-heading":
+    "@own(!:is([data-not-content] *)) & @own(!:is(h1 + *,h2 + *,h3 + *,h4 + *,h5 + *,h6 + *,[data-heading] + *))",
 };
 
 let configured = false;

@@ -14,7 +14,7 @@ const containsCurrent = (items: SidebarEntry[]): boolean =>
   );
 ---
 
-<ul data-top-level={depth === 0 ? "" : undefined}>
+<ul>
   {
     entries.map((entry, index) => {
       const groupPath = [...path, `${index}:${entry.label}`];
@@ -48,7 +48,10 @@ const containsCurrent = (items: SidebarEntry[]): boolean =>
         </svg>
       );
       return (
-        <li>
+        <li
+          data-top-level={depth === 0 ? "" : undefined}
+          data-section={depth === 0 && entry.type === "group" ? "" : undefined}
+        >
           {entry.type === "link" ? (
             <a
               {...entry.attrs}

@@ -38,7 +38,7 @@ export default function DocumentStyles() {
       },
       "$docs-nav-height": {
         "": "4.5rem",
-        ":has([data-element=TopNavigation])": "7.25rem",
+        ":has(TopNavigation)": "7.25rem",
         "@mobile": "3.5rem",
         "@mobile & [data-has-sidebar]": "6.5rem",
       },
@@ -225,7 +225,7 @@ export default function DocumentStyles() {
   );
 
   useGlobalStyles(
-    ":where(h1, h2, h3, h4, h5, h6, [data-element=SiteTitle])",
+    ":where(h1, h2, h3, h4, h5, h6, .site-title)",
     resolveComponentStyles("Heading", {
       color: "#heading",
       preset: {

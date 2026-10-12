@@ -164,15 +164,15 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       $: "label > svg",
       inlineMargin: {
         "": null,
-        "@own(:is(label > svg:last-child))": "auto start",
+        "@own(:last-child)": "auto start",
       },
-      visibility: { "": null, "@own(:is(label > svg:last-child))": "hidden" },
+      visibility: { "": null, "@own(:last-child)": "hidden" },
     },
     SelectedCheckmark: {
       $: "label > svg",
       visibility: {
         "": null,
-        "@own(:is(label:has(input:checked) > svg:last-child))": "visible",
+        "@own(:last-child & :is(:has(input:checked) >))": "visible",
       },
     },
   },

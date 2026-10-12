@@ -1,0 +1,56 @@
+---
+title: Prose states
+---
+
+import { Card, CodeGroup } from "@tenphi/cookbook/components";
+
+## Blocks
+
+A paragraph before a linked card.
+
+<Card title="Linked card" href="/guide">
+  Card content.
+</Card>
+
+A paragraph after a linked card.
+
+## Isolated content
+
+<div data-not-content>
+  <div>
+    <p data-isolated-paragraph>Isolated paragraph.</p>
+  </div>
+  <code data-isolated-code>isolated code</code>
+  <details data-isolated-details>
+    <summary>Isolated summary</summary>
+    <p>Details content.</p>
+  </details>
+</div>
+
+## Details
+
+<details data-prose-details open>
+  <summary>Prose summary</summary>
+  <p>Expanded prose content.</p>
+</details>
+
+## Diff fence
+
+```diff
+-old
++new
+
+ unchanged
+```
+
+## Patch group
+
+<CodeGroup
+  items={[
+    {
+      label: "Patch",
+      language: "patch",
+      code: "-previous\n+next\n\n unchanged",
+    },
+  ]}
+/>

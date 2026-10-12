@@ -7,7 +7,7 @@ configureCookbookStates();
 export function SyntaxHighlightStyles() {
   useGlobalStyles(
     // State conditions add no specificity; preserve the former root category weight.
-    "[data-syntax][data-syntax]",
+    ".tasty-code.tasty-code",
     resolveComponentStyles("SyntaxHighlight", {
       color: {
         "": null,

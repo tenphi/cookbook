@@ -5,6 +5,7 @@ export interface CardProps {
 export interface LogoProps {
   label?: string;
   decorative?: boolean;
+  class?: string;
 }
 export interface PreviewProps {
   title: string;

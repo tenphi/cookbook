@@ -43,7 +43,7 @@ export const MobileNavigationTabsRoot = defineComponent(
         $: "details > summary > svg",
         rotate: {
           "": null,
-          "@own(:is(details[open] > summary > svg))": "180deg",
+          "@own(:is([open] > summary >))": "180deg",
         },
       },
       List: {

@@ -55,7 +55,7 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
     <Head />
   </head>
   <body>
-    <SkipLinkRoot href="#main-content"
+    <SkipLinkRoot className="cookbook-skip-link" href="#main-content"
       >{Astro.locals.t("page.skipToContent")}</SkipLinkRoot
     >
     <PageFrame>
@@ -64,10 +64,13 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
       <div>
         {
           route.toc && (
-            <TableOfContentsLayoutRoot data-print-hidden="">
+            <TableOfContentsLayoutRoot
+              className="right-sidebar-container"
+              data-print-hidden=""
+            >
               <div data-element="Content">
                 <MobileTableOfContents />
-                <TableOfContentsRoot>
+                <TableOfContentsRoot className="right-sidebar-panel">
                   <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
                   <nav
                     aria-label={Astro.locals.t("tableOfContents.onThisPage")}
@@ -79,14 +82,21 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
             </TableOfContentsLayoutRoot>
           )
         }
-        <MainPaneRoot>
+        <MainPaneRoot className="main-pane">
           <MainContentRoot
             id="main-content"
             data-pagefind-body={indexed ? "" : undefined}
             lang={route.entryMeta.lang}
             dir={route.entryMeta.dir}
           >
-            {data.banner && <BannerRoot set:html={data.banner.content} />}
+            {
+              data.banner && (
+                <BannerRoot
+                  className="cookbook-banner"
+                  set:html={data.banner.content}
+                />
+              )
+            }
             {
               data.hero ? (
                 <div data-element="Panel">

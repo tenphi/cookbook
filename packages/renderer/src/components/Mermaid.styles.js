@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export function MermaidStyles() {
   useGlobalStyles(
-    "[data-element=Markdown] [data-element=Mermaid]",
+    ".cookbook-markdown-content .td-mermaid",
     resolveComponentStyles("Mermaid", {
       display: "grid",
       placeItems: "center",

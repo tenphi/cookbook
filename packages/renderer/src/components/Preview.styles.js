@@ -56,14 +56,14 @@ export const PreviewRoot = defineComponent("Preview", {
       $: "> details > summary",
       fill: {
         "": null,
-        "@own(:is(details > summary:hover))": "#surface-2-hover",
+        "@own(:hover)": "#surface-2-hover",
       },
     },
     ActiveSummary: {
       $: "> details > summary",
       fill: {
         "": null,
-        "@own(:is(details > summary:active))": "#surface-2-pressed",
+        "@own(:active)": "#surface-2-pressed",
       },
     },
     Pre: {

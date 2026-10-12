@@ -53,26 +53,36 @@ function isOrdinaryCodeBlock(node: HastNode): boolean {
 }
 
 function codeBlockWithCopy(pre: HastNode): HastNode {
-  return element("cookbook-code-block", { dataElement: "MarkdownCodeBlock" }, [
-    pre,
-    element(
-      "button",
-      {
-        type: "button",
-        dataElement: "CopyButton",
-        dataCopyCode: "",
-        ariaLabel: "Copy code",
-        title: "Copy code",
-      },
-      [
-        element(
-          "span",
-          { dataElement: "CopyIcon", dataCopyIcon: "", ariaHidden: "true" },
-          [],
-        ),
-      ],
-    ),
-  ]);
+  const language =
+    pre.properties?.dataLanguage ?? pre.properties?.["data-language"];
+  return element(
+    "cookbook-code-block",
+    {
+      className: ["td-code-block"],
+      dataElement: "MarkdownCodeBlock",
+      dataDiff: language === "diff" || language === "patch" ? "" : undefined,
+    },
+    [
+      pre,
+      element(
+        "button",
+        {
+          type: "button",
+          dataElement: "CopyButton",
+          dataCopyCode: "",
+          ariaLabel: "Copy code",
+          title: "Copy code",
+        },
+        [
+          element(
+            "span",
+            { dataElement: "CopyIcon", dataCopyIcon: "", ariaHidden: "true" },
+            [],
+          ),
+        ],
+      ),
+    ],
+  );
 }
 
 function element(

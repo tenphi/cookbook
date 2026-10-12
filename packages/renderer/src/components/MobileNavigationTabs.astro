@@ -42,7 +42,11 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 {
   layout.tabs.length > 0 && (
-    <MobileNavigationTabsRoot data-print-hidden="" aria-label={ui.sections}>
+    <MobileNavigationTabsRoot
+      className="td-mobile-tabs"
+      data-print-hidden=""
+      aria-label={ui.sections}
+    >
       <details>
         <summary aria-label={ui.chooseSection}>
           <span data-element="Label">

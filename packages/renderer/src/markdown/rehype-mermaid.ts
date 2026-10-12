@@ -70,7 +70,7 @@ function replaceMermaidCodeBlocks(parent: HastNode): void {
 
 function renderMermaidElement(source: string): string {
   const svg = accessibleSvg(render(source), source);
-  return `<div data-element="Mermaid" data-mermaid-state="ready">${svg}</div>`;
+  return `<div class="td-mermaid" data-element="Mermaid" data-mermaid-state="ready">${svg}</div>`;
 }
 
 function isMermaidCodeBlock(node: HastNode): boolean {

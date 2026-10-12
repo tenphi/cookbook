@@ -201,29 +201,32 @@ Apply these steps if your project still uses the earlier contracts:
 See [authoring](./authoring.mdx) for component usage and
 [working examples](./examples.md) for repository configuration patterns.
 
-## Owned markup and button variants
+## Root hooks, anatomy, and button variants
 
-Cookbook no longer emits authored CSS classes for its shell, components, Markdown,
-or syntax highlighting. Use `theme.styles.<ComponentName>` and its registered
-sub-elements instead of class selectors. Custom component markup should use
-`data-element` identities; variant conditions belong in property state maps.
-For example, hero actions use `data-element="Action"` and `data-primary`,
-`data-secondary`, or `data-minimal`. Variant customization hooks such as
-`Hero.PrimaryAction` now target `Action` structurally. Keep their variant condition
-in a property map, for example
-`PrimaryAction: { color: { "@own(primary)": "#accent-text" } }`, rather than a scalar
-that would apply to every action.
-The `Logo` component no longer accepts a `class` prop; customize `theme.styles.Logo`
-or the owning component's `Logo` sub-element.
+Existing component root classes and Logo’s root `class` prop remain supported.
+Stable generated-content root classes remain available for global ownership, including
+`.cookbook-markdown-content`, `.cookbook-heading-wrapper`, `.td-code-block`,
+`.tasty-code`, `.cookbook-alert`, and `.td-mermaid`. Custom roots may also use classes
+or `data-component`.
 
-Heading wrappers use `data-element="MarkdownHeading"` and `data-level="h1"` through
-`"h6"`. Syntax transformers must emit data modifiers instead of authored classes;
-see [component styles](./component-styles.md#syntax-highlighting-and-isolated-previews).
-Syntax category hooks likewise use property conditions, for example
-`SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
-Preserve the built-in condition when overriding a variant or category property.
-Tasty-generated classes and library-owned Pagefind UI classes remain.
+Owned sub-elements use `data-element` identities, and state uses data modifiers.
+Keep identity matching in structural `$` selectors. For example, hero actions use
+`data-element="Action"` with `data-primary`, `data-secondary`, or `data-minimal`.
+When customizing `Hero.PrimaryAction`, keep its variant condition in a property
+map, such as `color: { "@own(primary)": "#accent-text" }`.
 
-Hero buttons no longer move on hover. Minimal actions have the same padding,
-background, and border width as secondary outline actions, with a transparent
-border (`border: "#clear"`).
+The code-block wrapper owns `data-diff` and `data-copy-state`; code and line rules
+use plain `diff` or `copy-state=copied` state keys. Line insertion/deletion flags
+belong to the line itself and use `@own(inserted)` / `@own(deleted)`.
+
+Heading wrappers carry `data-heading` and `level=h1` through `level=h6` states.
+Linked Cards carry `data-block` for prose spacing. Shared `@prose`, `@prose-block`,
+and `@prose-heading` conditions keep repeated Markdown declarations readable while
+preserving isolated `data-not-content` descendants and conditional omissions.
+
+Syntax transformers may emit root classes. Token/category hooks use modifiers,
+for example `SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
+Tasty-generated style hashes and library-owned Pagefind sub-element classes remain.
+
+Hero buttons stay stationary on hover. Minimal actions share secondary outline
+padding, background, and border width, with a transparent border (`border: "#clear"`).

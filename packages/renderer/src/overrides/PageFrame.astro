@@ -5,11 +5,12 @@ import { SidebarRoot } from "../components/Sidebar.styles.js";
 const { hasSidebar } = Astro.locals.cookbookRoute;
 ---
 
-<PageFrameRoot data-has-sidebar={hasSidebar ? "" : undefined}>
-  <HeaderFrameRoot><slot name="header" /></HeaderFrameRoot>
+<PageFrameRoot className="page" data-has-sidebar={hasSidebar ? "" : undefined}>
+  <HeaderFrameRoot className="header"><slot name="header" /></HeaderFrameRoot>
   {
     hasSidebar && (
       <SidebarRoot
+        className="sidebar-pane"
         id="cookbook__sidebar"
         data-print-hidden=""
         popover="auto"

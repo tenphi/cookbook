@@ -52,7 +52,7 @@ export const ConsumerButton = extendComponent("ConsumerButton", Button, {
 
 export function ConsumerGlobalStyles() {
   useGlobalStyles(
-    "[data-element=ConsumerGlobal]",
+    ".consumer-global",
     resolveComponentStyles(
       "ConsumerGlobal",
       mergeStyles(

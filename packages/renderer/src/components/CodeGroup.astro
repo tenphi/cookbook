@@ -21,10 +21,20 @@ const highlight = codeGroupHighlighting();
           {item.language && (
             <CodeGroupRoot.Caption>{item.language}</CodeGroupRoot.Caption>
           )}
-          <cookbook-code-block data-element="MarkdownCodeBlock">
+          <cookbook-code-block
+            class="td-code-block"
+            data-element="MarkdownCodeBlock"
+            data-diff={
+              item.language === "diff" || item.language === "patch"
+                ? ""
+                : undefined
+            }
+          >
             <Code
               code={item.code}
-              lang={item.language ?? "text"}
+              lang={
+                item.language === "patch" ? "diff" : (item.language ?? "text")
+              }
               theme={highlight.theme}
               transformers={highlight.transformers}
               embeddedLangs={highlight.langs}

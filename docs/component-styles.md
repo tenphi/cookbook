@@ -14,7 +14,7 @@ its dimensions under `SiteLogo`.
 
 Heading levels are states of the same element. Customize them through a root
 property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
-Markdown heading wrappers use `[data-level=h1]` through `[data-level=h6]` as root states.
+Markdown heading wrappers use `level=h1` through `level=h6` as root states.
 
 Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
 owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
@@ -84,22 +84,25 @@ Cookbook registers these Tasty state aliases for `theme.styles`, custom
 components, and recipes. Widths use CSS `rem` units; their pixel values depend
 on the browser's font-size settings.
 
-| State             | Condition                                                  | Typical use                                        |
-| ----------------- | ---------------------------------------------------------- | -------------------------------------------------- |
-| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space |
-| `@small`          | width ≤ 40rem                                              | Stack compact grids                                |
-| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement    |
-| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                |
-| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts            |
-| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts           |
-| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                    |
-| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents   |
-| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel      |
-| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                             |
-| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance        |
-| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance         |
-| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly      |
-| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly      |
+| State             | Condition                                                  | Typical use                                            |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------------------ |
+| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space     |
+| `@small`          | width ≤ 40rem                                              | Stack compact grids                                    |
+| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement        |
+| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                    |
+| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts                |
+| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts               |
+| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                        |
+| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents       |
+| `@prose`          | selected descendant is outside a `data-not-content` island | Conditional Markdown rules                             |
+| `@prose-block`    | prose block follows block content                          | Block gaps, including linked Cards marked `data-block` |
+| `@prose-heading`  | prose heading follows non-heading content                  | Heading gaps                                           |
+| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel          |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                                 |
+| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance            |
+| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance             |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly          |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly          |
 
 The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
 boundary serve different parts of the layout; their ranges intentionally
@@ -131,6 +134,12 @@ state keys for the component root. A sub-element cannot target its containing
 element: use root state maps for callout kinds, hover/active buttons, compact
 selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
 instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
+For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
+Use `@own(:first-child)` when a structurally selected link needs its own condition,
+instead of repeating its `Panel a` selector. `@prose` keeps nested isolated content
+out of Markdown styling; its scoped ancestry check is shared because Tasty 3.9.3
+does not apply `@parent()` inside `@own()`.
+
 A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change
 only that branch. `"": null` omits a declaration outside a condition. For
@@ -443,9 +452,11 @@ colors with `theme.palette` (for example `syntax-keyword`). The default
 to the page background's saturation, in dark mode. Set
 `theme.palette["syntax-bg"]` to give code its own color seed;
 syntax text and token contrast resolve against that surface. Code fences, including
-MDX and diff blocks, use `data-syntax-*` modifiers, `data-diff`, and
-`data-inserted`/`data-deleted` on lines with `data-element="Line"`. Custom Shiki
-transformers should emit data modifiers; unsupported classes or inline declarations fail with a
+MDX and diff blocks, use the `.tasty-code` root class, `data-syntax-*` modifiers, and
+`data-diff` on the owning code-block wrapper. Diff lines carry
+`data-inserted`/`data-deleted` with `data-element="Line"`. Custom Shiki
+transformers may add root classes; token anatomy and state use identities or
+modifiers. Unsupported token classes or inline declarations fail with a
 configuration hint.
 
 The production build rejects style attributes, style blocks (including inside
@@ -468,7 +479,8 @@ transition applies only to wider layouts.
 The Pagefind sizing adapter prevents inline layout declarations and is checked
 against the pinned UI version during builds.
 
-Cookbook-owned markup uses `data-element` identities for anatomy and data modifiers
-for states. The remaining CSS classes are Tasty-generated style attachment hashes
-and Pagefind UI classes generated by the search library; the search bridge needs
-those selectors because Pagefind owns and updates its result markup.
+Root selectors may use stable classes (for example `.cookbook-markdown-content`,
+`.td-code-block`, and `.tasty-code`) or `data-component`. `data-element` identifies
+structural anatomy and must not serve as a variant or modifier. Use data modifiers
+for states; authored sub-element classes remain only in the Pagefind bridge because
+the library owns and updates its UI markup.

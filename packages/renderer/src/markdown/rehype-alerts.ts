@@ -76,6 +76,7 @@ function alert(blockquote: Node): Node | undefined {
     type: "element",
     tagName: "aside",
     properties: {
+      className: ["cookbook-alert"],
       dataElement: "MarkdownAlert",
       [`data-${kind}`]: "",
       ariaLabel: title,

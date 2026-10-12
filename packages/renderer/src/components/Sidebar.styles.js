@@ -104,12 +104,11 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "MobileHeading > button",
       color: {
         "": null,
-        "@own(:is([data-element=MobileHeading] > button:hover))": "#text",
+        "@own(:hover)": "#text",
       },
       fill: {
         "": null,
-        "@own(:is([data-element=MobileHeading] > button:hover))":
-          "#surface-2-hover",
+        "@own(:hover)": "#surface-2-hover",
       },
     },
     CloseIcon: {
@@ -159,15 +158,14 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(:is(ul[data-top-level] > li + li))": "0 start",
+        "@own(top-level)": "0 start",
       },
     },
     GroupSpacing: {
       $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(:is([data-top-level] > li + li:has(> [data-element=SectionHeading])))":
-          "($gap * 2.5) start",
+        "@own(top-level & section)": "($gap * 2.5) start",
       },
     },
     NestedItem: {
@@ -238,10 +236,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
     },
     LinkLabel: {
       $: "a > span",
-      inlineSize: { "": null, "@own(:is(a > span:first-child))": "min 0" },
-      overflow: { "": null, "@own(:is(a > span:first-child))": "hidden" },
-      textOverflow: { "": null, "@own(:is(a > span:first-child))": "ellipsis" },
-      whiteSpace: { "": null, "@own(:is(a > span:first-child))": "nowrap" },
+      inlineSize: { "": null, "@own(:first-child)": "min 0" },
+      overflow: { "": null, "@own(:first-child)": "hidden" },
+      textOverflow: { "": null, "@own(:first-child)": "ellipsis" },
+      whiteSpace: { "": null, "@own(:first-child)": "nowrap" },
     },
     InteractiveControl: {
       $: "cookbook-sidebar a, cookbook-sidebar summary",
@@ -272,7 +270,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "details > summary > [data-element=Caret], details > summary > a > [data-element=Caret]",
       transform: {
         "": null,
-        "@own(:is(details[open] > summary > [data-element=Caret])) | @own(:is(details[open] > summary > a > [data-element=Caret]))":
+        "@own(:is(details[open] > summary > *, details[open] > summary > a > *))":
           "rotate(90deg)",
       },
     },
@@ -289,13 +287,11 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "SectionHeading > a",
       color: {
         "": null,
-        '@own(:is([data-element=SectionHeading] > a:not([aria-current="page"])))':
-          "#text",
+        '@own(![aria-current="page"])': "#text",
       },
       preset: {
         "": null,
-        '@own(:is([data-element=SectionHeading] > a:not([aria-current="page"])))':
-          "small / strong",
+        '@own(![aria-current="page"])': "small / strong",
       },
     },
     Badge: {
