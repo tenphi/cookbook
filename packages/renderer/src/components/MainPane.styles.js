@@ -13,7 +13,7 @@ export const MainPaneRoot = defineComponent("MainPane", {
       "": "0 100% initial",
       "[data-has-sidebar] & [data-has-toc]":
         "min(calc(100% - $sidebar-width), calc($content-width + (100% - $content-width - $sidebar-width) / 2))",
-      "([data-has-sidebar] & [data-has-toc]) & (@narrow-layout)": "100%",
+      "([data-has-sidebar] & [data-has-toc]) & (!@lg)": "100%",
     },
   },
 });

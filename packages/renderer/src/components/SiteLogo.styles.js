@@ -11,8 +11,8 @@ export const SiteLogoRoot = defineComponent("SiteLogo", {
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    inlineSize: { "": "auto max 12rem", "@mobile": "auto max 30vw" },
-    blockSize: { "": "2rem", "@mobile": "1.75rem" },
+    inlineSize: { "": "auto max 12rem", "!@md": "auto max 30vw" },
+    blockSize: { "": "2rem", "!@md": "1.75rem" },
     Image: {
       $: "> img",
       display: "block",

@@ -8,22 +8,22 @@ export const SidebarRoot = defineComponent("Sidebar", {
   "data-element": "Sidebar",
   styles: {
     "$sidebar-transition": "120ms",
-    display: { "@desktop": "block" },
+    display: { "@md": "block" },
     visibility: {
       "": "visible",
-      "@mobile": "hidden",
-      "@popover-open & @mobile": "visible",
+      "!@md": "hidden",
+      ":is(:popover-open) & !@md": "visible",
     },
     position: "fixed",
-    zIndex: { "": "8", "@mobile": "12" },
-    blockInset: { "": "$docs-nav-height start, 0 end", "@mobile": "0" },
+    zIndex: { "": "8", "!@md": "12" },
+    blockInset: { "": "$docs-nav-height start, 0 end", "!@md": "0" },
     inlineInset: {
       "": "0 start, auto end",
-      "@desktop": "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
+      "@md": "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
     },
     inlineSize: {
       "": "$sidebar-width",
-      "@mobile": "min(22rem, calc(100% - 2rem))",
+      "!@md": "min(22rem, calc(100% - 2rem))",
     },
     blockSize: "auto",
     margin: "0",
@@ -34,15 +34,15 @@ export const SidebarRoot = defineComponent("Sidebar", {
     scrollbar: "auto stable",
     fill: "#surface",
     overscrollBehavior: "contain",
-    shadow: { "": "none", "@mobile": "0.25rem 0 1rem #shadow" },
+    shadow: { "": "none", "!@md": "0.25rem 0 1rem #shadow" },
     translate: {
       "": "0",
-      "@mobile": "-100% 0",
-      "@popover-open & [data-open] & @mobile": "0",
+      "!@md": "-100% 0",
+      ":is(:popover-open) & [data-open] & !@md": "0",
     },
     transition: {
       "": "none",
-      "@mobile & !@reduced-motion":
+      "!@md & !@reduced-motion":
         "translate $sidebar-transition ease-out, visibility $sidebar-transition, display $sidebar-transition allow-discrete, overlay $sidebar-transition allow-discrete",
     },
     Backdrop: {
@@ -51,18 +51,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
       opacity: "0",
       transition: {
         "": "none",
-        "@mobile & !@reduced-motion":
+        "!@md & !@reduced-motion":
           "opacity $sidebar-transition ease-out, display $sidebar-transition allow-discrete, overlay $sidebar-transition allow-discrete",
       },
     },
     OpenBackdrop: {
       $: "&::backdrop",
-      opacity: { "": null, "@popover-open & [data-open]": "1" },
+      opacity: { "": null, ":is(:popover-open) & [data-open]": "1" },
     },
     MobileHeading: {
       $: "MobileHeading",
       display: "flex",
-      hide: { "": true, "@mobile": false },
+      hide: { "": true, "!@md": false },
       alignItems: "center",
       justifyContent: "space-between",
       gap: "$gap",
@@ -140,7 +140,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "($gap * 2)",
       blockPadding: {
         "": "($gap * 3) start, ($gap * 6) end",
-        "@mobile": "($gap * 2) start, ($gap * 6) end",
+        "!@md": "($gap * 2) start, ($gap * 6) end",
       },
     },
     Tree: { $: "cookbook-sidebar", display: "block" },

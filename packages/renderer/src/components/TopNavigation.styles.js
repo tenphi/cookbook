@@ -8,7 +8,7 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
   "data-element": "TopNavigation",
   styles: {
     display: "flex",
-    hide: { "": false, "@mobile": true },
+    hide: { "": false, "!@md": true },
     alignItems: "stretch",
     gap: "clamp(1.25rem, 2.5vw, 2.5rem)",
     inlineSize: "100%",

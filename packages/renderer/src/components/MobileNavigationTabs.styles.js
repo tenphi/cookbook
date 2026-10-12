@@ -10,7 +10,7 @@ export const MobileNavigationTabsRoot = defineComponent(
     "data-element": "MobileNavigationTabs",
     styles: {
       display: "grid",
-      hide: { "": false, "@desktop": true },
+      hide: { "": false, "@md": true },
       gap: "$gap",
       blockMargin: "0",
       Label: {

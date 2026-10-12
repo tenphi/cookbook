@@ -138,9 +138,9 @@ export default defineDocsConfig({
     styles: {
       Hero: {
         Visual: {
-          order: { "": "2", "@mobile": "-1" },
-          inlineSize: { "": "11rem", "@mobile": "6rem" },
-          blockSize: { "": "11rem", "@mobile": "6rem" },
+          order: { "": "2", "!@md": "-1" },
+          inlineSize: { "": "11rem", "!@md": "6rem" },
+          blockSize: { "": "11rem", "!@md": "6rem" },
         },
       },
     },

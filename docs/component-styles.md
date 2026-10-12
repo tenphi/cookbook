@@ -66,14 +66,14 @@ theme: {
     Sidebar: {
       LinkLabel: {
         preset: "body",
-        whiteSpace: { "": "nowrap", "@mobile": "normal" }
+        whiteSpace: { "": "nowrap", "!@md": "normal" }
       }
     }
   }
 }
 ```
 
-The `@mobile` value sits with the default value in one Tasty state map. Shared
+The `!@md` value sits with the default value in one Tasty state map. Shared
 tokens and presets keep the component aligned with the rest of the site, while
 Glaze resolves semantic colors across the configured schemes and contrast
 modes.
@@ -84,32 +84,26 @@ Cookbook registers these Tasty state aliases for `theme.styles`, custom
 components, and recipes. Widths use CSS `rem` units; their pixel values depend
 on the browser's font-size settings.
 
-| State             | Condition                                                  | Typical use                                            |
-| ----------------- | ---------------------------------------------------------- | ------------------------------------------------------ |
-| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space     |
-| `@small`          | width ≤ 40rem                                              | Stack compact grids                                    |
-| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement        |
-| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                    |
-| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts                |
-| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts               |
-| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                        |
-| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents       |
-| `@prose`          | selected descendant is outside a `data-not-content` island | Conditional Markdown rules                             |
-| `@prose-block`    | prose block follows block content                          | Block gaps, including linked Cards marked `data-block` |
-| `@prose-heading`  | prose heading follows non-heading content                  | Heading gaps                                           |
-| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel          |
-| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                                 |
-| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance            |
-| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance             |
-| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly          |
-| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly          |
+| State | Condition     | Typical use                                    |
+| ----- | ------------- | ---------------------------------------------- |
+| `@sm` | width > 40rem | Pagination links share one row                 |
+| `@md` | width ≥ 50rem | Desktop navigation and component layouts       |
+| `@lg` | width ≥ 72rem | Desktop table of contents fits beside the page |
 
-The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
-boundary serve different parts of the layout; their ranges intentionally
-overlap. Use the default state key `""` for the value outside the listed
-condition. Add your own aliases with `theme.states`; redefining a built-in
-alias also changes the renderer's responsive layout, so check the whole site
-when doing so.
+The conditions select wider viewports. Use `!@sm` for stacked
+pagination, `!@md` for mobile, and `!@lg` when the contents panel does not fit
+beside the page. Combine states when needed, for example `@md & !@lg` for the
+intermediate layout. Component-specific
+thresholds use direct media conditions, such as `@media(w <= 23rem)` for
+PackageVersion. Use the default state key `""` for the value outside a condition.
+Add your own aliases with `theme.states`; redefining a built-in alias also
+changes the renderer's responsive layout, so check the whole site when doing so.
+
+Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
+`@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
+needed because the pinned linter's simple pseudo-class list omits `:popover-open`.
+`@reduced-motion` matches
+`prefers-reduced-motion: reduce` and disables optional animation.
 
 Use `@light` and `@dark` in component styles. They check the page root's
 `data-theme` attribute and use the system preference only when that attribute
@@ -139,6 +133,11 @@ Use `@own(:first-child)` when a structurally selected link needs its own conditi
 instead of repeating its `Panel a` selector. `@prose` keeps nested isolated content
 out of Markdown styling; its scoped ancestry check is shared because Tasty 3.9.3
 does not apply `@parent()` inside `@own()`.
+
+Markdown also shares `@prose-block` for a block following block content
+(including linked Cards marked `data-block`), and `@prose-heading` for a heading
+following non-heading content. Both preserve the same isolated-content condition
+as `@prose`.
 
 A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change

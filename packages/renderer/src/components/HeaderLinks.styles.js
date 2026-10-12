@@ -9,12 +9,12 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
   styles: {
     display: "flex",
     flexShrink: "0",
-    order: { "": "0", "@mobile": "2" },
+    order: { "": "0", "!@md": "2" },
     "$popover-transition": "120ms",
     Desktop: {
       $: "Desktop",
       display: "flex",
-      hide: { "": false, "@mobile": true },
+      hide: { "": false, "!@md": true },
       alignItems: "center",
       gap: "($gap * 0.5)",
     },
@@ -60,7 +60,7 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
     Trigger: {
       $: "Trigger",
       display: "grid",
-      hide: { "": true, "@mobile": false },
+      hide: { "": true, "!@md": false },
       placeItems: "center",
       inlineSize: "$docs-menu-button-size",
       blockSize: "$docs-menu-button-size",
@@ -100,8 +100,8 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
     },
     OpenPanel: {
       $: "[data-element=Panel]",
-      opacity: { "": null, "@own(@popover-open & [data-open])": "1" },
-      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
+      opacity: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
+      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
     },
     PanelNavigation: {
       $: "Panel nav",

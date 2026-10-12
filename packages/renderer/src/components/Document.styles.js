@@ -29,7 +29,7 @@ export default function DocumentStyles() {
     resolveComponentStyles("Layout", {
       overflow: {
         "": null,
-        ":has(#cookbook__sidebar:popover-open) & @mobile": "hidden",
+        ":has(#cookbook__sidebar:popover-open) & !@md": "hidden",
       },
       colorScheme: {
         "": "dark",
@@ -39,20 +39,20 @@ export default function DocumentStyles() {
       "$docs-nav-height": {
         "": "4.5rem",
         ":has(TopNavigation)": "7.25rem",
-        "@mobile": "3.5rem",
-        "@mobile & [data-has-sidebar]": "6.5rem",
+        "!@md": "3.5rem",
+        "!@md & [data-has-sidebar]": "6.5rem",
       },
       "$docs-nav-pad-x": {
         "": "clamp(1.25rem, 2.5vw, 2rem)",
-        "@mobile": "1rem",
+        "!@md": "1rem",
       },
-      "$docs-nav-gap": { "": "0.75rem", "@mobile": "0.5rem" },
+      "$docs-nav-gap": { "": "0.75rem", "!@md": "0.5rem" },
       "$docs-sidebar-pad-x": "1.5rem",
       "$docs-content-pad-x": {
         "": "clamp(1.5rem, calc((100% - $content-width) / 2), 4rem)",
-        "@mobile": "1rem",
+        "!@md": "1rem",
       },
-      "$docs-menu-button-size": { "": "2.5rem", "@mobile": "2.25rem" },
+      "$docs-menu-button-size": { "": "2.5rem", "!@md": "2.25rem" },
       "$docs-mobile-toc-height": "0rem",
       Islands: {
         $: "astro-island, astro-slot, astro-static-slot",
@@ -159,7 +159,7 @@ export default function DocumentStyles() {
         display: {
           "": null,
           "@own(desktop-block)": "block",
-          "@own(desktop-block) & @mobile": "none",
+          "@own(desktop-block) & !@md": "none",
         },
       },
       DesktopFlex: {
@@ -167,7 +167,7 @@ export default function DocumentStyles() {
         display: {
           "": null,
           "@own(desktop-flex)": "flex",
-          "@own(desktop-flex) & @mobile": "none",
+          "@own(desktop-flex) & !@md": "none",
         },
       },
       ScreenReaderOnly: {
@@ -190,7 +190,7 @@ export default function DocumentStyles() {
         display: {
           "": null,
           "@own(narrow)": "none",
-          "@own(narrow) & @narrow-layout": "block",
+          "@own(narrow) & !@lg": "block",
         },
       },
       MobileBlock: {
@@ -198,7 +198,7 @@ export default function DocumentStyles() {
         display: {
           "": null,
           "@own(mobile)": "none",
-          "@own(mobile) & @mobile": "block",
+          "@own(mobile) & !@md": "block",
         },
       },
       Code: {

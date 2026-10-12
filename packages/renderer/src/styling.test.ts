@@ -25,12 +25,12 @@ describe("consumer styling", () => {
       Logo: {
         $: "> svg",
         color: "#accent-text",
-        inlineSize: { "": "2rem", "@mobile": "1.75rem" },
+        inlineSize: { "": "2rem", "!@md": "1.75rem" },
       },
     } satisfies Styles;
     configureComponentStyles({
       ProjectTitle: {
-        Logo: { inlineSize: { "@mobile": "1.625rem" } },
+        Logo: { inlineSize: { "!@md": "1.625rem" } },
       },
     });
 
@@ -41,10 +41,10 @@ describe("consumer styling", () => {
       Logo: {
         $: "> svg",
         color: "#accent-text",
-        inlineSize: { "": "2rem", "@mobile": "1.625rem" },
+        inlineSize: { "": "2rem", "!@md": "1.625rem" },
       },
     });
-    expect(base.Logo.inlineSize["@mobile"]).toBe("1.75rem");
+    expect(base.Logo.inlineSize["!@md"]).toBe("1.75rem");
 
     const Root = defineComponent("ProjectTitle", { as: "a", styles: base });
     const collector = createServerStyleCollector();

@@ -10,17 +10,17 @@ export const HeroRoot = defineComponent("Hero", {
     display: "grid",
     gridColumns: {
       "": "minmax(0, 7fr) minmax(12rem, 4fr)",
-      "@mobile": "minmax(0, 1fr)",
+      "!@md": "minmax(0, 1fr)",
     },
     alignItems: "center",
     gap: "clamp(2rem, 5vw, 5rem)",
     blockPadding: {
       "": "clamp(3rem, 8vw, 7rem) start, clamp(2rem, 6vw, 5rem) end",
-      "@mobile": "($gap * 4) start, clamp(2rem, 6vw, 5rem) end",
+      "!@md": "($gap * 4) start, clamp(2rem, 6vw, 5rem) end",
     },
     Visual: {
       $: "> img, > Visual",
-      order: { "": "2", "@mobile": "0" },
+      order: { "": "2", "!@md": "0" },
       display: "grid",
       placeItems: "center",
       inlineSize: "min(100%, 22rem)",
@@ -49,9 +49,9 @@ export const HeroRoot = defineComponent("Hero", {
       $: "> Stack",
       display: "flex",
       flow: "column",
-      alignItems: { "": "flex-start", "@mobile": "center" },
+      alignItems: { "": "flex-start", "!@md": "center" },
       gap: "clamp(1.5rem, 3vw, 2rem)",
-      textAlign: { "": "start", "@mobile": "center" },
+      textAlign: { "": "start", "!@md": "center" },
     },
     Copy: {
       $: "> Stack > Copy",
@@ -79,7 +79,7 @@ export const HeroRoot = defineComponent("Hero", {
       $: "Actions",
       display: "flex",
       flow: "row wrap",
-      justifyContent: { "": "flex-start", "@mobile": "center" },
+      justifyContent: { "": "flex-start", "!@md": "center" },
       gap: "($gap * 1.5)",
     },
     Action: {

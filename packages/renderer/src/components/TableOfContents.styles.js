@@ -8,7 +8,7 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
   "data-element": "TableOfContents",
   styles: {
     display: "block",
-    hide: { "": false, "@narrow-layout": true },
+    hide: { "": false, "!@lg": true },
     blockPadding: "($gap * 4) start",
     inlinePadding: "$docs-sidebar-pad-x",
     Heading: {

@@ -164,14 +164,14 @@ export const SiteTitleRoot = defineComponent("ProjectSiteTitle", {
     gap: "1x",
     inlineSize: "min 0",
     color: "#text",
-    preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
+    preset: { "": "h4 / strong", "!@md": "h5 / strong" },
     textDecoration: "none",
     Logo: {
       $: "> svg",
       display: "block",
       flexShrink: "0",
-      inlineSize: { "": "2rem", "@mobile": "1.75rem" },
-      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      inlineSize: { "": "2rem", "!@md": "1.75rem" },
+      blockSize: { "": "2rem", "!@md": "1.75rem" },
       color: "#accent-text",
     },
     Label: {

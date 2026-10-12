@@ -40,8 +40,8 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       $: "> button > LabelIcon",
       display: "block",
       flexShrink: "0",
-      inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
-      blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
+      inlineSize: { "": "1.25rem", "!@md": "1.125rem" },
+      blockSize: { "": "1.25rem", "!@md": "1.125rem" },
     },
     TriggerLabel: {
       // Reuse the shared, server-only popover anatomy.
@@ -92,7 +92,7 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       // Reuse the shared, server-only popover anatomy.
       // eslint-disable-next-line tasty/no-style-spread
       ...languageSelectStyles.Panel,
-      blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
+      blockInset: { "": "4rem start", "!@md": "3.5rem start" },
       inlineInset:
         "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
     },

@@ -284,7 +284,7 @@ const config = defineDocsConfig({
       },
     },
     states: {
-      '@mobile': '@media(w < 43rem)',
+      '@md': '@media(w >= 43rem)',
       '@consumer-narrow': '@media(w < 37rem)',
     },
     presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
@@ -296,7 +296,7 @@ const config = defineDocsConfig({
     customStyles: {
       ConsumerButton: { gap: '13px' },
       ConsumerTitleBase: { Label: { padding: '3px' } },
-      ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
+      ConsumerSiteTitle: { Logo: { inlineSize: { '!@md': '1.625rem' } } },
       ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
       ConsumerAnatomy: { color: '#text' },
       ConsumerUnused: { color: '#text' },
@@ -536,12 +536,12 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       );
     }
     if (
-      !/@media\s*\(width\s*<\s*43rem\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(
+      !/@media\s*\(not\s*\(width\s*>=\s*43rem\)\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(
         css,
       )
     ) {
       throw new Error(
-        "The consumer's @mobile override was not applied to its logo.",
+        "The consumer's !@md override was not applied to its logo.",
       );
     }
     console.log(

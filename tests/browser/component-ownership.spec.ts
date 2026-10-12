@@ -543,6 +543,39 @@ test("hero actions keep their geometry on hover and minimal shares outline sizin
   }
 });
 
+test("width aliases preserve pagination, navigation, and contents boundaries", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const links = page.locator("[data-element=Pagination] > a");
+  await expect(links).toHaveCount(2);
+  for (const width of [640, 641]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const next = (await links.nth(0).boundingBox())!;
+    const previous = (await links.nth(1).boundingBox())!;
+    if (width === 640) {
+      expect(previous.y).toBeGreaterThan(next.y);
+    } else {
+      expect(previous.y).toBe(next.y);
+      expect(previous.x).toBeLessThan(next.x);
+    }
+  }
+  for (const width of [799, 800]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect(page.locator("[data-element=MobileMenuToggle]")).toHaveCSS(
+      "display",
+      width < 800 ? "flex" : "none",
+    );
+  }
+  for (const width of [1151, 1152]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect(page.locator("[data-element=TableOfContents]")).toHaveCSS(
+      "display",
+      width < 1152 ? "none" : "block",
+    );
+  }
+});
+
 test("authored classes identify roots only", async ({ page }) => {
   for (const route of ["/manual/", "/manual/guide/", "/custom-header/guide/"]) {
     await page.goto(route);

@@ -230,3 +230,33 @@ Tasty-generated style hashes and library-owned Pagefind sub-element classes rema
 
 Hero buttons stay stationary on hover. Minimal actions share secondary outline
 padding, background, and border width, with a transparent border (`border: "#clear"`).
+
+## Smaller shared state set
+
+Responsive aliases now use one width scale: `@sm` (>40rem), `@md` (≥50rem), and
+`@lg` (≥72rem). The conditions select wider viewports;
+the exclusive 40rem boundary preserves the former `@small` behavior. The renderer
+keeps its existing responsive thresholds.
+Use these replacements for the removed shortcuts in custom style maps:
+
+| Removed alias    | Replacement          |
+| ---------------- | -------------------- |
+| `@small`         | `!@sm`               |
+| `@mobile`        | `!@md`               |
+| `@narrow-layout` | `!@lg`               |
+| `@desktop`       | `@md`                |
+| `@compact`       | `@media(w <= 23rem)` |
+| `@shell-mobile`  | `@media(w <= 48rem)` |
+| `@shell-desktop` | `@media(w > 48rem)`  |
+| `@medium-layout` | `@md & !@lg`         |
+| `@popover-open`  | `:is(:popover-open)` |
+
+Inside a selected descendant's condition, use `@own(:is(:popover-open))`.
+The `:is()` wrapper accommodates the pinned linter's pseudo-class list.
+The shell and medium-layout aliases were unused by built-in components;
+PackageVersion's 23rem rule is now a direct media condition. Define a project
+alias in `theme.states` if you need a named threshold across your own components.
+
+If you customized `theme.states`, rename your breakpoint definitions and invert
+the old upper-bound conditions. For example, `"@mobile": "@media(w < 43rem)"`
+becomes `"@md": "@media(w >= 43rem)"`.

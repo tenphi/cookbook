@@ -8,7 +8,7 @@ export const PackageVersionRoot = defineComponent("PackageVersion", {
   "data-element": "PackageVersion",
   styles: {
     display: "inline-flex",
-    hide: { "": false, "@compact": true },
+    hide: { "": false, "@media(w <= 23rem)": true },
     alignItems: "center",
     flexShrink: "0",
     blockSize: "min 1.5rem",

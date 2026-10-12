@@ -12,7 +12,7 @@ export const PaginationRoot = defineComponent("Pagination", {
   styles: {
     display: { "": "grid", "@media:print": "none" },
     gap: "($gap * 2)",
-    gridColumns: { "": "repeat(2, minmax(0, 1fr))", "@small": "1fr" },
+    gridColumns: { "": "repeat(2, minmax(0, 1fr))", "!@sm": "1fr" },
     Link: {
       $: "a",
       radius: "$radius",
@@ -37,12 +37,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (@small)': "auto",
+        '(@own([rel="prev"])) & (!@sm)': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (@small)': "auto",
+        '(@own([rel="prev"])) & (!@sm)': "auto",
       },
     },
     NextLink: {
@@ -52,12 +52,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="next"])': "2",
-        '(@own([rel="next"])) & (@small)': "auto",
+        '(@own([rel="next"])) & (!@sm)': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="next"])': "1",
-        '(@own([rel="next"])) & (@small)': "auto",
+        '(@own([rel="next"])) & (!@sm)': "auto",
       },
     },
     NextIcon: {

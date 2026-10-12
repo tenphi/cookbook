@@ -10,7 +10,7 @@ export const MobileTableOfContentsRoot = defineComponent(
     "data-element": "MobileTableOfContents",
     styles: {
       display: "block",
-      hide: { "": true, "@narrow-layout": false },
+      hide: { "": true, "!@lg": false },
       padding: "$gap $docs-sidebar-pad-x",
       blockBorder: "$border-width solid #border end",
       fill: "#surface",

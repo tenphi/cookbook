@@ -17,7 +17,7 @@ component("ProjectBadge", {
     radius: "1cr",
     border: "1bw solid #border",
     color: "#accent-text",
-    fill: { "": "#surface", "@mobile": "#surface-2" },
+    fill: { "": "#surface", "!@md": "#surface-2" },
     preset: "body / strong",
     Label: { color: "#text-soft", gap: "$gap" } satisfies Styles,
   },
