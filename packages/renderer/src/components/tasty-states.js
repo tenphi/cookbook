@@ -17,7 +17,7 @@ export const cookbookStates = {
   "@md": "@media(w >= 50rem)",
   "@lg": "@media(w >= 72rem)",
   "@reduced-motion": "@media(prefers-reduced-motion: reduce)",
-  // Tasty 3.9.3 does not apply nested @parent() inside @own(). Keep this scoped
+  // Tasty 3.9.9 does not apply nested @parent() inside @own(). Keep this scoped
   // ancestry check in one alias so nested isolated content stays untouched.
   "@prose": "@own(!:is([data-not-content] *))",
   "@prose-block":

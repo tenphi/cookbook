@@ -123,7 +123,7 @@ import { CodeGroup } from "@tenphi/cookbook/components";
       config.theme.presets = { body: { fontSize: "19px" } };
       config.theme.tokens = { "$content-width": "64rem" };
       config.theme.styles = {
-        Pagination: { Link: { radius: "13px" } },
+        Pagination: { Link: { radius: "13px", border: "3px dashed #border" } },
         Callout: { "$margin-block-end": "37px" },
         Heading: { textWrap: { "": "balance", ":is(h3)": "pretty" } },
         Sidebar: { Link: { padding: "1x" } },

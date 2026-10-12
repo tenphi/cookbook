@@ -230,6 +230,8 @@ Tasty-generated style hashes and library-owned Pagefind sub-element classes rema
 
 Hero buttons stay stationary on hover. Minimal actions share secondary outline
 padding, background, and border width, with a transparent border (`border: "#clear"`).
+Pagination links also reserve a transparent border before hover; hover changes
+only its color, preserving `theme.styles.Pagination.Link` border width and style.
 
 ## Smaller shared state set
 

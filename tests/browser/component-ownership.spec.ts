@@ -543,6 +543,43 @@ test("hero actions keep their geometry on hover and minimal shares outline sizin
   }
 });
 
+test("pagination hover preserves geometry and configured border widths", async ({
+  page,
+}) => {
+  for (const site of ["manual", "custom-header"]) {
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto(`/${site}/guide/`);
+      for (const link of await page
+        .locator("[data-element=Pagination] > a")
+        .all()) {
+        await link.scrollIntoViewIfNeeded();
+        await page.mouse.move(0, 0);
+        const geometry = () =>
+          link.evaluate((element) => {
+            const { x, y, width, height } = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return {
+              x,
+              y,
+              width,
+              height,
+              borderWidth: style.borderWidth,
+              borderStyle: style.borderStyle,
+            };
+          });
+        const before = await geometry();
+        await link.hover();
+        expect(await geometry()).toEqual(before);
+        if (site === "custom-header") {
+          expect(before.borderWidth).toBe("3px");
+          expect(before.borderStyle).toBe("dashed");
+        }
+      }
+    }
+  }
+});
+
 test("width aliases preserve pagination, navigation, and contents boundaries", async ({
   page,
 }) => {

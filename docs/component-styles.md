@@ -143,7 +143,7 @@ instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
 For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
 Use `@own(:first-child)` when a structurally selected link needs its own condition,
 instead of repeating its `Panel a` selector. `@prose` keeps nested isolated content
-out of Markdown styling; its scoped ancestry check is shared because Tasty 3.9.3
+out of Markdown styling; its scoped ancestry check is shared because Tasty 3.9.9
 does not apply `@parent()` inside `@own()`.
 
 Markdown also shares `@prose-block` for a block following block content

@@ -124,10 +124,19 @@ const tastyModifiersTransformer = {
       }
       // Keep the stable syntax root class; normalize line anatomy and reject
       // authored token/modifier classes before serialization.
-      const rawClasses = node.properties?.class;
-      const classes =
-        typeof rawClasses === "string" ? rawClasses.split(/\s+/) : rawClasses;
-      if (Array.isArray(classes)) {
+      const classValues = [node.properties?.class, node.properties?.className];
+      const classes = classValues.flatMap((value) =>
+        typeof value === "string"
+          ? value.split(/\s+/).filter(Boolean)
+          : Array.isArray(value)
+            ? value
+            : [],
+      );
+      if (
+        classValues.some(
+          (value) => typeof value === "string" || Array.isArray(value),
+        )
+      ) {
         for (const name of classes) {
           if (
             name === "astro-code" ||
@@ -143,6 +152,7 @@ const tastyModifiersTransformer = {
             );
           }
         }
+        delete node.properties.className;
         if (node.tagName === "pre") {
           node.properties.class = [
             "tasty-code",

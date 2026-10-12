@@ -102,41 +102,50 @@ describe("Cookbook Shiki theme", () => {
     ).rejects.toThrow("theme.styles.SyntaxHighlight");
   });
 
-  it("rejects authored classes in custom transformers with a modifier hint", async () => {
-    const renderer = await createMarkdownProcessor({
-      shikiConfig: cookbookShikiConfig({
-        transformers: [
-          {
-            span(node: { properties: Record<string, unknown> }) {
-              node.properties.class = "consumer-token";
+  it.each(["class", "className"])(
+    "rejects authored token %s properties with a modifier hint",
+    async (classProperty) => {
+      const renderer = await createMarkdownProcessor({
+        shikiConfig: cookbookShikiConfig({
+          transformers: [
+            {
+              span(node: { properties: Record<string, unknown> }) {
+                node.properties[classProperty] = "consumer-token";
+              },
             },
-          },
-        ],
-      }),
-    });
-    await expect(
-      renderer.render("```js\nconst x=1;\n```", { frontmatter: {} }),
-    ).rejects.toThrow("Use semantic data modifiers");
-  });
+          ],
+        }),
+      });
+      await expect(
+        renderer.render("```js\nconst x=1;\n```", { frontmatter: {} }),
+      ).rejects.toThrow("Use semantic data modifiers");
+    },
+  );
 
-  it("preserves classes that identify a custom code root", async () => {
-    const renderer = await createMarkdownProcessor({
-      shikiConfig: cookbookShikiConfig({
-        transformers: [
-          {
-            pre(node: { properties: Record<string, unknown> }) {
-              node.properties.class += " custom-code-root";
+  it.each(["class", "className"])(
+    "preserves %s hooks that identify a custom code root",
+    async (classProperty) => {
+      const renderer = await createMarkdownProcessor({
+        shikiConfig: cookbookShikiConfig({
+          transformers: [
+            {
+              pre(node: { properties: Record<string, unknown> }) {
+                node.properties[classProperty] =
+                  classProperty === "class"
+                    ? `${node.properties.class} custom-code-root`
+                    : "custom-code-root";
+              },
             },
-          },
-        ],
-      }),
-    });
-    const { code } = await renderer.render("```js\nconst x=1;\n```", {
-      frontmatter: {},
-    });
-    expect(code).toContain('class="tasty-code custom-code-root"');
-    expect(code).not.toMatch(/<span[^>]*\sclass=/);
-  });
+          ],
+        }),
+      });
+      const { code } = await renderer.render("```js\nconst x=1;\n```", {
+        frontmatter: {},
+      });
+      expect(code).toContain('class="tasty-code custom-code-root"');
+      expect(code).not.toMatch(/<span[^>]*\sclass=/);
+    },
+  );
 
   it("preserves consumer languages and transformers", () => {
     const transformer = { name: "consumer" };

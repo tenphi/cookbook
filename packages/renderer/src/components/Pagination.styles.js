@@ -22,9 +22,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       gap: "$gap",
       inlineSize: "100%",
       padding: "($gap * 2)",
-      // Recolor only; Link owns the border width and style, including theme overrides.
-      // eslint-disable-next-line tasty/prefer-shorthand-property
-      borderColor: "#border",
+      border: "#clear",
       color: "#text-soft",
       fill: "#surface-2",
       shadow: "none",
@@ -79,7 +77,9 @@ export const PaginationRoot = defineComponent("Pagination", {
     },
     HoverLink: {
       $: "a",
-      border: { "": null, "@own(:hover)": "$border-width solid #border" },
+      // Recolor only; Link owns the border width and style, including theme overrides.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
+      borderColor: { "": null, "@own(:hover)": "#border" },
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     ActiveLink: {
