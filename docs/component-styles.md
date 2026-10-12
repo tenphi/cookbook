@@ -102,14 +102,26 @@ changes the renderer's responsive layout, so check the whole site when doing so.
 Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
 `@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
 needed because the pinned linter's simple pseudo-class list omits `:popover-open`.
-`@reduced-motion` matches
-`prefers-reduced-motion: reduce` and disables optional animation.
+
+### Appearance and motion states
+
+Use these shared aliases to match the site's appearance or respect motion preferences.
+
+| State             | Condition                                                  | Typical use                                 |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Suppress optional motion                    |
+| `@light`          | Explicit light theme, or system light when no theme is set | Match the site's effective light appearance |
+| `@dark`           | Explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance  |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the system preference directly         |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the system preference directly         |
 
 Use `@light` and `@dark` in component styles. They check the page root's
 `data-theme` attribute and use the system preference only when that attribute
 is absent. Document rules that style the root itself use `@system-light` and
 `@system-dark` within their automatic-theme branch. Keep scheme media queries
 in the shared state definitions instead of repeating them in style objects.
+
+### State maps and validation
 
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,
