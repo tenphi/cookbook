@@ -86,7 +86,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       $: "a",
       fill: { "": null, "@own(:active)": "#surface-2-pressed" },
     },
-    Title: { $: ".link-title", color: "#heading", preset: "h5" },
+    Title: { $: "Title", color: "#heading", preset: "h5" },
     LoneNextLink: {
       // Preserve the conditional scope of this empty legacy customization hook.
       // eslint-disable-next-line tasty/no-state-in-selector

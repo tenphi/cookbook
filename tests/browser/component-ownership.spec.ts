@@ -53,7 +53,7 @@ test("anatomy overrides stay scoped to copy controls and selector panels", async
   page,
 }) => {
   await page.goto("/custom-header/guide/");
-  const code = page.locator(".td-code-block").first();
+  const code = page.locator("[data-element=MarkdownCodeBlock]").first();
   await expect(code.locator('[data-element="CopyButton"]')).toHaveCSS(
     "width",
     "42px",
@@ -96,7 +96,9 @@ test("prose owns block spacing while tab controls retain their own margins", asy
     "margin-block-start",
     "24px",
   );
-  const heading = page.locator(".cookbook-heading-wrapper.level-h2").nth(1);
+  const heading = page
+    .locator("[data-element=MarkdownHeading][data-level=h2]")
+    .nth(1);
   const spacing = await heading.evaluate(
     (e) => `${parseFloat(getComputedStyle(e).fontSize) * 1.5}px`,
   );
@@ -113,24 +115,16 @@ test("Hero color variants preserve the configured action border width and style"
   page,
 }) => {
   await page.goto("/manual/");
-  await page.evaluate(() => {
-    const hero = document.querySelector(".hero")!;
-    for (const variant of ["primary", "secondary", "minimal"]) {
-      const action = document.createElement("a");
-      action.className = `cookbook-link-button ${variant}`;
-      action.textContent = variant;
-      hero.append(action);
-    }
-  });
-  for (const variant of ["primary", "secondary"]) {
-    const action = page.locator(`.hero .cookbook-link-button.${variant}`);
+  for (const variant of ["primary", "secondary", "minimal"]) {
+    const action = page.locator(
+      `[data-element=Hero] [data-element=Action][data-${variant}]`,
+    );
     await expect(action).toHaveCSS("border-top-width", "3px");
     await expect(action).toHaveCSS("border-top-style", "dashed");
   }
-  await expect(page.locator(".hero .cookbook-link-button.minimal")).toHaveCSS(
-    "border-top-width",
-    "0px",
-  );
+  await expect(
+    page.locator("[data-element=Hero] [data-element=Action][data-minimal]"),
+  ).toHaveCSS("border-top-color", "oklch(1 0 0 / 0)");
 });
 
 test("button descendants inherit the shared theme and own their overrides", async ({
@@ -160,13 +154,18 @@ test("replacing Header and Head preserves document foundations and component cus
   );
   await expect(page.locator("body")).toHaveCSS("margin", "0px");
   await expect(page.locator("body")).toHaveCSS("font-size", "19px");
-  await expect(page.locator(".header")).toHaveCSS("position", "fixed");
-  await expect(page.locator(".cookbook-banner a")).toHaveText("the home page");
-  await expect(page.locator(".cookbook-banner")).toHaveCSS(
+  await expect(page.locator("[data-element=HeaderFrame]")).toHaveCSS(
+    "position",
+    "fixed",
+  );
+  await expect(page.locator("[data-element=Banner] a")).toHaveText(
+    "the home page",
+  );
+  await expect(page.locator("[data-element=Banner]")).toHaveCSS(
     "text-align",
     "center",
   );
-  await expect(page.locator(".pagination-links a").first()).toHaveCSS(
+  await expect(page.locator("[data-element=Pagination] a").first()).toHaveCSS(
     "border-radius",
     "13px",
   );
@@ -175,14 +174,14 @@ test("replacing Header and Head preserves document foundations and component cus
     "8px",
   );
   await expect(
-    page.locator(".cookbook-markdown-content blockquote").first(),
+    page.locator("[data-element=Markdown] blockquote").first(),
   ).toHaveCSS("padding-inline-start", "29px");
-  await expect(page.locator(".cookbook-anchor-link").first()).toHaveCSS(
+  await expect(page.locator("[data-element=Anchor]").first()).toHaveCSS(
     "display",
     "grid",
   );
   await expect(
-    page.locator(".td-code-block [data-copy-code]").first(),
+    page.locator("[data-element=MarkdownCodeBlock] [data-copy-code]").first(),
   ).toHaveCSS("position", "absolute");
   await expect(
     page.locator('link[rel="stylesheet"][data-tasty-ssr]'),
@@ -195,7 +194,7 @@ test("replacing Header and Head preserves document foundations and component cus
       document.documentElement.dataset.contrast = "more";
     }, theme);
     await expect(page.locator("body")).toHaveCSS("font-size", "19px");
-    await expect(page.locator(".pagination-links a").first()).toHaveCSS(
+    await expect(page.locator("[data-element=Pagination] a").first()).toHaveCSS(
       "border-radius",
       "13px",
     );
@@ -213,17 +212,17 @@ test("CodeGroup owns code styles outside MarkdownContent", async ({ page }) => {
   await page.goto("/custom-header/");
   const group = page.locator("[data-standalone-code-group]");
   await expect(group).toBeVisible();
-  await expect(group.locator(".cookbook-markdown-content")).toHaveCount(0);
+  await expect(group.locator("[data-element=Markdown]")).toHaveCount(0);
   await expect(group.locator("pre")).toHaveCSS("border-radius", "17px");
   await expect(group.locator("[data-copy-code]")).toHaveCSS(
     "position",
     "absolute",
   );
-  await expect(group.locator(".td-code-block")).toHaveCSS(
+  await expect(group.locator("[data-element=MarkdownCodeBlock]")).toHaveCSS(
     "position",
     "relative",
   );
-  const keyword = group.locator(".td-syntax-keyword").first();
+  const keyword = group.locator("[data-syntax-keyword]").first();
   const keywordColor = await page.evaluate(() =>
     getComputedStyle(document.documentElement)
       .getPropertyValue("--syntax-keyword-color")
@@ -241,9 +240,9 @@ test("generated Markdown controls preserve spacing and link colors", async ({
     "16px",
   );
   await expect(
-    page.locator(".td-code-block [data-copy-code]").first(),
+    page.locator("[data-element=MarkdownCodeBlock] [data-copy-code]").first(),
   ).toHaveCSS("margin", "0px");
-  const link = page.locator(".cookbook-anchor-link").first();
+  const link = page.locator("[data-element=Anchor]").first();
   const textMuted = await page.evaluate(() =>
     getComputedStyle(document.documentElement)
       .getPropertyValue("--text-muted-color")
@@ -256,7 +255,7 @@ test("Markdown warning alerts use registered warning colors in every appearance"
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const caution = page.locator(".cookbook-alert--caution");
+  const caution = page.locator("[data-caution]");
   await expect(caution).toBeVisible();
   for (const scheme of ["light", "dark"]) {
     for (const contrast of ["normal", "more"]) {
@@ -284,10 +283,14 @@ for (const systemScheme of ["light", "dark"] as const) {
   }) => {
     await page.emulateMedia({ colorScheme: systemScheme });
     await page.goto("/wide-logo/");
-    const darkHero = page.locator('.hero > img[data-hero-image="dark"]');
-    const lightHero = page.locator('.hero > img[data-hero-image="light"]');
-    const darkLogo = page.locator(".td-site-logo__dark").first();
-    const lightLogo = page.locator(".td-site-logo__light").first();
+    const darkHero = page.locator(
+      '[data-element=Hero] > img[data-hero-image="dark"]',
+    );
+    const lightHero = page.locator(
+      '[data-element=Hero] > img[data-hero-image="light"]',
+    );
+    const darkLogo = page.locator("[data-element=Dark]").first();
+    const lightLogo = page.locator("[data-element=Light]").first();
     for (const selected of [undefined, "light", "dark"] as const) {
       await page.evaluate((theme) => {
         if (theme) document.documentElement.dataset.theme = theme;
@@ -476,8 +479,14 @@ test("callout kind states and syntax root states retain their semantic styles", 
     // Exercise the syntax bridge independently of MarkdownCodeBlock's owned defaults.
     const code = document.createElement("pre");
     code.dataset.testSyntax = "";
-    code.className =
-      "tasty-code td-syntax-scroll td-syntax-wrap td-syntax-keyword";
+    for (const modifier of [
+      "syntax",
+      "syntax-scroll",
+      "syntax-wrap",
+      "syntax-keyword",
+    ]) {
+      code.setAttribute(`data-${modifier}`, "");
+    }
     code.textContent = "const standalone = true;";
     document.body.append(code);
     return getComputedStyle(document.documentElement)
@@ -489,4 +498,60 @@ test("callout kind states and syntax root states retain their semantic styles", 
   await expect(code).toHaveCSS("white-space", "pre-wrap");
   await expect(code).toHaveCSS("overflow-wrap", "break-word");
   await expect(code).toHaveCSS("color", keywordColor);
+});
+
+test("hero actions keep their geometry on hover and minimal shares outline sizing", async ({
+  page,
+}) => {
+  await page.goto("/manual/");
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const actions = page.locator("[data-element=Hero] [data-element=Action]");
+    await expect(actions).toHaveCount(3);
+    for (const action of await actions.all()) {
+      await page.mouse.move(0, 0);
+      const before = await action.boundingBox();
+      await action.hover();
+      await expect(action).toHaveCSS("translate", "none");
+      await expect.poll(() => action.boundingBox()).toEqual(before);
+    }
+    const geometry = async (variant: string) =>
+      page
+        .locator(`[data-element=Hero] [data-element=Action][data-${variant}]`)
+        .evaluate((element) => {
+          const style = getComputedStyle(element);
+          return [
+            style.padding,
+            style.borderTopWidth,
+            style.borderTopStyle,
+            style.backgroundColor,
+            style.borderRadius,
+            style.minBlockSize,
+          ];
+        });
+    await page.mouse.move(0, 0);
+    const surface = await page.evaluate(() =>
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--surface-2-color")
+        .trim(),
+    );
+    await expect(
+      page.locator("[data-element=Hero] [data-element=Action][data-minimal]"),
+    ).toHaveCSS("background-color", surface);
+    expect(await geometry("minimal")).toEqual(await geometry("secondary"));
+  }
+});
+
+test("built markup retains only extracted Tasty classes", async ({ page }) => {
+  for (const route of ["/manual/", "/manual/guide/", "/custom-header/guide/"]) {
+    await page.goto(route);
+    const authored = await page
+      .locator("[class]")
+      .evaluateAll((elements) =>
+        elements.flatMap((element) =>
+          [...element.classList].filter((name) => !/^t[0-9a-z]+$/.test(name)),
+        ),
+      );
+    expect(authored).toEqual([]);
+  }
 });

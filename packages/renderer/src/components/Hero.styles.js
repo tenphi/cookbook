@@ -19,7 +19,7 @@ export const HeroRoot = defineComponent("Hero", {
       "@mobile": "($gap * 4) start, clamp(2rem, 6vw, 5rem) end",
     },
     Visual: {
-      $: "> img, > .hero-html",
+      $: "> img, > Visual",
       order: { "": "2", "@mobile": "0" },
       display: "grid",
       placeItems: "center",
@@ -46,7 +46,7 @@ export const HeroRoot = defineComponent("Hero", {
       },
     },
     Stack: {
-      $: "> :is(.stack)",
+      $: "> Stack",
       display: "flex",
       flow: "column",
       alignItems: { "": "flex-start", "@mobile": "center" },
@@ -54,7 +54,7 @@ export const HeroRoot = defineComponent("Hero", {
       textAlign: { "": "start", "@mobile": "center" },
     },
     Copy: {
-      $: "> :is(.stack) > :is(.copy)",
+      $: "> Stack > Copy",
       display: "flex",
       flow: "column",
       alignItems: "inherit",
@@ -69,62 +69,60 @@ export const HeroRoot = defineComponent("Hero", {
       textWrap: "balance",
     },
     Tagline: {
-      $: ":is(.tagline)",
+      $: "Tagline",
       inlineSize: "max 48ch",
       color: "#text-soft",
       preset: "hero-tagline",
       textWrap: "balance",
     },
     Actions: {
-      $: ":is(.actions)",
+      $: "Actions",
       display: "flex",
       flow: "row wrap",
       justifyContent: { "": "flex-start", "@mobile": "center" },
       gap: "($gap * 1.5)",
     },
     Action: {
-      $: ".cookbook-link-button",
+      $: "Action",
       display: "inline-flex",
       alignItems: "center",
       blockSize: "min $control-height",
       padding: "($gap * 1.25) ($gap * 2.5)",
       gap: "$gap",
       color: "#text",
-      border: true,
+      border: { "": true, "@own(minimal)": "#clear" },
       radius: "round",
       fill: "#surface-2",
       preset: "navigation / strong",
       textDecoration: "none",
-      transition: "fill $transition, translate $transition",
+      transition: "fill $transition",
     },
     HoverAction: {
-      $: ".cookbook-link-button",
-      "$hover-offset": "-1px",
+      $: "[data-element=Action]",
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
-      translate: { "": null, "@own(:hover)": "0 $hover-offset" },
     },
     PrimaryAction: {
-      $: ".cookbook-link-button.primary",
-      color: "#accent-surface-text",
+      $: "[data-element=Action]",
+      color: { "": null, "@own(primary)": "#accent-surface-text" },
       // Recolor only; Action owns the border width and style, including theme overrides.
       // eslint-disable-next-line tasty/prefer-shorthand-property
-      borderColor: "#accent-surface",
-      fill: "#accent-surface",
+      borderColor: { "": null, "@own(primary)": "#accent-surface" },
+      fill: { "": null, "@own(primary)": "#accent-surface" },
     },
     SecondaryAction: {
-      $: ".cookbook-link-button.secondary",
-      color: "#accent-text",
+      $: "[data-element=Action]",
+      color: { "": null, "@own(secondary)": "#accent-text" },
       // Recolor only; Action owns the border width and style, including theme overrides.
       // eslint-disable-next-line tasty/prefer-shorthand-property
-      borderColor: "#border-strong",
+      borderColor: { "": null, "@own(secondary)": "#border-strong" },
     },
     MinimalAction: {
-      $: ".cookbook-link-button.minimal",
-      inlinePadding: "0",
-      color: "#accent-text",
-      border: "0",
-      fill: "#clear",
+      $: "[data-element=Action]",
+      color: { "": null, "@own(minimal)": "#accent-text" },
+      // Recolor only so theme.styles.Hero.Action can still own border geometry.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
+      borderColor: { "": null, "@own(minimal)": "#clear" },
     },
-    ActionIcon: { $: ".cookbook-link-button svg", flexShrink: "0" },
+    ActionIcon: { $: "Action svg", flexShrink: "0" },
   },
 });

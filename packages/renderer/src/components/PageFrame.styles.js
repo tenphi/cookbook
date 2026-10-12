@@ -11,14 +11,14 @@ export const PageFrameRoot = defineComponent("PageFrame", {
     flow: "column",
     blockSize: "min 100vh",
     MainFrame: {
-      $: "> .main-frame",
+      $: "> MainFrame",
       inlineSize: { "": "0 100%", "@desktop": "min(100%, $layout-width)" },
       inlineMargin: "auto",
       blockPadding: "$docs-nav-height start",
       inlinePadding: "0 start",
     },
     SidebarFrame: {
-      $: "& > .main-frame",
+      $: "& > [data-element=MainFrame]",
       inlinePadding: {
         "": null,
         "[data-has-sidebar]": "$sidebar-width start",
@@ -26,7 +26,7 @@ export const PageFrameRoot = defineComponent("PageFrame", {
       },
     },
     Columns: {
-      $: "> .main-frame > div",
+      $: "> MainFrame > div",
       display: { "": "flex", "@narrow-layout": "block" },
       inlineSize: "min 0",
     },

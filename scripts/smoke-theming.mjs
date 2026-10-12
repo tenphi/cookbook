@@ -83,11 +83,11 @@ try {
     "utf8",
   );
   assert.equal((html.match(/data-element="SiteLogo"/g) ?? []).length, 2);
-  assert.equal((html.match(/class="td-site-logo__light"/g) ?? []).length, 2);
-  assert.equal((html.match(/class="td-site-logo__dark"/g) ?? []).length, 2);
+  assert.equal((html.match(/data-element="Light"/g) ?? []).length, 2);
+  assert.equal((html.match(/data-element="Dark"/g) ?? []).length, 2);
   assert.ok(html.includes('width="96" height="32"'));
   assert.match(html, /data-element="LogoLink" href="\/showcase"/);
-  assert.match(html, /class="td-sidebar-heading__home" href="\/showcase"/);
+  assert.match(html, /data-element="HomeLink" href="\/showcase"/);
   assert.ok(html.includes("Review ready"));
   assert.ok(html.includes("data-demo-badge"));
   const paths = await readdir(join(fixture, "dist"), { recursive: true });
@@ -105,7 +105,7 @@ try {
 
   assert.doesNotMatch(html, /<style\b/);
   assert.doesNotMatch(html, /<[a-z][^>]*\sstyle\s*=/i);
-  assert.ok(html.includes("td-syntax-keyword"));
+  assert.ok(html.includes("data-syntax-keyword"));
   assert.ok(html.includes('sandbox=""'));
   assert.match(css, /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/);
   assert.match(

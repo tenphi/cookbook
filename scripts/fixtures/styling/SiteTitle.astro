@@ -9,7 +9,7 @@ const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
 ---
 
 <ConsumerGlobalStyles />
-<SiteTitleRoot href={siteTitleHref} className="consumer-title">
+<SiteTitleRoot href={siteTitleHref} data-element="SiteTitle">
   <svg
     viewBox="0 0 24 24"
     aria-hidden="true"
@@ -23,5 +23,5 @@ const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
 <ConsumerButton data-consumer-button type="button"
   >Inherited button</ConsumerButton
 >
-<span class="consumer-global"><span>Docs</span></span>
+<span data-element="ConsumerGlobal"><span>Docs</span></span>
 <span data-element="ConsumerAnatomy">Unregistered identity</span>

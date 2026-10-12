@@ -29,13 +29,13 @@ export function selectPopoverStyles({
       },
     },
     TriggerLabel: {
-      $: ".trigger-label",
+      $: "TriggerLabel",
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
     },
     Caret: {
-      $: "> button > .caret",
+      $: "> button > Caret",
       flexShrink: "0",
       inlineSize: "0.875rem",
       blockSize: "0.875rem",
@@ -72,7 +72,7 @@ export function selectPopoverStyles({
       scale: { "": null, "@own(@popover-open & [data-open])": "1" },
     },
     PanelTitle: {
-      $: ".panel-title",
+      $: "PanelTitle",
       padding: "($gap * 0.75) $gap",
       color: "#text-muted",
       preset: "small / strong",
@@ -107,7 +107,7 @@ export function selectPopoverStyles({
       },
     },
     Checkmark: {
-      $: "nav a > .checkmark",
+      $: "nav a > Checkmark",
       flexShrink: "0",
       inlineMargin: "auto start",
       inlineSize: "1rem",
@@ -115,10 +115,11 @@ export function selectPopoverStyles({
       visibility: "hidden",
     },
     SelectedCheckmark: {
-      $: "nav a > .checkmark",
+      $: "nav a > [data-element=Checkmark]",
       visibility: {
         "": null,
-        '@own(:is(nav a[aria-current="page"] > .checkmark))': "visible",
+        '@own(:is(nav a[aria-current="page"] > [data-element=Checkmark]))':
+          "visible",
       },
     },
   };

@@ -15,7 +15,7 @@ export const MobileMenuFooterRoot = defineComponent("MobileMenuFooter", {
     blockPadding: "$gap",
     blockBorder: "$border-width solid #border start",
     Social: {
-      $: ".td-mobile-preferences__social",
+      $: "Social",
       display: "flex",
       hide: { "": false, ":empty": true },
       alignItems: "center",

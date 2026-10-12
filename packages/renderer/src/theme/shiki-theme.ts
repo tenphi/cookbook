@@ -78,14 +78,14 @@ const syntaxColors = new Map(
     background,
     inserted,
     deleted,
-  ].map((color) => [color, `td-${color.slice(6, -7)}`]),
+  ].map((color) => [color, color.slice(6, -7)]),
 );
 
 /** Keep grammar classification in Shiki and all presentation in Tasty. */
-const tastyClassesTransformer = {
-  name: "cookbook:tasty-classes",
+const tastyModifiersTransformer = {
+  name: "cookbook:tasty-modifiers",
   enforce: "post" as const,
-  root(this: DiffTransformerContext, root: HastElement): void {
+  root(root: HastElement): void {
     const visit = (node: HastElement) => {
       const style = node.properties?.style;
       if (typeof style === "string") {
@@ -94,32 +94,54 @@ const tastyClassesTransformer = {
           const separator = declaration.indexOf(":");
           const key = declaration.slice(0, separator).trim();
           const value = declaration.slice(separator + 1).trim();
-          let className: string | undefined;
-          if (key === "color") className = syntaxColors.get(value);
+          let modifier: string | undefined;
+          if (key === "color") modifier = syntaxColors.get(value);
           else if (key === "background-color" && value === background)
-            className = "td-syntax-bg";
+            modifier = "syntax-bg";
           else if (key === "font-style" && value === "italic")
-            className = "td-syntax-italic";
+            modifier = "syntax-italic";
           else if (key === "font-weight" && value === "bold")
-            className = "td-syntax-strong";
+            modifier = "syntax-strong";
           else if (key === "text-decoration" && value === "underline")
-            className = "td-syntax-underline";
+            modifier = "syntax-underline";
           else if (key === "overflow-x" && value === "auto")
-            className = "td-syntax-scroll";
+            modifier = "syntax-scroll";
           else if (
             (key === "white-space" && value === "pre-wrap") ||
             (key === "word-wrap" && value === "break-word")
           )
-            className = "td-syntax-wrap";
+            modifier = "syntax-wrap";
           else if (key === "user-select" && value === "none")
-            className = "td-syntax-marker";
-          if (!className)
+            modifier = "syntax-marker";
+          if (!modifier)
             throw new Error(
-              `Unsupported Shiki style ${JSON.stringify(declaration)}. Use semantic classes and theme.styles.SyntaxHighlight for custom transformers.`,
+              `Unsupported Shiki style ${JSON.stringify(declaration)}. Use semantic data modifiers and theme.styles.SyntaxHighlight for custom transformers.`,
             );
-          this.addClassToHast(node, className);
+          node.properties[`data-${modifier}`] = "";
         }
         delete node.properties.style;
+      }
+      // Shiki owns these structural classes; normalize them before serialization.
+      const rawClasses = node.properties?.class;
+      const classes =
+        typeof rawClasses === "string" ? rawClasses.split(/\s+/) : rawClasses;
+      if (Array.isArray(classes)) {
+        for (const name of classes) {
+          if (
+            name === "astro-code" ||
+            name === "tasty-code" ||
+            name === "shiki"
+          ) {
+            node.properties["data-syntax"] = "";
+          } else if (name === "line") {
+            node.properties.dataElement = "Line";
+          } else {
+            throw new Error(
+              `Unsupported Shiki class ${JSON.stringify(name)}. Use semantic data modifiers and theme.styles.SyntaxHighlight for custom transformers.`,
+            );
+          }
+        }
+        delete node.properties.class;
       }
       node.children?.forEach(visit);
     };
@@ -130,21 +152,20 @@ const tastyClassesTransformer = {
 type DiffTransformerContext = {
   source: string;
   options: { lang?: string };
-  addClassToHast(element: HastElement, className: string): HastElement;
 };
 
 const diffLanguages = new Set(["diff", "patch"]);
 
 /**
  * The diff grammar colors individual tokens, but it does not expose a stable
- * whole-line selector. Add semantic classes so insertions and deletions can
+ * whole-line selector. Add semantic modifiers so insertions and deletions can
  * receive subtle, full-width surfaces without hiding their +/- markers.
  */
 const diffLineTransformer = {
   name: "cookbook:diff-lines",
   pre(this: DiffTransformerContext, element: HastElement): void {
     if (this.options.lang && diffLanguages.has(this.options.lang)) {
-      this.addClassToHast(element, "td-diff");
+      element.properties["data-diff"] = "";
     }
   },
   line(
@@ -156,9 +177,9 @@ const diffLineTransformer = {
 
     const line = this.source.split(/\r?\n/)[lineNumber - 1] ?? "";
     if (line.startsWith("+") && !line.startsWith("+++")) {
-      this.addClassToHast(element, "td-diff-line--inserted");
+      element.properties["data-inserted"] = "";
     } else if (line.startsWith("-") && !line.startsWith("---")) {
-      this.addClassToHast(element, "td-diff-line--deleted");
+      element.properties["data-deleted"] = "";
     }
   },
 };
@@ -191,8 +212,8 @@ export function cookbookShikiConfig(
   if (!transformers.includes(diffLineTransformer)) {
     transformers.push(diffLineTransformer);
   }
-  if (!transformers.includes(tastyClassesTransformer)) {
-    transformers.push(tastyClassesTransformer);
+  if (!transformers.includes(tastyModifiersTransformer)) {
+    transformers.push(tastyModifiersTransformer);
   }
 
   return {

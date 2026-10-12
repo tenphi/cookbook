@@ -6,6 +6,8 @@ import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
+// Pagefind owns and updates result markup; its UI API exposes classes, not
+// configurable data-element identities. Keep class selectors only for that bridge.
 export const SearchResultsRoot = defineComponent("SearchResults", {
   as: "div",
   "data-element": "SearchResults",
@@ -22,22 +24,26 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
     "$pagefind-ui-tag": "#surface-3",
     preset: "body",
     UI: {
-      $: ".pagefind-ui, *",
+      $: "UI, .pagefind-ui, *",
       display: {
         "": "",
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "flex",
+        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
+          "flex",
       },
       flow: {
         "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "column",
+        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
+          "column",
       },
       flexGrow: {
         "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "1",
+        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
+          "1",
       },
       blockSize: {
         "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "min 0",
+        "@own(:is([data-element=UI])) | @own(:is(.pagefind-ui)) | @own(:is([data-search-results]))":
+          "min 0",
       },
     },
     Form: {
@@ -49,7 +55,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "min 0",
     },
     Field: {
-      $: ".cookbook-search-field",
+      $: "Field",
       position: "relative",
       flexShrink: "0",
     },
@@ -65,7 +71,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "min 0",
     },
     Input: {
-      $: ".cookbook-search-input",
+      $: "Input",
       flexShrink: "0",
       inlineSize: "100%",
       blockSize: "min 3rem",
@@ -77,7 +83,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       shadow: "none",
     },
     Clear: {
-      $: ".cookbook-search-clear",
+      $: "Clear",
       position: "absolute",
       blockInset: "0 start",
       inlineInset: "0 end",
@@ -166,7 +172,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     SearchIcon: {
-      $: ".cookbook-search-field::before",
+      $: "Field::before",
       content: '""',
       position: "absolute",
       zIndex: "1",
@@ -182,7 +188,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       pointerEvents: "none",
     },
     ClearIcon: {
-      $: ".cookbook-search-clear::before",
+      $: "Clear::before",
       content: '""',
       display: "block",
       inlineSize: "1rem",
@@ -193,7 +199,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
     },
     SuppressedClear: {
-      $: ".cookbook-search-clear",
+      $: "[data-element=Clear]",
       display: { "": "", "@own([hidden])": "none" },
     },
   },

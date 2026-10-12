@@ -55,7 +55,7 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
     <Head />
   </head>
   <body>
-    <SkipLinkRoot className="cookbook-skip-link" href="#main-content"
+    <SkipLinkRoot href="#main-content"
       >{Astro.locals.t("page.skipToContent")}</SkipLinkRoot
     >
     <PageFrame>
@@ -64,10 +64,10 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
       <div>
         {
           route.toc && (
-            <TableOfContentsLayoutRoot className="right-sidebar-container cookbook-print-hidden">
-              <div class="right-sidebar">
+            <TableOfContentsLayoutRoot data-print-hidden="">
+              <div data-element="Content">
                 <MobileTableOfContents />
-                <TableOfContentsRoot className="right-sidebar-panel">
+                <TableOfContentsRoot>
                   <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
                   <nav
                     aria-label={Astro.locals.t("tableOfContents.onThisPage")}
@@ -79,25 +79,18 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
             </TableOfContentsLayoutRoot>
           )
         }
-        <MainPaneRoot className="main-pane">
+        <MainPaneRoot>
           <MainContentRoot
             id="main-content"
             data-pagefind-body={indexed ? "" : undefined}
             lang={route.entryMeta.lang}
             dir={route.entryMeta.dir}
           >
-            {
-              data.banner && (
-                <BannerRoot
-                  className="cookbook-banner"
-                  set:html={data.banner.content}
-                />
-              )
-            }
+            {data.banner && <BannerRoot set:html={data.banner.content} />}
             {
               data.hero ? (
-                <div class="content-panel">
-                  <div class="cookbook-container">
+                <div data-element="Panel">
+                  <div data-element="Container">
                     <Hero />
                     <MarkdownContent>
                       <slot />
@@ -107,14 +100,14 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
                 </div>
               ) : (
                 <>
-                  <div class="content-panel">
-                    <div class="cookbook-container">
+                  <div data-element="Panel">
+                    <div data-element="Container">
                       <h1 id="_top" data-page-title set:html={data.title} />
                       {data.draft && <DraftContentNotice />}
                     </div>
                   </div>
-                  <div class="content-panel">
-                    <div class="cookbook-container">
+                  <div data-element="Panel">
+                    <div data-element="Container">
                       <MarkdownContent>
                         <slot />
                       </MarkdownContent>

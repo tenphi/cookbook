@@ -10,7 +10,7 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
   await expect(current).toHaveText("Offline supportNEW");
   await expect(current.locator('[data-element="Badge"]')).toHaveText("NEW");
   await expect(
-    sidebar.locator('.sidebar-section-label [data-element="Badge"]'),
+    sidebar.locator('[data-element=SectionHeading] [data-element="Badge"]'),
   ).toHaveText("BETA");
   await expect(
     sidebar.locator(
@@ -27,7 +27,7 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
   await page.goto("/sidebar-badges/reference/");
   await page.evaluate(() => document.fonts.ready);
   await sidebar
-    .locator(".top-level > li")
+    .locator("[data-top-level] > li")
     .first()
     .screenshot({
       path: testInfo.outputPath("sidebar-badges-light.png"),
@@ -37,7 +37,7 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
     document.documentElement.dataset.theme = "dark";
   });
   await sidebar
-    .locator(".top-level > li")
+    .locator("[data-top-level] > li")
     .first()
     .screenshot({
       path: testInfo.outputPath("sidebar-badges-dark.png"),

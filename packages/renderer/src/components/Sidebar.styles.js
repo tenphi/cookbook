@@ -60,7 +60,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       opacity: { "": null, "@popover-open & [data-open]": "1" },
     },
     MobileHeading: {
-      $: ".td-sidebar-heading",
+      $: "MobileHeading",
       display: "flex",
       hide: { "": true, "@mobile": false },
       alignItems: "center",
@@ -88,7 +88,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       whiteSpace: "nowrap",
     },
     Close: {
-      $: ".td-sidebar-heading > button",
+      $: "MobileHeading > button",
       display: "grid",
       placeItems: "center",
       flexShrink: "0",
@@ -101,18 +101,19 @@ export const SidebarRoot = defineComponent("Sidebar", {
       radius: "$header-control-radius",
     },
     HoverClose: {
-      $: ".td-sidebar-heading > button",
+      $: "MobileHeading > button",
       color: {
         "": null,
-        "@own(:is(.td-sidebar-heading > button:hover))": "#text",
+        "@own(:is([data-element=MobileHeading] > button:hover))": "#text",
       },
       fill: {
         "": null,
-        "@own(:is(.td-sidebar-heading > button:hover))": "#surface-2-hover",
+        "@own(:is([data-element=MobileHeading] > button:hover))":
+          "#surface-2-hover",
       },
     },
     CloseIcon: {
-      $: ".td-sidebar-heading > button > svg",
+      $: "MobileHeading > button > svg",
       inlineSize: "1.25rem",
       blockSize: "1.25rem",
     },
@@ -132,7 +133,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       },
     },
     Content: {
-      $: ".sidebar-content",
+      $: "Content",
       display: "flex",
       flow: "column",
       blockSize: "min 100%",
@@ -154,12 +155,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
       listStyle: "none",
     },
     Item: { $: "cookbook-sidebar li", overflowWrap: "anywhere" },
-    TopLevelSpacing: { $: ".top-level > li + li", blockMargin: "0 start" },
-    GroupSpacing: {
-      $: ".top-level > li + li",
+    TopLevelSpacing: {
+      $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(:is(.top-level > li + li:has(> .sidebar-section-label)))":
+        "@own(:is(ul[data-top-level] > li + li))": "0 start",
+      },
+    },
+    GroupSpacing: {
+      $: "ul > li + li",
+      blockMargin: {
+        "": null,
+        "@own(:is([data-top-level] > li + li:has(> [data-element=SectionHeading])))":
           "($gap * 2.5) start",
       },
     },
@@ -168,7 +175,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       inlineMargin: "($gap * 1.5) start",
     },
     SectionHeading: {
-      $: ".sidebar-section-label",
+      $: "SectionHeading",
       margin: "0 0 1bw",
       padding: "($gap * 0.75) ($gap * 1.25)",
       color: "#text",
@@ -194,7 +201,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       userSelect: "none",
     },
     GroupLabel: {
-      $: ".group-label",
+      $: "GroupLabel, [data-element=SectionHeading]",
       display: "flex",
       alignItems: "center",
       inlineSize: "min 0",
@@ -202,22 +209,22 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "0.25em",
     },
     GroupLabelText: {
-      $: ".group-label > span",
+      $: "GroupLabel > span, SectionHeading > span",
       inlineSize: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "min 0",
+        "@own(:first-child)": "min 0",
       },
       overflow: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "hidden",
+        "@own(:first-child)": "hidden",
       },
       textOverflow: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "ellipsis",
+        "@own(:first-child)": "ellipsis",
       },
       whiteSpace: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "nowrap",
+        "@own(:first-child)": "nowrap",
       },
     },
     Link: {
@@ -253,7 +260,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       hide: true,
     },
     Caret: {
-      $: ".sidebar-caret",
+      $: "Caret",
       flexShrink: "0",
       inlineSize: "1rem",
       blockSize: "1rem",
@@ -262,10 +269,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
       transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
     },
     ExpandedCaret: {
-      $: "details > summary > .sidebar-caret, details > summary > a > .sidebar-caret",
+      $: "details > summary > [data-element=Caret], details > summary > a > [data-element=Caret]",
       transform: {
         "": null,
-        "@own(:is(details[open] > summary > .sidebar-caret)) | @own(:is(details[open] > summary > a > .sidebar-caret))":
+        "@own(:is(details[open] > summary > [data-element=Caret])) | @own(:is(details[open] > summary > a > [data-element=Caret]))":
           "rotate(90deg)",
       },
     },
@@ -275,19 +282,19 @@ export const SidebarRoot = defineComponent("Sidebar", {
     },
     GroupLink: { $: "summary > a", justifyContent: "space-between" },
     LinkedSectionHeading: {
-      $: ".sidebar-section-label",
+      $: "[data-element=SectionHeading]",
       padding: { "": null, "@own(:has(> a))": "0" },
     },
     SectionLink: {
-      $: ".sidebar-section-label > a",
+      $: "SectionHeading > a",
       color: {
         "": null,
-        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
+        '@own(:is([data-element=SectionHeading] > a:not([aria-current="page"])))':
           "#text",
       },
       preset: {
         "": null,
-        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
+        '@own(:is([data-element=SectionHeading] > a:not([aria-current="page"])))':
           "small / strong",
       },
     },
@@ -305,9 +312,15 @@ export const SidebarRoot = defineComponent("Sidebar", {
       whiteSpace: "nowrap",
     },
     TopLevelLink: {
-      $: "a.large",
-      color: { "": null, '@own(:not([aria-current="page"]))': "#sidebar-text" },
-      preset: { "": null, '@own(:not([aria-current="page"]))': "navigation" },
+      $: "a",
+      color: {
+        "": null,
+        '@own(top-level & ![aria-current="page"])': "#sidebar-text",
+      },
+      preset: {
+        "": null,
+        '@own(top-level & ![aria-current="page"])': "navigation",
+      },
     },
   },
 });

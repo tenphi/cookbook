@@ -70,7 +70,9 @@ try {
     ["x-default", "https://docs.example.com/manual/guide/"],
   ]);
   assert.equal(
-    window.document.querySelector(".site-title").getAttribute("href"),
+    window.document
+      .querySelector("[data-element=SiteTitle]")
+      .getAttribute("href"),
     "/manual/",
   );
   const selector = window.document.querySelector("cookbook-language-select");
@@ -134,12 +136,14 @@ try {
   );
   assert.equal(
     prefixed.document
-      .querySelector('.td-top-tabs a[aria-current="page"]')
+      .querySelector('[data-element=TopNavigation] a[aria-current="page"]')
       .textContent.trim(),
     "Manuel",
   );
   assert.equal(
-    prefixed.document.querySelector(".site-title").getAttribute("href"),
+    prefixed.document
+      .querySelector("[data-element=SiteTitle]")
+      .getAttribute("href"),
     "/manual/en",
   );
   assert.equal(

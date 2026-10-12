@@ -22,7 +22,7 @@ export const TableOfContentsLayoutRoot = defineComponent(
         "@narrow-layout": "100%",
       },
       Content: {
-        $: ".right-sidebar",
+        $: "Content",
         position: { "": "sticky", "@narrow-layout": "static" },
         blockInset: "$docs-nav-height start",
         inlineSize: "100%",

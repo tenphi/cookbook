@@ -6,7 +6,7 @@ configureCookbookStates();
 
 export function MarkdownTableStyles() {
   useGlobalStyles(
-    ".cookbook-markdown-content:where(*)",
+    "[data-element=Markdown]:where(*)",
     resolveComponentStyles("MarkdownTable", {
       Table: {
         $: "table",
@@ -47,7 +47,7 @@ export function MarkdownTableStyles() {
         },
       },
       Scroll: {
-        $: ".td-table-scroll",
+        $: "Scroll",
         inlineSize: "initial 100% 100%",
         overflow: "auto",
         scrollbar: "thin",

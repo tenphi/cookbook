@@ -27,11 +27,11 @@ const section = layout.tabs[active]?.label;
   popovertarget="cookbook__sidebar"
   aria-controls="cookbook__sidebar"
   aria-expanded="false"
-  className="td-menu-button cookbook-menu-button cookbook-print-hidden"
+  data-print-hidden=""
 >
-  <Icon name="bars" class="open-menu" />
-  <span class="sr-only">{Astro.locals.t("menuButton.accessibleLabel")}</span>
-  {section && <span class="td-menu-button__section">{section}</span>}
+  <Icon name="bars" data-element="Icon" />
+  <span data-sr-only="">{Astro.locals.t("menuButton.accessibleLabel")}</span>
+  {section && <span data-element="Section">{section}</span>}
   {section && <Icon name="right-caret" />}
-  <span class="td-menu-button__page">{route.entry.data.title}</span>
+  <span data-element="Page">{route.entry.data.title}</span>
 </MobileMenuToggleRoot>

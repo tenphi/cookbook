@@ -14,7 +14,7 @@ export const MobileNavigationTabsRoot = defineComponent(
       gap: "$gap",
       blockMargin: "0",
       Label: {
-        $: ".td-mobile-tabs__label",
+        $: "Label",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",

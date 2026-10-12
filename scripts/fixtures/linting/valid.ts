@@ -37,7 +37,7 @@ const base = resolveComponentStyles("ProjectNote", {
 });
 mergeStyles(base, { color: { hovered: "#text-muted" } });
 useGlobalStyles(
-  ".project-note",
+  "[data-element=ProjectNote]",
   resolveComponentStyles("ProjectGlobal", {
     color: "#text",
     Label: { preset: "small", padding: "1x" },

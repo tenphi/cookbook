@@ -414,7 +414,11 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
         "Packed-package site did not contain the expected generated content.",
       );
     }
-    for (const marker of ["data-has-toc", "td-header", "right-sidebar"]) {
+    for (const marker of [
+      "data-has-toc",
+      'data-element="Header"',
+      'data-element="TableOfContentsLayout"',
+    ]) {
       if (!html.includes(marker)) {
         throw new Error(
           `Packed convention page did not use the default Cookbook theme: missing ${marker}.`,
@@ -488,7 +492,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       );
     }
     const title = html.match(
-      /<a\b[^>]*class="[^"]*consumer-title[^"]*"[^>]*>[\s\S]*?<\/a>/,
+      /<a\b[^>]*data-element="SiteTitle"[^>]*>[\s\S]*?<\/a>/,
     )?.[0];
     if (
       !title?.includes('href="/manual/"') ||
@@ -514,7 +518,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       "43rem",
       "var(--gap)",
       "var(--accent-text-color)",
-      ".consumer-global",
+      "[data-element=ConsumerGlobal]",
       "/manual/fonts/consumer-mono.woff2",
     ]) {
       if (!css.includes(value)) {

@@ -40,19 +40,21 @@ function popover(element: HTMLElement) {
 
 function mount() {
   document.body.innerHTML =
-    '<a class="cookbook-skip-link" href="#main">Skip</a><header class="header"><button class="td-menu-button" popovertarget="cookbook__sidebar">Open</button></header><main class="main-frame" id="main"></main>';
+    '<a data-element="SkipLink" href="#main">Skip</a><header data-element="HeaderFrame"><button data-element="MobileMenuToggle" popovertarget="cookbook__sidebar">Open</button></header><main data-element="MainFrame" id="main"></main>';
   const pane = document.createElement("cookbook-sidebar-pane");
   pane.id = "cookbook__sidebar";
   pane.innerHTML =
-    '<a href="/">Home</a><button autofocus>Close</button><nav class="td-mobile-tabs"><details><summary>Sections</summary><a href="/guide">Guide</a></details></nav><a href="/next">Next</a>';
+    '<a href="/">Home</a><button autofocus>Close</button><nav data-element="MobileNavigationTabs"><details><summary>Sections</summary><a href="/guide">Guide</a></details></nav><a href="/next">Next</a>';
   const state = popover(pane);
   document.body.append(pane);
   return {
     pane,
     ...state,
-    trigger: document.querySelector<HTMLButtonElement>(".td-menu-button")!,
-    main: document.querySelector<HTMLElement>(".main-frame")!,
-    header: document.querySelector<HTMLElement>(".header")!,
+    trigger: document.querySelector<HTMLButtonElement>(
+      "[data-element=MobileMenuToggle]",
+    )!,
+    main: document.querySelector<HTMLElement>("[data-element=MainFrame]")!,
+    header: document.querySelector<HTMLElement>("[data-element=HeaderFrame]")!,
     close: pane.querySelector("button")!,
   };
 }

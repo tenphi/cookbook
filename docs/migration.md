@@ -57,7 +57,7 @@ still use `--name`.
 Built-in markup now uses Tasty’s `data-element` identities instead of
 `data-tasty-anatomy`. Custom styles resolve through each owning definition.
 Heading levels move from `Heading.Level1`–`Level6` to root property state maps
-(`:is(h1)`–`:is(h6)`); Markdown wrappers use `.level-h1`–`.level-h6`.
+(`:is(h1)`–`:is(h6)`); Markdown wrappers use `[data-level=h1]`–`[data-level=h6]`.
 Panel first/second-child padding moves into `MainContent.Panel` token state maps.
 Header’s shared title/search defaults live on `Title` and `Search`; Footer’s
 only-child and hover states live on `MetaLink`, `MetaUpdated`, and `CreditLink`.
@@ -200,3 +200,30 @@ Apply these steps if your project still uses the earlier contracts:
 
 See [authoring](./authoring.mdx) for component usage and
 [working examples](./examples.md) for repository configuration patterns.
+
+## Owned markup and button variants
+
+Cookbook no longer emits authored CSS classes for its shell, components, Markdown,
+or syntax highlighting. Use `theme.styles.<ComponentName>` and its registered
+sub-elements instead of class selectors. Custom component markup should use
+`data-element` identities; variant conditions belong in property state maps.
+For example, hero actions use `data-element="Action"` and `data-primary`,
+`data-secondary`, or `data-minimal`. Variant customization hooks such as
+`Hero.PrimaryAction` now target `Action` structurally. Keep their variant condition
+in a property map, for example
+`PrimaryAction: { color: { "@own(primary)": "#accent-text" } }`, rather than a scalar
+that would apply to every action.
+The `Logo` component no longer accepts a `class` prop; customize `theme.styles.Logo`
+or the owning component's `Logo` sub-element.
+
+Heading wrappers use `data-element="MarkdownHeading"` and `data-level="h1"` through
+`"h6"`. Syntax transformers must emit data modifiers instead of authored classes;
+see [component styles](./component-styles.md#syntax-highlighting-and-isolated-previews).
+Syntax category hooks likewise use property conditions, for example
+`SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
+Preserve the built-in condition when overriding a variant or category property.
+Tasty-generated classes and library-owned Pagefind UI classes remain.
+
+Hero buttons no longer move on hover. Minimal actions have the same padding,
+background, and border width as secondary outline actions, with a transparent
+border (`border: "#clear"`).

@@ -30,14 +30,14 @@ export const MobileMenuToggleRoot = extendComponent(
         blockSize: "1.125rem",
       },
       Section: {
-        $: ".td-menu-button__section",
+        $: "Section",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
         inlineSize: "max 40%",
       },
       Page: {
-        $: ".td-menu-button__page",
+        $: "Page",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",

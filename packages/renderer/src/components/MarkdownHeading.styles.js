@@ -8,18 +8,18 @@ configureCookbookStates();
 
 export function MarkdownHeadingStyles() {
   useGlobalStyles(
-    ".cookbook-markdown-content .cookbook-heading-wrapper",
+    "[data-element=Markdown] [data-element=MarkdownHeading]",
     resolveComponentStyles("MarkdownHeading", {
       position: "relative",
       color: "#heading",
       preset: {
         "": "heading",
-        ".level-h1": "h1",
-        ".level-h2": "h2",
-        ".level-h3": "h3",
-        ".level-h4": "h4",
-        ".level-h5": "h5",
-        ".level-h6": "h6",
+        "[data-level=h1]": "h1",
+        "[data-level=h2]": "h2",
+        "[data-level=h3]": "h3",
+        "[data-level=h4]": "h4",
+        "[data-level=h5]": "h5",
+        "[data-level=h6]": "h6",
       },
       Heading: {
         $: "> *",
@@ -32,7 +32,7 @@ export function MarkdownHeadingStyles() {
         },
       },
       Link: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         position: { "": "absolute", "@mobile": "relative" },
         blockInset: {
           "": "((1lh - 1.75rem) / 2) start",
@@ -57,14 +57,14 @@ export function MarkdownHeadingStyles() {
         transition: "color $transition, fill $transition, opacity $transition",
       },
       RevealedLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         opacity: {
           "": null,
           ":hover | @own(:focus-visible)": "1",
         },
       },
       HoverLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         color: {
           "": null,
           "@own(:hover | :focus-visible)": "#accent-text",
@@ -75,7 +75,7 @@ export function MarkdownHeadingStyles() {
         },
       },
       LinkIcon: {
-        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
+        $: "> Anchor > [data-element=AnchorIcon]",
         display: "block",
         preset: "inherit / tight",
         // Scale with the current heading without replacing its inherited typography.
@@ -86,22 +86,22 @@ export function MarkdownHeadingStyles() {
         blockSize: "1em",
       },
       CopiedLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         color: { "": null, '@own([data-copy-state="copied"])': "#green-text" },
         opacity: { "": null, '@own([data-copy-state="copied"])': "1" },
       },
       CopiedLinkIcon: {
-        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
+        $: "> Anchor > [data-element=AnchorIcon]",
         visibility: {
           "": null,
-          '@own(:is(.cookbook-anchor-link[data-copy-state="copied"] > .cookbook-anchor-icon))':
+          '@own(:is([data-element=Anchor][data-copy-state="copied"] > [data-element=AnchorIcon]))':
             "hidden",
         },
       },
       CopiedIcon: {
         // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
         // eslint-disable-next-line tasty/no-state-in-selector
-        $: '> .cookbook-anchor-link[data-copy-state="copied"]::after',
+        $: '> Anchor[data-copy-state="copied"]::after',
         content: '""',
         position: "absolute",
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",

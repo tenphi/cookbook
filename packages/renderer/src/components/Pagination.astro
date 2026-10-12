@@ -6,13 +6,13 @@ const { prev, next } = pagination;
 
 {
   (next || prev) && (
-    <PaginationRoot className="pagination-links" dir={dir}>
+    <PaginationRoot dir={dir}>
       {next && (
         <a href={next.href} rel="next">
           <span>
             {Astro.locals.t("page.nextLink")}
             <br />
-            <span class="link-title">{next.label}</span>
+            <span data-element="Title">{next.label}</span>
           </span>
         </a>
       )}
@@ -21,7 +21,7 @@ const { prev, next } = pagination;
           <span>
             {Astro.locals.t("page.previousLink")}
             <br />
-            <span class="link-title">{prev.label}</span>
+            <span data-element="Title">{prev.label}</span>
           </span>
         </a>
       )}

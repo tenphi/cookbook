@@ -21,11 +21,11 @@ export const SiteLogoRoot = defineComponent("SiteLogo", {
       objectFit: "contain",
     },
     Light: {
-      $: "> .td-site-logo__light",
+      $: "> Light",
       hide: { "": false, "@dark": true },
     },
     Dark: {
-      $: "> .td-site-logo__dark",
+      $: "> Dark",
       hide: { "": true, "@dark": false },
     },
   },

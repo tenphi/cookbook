@@ -26,7 +26,7 @@ if (image) {
 }
 ---
 
-<HeroRoot className="hero">
+<HeroRoot>
   {
     darkImage && (
       <img
@@ -49,20 +49,25 @@ if (image) {
       />
     )
   }
-  {rawHtml && <div class="hero-html" set:html={rawHtml} />}
-  <div class="stack">
-    <div class="copy">
+  {rawHtml && <div data-element="Visual" set:html={rawHtml} />}
+  <div data-element="Stack">
+    <div data-element="Copy">
       <h1 id="_top" data-page-title set:html={title} />
       {data.draft && <DraftContentNotice />}
-      {tagline && <div class="tagline" set:html={tagline} />}
+      {tagline && <div data-element="Tagline" set:html={tagline} />}
     </div>
     {
       actions.length > 0 && (
-        <div class="actions">
+        <div data-element="Actions">
           {actions.map(({ link: href, text, variant }) => (
             <a
               {href}
-              class:list={["cookbook-link-button", variant ?? "secondary"]}
+              data-element="Action"
+              data-primary={variant === "primary" ? "" : undefined}
+              data-secondary={
+                !variant || variant === "secondary" ? "" : undefined
+              }
+              data-minimal={variant === "minimal" ? "" : undefined}
             >
               {text}
             </a>

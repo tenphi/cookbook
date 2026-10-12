@@ -78,7 +78,7 @@ export const SearchRoot = defineComponent("Search", {
       opacity: { "": "1", "@mobile": "0" },
     },
     Frame: {
-      $: ".dialog-frame",
+      $: "Frame",
       display: "flex",
       flow: "column",
       flexGrow: "1",
@@ -88,7 +88,7 @@ export const SearchRoot = defineComponent("Search", {
       overflow: "hidden",
     },
     Container: {
-      $: ".search-container",
+      $: "Container",
       display: "flex",
       flow: "column",
       flexGrow: "1",

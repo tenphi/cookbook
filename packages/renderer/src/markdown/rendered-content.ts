@@ -1,5 +1,5 @@
 const headingPattern =
-  /<div\b[^>]*\bclass=["'][^"']*\bcookbook-heading-wrapper\b[^"']*["'][^>]*>[\s\S]*?<\/div>|<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1>/gi;
+  /<div\b[^>]*\bdata-element=["']MarkdownHeading["'][^>]*>[\s\S]*?<\/div>|<h([1-6])\b([^>]*)>([\s\S]*?)<\/h\1>/gi;
 const idPattern = /\sid=(['"])(.*?)\1/i;
 const tags = /<[^>]*>/g;
 
@@ -23,7 +23,7 @@ export function addHeadingPermalinks(html: string): string {
       const title = escapeAttribute(
         decodeEntities(content.replace(tags, "").trim()),
       );
-      return `<div class="cookbook-heading-wrapper level-h${level}">${heading}<a class="cookbook-anchor-link" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”"><span class="cookbook-anchor-icon" aria-hidden="true">#</span></a></div>`;
+      return `<div data-element="MarkdownHeading" data-level="h${level}">${heading}<a data-element="Anchor" href="#${escapeAttribute(id)}" aria-label="Permalink to “${title}”"><span data-element="AnchorIcon" aria-hidden="true">#</span></a></div>`;
     },
   );
 }

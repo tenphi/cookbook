@@ -7,10 +7,10 @@ describe("rendered Markdown content", () => {
       '<h2 id="install"><code>Install</code> &amp; configure</h2><p>Body</p>',
     );
 
-    expect(html).toContain('class="cookbook-heading-wrapper level-h2"');
-    expect(html).toContain('class="cookbook-anchor-link" href="#install"');
+    expect(html).toContain('data-element="MarkdownHeading" data-level="h2"');
+    expect(html).toContain('data-element="Anchor" href="#install"');
     expect(html).toContain(
-      'class="cookbook-anchor-icon" aria-hidden="true">#</span>',
+      'data-element="AnchorIcon" aria-hidden="true">#</span>',
     );
     expect(html).toContain("Permalink to “Install &amp; configure”");
   });
@@ -21,16 +21,16 @@ describe("rendered Markdown content", () => {
 
   it("preserves headings that already have permalink wrappers", () => {
     const linked =
-      '<div class="cookbook-heading-wrapper level-h2"><h2 id="install">Install</h2><a class="cookbook-anchor-link" href="#install"><span aria-hidden="true" class="cookbook-anchor-icon"><svg></svg></span><span class="sr-only">Section titled “Install”</span></a></div>';
+      '<div data-element="MarkdownHeading" data-level="h2"><h2 id="install">Install</h2><a data-element="Anchor" href="#install"><span aria-hidden="true" data-element="AnchorIcon"><svg></svg></span><span data-sr-only="">Section titled “Install”</span></a></div>';
     const html = addHeadingPermalinks(
       `${linked}<h3 id="configure">Configure</h3>`,
     );
 
     expect(html).toContain(linked);
-    expect(html.match(/class="cookbook-heading-wrapper/g)).toHaveLength(2);
-    expect(html.match(/class="cookbook-anchor-link/g)).toHaveLength(2);
+    expect(html.match(/data-element="MarkdownHeading/g)).toHaveLength(2);
+    expect(html.match(/data-element="Anchor"/g)).toHaveLength(2);
     expect(html).not.toContain(
-      '<div class="cookbook-heading-wrapper level-h2"><div class="cookbook-heading-wrapper',
+      '<div data-element="MarkdownHeading" data-level="h2"><div data-element="MarkdownHeading',
     );
   });
 });

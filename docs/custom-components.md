@@ -234,8 +234,9 @@ at render time follow Tasty's usual precedence.
 Use `defineComponent` when authoring a component that should support
 `theme.customStyles`. Use `tasty` directly for ordinary Tasty creation or composition
 that does not need a configuration name. To define a named component around
-an existing React component that forwards `className`, pass it as `as` in the options. Use `className`
-when passing a class to a Tasty component from Astro.
+an existing React component that forwards `className`, pass it as `as` in the options. Tasty attaches its generated classes for extracted CSS. Use `data-element` identities
+and named sub-elements for owned anatomy, and modifiers/state maps for variants;
+do not add authored CSS classes.
 
 ### Extending a component
 
@@ -294,7 +295,7 @@ import {
 } from "@tenphi/cookbook/styling";
 
 useGlobalStyles(
-  ".project-note",
+  "[data-element=ProjectNote]",
   resolveComponentStyles("ProjectNote", {
     padding: "2x",
     fill: "#surface-2",
@@ -303,7 +304,7 @@ useGlobalStyles(
 );
 ---
 
-<aside class="project-note"><strong>Note</strong><slot /></aside>
+<aside data-element="ProjectNote"><strong>Note</strong><slot /></aside>
 ```
 
 `defineComponent`, `extendComponent`, and `resolveComponentStyles` read the same `theme.customStyles`

@@ -42,13 +42,10 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 
 {
   layout.tabs.length > 0 && (
-    <MobileNavigationTabsRoot
-      className="td-mobile-tabs cookbook-print-hidden"
-      aria-label={ui.sections}
-    >
+    <MobileNavigationTabsRoot data-print-hidden="" aria-label={ui.sections}>
       <details>
         <summary aria-label={ui.chooseSection}>
-          <span class="td-mobile-tabs__label">
+          <span data-element="Label">
             {layout.tabs[activeTab]?.label ?? ui.sections}
           </span>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">

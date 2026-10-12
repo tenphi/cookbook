@@ -6,33 +6,33 @@ configureCookbookStates();
 
 export function MarkdownAlertStyles() {
   useGlobalStyles(
-    ".cookbook-alert",
+    "[data-element=MarkdownAlert]",
     resolveComponentStyles("MarkdownAlert", {
       padding: "($gap * 2) ($gap * 2.5)",
       color: {
         "": "#text-soft",
-        ".cookbook-alert--note": "#blue-text",
-        ".cookbook-alert--tip": "#green-text",
-        ".cookbook-alert--caution": "#warning-text",
-        ".cookbook-alert--danger": "#red-text",
+        "[data-note]": "#blue-text",
+        "[data-tip]": "#green-text",
+        "[data-caution]": "#warning-text",
+        "[data-danger]": "#red-text",
       },
       border: {
         "": true,
-        ".cookbook-alert--note": "#blue",
-        ".cookbook-alert--tip": "#green",
-        ".cookbook-alert--caution": "#warning",
-        ".cookbook-alert--danger": "#red",
+        "[data-note]": "#blue",
+        "[data-tip]": "#green",
+        "[data-caution]": "#warning",
+        "[data-danger]": "#red",
       },
       radius: "$card-radius",
       fill: {
         "": "#surface-2",
-        ".cookbook-alert--note": "#blue-surface",
-        ".cookbook-alert--tip": "#green-surface",
-        ".cookbook-alert--caution": "#warning-surface",
-        ".cookbook-alert--danger": "#red-surface",
+        "[data-note]": "#blue-surface",
+        "[data-tip]": "#green-surface",
+        "[data-caution]": "#warning-surface",
+        "[data-danger]": "#red-surface",
       },
       Title: {
-        $: ".cookbook-alert__title",
+        $: "Title",
         display: "flex",
         alignItems: "center",
         gap: "$gap",
@@ -44,15 +44,15 @@ export function MarkdownAlertStyles() {
         preset: "strong",
       },
       FirstContent: {
-        $: ".cookbook-alert__content > *",
+        $: "Content > *",
         blockMargin: {
           "": null,
-          "@own(:is(.cookbook-alert__content > :first-child))":
+          "@own(:is([data-element=Content] > :first-child))":
             "$margin-block-start $margin-block-end",
         },
         "$margin-block-start": {
           "": null,
-          "@own(:is(.cookbook-alert__content > :first-child))": "0",
+          "@own(:is([data-element=Content] > :first-child))": "0",
         },
       },
     }),

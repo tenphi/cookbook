@@ -6,11 +6,7 @@ const content = addHeadingPermalinks(await Astro.slots.render("default"));
 ---
 
 <MarkdownStyles />
-<div
-  class="cookbook-markdown-content"
-  data-element="Markdown"
-  set:html={content}
-/>
+<div data-element="Markdown" set:html={content} />
 
 <script>
   import { initializeHeadingLinks } from "../client/heading-links.js";

@@ -12,17 +12,17 @@ export const MainContentRoot = defineComponent("MainContent", {
     padding: "0 0 5rem",
     // Layout spacing is a default; generated Markdown owns prose spacing.
     ContentSpacing: {
-      $: ":where(.content-panel > .cookbook-container) > * + *",
+      $: ":where(Panel > Container) > * + *",
       blockMargin: "$margin-block-start $margin-block-end",
       "$margin-block-start": "($gap * 3)",
     },
     Container: {
-      $: ".content-panel > .cookbook-container",
+      $: "Panel > Container",
       inlineMargin: "auto",
       inlineSize: "max $content-width",
     },
     Panel: {
-      $: ".content-panel",
+      $: "Panel",
       "$padding-block-start": {
         "": "($gap * 3)",
         "@own(:nth-of-type(2))": "($gap * 2)",

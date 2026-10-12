@@ -44,7 +44,7 @@ for (const name of entries) {
 // add another 1 KiB of Tasty-generated CSS.
 // Customizable heading-link copy feedback adds another 1 KiB.
 // The heading color's four modes and configurable Heading style tree add 1 KiB.
-// The full customization registry, semantic syntax classes, owned search,
+// The full customization registry, semantic syntax modifiers, owned search,
 // page actions, and mobile contents add ~23 KiB to the previous 163 KiB limit.
 // The configurable language popover and mobile placement add about 8 KiB.
 // Current measured maximum: 198,287 bytes; keep a small explicit growth margin.
@@ -108,10 +108,9 @@ if (!sharedCss.includes("view%42ox")) {
   );
 }
 if (
-  !/pre\.td-diff\s*>\s*code\s*>\s*:is\(\.line\)\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
+  !/pre\s*>\s*code\s*>\s*\[data-element=Line\]:where\(:is\(pre\[data-diff]\s*>\s*code\s*>\s*\*\)\)\s*\{[^}]*padding-inline:\s*1rem;[^}]*line-height:/.test(
     sharedCss,
-  ) ||
-  /pre\.td-diff\.line\s*\{/.test(sharedCss)
+  )
 ) {
   throw new Error("Diff lines lost their padding or typography rules.");
 }
@@ -140,11 +139,11 @@ for (const [name, descendant, label] of [
   ],
   [
     "Sidebar",
-    ".group-label > span:where(:is(.group-label > span:first-child))",
+    '[data-element="GroupLabel"] > span:where(:first-child)',
     "left navigation groups",
   ],
   ["TableOfContents", "a > span", "desktop table of contents"],
-  ["MobileMenuToggle", ".td-menu-button__page", "mobile navigation breadcrumb"],
+  ["MobileMenuToggle", '[data-element="Page"]', "mobile navigation breadcrumb"],
 ]) {
   const escapedSelector = `${styleOwnerSelector(componentPage, name)} ${descendant.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`;
   if (
@@ -248,7 +247,7 @@ for (const section of [
 ]) {
   if (
     !initialSidebar.includes(
-      `<h2 class="sidebar-section-label group-label"><span>${section}</span>`,
+      `<h2 data-element="SectionHeading"><span>${section}</span>`,
     ) ||
     /<details\b/.test(initialSidebar)
   ) {
@@ -405,17 +404,14 @@ for (const name of conventionEntries.filter(
 )) {
   const html = await readFile(join(conventionOutput, name), "utf8");
   for (const match of html.matchAll(
-    /<div\b[^>]*\bclass="[^"]*\bcookbook-heading-wrapper\b[^"]*"[^>]*>([\s\S]*?)<\/div>/g,
+    /<div\b[^>]*\bdata-element="MarkdownHeading"[^>]*>([\s\S]*?)<\/div>/g,
   )) {
     conventionHeadingWrappers += 1;
     const content = match[1] ?? "";
-    if (/\bclass="[^"]*\bcookbook-heading-wrapper\b/.test(content)) {
+    if (/\bdata-element="MarkdownHeading"/.test(content)) {
       throw new Error(`${name} contains nested heading permalink wrappers.`);
     }
-    if (
-      (content.match(/\bclass="[^"]*\bcookbook-anchor-link\b/g) ?? [])
-        .length !== 1
-    ) {
+    if ((content.match(/\bdata-element="Anchor"/g) ?? []).length !== 1) {
       throw new Error(`${name} must render exactly one permalink per heading.`);
     }
   }

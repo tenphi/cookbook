@@ -13,7 +13,7 @@ beforeEach(() => {
   document.execCommand = vi.fn();
   window.history.replaceState(null, "", "/docs/guide/?lang=en#previous");
   document.body.innerHTML =
-    '<div class="cookbook-markdown-content"><div class="cookbook-heading-wrapper"><h2 id="install">Install &amp; configure</h2><a class="cookbook-anchor-link" href="#install"><span class="cookbook-anchor-icon">#</span></a></div></div>';
+    '<div data-element="Markdown"><div data-element="MarkdownHeading"><h2 id="install">Install &amp; configure</h2><a data-element="Anchor" href="#install"><span data-element="AnchorIcon">#</span></a></div></div>';
 });
 
 afterEach(() => {
@@ -25,7 +25,7 @@ afterEach(() => {
 
 function mount() {
   initializeHeadingLinks();
-  return document.querySelector<HTMLAnchorElement>(".cookbook-anchor-link")!;
+  return document.querySelector<HTMLAnchorElement>("[data-element=Anchor]")!;
 }
 
 async function click(link: HTMLElement, options: MouseEventInit = {}) {

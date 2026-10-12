@@ -38,7 +38,7 @@ export default function DocumentStyles() {
       },
       "$docs-nav-height": {
         "": "4.5rem",
-        ":has(.td-top-tabs)": "7.25rem",
+        ":has([data-element=TopNavigation])": "7.25rem",
         "@mobile": "3.5rem",
         "@mobile & [data-has-sidebar]": "6.5rem",
       },
@@ -144,46 +144,62 @@ export default function DocumentStyles() {
         },
       },
       Hidden: {
-        $: ":where(*), :where(.cookbook-hidden)",
+        $: ":where(*)",
         hide: {
           "": null,
-          "@own([hidden] | .cookbook-hidden)": true,
+          "@own([hidden] | hidden)": true,
         },
       },
       PrintHidden: {
-        $: ".cookbook-print-hidden",
-        display: { "@media:print": "none" },
+        $: "*",
+        display: { "": null, "@own(print-hidden) & @media:print": "none" },
       },
       DesktopBlock: {
-        $: ":is(.md\\:cookbook-block)",
-        display: { "": "block", "@mobile": "none" },
+        $: "*",
+        display: {
+          "": null,
+          "@own(desktop-block)": "block",
+          "@own(desktop-block) & @mobile": "none",
+        },
       },
       DesktopFlex: {
-        $: ":is(.md\\:cookbook-flex)",
-        display: { "": "flex", "@mobile": "none" },
+        $: "*",
+        display: {
+          "": null,
+          "@own(desktop-flex)": "flex",
+          "@own(desktop-flex) & @mobile": "none",
+        },
       },
       ScreenReaderOnly: {
-        $: ".sr-only",
-        "$visually-hidden-size": "1px",
-        position: "absolute",
-        inlineSize: "$visually-hidden-size",
-        blockSize: "$visually-hidden-size",
-        padding: "0",
-        margin: "($visually-hidden-size * -1)",
-        overflow: "hidden",
-        clip: "rect(0, 0, 0, 0)",
-        whiteSpace: "nowrap",
-        border: "0",
+        $: "*",
+        "$visually-hidden-size": { "": null, "@own(sr-only)": "1px" },
+        position: { "": null, "@own(sr-only)": "absolute" },
+        inlineSize: { "": null, "@own(sr-only)": "$visually-hidden-size" },
+        blockSize: { "": null, "@own(sr-only)": "$visually-hidden-size" },
+        padding: { "": null, "@own(sr-only)": "0" },
+        margin: { "": null, "@own(sr-only)": "($visually-hidden-size * -1)" },
+        overflow: { "": null, "@own(sr-only)": "hidden" },
+        clip: { "": null, "@own(sr-only)": "rect(0, 0, 0, 0)" },
+        whiteSpace: { "": null, "@own(sr-only)": "nowrap" },
+        border: { "": null, "@own(sr-only)": "0" },
       },
       Strong: { $: ":where(strong), :where(b)", preset: "strong" },
       Link: { $: "a", color: "#accent-text" },
       NarrowBlock: {
-        $: ":is(.lg\\:cookbook-hidden)",
-        display: { "": "none", "@narrow-layout": "block" },
+        $: "*",
+        display: {
+          "": null,
+          "@own(narrow)": "none",
+          "@own(narrow) & @narrow-layout": "block",
+        },
       },
       MobileBlock: {
-        $: ":is(.md\\:cookbook-hidden)",
-        display: { "": "none", "@mobile": "block" },
+        $: "*",
+        display: {
+          "": null,
+          "@own(mobile)": "none",
+          "@own(mobile) & @mobile": "block",
+        },
       },
       Code: {
         $: ":where(code), :where(kbd), :where(samp), :where(pre)",
@@ -209,7 +225,7 @@ export default function DocumentStyles() {
   );
 
   useGlobalStyles(
-    ":where(h1, h2, h3, h4, h5, h6, .site-title)",
+    ":where(h1, h2, h3, h4, h5, h6, [data-element=SiteTitle])",
     resolveComponentStyles("Heading", {
       color: "#heading",
       preset: {

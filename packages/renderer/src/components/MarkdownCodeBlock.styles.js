@@ -9,7 +9,7 @@ configureCookbookStates();
 
 export function MarkdownCodeBlockStyles() {
   useGlobalStyles(
-    ':is(.cookbook-markdown-content .td-code-block, .td-code-block[data-element="MarkdownCodeBlock"])',
+    ':is([data-element=Markdown] [data-element=MarkdownCodeBlock], [data-element=MarkdownCodeBlock][data-element="MarkdownCodeBlock"])',
     resolveComponentStyles("MarkdownCodeBlock", {
       "$copy-button-size": "2rem",
       display: "block",
@@ -96,34 +96,48 @@ export function MarkdownCodeBlockStyles() {
         },
       },
       Code: { $: "pre code", padding: "0", color: "inherit", fill: "#clear" },
-      Diff: { $: "pre.td-diff", inlinePadding: "0" },
+      Diff: { $: "pre", inlinePadding: { "": null, "@own(diff)": "0" } },
       DiffCode: {
-        $: "pre.td-diff code",
-        display: "block",
-        inlineSize: "100% max-content initial",
+        $: "pre code",
+        display: { "": null, "@own(:is(pre[data-diff] code))": "block" },
+        inlineSize: {
+          "": null,
+          "@own(:is(pre[data-diff] code))": "100% max-content initial",
+        },
         // Zero line height removes gaps between block diff lines; the tight modifier would not.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        lineHeight: "0",
+        lineHeight: { "": null, "@own(:is(pre[data-diff] code))": "0" },
       },
       DiffLine: {
-        $: "pre.td-diff > code > :is(.line)",
-        display: "block",
-        inlinePadding: "1rem",
-        preset: "code",
+        $: "pre > code > [data-element=Line]",
+        display: { "": null, "@own(:is(pre[data-diff] > code > *))": "block" },
+        inlinePadding: {
+          "": null,
+          "@own(:is(pre[data-diff] > code > *))": "1rem",
+        },
+        preset: { "": null, "@own(:is(pre[data-diff] > code > *))": "code" },
       },
       EmptyDiffLine: {
         // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
         // eslint-disable-next-line tasty/no-state-in-selector
-        $: "pre.td-diff > code > .line:empty::before",
+        $: "pre[data-diff] > code > Line:empty::before",
         content: '"\\200b"',
       },
       InsertedLine: {
-        $: "pre.td-diff > code > .td-diff-line--inserted",
-        fill: "#green-surface",
+        $: "pre > code > [data-element=Line]",
+        fill: {
+          "": null,
+          "@own(inserted) & @own(:is(pre[data-diff] > code > *))":
+            "#green-surface",
+        },
       },
       DeletedLine: {
-        $: "pre.td-diff > code > .td-diff-line--deleted",
-        fill: "#red-surface",
+        $: "pre > code > [data-element=Line]",
+        fill: {
+          "": null,
+          "@own(deleted) & @own(:is(pre[data-diff] > code > *))":
+            "#red-surface",
+        },
       },
     }),
   );
