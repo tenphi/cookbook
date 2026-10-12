@@ -38,7 +38,7 @@ export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
       blockInset: "(anchor(bottom) + $gap) start, auto end",
       inlineInset: {
         "": "anchor(left) start, auto end",
-        "@mobile": "auto start, anchor(right) end",
+        "!@md": "auto start, anchor(right) end",
       },
     },
   },

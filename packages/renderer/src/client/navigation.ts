@@ -11,7 +11,7 @@ class CookbookSidebarPane extends HTMLElement {
     const { signal } = this.#listeners;
     this.#trigger =
       document.querySelector<HTMLButtonElement>(
-        '.td-menu-button[popovertarget="cookbook__sidebar"]',
+        '[data-element=MobileMenuToggle][popovertarget="cookbook__sidebar"]',
       ) ?? undefined;
     const desktop = matchMedia("(min-width: 50rem)");
     const syncViewport = () => {
@@ -41,7 +41,7 @@ class CookbookSidebarPane extends HTMLElement {
           this.getBoundingClientRect();
           this.setAttribute("data-open", "");
           for (const element of document.querySelectorAll<HTMLElement>(
-            ".header, .main-frame, .cookbook-skip-link",
+            "[data-element=HeaderFrame], [data-element=MainFrame], [data-element=SkipLink]",
           )) {
             this.#inert.set(element, element.inert);
             element.inert = true;
@@ -64,7 +64,7 @@ class CookbookSidebarPane extends HTMLElement {
       (event) => {
         if (desktop.matches || !this.matches(":popover-open")) return;
         const sections = this.querySelector<HTMLDetailsElement>(
-          ".td-mobile-tabs details[open]",
+          "[data-element=MobileNavigationTabs] details[open]",
         );
         if (event.key === "Escape" && sections) {
           event.preventDefault();

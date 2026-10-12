@@ -164,14 +164,14 @@ export const SiteTitleRoot = defineComponent("ProjectSiteTitle", {
     gap: "1x",
     inlineSize: "min 0",
     color: "#text",
-    preset: { "": "h4 / strong", "@mobile": "h5 / strong" },
+    preset: { "": "h4 / strong", "!@md": "h5 / strong" },
     textDecoration: "none",
     Logo: {
       $: "> svg",
       display: "block",
       flexShrink: "0",
-      inlineSize: { "": "2rem", "@mobile": "1.75rem" },
-      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      inlineSize: { "": "2rem", "!@md": "1.75rem" },
+      blockSize: { "": "2rem", "!@md": "1.75rem" },
       color: "#accent-text",
     },
     Label: {
@@ -234,8 +234,10 @@ at render time follow Tasty's usual precedence.
 Use `defineComponent` when authoring a component that should support
 `theme.customStyles`. Use `tasty` directly for ordinary Tasty creation or composition
 that does not need a configuration name. To define a named component around
-an existing React component that forwards `className`, pass it as `as` in the options. Use `className`
-when passing a class to a Tasty component from Astro.
+an existing React component that forwards `className`, pass it as `as` in the options. Tasty attaches its generated classes for extracted CSS. Use `data-element` identities
+and named sub-elements for owned anatomy, and modifiers/state maps for variants.
+Root selectors may keep stable classes, such as `.project-note`, or use
+`data-component`; avoid classes for sub-elements and modifiers.
 
 ### Extending a component
 

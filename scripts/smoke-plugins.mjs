@@ -91,13 +91,16 @@ if (route.id === "/guide") {
     join(fixture, "dist/guide/index.html"),
     "utf8",
   );
-  assert.match(guideHtml, /cookbook-alert--tip/);
+  assert.match(
+    guideHtml,
+    /<aside\b[^>]*data-element="MarkdownAlert"[^>]*data-tip(?:\s|=|>)/,
+  );
   assert.match(guideHtml, /Helpful alert/);
   assert.match(guideHtml, /Extended by Astro/);
   assert.match(guideHtml, /consumer-owner" content="docs-team/);
   assert.match(
     await readFile(join(fixture, "dist/example/index.html"), "utf8"),
-    /cookbook-alert--caution/,
+    /<aside\b[^>]*data-element="MarkdownAlert"[^>]*data-caution(?:\s|=|>)/,
   );
   assert.match(
     await readFile(join(fixture, "dist/fr/guide/index.html"), "utf8"),

@@ -10,11 +10,11 @@ export const MobileNavigationTabsRoot = defineComponent(
     "data-element": "MobileNavigationTabs",
     styles: {
       display: "grid",
-      hide: { "": false, "@desktop": true },
+      hide: { "": false, "@md": true },
       gap: "$gap",
       blockMargin: "0",
       Label: {
-        $: ".td-mobile-tabs__label",
+        $: "Label",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
@@ -43,7 +43,7 @@ export const MobileNavigationTabsRoot = defineComponent(
         $: "details > summary > svg",
         rotate: {
           "": null,
-          "@own(:is(details[open] > summary > svg))": "180deg",
+          "@own(:is([open] > summary >))": "180deg",
         },
       },
       List: {

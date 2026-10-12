@@ -9,7 +9,7 @@ type SatteriContext = {
   replaceNode(node: Readonly<HastNode>, replacement: HastNode): void;
 };
 
-const containerClass = "td-table-scroll";
+const containerElement = "Scroll";
 
 /** Wrap Markdown tables in a dedicated horizontal scroll container. */
 export function rehypeTableScroll() {
@@ -44,17 +44,15 @@ function scrollContainer(table: HastNode): HastNode {
   return {
     type: "element",
     tagName: "div",
-    properties: { className: [containerClass] },
+    properties: { dataElement: containerElement },
     children: [table],
   };
 }
 
 function isScrollContainer(node: HastNode): boolean {
-  const className = node.properties?.className;
   return (
     node.type === "element" &&
     node.tagName === "div" &&
-    Array.isArray(className) &&
-    className.includes(containerClass)
+    node.properties?.dataElement === containerElement
   );
 }

@@ -111,8 +111,9 @@ try {
           /Présentation/,
         );
       if (id === "github-alerts")
-        assert.ok(
-          html.includes("cookbook-alert--note"),
+        assert.match(
+          html,
+          /<aside\b[^>]*data-element="MarkdownAlert"[^>]*data-note(?:\s|=|>)/,
           "Cookbook must render the note with its Tasty styles",
         );
       if (id === "local-font")

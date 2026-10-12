@@ -10,7 +10,7 @@ for (const variant of ["manual", "custom-header"]) {
         fontResponses.push({ url: response.url(), status: response.status() });
     });
     await page.goto(`/${variant}/guide/`);
-    const heading = page.locator(".cookbook-markdown-content h2").first();
+    const heading = page.locator("[data-element=Markdown] h2").first();
     await expect(page.locator("body")).toHaveCSS(
       "font-family",
       /Onest Variable/i,

@@ -57,7 +57,7 @@ still use `--name`.
 Built-in markup now uses Tasty’s `data-element` identities instead of
 `data-tasty-anatomy`. Custom styles resolve through each owning definition.
 Heading levels move from `Heading.Level1`–`Level6` to root property state maps
-(`:is(h1)`–`:is(h6)`); Markdown wrappers use `.level-h1`–`.level-h6`.
+(`:is(h1)`–`:is(h6)`); Markdown wrappers use `[data-level=h1]`–`[data-level=h6]`.
 Panel first/second-child padding moves into `MainContent.Panel` token state maps.
 Header’s shared title/search defaults live on `Title` and `Search`; Footer’s
 only-child and hover states live on `MetaLink`, `MetaUpdated`, and `CreditLink`.
@@ -200,3 +200,65 @@ Apply these steps if your project still uses the earlier contracts:
 
 See [authoring](./authoring.mdx) for component usage and
 [working examples](./examples.md) for repository configuration patterns.
+
+## Root hooks, anatomy, and button variants
+
+Existing component root classes and Logo’s root `class` prop remain supported.
+Stable generated-content root classes remain available for global ownership, including
+`.cookbook-markdown-content`, `.cookbook-heading-wrapper`, `.td-code-block`,
+`.tasty-code`, `.cookbook-alert`, and `.td-mermaid`. Custom roots may also use classes
+or `data-component`.
+
+Owned sub-elements use `data-element` identities, and state uses data modifiers.
+Keep identity matching in structural `$` selectors. For example, hero actions use
+`data-element="Action"` with `data-primary`, `data-secondary`, or `data-minimal`.
+When customizing `Hero.PrimaryAction`, keep its variant condition in a property
+map, such as `color: { "@own(primary)": "#accent-text" }`.
+
+The code-block wrapper owns `data-diff` and `data-copy-state`; code and line rules
+use plain `diff` or `copy-state=copied` state keys. Line insertion/deletion flags
+belong to the line itself and use `@own(inserted)` / `@own(deleted)`.
+
+Heading wrappers carry `data-heading` and `level=h1` through `level=h6` states.
+Linked Cards carry `data-block` for prose spacing. Shared `@prose`, `@prose-block`,
+and `@prose-heading` conditions keep repeated Markdown declarations readable while
+preserving isolated `data-not-content` descendants and conditional omissions.
+
+Syntax transformers may emit root classes. Token/category hooks use modifiers,
+for example `SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
+Tasty-generated style hashes and library-owned Pagefind sub-element classes remain.
+
+Hero buttons stay stationary on hover. Minimal actions share secondary outline
+padding, background, and border width, with a transparent border (`border: "#clear"`).
+Pagination links also reserve a transparent border before hover; hover changes
+only its color, preserving `theme.styles.Pagination.Link` border width and style.
+
+## Smaller shared state set
+
+Responsive aliases now use one width scale: `@sm` (>40rem), `@md` (≥50rem), and
+`@lg` (≥72rem). The conditions select wider viewports;
+the exclusive 40rem boundary preserves the former `@small` behavior. The renderer
+keeps its existing responsive thresholds.
+Use these replacements for the removed shortcuts in custom style maps:
+
+| Removed alias    | Replacement          |
+| ---------------- | -------------------- |
+| `@small`         | `!@sm`               |
+| `@mobile`        | `!@md`               |
+| `@narrow-layout` | `!@lg`               |
+| `@desktop`       | `@md`                |
+| `@compact`       | `@media(w <= 23rem)` |
+| `@shell-mobile`  | `@media(w <= 48rem)` |
+| `@shell-desktop` | `@media(w > 48rem)`  |
+| `@medium-layout` | `@md & !@lg`         |
+| `@popover-open`  | `:is(:popover-open)` |
+
+Inside a selected descendant's condition, use `@own(:is(:popover-open))`.
+The `:is()` wrapper accommodates the pinned linter's pseudo-class list.
+The shell and medium-layout aliases were unused by built-in components;
+PackageVersion's 23rem rule is now a direct media condition. Define a project
+alias in `theme.states` if you need a named threshold across your own components.
+
+If you customized `theme.states`, rename your breakpoint definitions and invert
+the old upper-bound conditions. For example, `"@mobile": "@media(w < 43rem)"`
+becomes `"@md": "@media(w >= 43rem)"`.

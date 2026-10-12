@@ -10,7 +10,7 @@ export const MobileTableOfContentsRoot = defineComponent(
     "data-element": "MobileTableOfContents",
     styles: {
       display: "block",
-      hide: { "": true, "@narrow-layout": false },
+      hide: { "": true, "!@lg": false },
       padding: "$gap $docs-sidebar-pad-x",
       blockBorder: "$border-width solid #border end",
       fill: "#surface",
@@ -51,7 +51,7 @@ export const MobileTableOfContentsRoot = defineComponent(
         $: "a, summary",
         outline: {
           "": null,
-          "@own(:is(a:focus-visible)) | @own(:is(summary:focus-visible))":
+          "@own(:focus-visible)":
             "$outline-width solid #focus / $outline-offset",
         },
       },

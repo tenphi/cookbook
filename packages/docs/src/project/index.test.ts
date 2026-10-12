@@ -97,11 +97,11 @@ describe("project resolution", () => {
   it("keeps the preset default when overriding a conditional Tasty style", () => {
     const result = mergeDocsConfig(
       { theme: { styles: { Tabs: { padding: "2x" } } } },
-      { theme: { styles: { Tabs: { padding: { "@mobile": "1x" } } } } },
+      { theme: { styles: { Tabs: { padding: { "!@md": "1x" } } } } },
     );
     expect(result.theme?.styles?.Tabs?.padding).toEqual({
       "": "2x",
-      "@mobile": "1x",
+      "!@md": "1x",
     });
   });
 });

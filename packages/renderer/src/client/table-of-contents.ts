@@ -38,7 +38,9 @@ class CookbookTableOfContents extends HTMLElement {
 
   #sync = () => {
     this.#frame = 0;
-    const header = document.querySelector<HTMLElement>(".header");
+    const header = document.querySelector<HTMLElement>(
+      "[data-element=HeaderFrame]",
+    );
     const marker = (header?.getBoundingClientRect().bottom ?? 0) + 24;
     let current = this.#entries[0];
     for (const entry of this.#entries) {
@@ -57,7 +59,7 @@ class CookbookTableOfContents extends HTMLElement {
     current.link.setAttribute("aria-current", "location");
     this.#active = current.link;
 
-    const sidebar = this.closest<HTMLElement>(".right-sidebar");
+    const sidebar = this.closest<HTMLElement>("[data-element=Content]");
     if (!sidebar || sidebar.getClientRects().length === 0) return;
     const sidebarRect = sidebar.getBoundingClientRect();
     const linkRect = current.link.getBoundingClientRect();

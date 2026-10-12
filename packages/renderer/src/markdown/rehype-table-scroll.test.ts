@@ -18,7 +18,7 @@ describe("Markdown table scrolling", () => {
       },
     );
 
-    expect(code).toMatch(/<div class="td-table-scroll">\s*<table>/);
+    expect(code).toMatch(/<div data-element="Scroll">\s*<table>/);
     expect(code).toContain("<thead>");
     expect(code).toContain("<tbody>");
     expect(code).toContain("<th>Name</th>");
@@ -50,7 +50,7 @@ describe("Markdown table scrolling", () => {
     expect(replacement).toMatchObject({
       type: "element",
       tagName: "div",
-      properties: { className: ["td-table-scroll"] },
+      properties: { dataElement: "Scroll" },
     });
     expect(replacement?.children).toEqual([table]);
   });

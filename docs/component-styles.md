@@ -14,7 +14,7 @@ its dimensions under `SiteLogo`.
 
 Heading levels are states of the same element. Customize them through a root
 property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
-Markdown heading wrappers use `.level-h1` through `.level-h6` as root states.
+Markdown heading wrappers use `level=h1` through `level=h6` as root states.
 
 Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
 owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
@@ -66,14 +66,14 @@ theme: {
     Sidebar: {
       LinkLabel: {
         preset: "body",
-        whiteSpace: { "": "nowrap", "@mobile": "normal" }
+        whiteSpace: { "": "nowrap", "!@md": "normal" }
       }
     }
   }
 }
 ```
 
-The `@mobile` value sits with the default value in one Tasty state map. Shared
+The `!@md` value sits with the default value in one Tasty state map. Shared
 tokens and presets keep the component aligned with the rest of the site, while
 Glaze resolves semantic colors across the configured schemes and contrast
 modes.
@@ -84,35 +84,44 @@ Cookbook registers these Tasty state aliases for `theme.styles`, custom
 components, and recipes. Widths use CSS `rem` units; their pixel values depend
 on the browser's font-size settings.
 
-| State             | Condition                                                  | Typical use                                        |
-| ----------------- | ---------------------------------------------------------- | -------------------------------------------------- |
-| `@compact`        | width ≤ 23rem                                              | Hide optional header controls in very narrow space |
-| `@small`          | width ≤ 40rem                                              | Stack compact grids                                |
-| `@shell-mobile`   | width ≤ 48rem                                              | Switch the page shell to its narrow arrangement    |
-| `@shell-desktop`  | width > 48rem                                              | Restore the wider shell arrangement                |
-| `@mobile`         | width < 50rem                                              | Mobile navigation and component layouts            |
-| `@desktop`        | width ≥ 50rem                                              | Desktop navigation and component layouts           |
-| `@medium-layout`  | 50rem ≤ width < 72rem                                      | Intermediate two-column layouts                    |
-| `@narrow-layout`  | width < 72rem                                              | Hide or reposition the desktop table of contents   |
-| `@popover-open`   | selected element is an open native popover                 | Use inside `@own(...)` for a descendant panel      |
-| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Remove optional motion                             |
-| `@light`          | explicit light theme, or system light when no theme is set | Match the site's effective light appearance        |
-| `@dark`           | explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance         |
-| `@system-light`   | `prefers-color-scheme: light`                              | Read the operating system preference directly      |
-| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the operating system preference directly      |
+| State | Condition     | Typical use                                    |
+| ----- | ------------- | ---------------------------------------------- |
+| `@sm` | width > 40rem | Pagination links share one row                 |
+| `@md` | width ≥ 50rem | Desktop navigation and component layouts       |
+| `@lg` | width ≥ 72rem | Desktop table of contents fits beside the page |
 
-The 48rem shell boundary, 50rem navigation boundary, and 72rem contents
-boundary serve different parts of the layout; their ranges intentionally
-overlap. Use the default state key `""` for the value outside the listed
-condition. Add your own aliases with `theme.states`; redefining a built-in
-alias also changes the renderer's responsive layout, so check the whole site
-when doing so.
+The conditions select wider viewports. Use `!@sm` for stacked
+pagination, `!@md` for mobile, and `!@lg` when the contents panel does not fit
+beside the page. Combine states when needed, for example `@md & !@lg` for the
+intermediate layout. Component-specific
+thresholds use direct media conditions, such as `@media(w <= 23rem)` for
+PackageVersion. Use the default state key `""` for the value outside a condition.
+Add your own aliases with `theme.states`; redefining a built-in alias also
+changes the renderer's responsive layout, so check the whole site when doing so.
+
+Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
+`@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
+needed because the pinned linter's simple pseudo-class list omits `:popover-open`.
+
+### Appearance and motion states
+
+Use these shared aliases to match the site's appearance or respect motion preferences.
+
+| State             | Condition                                                  | Typical use                                 |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Suppress optional motion                    |
+| `@light`          | Explicit light theme, or system light when no theme is set | Match the site's effective light appearance |
+| `@dark`           | Explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance  |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the system preference directly         |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the system preference directly         |
 
 Use `@light` and `@dark` in component styles. They check the page root's
 `data-theme` attribute and use the system preference only when that attribute
 is absent. Document rules that style the root itself use `@system-light` and
 `@system-dark` within their automatic-theme branch. Keep scheme media queries
 in the shared state definitions instead of repeating them in style objects.
+
+### State maps and validation
 
 In a generated site, run `npm run validate` (or the matching package manager's
 command) after editing `docs.config.ts`. It checks TypeScript theme properties,
@@ -131,6 +140,17 @@ state keys for the component root. A sub-element cannot target its containing
 element: use root state maps for callout kinds, hover/active buttons, compact
 selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
 instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
+For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
+Use `@own(:first-child)` when a structurally selected link needs its own condition,
+instead of repeating its `Panel a` selector. `@prose` uses
+`@own(!:is([data-not-content] *))` to exclude selected elements inside isolated
+sections while preserving surrounding prose in the same Markdown root.
+
+Markdown also shares `@prose-block` for a block following block content
+(including linked Cards marked `data-block`), and `@prose-heading` for a heading
+following non-heading content. Both preserve the same isolated-content condition
+as `@prose`.
+
 A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change
 only that branch. `"": null` omits a declaration outside a condition. For
@@ -140,9 +160,9 @@ conditional `display`, `"": null` is also supported, including styles with
 For a compact language selector, customize the root with
 `LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
 The former `Compact` hook is now a root state. Likewise, customize code wrapping
-with `SyntaxHighlight: { whiteSpace: { ".td-syntax-wrap": "pre-wrap" } }`.
+with `SyntaxHighlight: { whiteSpace: { "[data-syntax-wrap]": "pre-wrap" } }`.
 Syntax category sub-elements such as `Keyword` target descendant spans; use
-`SyntaxHighlight.color[".td-syntax-keyword"]` when customizing the containing
+`SyntaxHighlight.color["[data-syntax-keyword]"]` when customizing the containing
 code element itself.
 
 Cookbook temporarily retains selectors for pseudo-element states that Tasty
@@ -443,8 +463,11 @@ colors with `theme.palette` (for example `syntax-keyword`). The default
 to the page background's saturation, in dark mode. Set
 `theme.palette["syntax-bg"]` to give code its own color seed;
 syntax text and token contrast resolve against that surface. Code fences, including
-MDX and diff blocks, use classes without inline style attributes. Custom Shiki
-transformers should emit classes; unsupported inline declarations fail with a
+MDX and diff blocks, use the `.tasty-code` root class, `data-syntax-*` modifiers, and
+`data-diff` on the owning code-block wrapper. Diff lines carry
+`data-inserted`/`data-deleted` with `data-element="Line"`. Custom Shiki
+transformers may add root classes; token anatomy and state use identities or
+modifiers. Unsupported token classes or inline declarations fail with a
 configuration hint.
 
 The production build rejects style attributes, style blocks (including inside
@@ -466,3 +489,9 @@ The fullscreen mobile dialog has no dimmed or blurred backdrop; the backdrop
 transition applies only to wider layouts.
 The Pagefind sizing adapter prevents inline layout declarations and is checked
 against the pinned UI version during builds.
+
+Root selectors may use stable classes (for example `.cookbook-markdown-content`,
+`.td-code-block`, and `.tasty-code`) or `data-component`. `data-element` identifies
+structural anatomy and must not serve as a variant or modifier. Use data modifiers
+for states; authored sub-element classes remain only in the Pagefind bridge because
+the library owns and updates its UI markup.

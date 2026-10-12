@@ -14,12 +14,12 @@ export function MarkdownHeadingStyles() {
       color: "#heading",
       preset: {
         "": "heading",
-        ".level-h1": "h1",
-        ".level-h2": "h2",
-        ".level-h3": "h3",
-        ".level-h4": "h4",
-        ".level-h5": "h5",
-        ".level-h6": "h6",
+        "level=h1": "h1",
+        "level=h2": "h2",
+        "level=h3": "h3",
+        "level=h4": "h4",
+        "level=h5": "h5",
+        "level=h6": "h6",
       },
       Heading: {
         $: "> *",
@@ -28,28 +28,28 @@ export function MarkdownHeadingStyles() {
         inlinePadding: {
           "": null,
           "@own(:first-child)": "0 end",
-          "(@own(:first-child)) & (@mobile)": "1.75rem end",
+          "(@own(:first-child)) & (!@md)": "1.75rem end",
         },
       },
       Link: {
-        $: "> .cookbook-anchor-link",
-        position: { "": "absolute", "@mobile": "relative" },
+        $: "> [data-element=Anchor]",
+        position: { "": "absolute", "!@md": "relative" },
         blockInset: {
           "": "((1lh - 1.75rem) / 2) start",
-          "@mobile": "auto start",
+          "!@md": "auto start",
         },
-        inlineInset: { "": "-2rem start", "@mobile": "auto start" },
+        inlineInset: { "": "-2rem start", "!@md": "auto start" },
         display: "inline-grid",
         placeItems: "center",
-        inlineSize: { "": "1.75rem", "@mobile": "1.5rem" },
-        blockSize: { "": "1.75rem", "@mobile": "1.5rem" },
-        inlineMargin: { "": "0 start", "@mobile": "-1.5rem start" },
-        verticalAlign: { "": "baseline", "@mobile": "middle" },
+        inlineSize: { "": "1.75rem", "!@md": "1.5rem" },
+        blockSize: { "": "1.75rem", "!@md": "1.5rem" },
+        inlineMargin: { "": "0 start", "!@md": "-1.5rem start" },
+        verticalAlign: { "": "baseline", "!@md": "middle" },
         color: "#text-muted",
         opacity: {
           "": "1",
           "@media(hover: hover)": "0",
-          "@mobile": "1",
+          "!@md": "1",
         },
         radius: "$radius",
         userSelect: "none",
@@ -57,14 +57,14 @@ export function MarkdownHeadingStyles() {
         transition: "color $transition, fill $transition, opacity $transition",
       },
       RevealedLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         opacity: {
           "": null,
           ":hover | @own(:focus-visible)": "1",
         },
       },
       HoverLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         color: {
           "": null,
           "@own(:hover | :focus-visible)": "#accent-text",
@@ -75,7 +75,7 @@ export function MarkdownHeadingStyles() {
         },
       },
       LinkIcon: {
-        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
+        $: "> Anchor > [data-element=AnchorIcon]",
         display: "block",
         preset: "inherit / tight",
         // Scale with the current heading without replacing its inherited typography.
@@ -86,22 +86,21 @@ export function MarkdownHeadingStyles() {
         blockSize: "1em",
       },
       CopiedLink: {
-        $: "> .cookbook-anchor-link",
+        $: "> [data-element=Anchor]",
         color: { "": null, '@own([data-copy-state="copied"])': "#green-text" },
         opacity: { "": null, '@own([data-copy-state="copied"])': "1" },
       },
       CopiedLinkIcon: {
-        $: "> .cookbook-anchor-link > .cookbook-anchor-icon",
+        $: "> Anchor > [data-element=AnchorIcon]",
         visibility: {
           "": null,
-          '@own(:is(.cookbook-anchor-link[data-copy-state="copied"] > .cookbook-anchor-icon))':
-            "hidden",
+          '@own(:is([data-copy-state="copied"] >))': "hidden",
         },
       },
       CopiedIcon: {
         // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
         // eslint-disable-next-line tasty/no-state-in-selector
-        $: '> .cookbook-anchor-link[data-copy-state="copied"]::after',
+        $: '> Anchor[data-copy-state="copied"]::after',
         content: '""',
         position: "absolute",
         inlineSize: "clamp(1rem, 0.65em, 1.5rem)",

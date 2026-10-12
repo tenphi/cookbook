@@ -21,21 +21,21 @@ export function selectPopoverStyles({
       $: "> button",
       color: {
         "": null,
-        "@own(:hover) | :has([popover]:popover-open)": "#text",
+        "@own(:hover) | :has([popover]:is(:popover-open))": "#text",
       },
       fill: {
         "": null,
-        "@own(:hover) | :has([popover]:popover-open)": "#surface-2-hover",
+        "@own(:hover) | :has([popover]:is(:popover-open))": "#surface-2-hover",
       },
     },
     TriggerLabel: {
-      $: ".trigger-label",
+      $: "TriggerLabel",
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
     },
     Caret: {
-      $: "> button > .caret",
+      $: "> button > Caret",
       flexShrink: "0",
       inlineSize: "0.875rem",
       blockSize: "0.875rem",
@@ -67,12 +67,12 @@ export function selectPopoverStyles({
       $: '> [data-element="Panel"]',
       opacity: {
         "": null,
-        "@own(@popover-open & [data-open])": "1",
+        "@own(:is(:popover-open) & [data-open])": "1",
       },
-      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
+      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
     },
     PanelTitle: {
-      $: ".panel-title",
+      $: "PanelTitle",
       padding: "($gap * 0.75) $gap",
       color: "#text-muted",
       preset: "small / strong",
@@ -92,22 +92,22 @@ export function selectPopoverStyles({
     },
     [hoverOption]: {
       $: "nav a",
-      color: { "": null, "@own(:is(nav a:hover))": "#text" },
-      fill: { "": null, "@own(:is(nav a:hover))": "#surface-2-hover" },
+      color: { "": null, "@own(:hover)": "#text" },
+      fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     [currentOption]: {
       $: "nav a",
       color: {
         "": null,
-        '@own(:is(nav a[aria-current="page"]))': "#accent-text",
+        '@own([aria-current="page"])': "#accent-text",
       },
       fill: {
         "": null,
-        '@own(:is(nav a[aria-current="page"]))': "#accent-surface-2-subtle",
+        '@own([aria-current="page"])': "#accent-surface-2-subtle",
       },
     },
     Checkmark: {
-      $: "nav a > .checkmark",
+      $: "nav a > Checkmark",
       flexShrink: "0",
       inlineMargin: "auto start",
       inlineSize: "1rem",
@@ -115,10 +115,10 @@ export function selectPopoverStyles({
       visibility: "hidden",
     },
     SelectedCheckmark: {
-      $: "nav a > .checkmark",
+      $: "nav a > [data-element=Checkmark]",
       visibility: {
         "": null,
-        '@own(:is(nav a[aria-current="page"] > .checkmark))': "visible",
+        '@own(:is([aria-current="page"] >))': "visible",
       },
     },
   };

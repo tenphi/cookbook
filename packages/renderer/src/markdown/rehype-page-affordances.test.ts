@@ -27,7 +27,6 @@ describe("Markdown page affordances", () => {
     expect(tree.children[0]).toMatchObject({
       tagName: "cookbook-code-block",
       properties: {
-        className: ["td-code-block"],
         dataElement: "MarkdownCodeBlock",
       },
       children: [

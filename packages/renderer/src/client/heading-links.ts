@@ -1,22 +1,20 @@
 import { message as uiMessage } from "./messages.js";
 /** Keep real fragment links as the no-JavaScript and modified-click fallback. */
 export function initializeHeadingLinks(): void {
-  for (const content of document.querySelectorAll(
-    ".cookbook-markdown-content",
-  )) {
+  for (const content of document.querySelectorAll("[data-element=Markdown]")) {
     let status = content.querySelector<HTMLElement>(
       "[data-heading-copy-status]",
     );
     if (!status) {
       status = document.createElement("span");
-      status.className = "sr-only";
+      status.dataset.srOnly = "";
       status.dataset.headingCopyStatus = "";
       status.setAttribute("role", "status");
       content.append(status);
     }
 
     for (const link of content.querySelectorAll<HTMLAnchorElement>(
-      '.cookbook-heading-wrapper > .cookbook-anchor-link[href^="#"]',
+      '[data-element=MarkdownHeading] > [data-element=Anchor][href^="#"]',
     )) {
       if (link.dataset.copyReady) continue;
       link.dataset.copyReady = "true";
@@ -90,7 +88,7 @@ async function copyLink(value: string): Promise<void> {
 
   // Older browsers and insecure local previews may not expose Clipboard API.
   const input = document.createElement("textarea");
-  input.className = "sr-only";
+  input.dataset.srOnly = "";
   input.value = value;
   input.readOnly = true;
   const focused = document.activeElement;

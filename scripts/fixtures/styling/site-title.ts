@@ -19,8 +19,8 @@ const titleStyles = {
     $: "> svg",
     display: "block",
     flexShrink: "0",
-    inlineSize: { "": "2rem", "@mobile": "1.75rem" },
-    blockSize: { "": "2rem", "@mobile": "1.75rem" },
+    inlineSize: { "": "2rem", "!@md": "1.75rem" },
+    blockSize: { "": "2rem", "!@md": "1.75rem" },
     color: "#accent-text",
   },
   Label: {

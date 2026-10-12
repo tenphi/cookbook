@@ -64,8 +64,11 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
       <div>
         {
           route.toc && (
-            <TableOfContentsLayoutRoot className="right-sidebar-container cookbook-print-hidden">
-              <div class="right-sidebar">
+            <TableOfContentsLayoutRoot
+              className="right-sidebar-container"
+              data-print-hidden=""
+            >
+              <div data-element="Content">
                 <MobileTableOfContents />
                 <TableOfContentsRoot className="right-sidebar-panel">
                   <h2>{Astro.locals.t("tableOfContents.onThisPage")}</h2>
@@ -96,8 +99,8 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
             }
             {
               data.hero ? (
-                <div class="content-panel">
-                  <div class="cookbook-container">
+                <div data-element="Panel">
+                  <div data-element="Container">
                     <Hero />
                     <MarkdownContent>
                       <slot />
@@ -107,14 +110,14 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
                 </div>
               ) : (
                 <>
-                  <div class="content-panel">
-                    <div class="cookbook-container">
+                  <div data-element="Panel">
+                    <div data-element="Container">
                       <h1 id="_top" data-page-title set:html={data.title} />
                       {data.draft && <DraftContentNotice />}
                     </div>
                   </div>
-                  <div class="content-panel">
-                    <div class="cookbook-container">
+                  <div data-element="Panel">
+                    <div data-element="Container">
                       <MarkdownContent>
                         <slot />
                       </MarkdownContent>

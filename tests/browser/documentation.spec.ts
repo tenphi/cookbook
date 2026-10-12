@@ -9,11 +9,13 @@ for (const [site, contentWidth] of [
     page,
   }) => {
     await page.goto(`/${site}/landing/`);
-    const panel = page.locator(".content-panel").first();
+    const panel = page
+      .locator("[data-element=MainContent] > [data-element=Panel]")
+      .first();
     async function measure(width: number) {
       await page.setViewportSize({ width, height: 900 });
       return panel.evaluate((element) => {
-        const container = element.querySelector(".cookbook-container")!;
+        const container = element.querySelector("[data-element=Container]")!;
         const rect = container.getBoundingClientRect();
         return {
           left: rect.left,
@@ -336,7 +338,7 @@ test("header popovers fade on open and close", async ({ page }) => {
     },
     {
       trigger: page.getByRole("button", { name: "More", exact: true }),
-      panel: page.locator(".td-header-links__panel"),
+      panel: page.locator("cookbook-header-links > [data-element=Panel]"),
       close: page.getByRole("button", {
         name: "Close more menu",
         exact: true,
@@ -398,7 +400,7 @@ test("header popovers respect reduced motion", async ({ page }) => {
     },
     {
       trigger: page.getByRole("button", { name: "More", exact: true }),
-      panel: page.locator(".td-header-links__panel"),
+      panel: page.locator("cookbook-header-links > [data-element=Panel]"),
       close: page.getByRole("button", {
         name: "Close more menu",
         exact: true,
@@ -469,7 +471,9 @@ test("selection popovers dismiss on Escape and outside click", async ({
 
   await page.setViewportSize({ width: 390, height: 844 });
   const more = page.getByRole("button", { name: "More", exact: true });
-  const morePanel = page.locator(".td-header-links__panel");
+  const morePanel = page.locator(
+    "cookbook-header-links > [data-element=Panel]",
+  );
   await more.click();
   await page.keyboard.press("Escape");
   await expect(morePanel).toBeHidden();
@@ -527,15 +531,15 @@ for (const { site, width } of headingCases) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`/${site}/heading-links/`);
     const positions = await page
-      .locator(".cookbook-heading-wrapper")
+      .locator("[data-element=MarkdownHeading]")
       .evaluateAll((wrappers) =>
         wrappers.map((wrapper) => {
           const heading = wrapper.firstElementChild!;
           const link = wrapper.querySelector<HTMLElement>(
-            ".cookbook-anchor-link",
+            "[data-element=Anchor]",
           )!;
           const icon = link.querySelector<HTMLElement>(
-            ".cookbook-anchor-icon",
+            "[data-element=AnchorIcon]",
           )!;
           const text = document.createRange();
           text.selectNodeContents(heading);
@@ -586,7 +590,9 @@ test("desktop contents follows the current section and keeps its link visible", 
   expect(count).toBeGreaterThan(12);
   await expect(links.first()).toHaveAttribute("aria-current", "location");
 
-  const sidebar = page.locator(".right-sidebar");
+  const sidebar = page.locator(
+    "[data-element=TableOfContentsLayout] > [data-element=Content]",
+  );
   const initialTop = (await sidebar.boundingBox())!.y;
   const middle = links.nth(Math.floor(count / 2));
   const middleHref = await middle.getAttribute("href");
@@ -605,7 +611,7 @@ test("desktop contents follows the current section and keeps its link visible", 
   await expect(last).toHaveAttribute("aria-current", "location");
   const position = await last.evaluate((link) => {
     const item = link.getBoundingClientRect();
-    const sidebar = link.closest<HTMLElement>(".right-sidebar")!;
+    const sidebar = link.closest<HTMLElement>("[data-element=Content]")!;
     const panel = sidebar.getBoundingClientRect();
     return {
       itemTop: item.top,
@@ -663,8 +669,12 @@ for (const scheme of ["Light", "Dark"])
 
 test("hero image follows the selected appearance", async ({ page }) => {
   await page.goto("/manual/");
-  const darkImage = page.locator('.hero > img[data-hero-image="dark"]');
-  const lightImage = page.locator('.hero > img[data-hero-image="light"]');
+  const darkImage = page.locator(
+    '[data-element=Hero] > img[data-hero-image="dark"]',
+  );
+  const lightImage = page.locator(
+    '[data-element=Hero] > img[data-hero-image="light"]',
+  );
   await page.getByRole("button", { name: "Appearance", exact: true }).click();
   await page.getByRole("radio", { name: "Dark", exact: true }).focus();
   await page.keyboard.press("Space");
@@ -704,9 +714,13 @@ for (const width of [320, 390, 768]) {
     await expect(
       page.locator("cookbook-mobile-toc details"),
     ).not.toHaveAttribute("open");
-    const hero = await page.locator(".hero > img:visible").boundingBox();
+    const hero = await page
+      .locator("[data-element=Hero] > img:visible")
+      .boundingBox();
     expect(hero!.width / hero!.height).toBeCloseTo(3, 1);
-    const divider = await page.locator(".td-menu-button").boundingBox();
+    const divider = await page
+      .locator("[data-element=MobileMenuToggle]")
+      .boundingBox();
     expect(divider!.x).toBe(0);
     expect(divider!.width).toBe(width);
     const results = await new AxeBuilder({ page })
@@ -823,7 +837,7 @@ test("language popover is styled and switches pages on desktop and mobile", asyn
   );
   expect(
     await desktop
-      .locator(".label-icon")
+      .locator("[data-element=LabelIcon]")
       .evaluate((icon) => Math.round(icon.getBoundingClientRect().width)),
   ).toBe(20);
   await page.keyboard.press("Tab");
@@ -878,14 +892,14 @@ test("footer credit keeps its space and pagination uses heading weight", async (
   });
   expect(gap).toBeGreaterThan(2);
   const heading = await page
-    .locator(".cookbook-markdown-content h2")
+    .locator("[data-element=Markdown] h2")
     .first()
     .evaluate((e) => ({
       weight: getComputedStyle(e).fontWeight,
       color: getComputedStyle(e).color,
     }));
   const title = await page
-    .locator(".pagination-links .link-title")
+    .locator("[data-element=Pagination] [data-element=Title]")
     .first()
     .evaluate((e) => ({
       weight: getComputedStyle(e).fontWeight,
@@ -899,7 +913,7 @@ test("pagination keeps Next first in keyboard order across layouts", async ({
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/manual/guide/");
-  const links = page.locator(".pagination-links > a");
+  const links = page.locator("[data-element=Pagination] > a");
   await expect(links).toHaveCount(2);
   await expect(links.nth(0)).toHaveAttribute("rel", "next");
   await expect(links.nth(1)).toHaveAttribute("rel", "prev");
@@ -920,7 +934,7 @@ test("pagination keeps Next first in keyboard order across layouts", async ({
   await page.keyboard.press("Tab");
   await expect(links.nth(1)).toBeFocused();
   await page.emulateMedia({ media: "print" });
-  await expect(page.locator(".pagination-links")).toBeHidden();
+  await expect(page.locator("[data-element=Pagination]")).toBeHidden();
 });
 
 for (const width of [390, 1440]) {
@@ -931,7 +945,7 @@ for (const width of [390, 1440]) {
     await page.goto("/manual/");
     const block = page
       .getByRole("tabpanel", { name: "npm", exact: true })
-      .locator(".td-code-block");
+      .locator("[data-element=MarkdownCodeBlock]");
     const pre = (await block.locator("pre").boundingBox())!;
     const button = (await block
       .getByRole("button", { name: "Copy code", exact: true })
@@ -942,7 +956,7 @@ for (const width of [390, 1440]) {
     expect(Math.abs(top - right)).toBeLessThan(0.1);
     expect(Math.abs(top - bottom)).toBeLessThan(0.1);
     await page.goto("/manual/guide/");
-    const fence = page.locator(".td-code-block").last();
+    const fence = page.locator("[data-element=MarkdownCodeBlock]").last();
     const card = (await fence.locator("pre").boundingBox())!;
     const copy = (await fence.locator("[data-copy-code]").boundingBox())!;
     expect(
@@ -962,7 +976,9 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
       const logo = (await page
         .locator('[data-element="Header"] [data-element="LogoLink"] > span')
         .boundingBox())!;
-      const title = (await page.locator(".site-title").boundingBox())!;
+      const title = (await page
+        .locator("[data-element=SiteTitle]")
+        .boundingBox())!;
       expect(
         Math.abs(logo.y + logo.height / 2 - title.y - title.height / 2),
       ).toBeLessThan(0.5);
@@ -972,7 +988,7 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
       if (variant !== "manual") {
         expect(
           await page
-            .locator(".site-title")
+            .locator("[data-element=SiteTitle]")
             .evaluate((e) => getComputedStyle(e).fontSize),
         ).toBe(width < 1440 ? "22px" : "28px");
         const artwork = (await page
@@ -987,7 +1003,7 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
         expect(
           Math.abs(artwork.y + artwork.height / 2 - title.y - title.height / 2),
         ).toBeLessThan(0.5);
-        const fence = page.locator(".td-code-block").last();
+        const fence = page.locator("[data-element=MarkdownCodeBlock]").last();
         const card = (await fence.locator("pre").boundingBox())!;
         const copy = (await fence.locator("[data-copy-code]").boundingBox())!;
         expect(
@@ -998,7 +1014,7 @@ for (const variant of ["manual", "wide-logo", "tall-logo"]) {
       }
       if (width < 1440) {
         await page.getByRole("button", { name: /Menu/ }).click();
-        const home = page.locator(".td-sidebar-heading__home");
+        const home = page.locator("[data-element=HomeLink]");
         const mark = (await home
           .locator('[data-element="Logo"], [data-element="SiteLogo"]')
           .boundingBox())!;

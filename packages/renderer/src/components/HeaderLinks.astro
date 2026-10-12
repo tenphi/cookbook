@@ -23,7 +23,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 {
   links.length > 0 && (
     <HeaderLinksRoot>
-      <nav class="td-header-links__desktop" aria-label={ui.headerLinks}>
+      <nav data-element="Desktop" aria-label={ui.headerLinks}>
         {links.map((link) => (
           <a
             href={href(link.link)}
@@ -37,7 +37,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
       </nav>
       <button
         type="button"
-        class="td-header-links__trigger"
+        data-element="Trigger"
         popovertarget="cookbook-header-links"
         aria-label={ui.more}
         title={ui.more}
@@ -56,14 +56,10 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
           </>
         </svg>
       </button>
-      <div
-        id="cookbook-header-links"
-        popover="auto"
-        class="td-header-links__panel"
-      >
+      <div id="cookbook-header-links" popover="auto" data-element="Panel">
         <button
           type="button"
-          class="td-header-links__close"
+          data-element="Close"
           popovertarget="cookbook-header-links"
           popovertargetaction="hide"
           aria-label={ui.closeMore}

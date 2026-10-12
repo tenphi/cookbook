@@ -53,9 +53,15 @@ function isOrdinaryCodeBlock(node: HastNode): boolean {
 }
 
 function codeBlockWithCopy(pre: HastNode): HastNode {
+  const language =
+    pre.properties?.dataLanguage ?? pre.properties?.["data-language"];
   return element(
     "cookbook-code-block",
-    { className: ["td-code-block"], dataElement: "MarkdownCodeBlock" },
+    {
+      className: ["td-code-block"],
+      dataElement: "MarkdownCodeBlock",
+      dataDiff: language === "diff" || language === "patch" ? "" : undefined,
+    },
     [
       pre,
       element(

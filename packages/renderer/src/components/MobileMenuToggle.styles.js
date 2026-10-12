@@ -11,7 +11,7 @@ export const MobileMenuToggleRoot = extendComponent(
     "data-element": "MobileMenuToggle",
     styles: {
       color: { ":hover": "#text", ":active": "#accent-text" },
-      display: { "": "none", "@mobile": "flex" },
+      display: { "": "none", "!@md": "flex" },
       inlineSize: "(100% + ($docs-nav-pad-x * 2))",
       inlineMargin: "(-1 * $docs-nav-pad-x)",
       blockSize: "0 3rem initial",
@@ -30,14 +30,14 @@ export const MobileMenuToggleRoot = extendComponent(
         blockSize: "1.125rem",
       },
       Section: {
-        $: ".td-menu-button__section",
+        $: "Section",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
         inlineSize: "max 40%",
       },
       Page: {
-        $: ".td-menu-button__page",
+        $: "Page",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",

@@ -37,11 +37,11 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       fill: { "": null, "@own(:active)": "#surface-2-pressed" },
     },
     LabelIcon: {
-      $: "> button > .label-icon",
+      $: "> button > LabelIcon",
       display: "block",
       flexShrink: "0",
-      inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
-      blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
+      inlineSize: { "": "1.25rem", "!@md": "1.125rem" },
+      blockSize: { "": "1.25rem", "!@md": "1.125rem" },
     },
     TriggerLabel: {
       // Reuse the shared, server-only popover anatomy.
@@ -60,11 +60,11 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       padding: { "": null, "[data-compact]": "0" },
     },
     CompactLabel: {
-      $: "& > button > .trigger-label",
+      $: "& > button > [data-element=TriggerLabel]",
       hide: { "": null, "[data-compact]": true },
     },
     CompactCaret: {
-      $: "& > button > :is(.caret)",
+      $: "& > button > :is(Caret)",
       hide: { "": null, "[data-compact]": true },
     },
     Label: { $: "> button" },
@@ -82,7 +82,7 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
     CompactLabelIcon: {
       // Preserve the conditional scope of this empty legacy customization hook.
       // eslint-disable-next-line tasty/no-state-in-selector
-      $: "&[data-compact] > button > .label-icon",
+      $: "&[data-compact] > button > [data-element=LabelIcon]",
     },
     SidebarTrigger: {
       $: "& > button",
@@ -92,7 +92,7 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       // Reuse the shared, server-only popover anatomy.
       // eslint-disable-next-line tasty/no-style-spread
       ...languageSelectStyles.Panel,
-      blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
+      blockInset: { "": "4rem start", "!@md": "3.5rem start" },
       inlineInset:
         "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
     },
@@ -154,7 +154,7 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       // eslint-disable-next-line tasty/no-style-spread
       ...languageSelectStyles.CurrentOption,
     },
-    Fallback: { $: ".fallback-label", color: "#text-muted" },
+    Fallback: { $: "Fallback", color: "#text-muted" },
     Checkmark: {
       // Reuse the shared, server-only popover anatomy.
       // eslint-disable-next-line tasty/no-style-spread

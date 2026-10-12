@@ -15,10 +15,9 @@ export const CodeGroupRoot = defineComponent("CodeGroup", {
       blockMargin: "$margin-block-start $margin-block-end",
       inlineMargin: "0",
     },
-    Pre: { $: "pre" },
+    Pre: { $: "pre", preset: "code" },
     Code: {
       $: "pre code",
-      preset: "code",
       color: "#syntax-text",
       whiteSpace: "pre",
     },

@@ -76,20 +76,22 @@ function alert(blockquote: Node): Node | undefined {
     type: "element",
     tagName: "aside",
     properties: {
-      className: ["cookbook-alert", `cookbook-alert--${kind}`],
+      className: ["cookbook-alert"],
+      dataElement: "MarkdownAlert",
+      [`data-${kind}`]: "",
       ariaLabel: title,
     },
     children: [
       {
         type: "element",
         tagName: "p",
-        properties: { className: ["cookbook-alert__title"] },
+        properties: { dataElement: "Title" },
         children: [{ type: "text", value: title }],
       },
       {
         type: "element",
         tagName: "div",
-        properties: { className: ["cookbook-alert__content"] },
+        properties: { dataElement: "Content" },
         children: body,
       },
     ],

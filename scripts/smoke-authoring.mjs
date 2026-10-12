@@ -22,7 +22,7 @@ try {
   await writeFile(join(fixture, "package.json"), '{"type":"module"}');
   await writeFile(
     join(fixture, "astro.config.mjs"),
-    `import cookbook from "@tenphi/cookbook";export default {site:"https://docs.example.com",base:"/manual/",markdown:{shikiConfig:{langs:[{name:"acme",scopeName:"source.acme",patterns:[{match:"HELLO",name:"keyword.control.acme"}]}],transformers:[{name:"acme-marker",pre(node){this.addClassToHast(node,"acme-highlight")}}]}},integrations:[cookbook()]};`,
+    `import cookbook from "@tenphi/cookbook";export default {site:"https://docs.example.com",base:"/manual/",markdown:{shikiConfig:{langs:[{name:"acme",scopeName:"source.acme",patterns:[{match:"HELLO",name:"keyword.control.acme"}]}],transformers:[{name:"acme-marker",pre(node){node.properties["data-acme-highlight"]=""}}]}},integrations:[cookbook()]};`,
   );
   const config = {
     site: { title: "Authoring" },
@@ -115,8 +115,8 @@ try {
   assert.equal(hero.getAttribute("height"), "240");
   assert.equal(hero.getAttribute("fetchpriority"), "high");
   assert.ok(hero.getAttribute("src").startsWith("/manual/"));
-  assert.equal(doc.querySelectorAll("pre.acme-highlight").length, 3);
-  assert.equal(doc.querySelectorAll(".td-syntax-keyword").length, 3);
+  assert.equal(doc.querySelectorAll("pre[data-acme-highlight]").length, 3);
+  assert.equal(doc.querySelectorAll("[data-syntax-keyword]").length, 3);
   assert.equal(
     doc.querySelectorAll("cookbook-code-block [data-copy-code]").length,
     3,
@@ -133,7 +133,7 @@ try {
     await readFile(join(fixture, "dist/api/get-item/index.html"), "utf8"),
   );
   const api = apiWindow.document;
-  const article = api.querySelector(".cookbook-markdown-content").textContent;
+  const article = api.querySelector("[data-element=Markdown]").textContent;
   for (const text of ["HTTP bearer", "Override", "Example: result"])
     assert.ok(article.includes(text));
   assert.equal(api.querySelectorAll("tbody tr").length, 1);

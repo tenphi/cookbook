@@ -249,7 +249,7 @@ try {
         // This fresh consumer deliberately has no lockfile yet. Keep the repo
         // install frozen; allow only this generated fixture to create its lock.
         // Match the repository's reviewed release-age exceptions for this upgrade.
-        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.9.9'\n  - '@tenphi/eslint-plugin-tasty@1.6.0'\n  - '@tenphi/glaze@2.0.1'\n",
+        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.9.10'\n  - '@tenphi/eslint-plugin-tasty@1.6.0'\n  - '@tenphi/glaze@2.0.1'\n",
       );
     } else
       packageJson.overrides = Object.fromEntries(
@@ -284,7 +284,7 @@ const config = defineDocsConfig({
       },
     },
     states: {
-      '@mobile': '@media(w < 43rem)',
+      '@md': '@media(w >= 43rem)',
       '@consumer-narrow': '@media(w < 37rem)',
     },
     presets: { 'consumer-title': { fontSize: '1.3125rem', fontWeight: 650 } },
@@ -296,7 +296,7 @@ const config = defineDocsConfig({
     customStyles: {
       ConsumerButton: { gap: '13px' },
       ConsumerTitleBase: { Label: { padding: '3px' } },
-      ConsumerSiteTitle: { Logo: { inlineSize: { '@mobile': '1.625rem' } } },
+      ConsumerSiteTitle: { Logo: { inlineSize: { '!@md': '1.625rem' } } },
       ConsumerGlobal: { Label: { blockSize: '1.125rem' } },
       ConsumerAnatomy: { color: '#text' },
       ConsumerUnused: { color: '#text' },
@@ -414,7 +414,11 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
         "Packed-package site did not contain the expected generated content.",
       );
     }
-    for (const marker of ["data-has-toc", "td-header", "right-sidebar"]) {
+    for (const marker of [
+      "data-has-toc",
+      'data-element="Header"',
+      'data-element="TableOfContentsLayout"',
+    ]) {
       if (!html.includes(marker)) {
         throw new Error(
           `Packed convention page did not use the default Cookbook theme: missing ${marker}.`,
@@ -532,12 +536,12 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
       );
     }
     if (
-      !/@media\s*\(width\s*<\s*43rem\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(
+      !/@media\s*\(not\s*\(width\s*>=\s*43rem\)\)\s*\{\s*[^{}]*>\s*svg\s*\{[^}]*inline-size:\s*1\.625rem/.test(
         css,
       )
     ) {
       throw new Error(
-        "The consumer's @mobile override was not applied to its logo.",
+        "The consumer's !@md override was not applied to its logo.",
       );
     }
     console.log(

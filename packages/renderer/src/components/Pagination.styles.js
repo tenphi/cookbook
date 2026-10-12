@@ -12,7 +12,7 @@ export const PaginationRoot = defineComponent("Pagination", {
   styles: {
     display: { "": "grid", "@media:print": "none" },
     gap: "($gap * 2)",
-    gridColumns: { "": "repeat(2, minmax(0, 1fr))", "@small": "1fr" },
+    gridColumns: { "": "repeat(2, minmax(0, 1fr))", "!@sm": "1fr" },
     Link: {
       $: "a",
       radius: "$radius",
@@ -22,9 +22,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       gap: "$gap",
       inlineSize: "100%",
       padding: "($gap * 2)",
-      // Recolor only; Link owns the border width and style, including theme overrides.
-      // eslint-disable-next-line tasty/prefer-shorthand-property
-      borderColor: "#border",
+      border: "#clear",
       color: "#text-soft",
       fill: "#surface-2",
       shadow: "none",
@@ -37,12 +35,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (@small)': "auto",
+        '(@own([rel="prev"])) & (!@sm)': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (@small)': "auto",
+        '(@own([rel="prev"])) & (!@sm)': "auto",
       },
     },
     NextLink: {
@@ -52,12 +50,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="next"])': "2",
-        '(@own([rel="next"])) & (@small)': "auto",
+        '(@own([rel="next"])) & (!@sm)': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="next"])': "1",
-        '(@own([rel="next"])) & (@small)': "auto",
+        '(@own([rel="next"])) & (!@sm)': "auto",
       },
     },
     NextIcon: {
@@ -79,14 +77,16 @@ export const PaginationRoot = defineComponent("Pagination", {
     },
     HoverLink: {
       $: "a",
-      border: { "": null, "@own(:hover)": "$border-width solid #border" },
+      // Recolor only; Link owns the border width and style, including theme overrides.
+      // eslint-disable-next-line tasty/prefer-shorthand-property
+      borderColor: { "": null, "@own(:hover)": "#border" },
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     ActiveLink: {
       $: "a",
       fill: { "": null, "@own(:active)": "#surface-2-pressed" },
     },
-    Title: { $: ".link-title", color: "#heading", preset: "h5" },
+    Title: { $: "Title", color: "#heading", preset: "h5" },
     LoneNextLink: {
       // Preserve the conditional scope of this empty legacy customization hook.
       // eslint-disable-next-line tasty/no-state-in-selector

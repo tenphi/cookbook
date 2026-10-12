@@ -10,9 +10,9 @@ import check from "../icons/check.svg?raw";
 
 interface Props {
   name: string;
-  class?: string;
+  "data-element"?: "Icon" | "LabelIcon" | "Caret" | "Checkmark";
 }
-const { name, class: className } = Astro.props;
+const { name, "data-element": element = "Icon" } = Astro.props;
 const originals: Record<string, string> = {
   bars: menu,
   close,
@@ -32,7 +32,7 @@ const originals: Record<string, string> = {
 };
 const svg = originals[name]
   ?.replaceAll('stroke="black"', 'stroke="currentColor"')
-  .replace("<svg ", `<svg class="${className ?? ""}" aria-hidden="true" `);
+  .replace("<svg ", `<svg data-element="${element}" aria-hidden="true" `);
 if (!svg) throw new Error(`Unknown Cookbook icon: ${name}`);
 ---
 

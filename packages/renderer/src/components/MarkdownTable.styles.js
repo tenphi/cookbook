@@ -30,7 +30,7 @@ export function MarkdownTableStyles() {
         $: "tbody td",
         // Clear only the last row's end border; the theme may configure its start border.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        borderBlockEnd: { "@own(:is(tbody tr:last-child > td))": "0" },
+        borderBlockEnd: { "@own(:is(tr:last-child >))": "0" },
       },
       HeaderCell: {
         $: "th",
@@ -38,16 +38,16 @@ export function MarkdownTableStyles() {
         fill: "#surface-2",
         textAlign: "start",
         radius: {
-          "@own(:is(thead:first-child tr:first-child > th) & :first-child & !:last-child)":
+          "@own(:is(thead:first-child tr:first-child >) & :first-child & !:last-child)":
             "($card-radius - $border-width) top-left",
-          "@own(:is(thead:first-child tr:first-child > th) & !:first-child & :last-child)":
+          "@own(:is(thead:first-child tr:first-child >) & !:first-child & :last-child)":
             "($card-radius - $border-width) top-right",
-          "@own(:is(thead:first-child tr:first-child > th) & :first-child & :last-child)":
+          "@own(:is(thead:first-child tr:first-child >) & :first-child & :last-child)":
             "($card-radius - $border-width) top",
         },
       },
       Scroll: {
-        $: ".td-table-scroll",
+        $: "Scroll",
         inlineSize: "initial 100% 100%",
         overflow: "auto",
         scrollbar: "thin",

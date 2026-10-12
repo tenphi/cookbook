@@ -70,7 +70,7 @@ function replaceMermaidCodeBlocks(parent: HastNode): void {
 
 function renderMermaidElement(source: string): string {
   const svg = accessibleSvg(render(source), source);
-  return `<div class="td-mermaid" data-mermaid-state="ready">${svg}</div>`;
+  return `<div class="td-mermaid" data-element="Mermaid" data-mermaid-state="ready">${svg}</div>`;
 }
 
 function isMermaidCodeBlock(node: HastNode): boolean {
@@ -111,6 +111,10 @@ function render(source: string): string {
       transparent: true,
     })
       .replace(svgStyleBlock, "")
+      // These vendor group classes have no role after removing its stylesheet.
+      .replace(/\sclass="([^"]*)"/g, (_, names: string) =>
+        names.split(/\s+/).includes("mono") ? ' data-mono=""' : "",
+      )
       // The root variables are owned by theme.styles.Mermaid.Diagram.
       .replace(/(<svg\b[^>]*?)\sstyle="[^"]*"/, "$1")
   );

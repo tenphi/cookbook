@@ -6,6 +6,8 @@ import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
+// Pagefind owns and updates result markup; its UI API exposes classes, not
+// configurable data-element identities. Keep class selectors only for that bridge.
 export const SearchResultsRoot = defineComponent("SearchResults", {
   as: "div",
   "data-element": "SearchResults",
@@ -22,23 +24,11 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
     "$pagefind-ui-tag": "#surface-3",
     preset: "body",
     UI: {
-      $: ".pagefind-ui, *",
-      display: {
-        "": "",
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "flex",
-      },
-      flow: {
-        "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "column",
-      },
-      flexGrow: {
-        "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "1",
-      },
-      blockSize: {
-        "": null,
-        "@own(:is(.pagefind-ui)) | @own(:is([data-search-results]))": "min 0",
-      },
+      $: "UI, [data-element=EngineUI], .pagefind-ui",
+      display: "flex",
+      flow: "column",
+      flexGrow: "1",
+      blockSize: "min 0",
     },
     Form: {
       $: ".pagefind-ui__form",
@@ -49,7 +39,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "min 0",
     },
     Field: {
-      $: ".cookbook-search-field",
+      $: "Field",
       position: "relative",
       flexShrink: "0",
     },
@@ -65,7 +55,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "min 0",
     },
     Input: {
-      $: ".cookbook-search-input",
+      $: "Input",
       flexShrink: "0",
       inlineSize: "100%",
       blockSize: "min 3rem",
@@ -77,7 +67,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       shadow: "none",
     },
     Clear: {
-      $: ".cookbook-search-clear",
+      $: "Clear",
       position: "absolute",
       blockInset: "0 start",
       inlineInset: "0 end",
@@ -97,12 +87,12 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       flexGrow: "1",
       blockSize: "min 0",
       overflowY: "auto",
-      blockMargin: { "": "($gap * 3) start", "@mobile": "($gap * 2) start" },
+      blockMargin: { "": "($gap * 3) start", "!@md": "($gap * 2) start" },
       blockBorder: "$border-width solid #border start",
-      inlineSize: { "@mobile": "(100% + ($gap * 4))" },
-      inlineMargin: { "@mobile": "(-1 * $gap * 2)" },
-      inlinePadding: { "@mobile": "($gap * 2)" },
-      blockPadding: { "@mobile": "($gap * 2) end" },
+      inlineSize: { "!@md": "(100% + ($gap * 4))" },
+      inlineMargin: { "!@md": "(-1 * $gap * 2)" },
+      inlinePadding: { "!@md": "($gap * 2)" },
+      blockPadding: { "!@md": "($gap * 2) end" },
     },
     Result: {
       $: ".pagefind-ui__result",
@@ -151,9 +141,9 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
     },
     More: {
       $: ".pagefind-ui__button",
-      display: { "@mobile": "block" },
-      inlineSize: { "@mobile": "max-content" },
-      inlineMargin: { "@mobile": "auto start" },
+      display: { "!@md": "block" },
+      inlineSize: { "!@md": "max-content" },
+      inlineMargin: { "!@md": "auto start" },
       padding: "1x 2x",
       border: "$border-width solid #border",
       radius: "$radius",
@@ -166,7 +156,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     SearchIcon: {
-      $: ".cookbook-search-field::before",
+      $: "Field::before",
       content: '""',
       position: "absolute",
       zIndex: "1",
@@ -182,7 +172,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       pointerEvents: "none",
     },
     ClearIcon: {
-      $: ".cookbook-search-clear::before",
+      $: "Clear::before",
       content: '""',
       display: "block",
       inlineSize: "1rem",
@@ -193,7 +183,7 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
     },
     SuppressedClear: {
-      $: ".cookbook-search-clear",
+      $: "[data-element=Clear]",
       display: { "": "", "@own([hidden])": "none" },
     },
   },

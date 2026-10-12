@@ -16,8 +16,8 @@ export const HeaderRoot = defineComponent("Header", {
     Primary: {
       display: "flex",
       alignItems: "center",
-      gap: { "": "clamp(0.5rem, 1.5vw, 1.5rem)", "@mobile": "0.5rem" },
-      blockSize: { "": "4.5rem", "@mobile": "3.5rem" },
+      gap: { "": "clamp(0.5rem, 1.5vw, 1.5rem)", "!@md": "0.5rem" },
+      blockSize: { "": "4.5rem", "!@md": "3.5rem" },
       flexShrink: "0",
     },
     Title: {
@@ -28,7 +28,7 @@ export const HeaderRoot = defineComponent("Header", {
       overflow: "hidden",
       flexShrink: "1",
       inlineSize: "min 0",
-      inlineMargin: { "": "0 end", "@mobile": "auto end" },
+      inlineMargin: { "": "0 end", "!@md": "auto end" },
     },
     LogoLink: {
       display: "inline-grid",
@@ -38,14 +38,14 @@ export const HeaderRoot = defineComponent("Header", {
       textDecoration: "none",
     },
     Logo: {
-      inlineSize: { "": "2rem", "@mobile": "1.75rem" },
-      blockSize: { "": "2rem", "@mobile": "1.75rem" },
+      inlineSize: { "": "2rem", "!@md": "1.75rem" },
+      blockSize: { "": "2rem", "!@md": "1.75rem" },
     },
     SiteTitle: {
       inlineSize: "min 0",
       overflow: "hidden",
       color: "#text",
-      preset: { "": "h4", "@mobile": "h5" },
+      preset: { "": "h4", "!@md": "h5" },
       textDecoration: "none",
       whiteSpace: "nowrap",
       textOverflow: "ellipsis",
@@ -54,10 +54,10 @@ export const HeaderRoot = defineComponent("Header", {
       $: "Primary > Search",
       display: "flex",
       alignItems: "center",
-      flexGrow: { "": "1", "@mobile": "0" },
-      flexShrink: { "": "1", "@mobile": "0" },
-      inlineSize: { "": "min 0", "@mobile": "$docs-menu-button-size" },
-      inlineMargin: { "": "auto", "@mobile": "0" },
+      flexGrow: { "": "1", "!@md": "0" },
+      flexShrink: { "": "1", "!@md": "0" },
+      inlineSize: { "": "min 0", "!@md": "$docs-menu-button-size" },
+      inlineMargin: { "": "auto", "!@md": "0" },
     },
     SearchElement: {
       $: "Search site-search",
@@ -66,7 +66,7 @@ export const HeaderRoot = defineComponent("Header", {
     },
     Tools: {
       display: "flex",
-      hide: { "": false, "@mobile": true },
+      hide: { "": false, "!@md": true },
       flow: "row",
       alignItems: "center",
       justifyContent: "flex-end",
@@ -78,7 +78,7 @@ export const HeaderRoot = defineComponent("Header", {
     },
     MobileTheme: {
       display: "grid",
-      hide: { "": true, "@mobile": false },
+      hide: { "": true, "!@md": false },
       flexShrink: "0",
       order: "1",
       inlineSize: "$docs-menu-button-size",
@@ -86,7 +86,7 @@ export const HeaderRoot = defineComponent("Header", {
     },
     MobileLanguage: {
       display: "grid",
-      hide: { "": true, "@mobile": false },
+      hide: { "": true, "!@md": false },
       flexShrink: "0",
       order: "1",
       inlineSize: "$docs-menu-button-size",

@@ -46,10 +46,9 @@ const sidebar =
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
-<div class="td-sidebar-heading">
+<div data-element="MobileHeading">
   <a
     data-element="HomeLink"
-    class="td-sidebar-heading__home"
     href={localeHref(
       (content.logo && content.logo.href) || "/",
       currentPath,
@@ -83,7 +82,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
   <SidebarList entries={sidebar} />
 </cookbook-sidebar>
 
-<div class="md:cookbook-hidden">
+<div data-mobile="">
   <MobileMenuFooter />
 </div>
 

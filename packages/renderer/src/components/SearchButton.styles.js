@@ -10,10 +10,10 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
   "data-element": "SearchButton",
   styles: {
     color: { ":hover": "#text", ":active": "#text" },
-    justifyContent: { "": "flex-start", "@mobile": "center" },
+    justifyContent: { "": "flex-start", "!@md": "center" },
     inlineSize: {
       "": "initial 100% 22rem",
-      "@mobile": "initial $docs-menu-button-size 22rem",
+      "!@md": "initial $docs-menu-button-size 22rem",
     },
     inlineMargin: {
       "": "0 start",
@@ -21,21 +21,21 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     },
     blockSize: {
       "": "0 $control-height initial",
-      "@mobile": "0 $docs-menu-button-size initial",
+      "!@md": "0 $docs-menu-button-size initial",
     },
-    padding: { "": "0 $gap 0 ($gap * 1.5)", "@mobile": "0" },
-    border: { "": true, "@mobile": "0" },
+    padding: { "": "0 $gap 0 ($gap * 1.5)", "!@md": "0" },
+    border: { "": true, "!@md": "0" },
     radius: "$header-control-radius",
     fill: {
       "": "#surface",
-      "@mobile": "#clear",
+      "!@md": "#clear",
       ":hover": "#surface-2-hover",
       ":active": "#surface-2-pressed",
     },
     preset: "small",
     shadow: "none",
     transition: "color $transition, fill $transition",
-    Label: { $: "> span", hide: { "": false, "@mobile": true } },
+    Label: { $: "> span", hide: { "": false, "!@md": true } },
     PendingShortcut: {
       $: "> kbd",
       visibility: { "": null, "@own([data-pending])": "hidden" },
@@ -43,7 +43,7 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     Shortcut: {
       $: "> kbd",
       display: "flex",
-      hide: { "": false, "@narrow-layout": true },
+      hide: { "": false, "!@lg": true },
       gap: "0.25em",
       inlineMargin: "auto start",
       inlinePadding: "0.375rem",
@@ -57,8 +57,8 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       content: '""',
       display: "block",
       flexShrink: "0",
-      inlineSize: { "": "1rem", "@mobile": "1.25rem" },
-      blockSize: { "": "1rem", "@mobile": "1.25rem" },
+      inlineSize: { "": "1rem", "!@md": "1.25rem" },
+      blockSize: { "": "1rem", "!@md": "1.25rem" },
       fill: "#current",
       // The imported SVG is encoded at build time and never evaluated in the browser.
       // eslint-disable-next-line tasty/no-runtime-styles-mutation

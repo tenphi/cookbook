@@ -20,20 +20,20 @@ export const SearchRoot = defineComponent("Search", {
     },
     Dialog: {
       $: "dialog",
-      radius: { "": "$card-radius", "@mobile": "0" },
-      inlineSize: { "": "0 90% 40rem", "@mobile": "100%" },
+      radius: { "": "$card-radius", "!@md": "0" },
+      inlineSize: { "": "0 90% 40rem", "!@md": "100%" },
       blockSize: {
         "": "15rem max-content (100% - 8rem)",
-        "@mobile": "100% 100% 100%",
+        "!@md": "100% 100% 100%",
       },
-      margin: { "": "4rem auto auto", "@mobile": "0" },
+      margin: { "": "4rem auto auto", "!@md": "0" },
       padding: "0",
       color: "#text",
       border: true,
       fill: "#surface",
       shadow: "0 1rem 3rem #shadow",
       opacity: "0",
-      scale: { "": "0.98", "@mobile": "1" },
+      scale: { "": "0.98", "!@md": "1" },
       transition: {
         "": "none",
         "!@reduced-motion":
@@ -62,12 +62,12 @@ export const SearchRoot = defineComponent("Search", {
     },
     Backdrop: {
       $: "dialog::backdrop",
-      fill: { "": "#overlay", "@mobile": "#clear" },
-      backdropFilter: { "": "blur(0.25rem)", "@mobile": "none" },
+      fill: { "": "#overlay", "!@md": "#clear" },
+      backdropFilter: { "": "blur(0.25rem)", "!@md": "none" },
       opacity: "0",
       transition: {
         "": "none",
-        "!@reduced-motion & !@mobile":
+        "!@reduced-motion & @md":
           "opacity $dialog-transition ease-out, display $dialog-transition allow-discrete, overlay $dialog-transition allow-discrete",
       },
     },
@@ -75,20 +75,20 @@ export const SearchRoot = defineComponent("Search", {
       // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
       // eslint-disable-next-line tasty/no-state-in-selector
       $: "dialog[open][data-open]::backdrop",
-      opacity: { "": "1", "@mobile": "0" },
+      opacity: { "": "1", "!@md": "0" },
     },
     Frame: {
-      $: ".dialog-frame",
+      $: "Frame",
       display: "flex",
       flow: "column",
       flexGrow: "1",
       blockSize: "min 0",
       gap: "($gap * 2)",
-      padding: { "": "($gap * 3)", "@mobile": "($gap * 2) ($gap * 2) 0" },
+      padding: { "": "($gap * 3)", "!@md": "($gap * 2) ($gap * 2) 0" },
       overflow: "hidden",
     },
     Container: {
-      $: ".search-container",
+      $: "Container",
       display: "flex",
       flow: "column",
       flexGrow: "1",
@@ -97,7 +97,7 @@ export const SearchRoot = defineComponent("Search", {
     },
     Close: {
       $: 'button[data-element="Close"]',
-      display: { "": "none", "@mobile": "grid" },
+      display: { "": "none", "!@md": "grid" },
       placeItems: "center",
       alignSelf: "flex-end",
       flexShrink: "0",

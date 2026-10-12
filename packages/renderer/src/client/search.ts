@@ -15,7 +15,7 @@ export function initializeSearch(
   const open = element.querySelector<HTMLButtonElement>("[data-open-modal]")!;
   const close = element.querySelector<HTMLButtonElement>("[data-close-modal]")!;
   const dialog = element.querySelector("dialog")!;
-  const frame = element.querySelector(".dialog-frame")!;
+  const frame = element.querySelector("[data-element=Frame]")!;
   const status = element.querySelector<HTMLElement>("[data-search-status]");
   const input = element.querySelector<HTMLInputElement>("[data-search-input]");
   const clear = element.querySelector<HTMLButtonElement>("[data-clear-search]");
@@ -71,6 +71,7 @@ export function initializeSearch(
           return result;
         },
       });
+      // Pagefind generates and controls these nodes; its UI API exposes only classes.
       engineInput = element.querySelector(".pagefind-ui__search-input");
       element.querySelector(".pagefind-ui__form")?.removeAttribute("role");
       // Cookbook owns the field so focus stays within the opening tap on mobile.

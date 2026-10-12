@@ -27,9 +27,9 @@ const id = `select-${crypto.randomUUID()}`;
   aria-label={triggerLabel}
   title={title}
 >
-  {icon && <Icon name={icon} class="label-icon" />}
-  <span class="trigger-label">{selectedLabel}</span>
-  <Icon name="down-caret" class="caret" />
+  {icon && <Icon name={icon} data-element="LabelIcon" />}
+  <span data-element="TriggerLabel">{selectedLabel}</span>
+  <Icon name="down-caret" data-element="Caret" />
 </button>
 <div
   id={id}
@@ -39,7 +39,7 @@ const id = `select-${crypto.randomUUID()}`;
   aria-label={title}
   data-select-popover-panel
 >
-  <div class="panel-title">{title}</div>
+  <div data-element="PanelTitle">{title}</div>
   <nav aria-label={title}>
     {
       options.map((option) => (
@@ -48,8 +48,8 @@ const id = `select-${crypto.randomUUID()}`;
           aria-current={option.current ? "page" : undefined}
         >
           <span lang={option.lang}>{option.label}</span>
-          {option.hint && <span class="fallback-label">({option.hint})</span>}
-          <Icon name="approve-check" class="checkmark" />
+          {option.hint && <span data-element="Fallback">({option.hint})</span>}
+          <Icon name="approve-check" data-element="Checkmark" />
         </a>
       ))
     }

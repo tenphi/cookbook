@@ -35,7 +35,7 @@ const translations = {
     >
   </SearchButtonRoot>
   <dialog aria-label={label}>
-    <div class="dialog-frame">
+    <div data-element="Frame">
       <button
         type="button"
         data-element="Close"
@@ -47,13 +47,13 @@ const translations = {
             {Astro.locals.t("search.devWarning")}
           </p>
         ) : (
-          <div class="search-container">
+          <div data-element="Container">
             <p data-element="Status" data-search-status role="status" hidden />
             <SearchResultsRoot id="cookbook__search">
-              <div class="pagefind-ui" role="search" aria-label={label}>
-                <div class="cookbook-search-field">
+              <div data-element="UI" role="search" aria-label={label}>
+                <div data-element="Field">
                   <input
-                    class="cookbook-search-input"
+                    data-element="Input"
                     data-search-input
                     type="text"
                     aria-label={label}
@@ -64,14 +64,14 @@ const translations = {
                     autofocus
                   />
                   <button
-                    class="cookbook-search-clear"
+                    data-element="Clear"
                     data-clear-search
                     type="button"
                     aria-label={Astro.locals.t("pagefind.clear_search")}
                     hidden
                   />
                 </div>
-                <div data-search-results />
+                <div data-element="EngineUI" data-search-results />
               </div>
             </SearchResultsRoot>
           </div>

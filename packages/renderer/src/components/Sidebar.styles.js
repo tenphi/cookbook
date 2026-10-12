@@ -8,22 +8,22 @@ export const SidebarRoot = defineComponent("Sidebar", {
   "data-element": "Sidebar",
   styles: {
     "$sidebar-transition": "120ms",
-    display: { "@desktop": "block" },
+    display: { "@md": "block" },
     visibility: {
       "": "visible",
-      "@mobile": "hidden",
-      "@popover-open & @mobile": "visible",
+      "!@md": "hidden",
+      ":is(:popover-open) & !@md": "visible",
     },
     position: "fixed",
-    zIndex: { "": "8", "@mobile": "12" },
-    blockInset: { "": "$docs-nav-height start, 0 end", "@mobile": "0" },
+    zIndex: { "": "8", "!@md": "12" },
+    blockInset: { "": "$docs-nav-height start, 0 end", "!@md": "0" },
     inlineInset: {
       "": "0 start, auto end",
-      "@desktop": "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
+      "@md": "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
     },
     inlineSize: {
       "": "$sidebar-width",
-      "@mobile": "min(22rem, calc(100% - 2rem))",
+      "!@md": "min(22rem, calc(100% - 2rem))",
     },
     blockSize: "auto",
     margin: "0",
@@ -34,15 +34,15 @@ export const SidebarRoot = defineComponent("Sidebar", {
     scrollbar: "auto stable",
     fill: "#surface",
     overscrollBehavior: "contain",
-    shadow: { "": "none", "@mobile": "0.25rem 0 1rem #shadow" },
+    shadow: { "": "none", "!@md": "0.25rem 0 1rem #shadow" },
     translate: {
       "": "0",
-      "@mobile": "-100% 0",
-      "@popover-open & [data-open] & @mobile": "0",
+      "!@md": "-100% 0",
+      ":is(:popover-open) & [data-open] & !@md": "0",
     },
     transition: {
       "": "none",
-      "@mobile & !@reduced-motion":
+      "!@md & !@reduced-motion":
         "translate $sidebar-transition ease-out, visibility $sidebar-transition, display $sidebar-transition allow-discrete, overlay $sidebar-transition allow-discrete",
     },
     Backdrop: {
@@ -51,18 +51,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
       opacity: "0",
       transition: {
         "": "none",
-        "@mobile & !@reduced-motion":
+        "!@md & !@reduced-motion":
           "opacity $sidebar-transition ease-out, display $sidebar-transition allow-discrete, overlay $sidebar-transition allow-discrete",
       },
     },
     OpenBackdrop: {
       $: "&::backdrop",
-      opacity: { "": null, "@popover-open & [data-open]": "1" },
+      opacity: { "": null, ":is(:popover-open) & [data-open]": "1" },
     },
     MobileHeading: {
-      $: ".td-sidebar-heading",
+      $: "MobileHeading",
       display: "flex",
-      hide: { "": true, "@mobile": false },
+      hide: { "": true, "!@md": false },
       alignItems: "center",
       justifyContent: "space-between",
       gap: "$gap",
@@ -88,7 +88,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       whiteSpace: "nowrap",
     },
     Close: {
-      $: ".td-sidebar-heading > button",
+      $: "MobileHeading > button",
       display: "grid",
       placeItems: "center",
       flexShrink: "0",
@@ -101,18 +101,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
       radius: "$header-control-radius",
     },
     HoverClose: {
-      $: ".td-sidebar-heading > button",
+      $: "MobileHeading > button",
       color: {
         "": null,
-        "@own(:is(.td-sidebar-heading > button:hover))": "#text",
+        "@own(:hover)": "#text",
       },
       fill: {
         "": null,
-        "@own(:is(.td-sidebar-heading > button:hover))": "#surface-2-hover",
+        "@own(:hover)": "#surface-2-hover",
       },
     },
     CloseIcon: {
-      $: ".td-sidebar-heading > button > svg",
+      $: "MobileHeading > button > svg",
       inlineSize: "1.25rem",
       blockSize: "1.25rem",
     },
@@ -132,7 +132,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       },
     },
     Content: {
-      $: ".sidebar-content",
+      $: "Content",
       display: "flex",
       flow: "column",
       blockSize: "min 100%",
@@ -140,7 +140,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "($gap * 2)",
       blockPadding: {
         "": "($gap * 3) start, ($gap * 6) end",
-        "@mobile": "($gap * 2) start, ($gap * 6) end",
+        "!@md": "($gap * 2) start, ($gap * 6) end",
       },
     },
     Tree: { $: "cookbook-sidebar", display: "block" },
@@ -154,13 +154,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
       listStyle: "none",
     },
     Item: { $: "cookbook-sidebar li", overflowWrap: "anywhere" },
-    TopLevelSpacing: { $: ".top-level > li + li", blockMargin: "0 start" },
-    GroupSpacing: {
-      $: ".top-level > li + li",
+    TopLevelSpacing: {
+      $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(:is(.top-level > li + li:has(> .sidebar-section-label)))":
-          "($gap * 2.5) start",
+        "@own(top-level)": "0 start",
+      },
+    },
+    GroupSpacing: {
+      $: "ul > li + li",
+      blockMargin: {
+        "": null,
+        "@own(top-level & section)": "($gap * 2.5) start",
       },
     },
     NestedItem: {
@@ -168,7 +173,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       inlineMargin: "($gap * 1.5) start",
     },
     SectionHeading: {
-      $: ".sidebar-section-label",
+      $: "SectionHeading",
       margin: "0 0 1bw",
       padding: "($gap * 0.75) ($gap * 1.25)",
       color: "#text",
@@ -194,7 +199,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       userSelect: "none",
     },
     GroupLabel: {
-      $: ".group-label",
+      $: "GroupLabel, [data-element=SectionHeading]",
       display: "flex",
       alignItems: "center",
       inlineSize: "min 0",
@@ -202,22 +207,22 @@ export const SidebarRoot = defineComponent("Sidebar", {
       gap: "0.25em",
     },
     GroupLabelText: {
-      $: ".group-label > span",
+      $: "GroupLabel > span, SectionHeading > span",
       inlineSize: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "min 0",
+        "@own(:first-child)": "min 0",
       },
       overflow: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "hidden",
+        "@own(:first-child)": "hidden",
       },
       textOverflow: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "ellipsis",
+        "@own(:first-child)": "ellipsis",
       },
       whiteSpace: {
         "": null,
-        "@own(:is(.group-label > span:first-child))": "nowrap",
+        "@own(:first-child)": "nowrap",
       },
     },
     Link: {
@@ -231,10 +236,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
     },
     LinkLabel: {
       $: "a > span",
-      inlineSize: { "": null, "@own(:is(a > span:first-child))": "min 0" },
-      overflow: { "": null, "@own(:is(a > span:first-child))": "hidden" },
-      textOverflow: { "": null, "@own(:is(a > span:first-child))": "ellipsis" },
-      whiteSpace: { "": null, "@own(:is(a > span:first-child))": "nowrap" },
+      inlineSize: { "": null, "@own(:first-child)": "min 0" },
+      overflow: { "": null, "@own(:first-child)": "hidden" },
+      textOverflow: { "": null, "@own(:first-child)": "ellipsis" },
+      whiteSpace: { "": null, "@own(:first-child)": "nowrap" },
     },
     InteractiveControl: {
       $: "cookbook-sidebar a, cookbook-sidebar summary",
@@ -253,7 +258,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       hide: true,
     },
     Caret: {
-      $: ".sidebar-caret",
+      $: "Caret",
       flexShrink: "0",
       inlineSize: "1rem",
       blockSize: "1rem",
@@ -262,10 +267,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
       transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
     },
     ExpandedCaret: {
-      $: "details > summary > .sidebar-caret, details > summary > a > .sidebar-caret",
+      $: "details > summary > [data-element=Caret], details > summary > a > [data-element=Caret]",
       transform: {
         "": null,
-        "@own(:is(details[open] > summary > .sidebar-caret)) | @own(:is(details[open] > summary > a > .sidebar-caret))":
+        "@own(:is(details[open] > summary > *, details[open] > summary > a > *))":
           "rotate(90deg)",
       },
     },
@@ -275,20 +280,18 @@ export const SidebarRoot = defineComponent("Sidebar", {
     },
     GroupLink: { $: "summary > a", justifyContent: "space-between" },
     LinkedSectionHeading: {
-      $: ".sidebar-section-label",
+      $: "[data-element=SectionHeading]",
       padding: { "": null, "@own(:has(> a))": "0" },
     },
     SectionLink: {
-      $: ".sidebar-section-label > a",
+      $: "SectionHeading > a",
       color: {
         "": null,
-        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
-          "#text",
+        '@own(![aria-current="page"])': "#text",
       },
       preset: {
         "": null,
-        '@own(:is(.sidebar-section-label > a:not([aria-current="page"])))':
-          "small / strong",
+        '@own(![aria-current="page"])': "small / strong",
       },
     },
     Badge: {
@@ -305,9 +308,15 @@ export const SidebarRoot = defineComponent("Sidebar", {
       whiteSpace: "nowrap",
     },
     TopLevelLink: {
-      $: "a.large",
-      color: { "": null, '@own(:not([aria-current="page"]))': "#sidebar-text" },
-      preset: { "": null, '@own(:not([aria-current="page"]))': "navigation" },
+      $: "a",
+      color: {
+        "": null,
+        '@own(top-level & ![aria-current="page"])': "#sidebar-text",
+      },
+      preset: {
+        "": null,
+        '@own(top-level & ![aria-current="page"])': "navigation",
+      },
     },
   },
 });

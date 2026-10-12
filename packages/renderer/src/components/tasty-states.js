@@ -13,16 +13,17 @@ export const cookbookStates = {
   "@system-dark": systemDark,
   "@light": `@root(theme=light) | (!@root(theme) & ${systemLight})`,
   "@dark": `@root(theme=dark) | (!@root(theme) & ${systemDark})`,
-  "@mobile": "@media(w < 50rem)",
-  "@desktop": "@media(w >= 50rem)",
-  "@small": "@media(w <= 40rem)",
-  "@compact": "@media(w <= 23rem)",
-  "@shell-mobile": "@media(w <= 48rem)",
-  "@shell-desktop": "@media(w > 48rem)",
-  "@narrow-layout": "@media(w < 72rem)",
-  "@medium-layout": "@media(w >= 50rem) & @media(w < 72rem)",
+  "@sm": "@media(w > 40rem)",
+  "@md": "@media(w >= 50rem)",
+  "@lg": "@media(w >= 72rem)",
   "@reduced-motion": "@media(prefers-reduced-motion: reduce)",
-  "@popover-open": ":is(:popover-open)",
+  // Check each selected element's ancestry so isolated sections do not affect
+  // surrounding prose in the same Markdown root.
+  "@prose": "@own(!:is([data-not-content] *))",
+  "@prose-block":
+    "@own(!:is([data-not-content] *)) & (@own(block) | @own(!:is(a,strong,em,del,span,input,code,br,li,dt,dd))) & (@own(:is(:not(a,strong,em,del,span,input,code,br) + *)) | @own(:is([data-block] + *)))",
+  "@prose-heading":
+    "@own(!:is([data-not-content] *)) & @own(!:is(h1 + *,h2 + *,h3 + *,h4 + *,h5 + *,h6 + *,[data-heading] + *))",
 };
 
 let configured = false;

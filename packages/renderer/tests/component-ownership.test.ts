@@ -220,7 +220,7 @@ export const Root = defineComponent("Hero", { styles: {
       fix: true,
     });
     const [result] = await eslint.lintText(
-      'import { defineComponent } from "../define-component.js";\nexport const Root = defineComponent("Hero", { styles: { MinimalAction: { $: ".minimal", paddingInlineStart: "0", paddingInlineEnd: "0" } } });',
+      'import { defineComponent } from "../define-component.js";\nexport const Root = defineComponent("Hero", { styles: { MinimalAction: { $: "Action", paddingInlineStart: "0", paddingInlineEnd: "0" } } });',
       {
         filePath: fileURLToPath(
           new URL("../src/components/Hero.styles.js", import.meta.url),

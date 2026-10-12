@@ -16,11 +16,11 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       placeItems: "center",
       inlineSize: {
         "": "$control-height",
-        "@mobile": "$docs-menu-button-size",
+        "!@md": "$docs-menu-button-size",
       },
       blockSize: {
         "": "$control-height",
-        "@mobile": "$docs-menu-button-size",
+        "!@md": "$docs-menu-button-size",
       },
       padding: "0",
       color: "#text-soft",
@@ -33,11 +33,11 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       $: "> button",
       color: {
         "": null,
-        "@own(:hover) | :has([popover]:popover-open)": "#text",
+        "@own(:hover) | :has([popover]:is(:popover-open))": "#text",
       },
       fill: {
         "": null,
-        "@own(:hover) | :has([popover]:popover-open)": "#surface-2-hover",
+        "@own(:hover) | :has([popover]:is(:popover-open))": "#surface-2-hover",
       },
     },
     ActiveTrigger: {
@@ -48,14 +48,14 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
     Icon: {
       $: "> button svg",
       display: "block",
-      inlineSize: { "": "1.25rem", "@mobile": "1.125rem" },
-      blockSize: { "": "1.25rem", "@mobile": "1.125rem" },
+      inlineSize: { "": "1.25rem", "!@md": "1.125rem" },
+      blockSize: { "": "1.25rem", "!@md": "1.125rem" },
     },
     Panel: {
       $: "Panel",
       position: "fixed",
       inset: "auto",
-      blockInset: { "": "4rem start", "@mobile": "3.5rem start" },
+      blockInset: { "": "4rem start", "!@md": "3.5rem start" },
       inlineInset:
         "max($docs-nav-pad-x, ((100vw - $layout-width) / 2 + $docs-sidebar-pad-x)) end",
       inlineSize: "min(15rem, calc(100vw - 2 * $docs-nav-pad-x))",
@@ -81,9 +81,9 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       $: '[data-element="Panel"]',
       opacity: {
         "": null,
-        "@own(@popover-open & [data-open])": "1",
+        "@own(:is(:popover-open) & [data-open])": "1",
       },
-      scale: { "": null, "@own(@popover-open & [data-open])": "1" },
+      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
     },
     Section: {
       $: "fieldset",
@@ -164,15 +164,15 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       $: "label > svg",
       inlineMargin: {
         "": null,
-        "@own(:is(label > svg:last-child))": "auto start",
+        "@own(:last-child)": "auto start",
       },
-      visibility: { "": null, "@own(:is(label > svg:last-child))": "hidden" },
+      visibility: { "": null, "@own(:last-child)": "hidden" },
     },
     SelectedCheckmark: {
       $: "label > svg",
       visibility: {
         "": null,
-        "@own(:is(label:has(input:checked) > svg:last-child))": "visible",
+        "@own(:last-child & :is(:has(input:checked) >))": "visible",
       },
     },
   },

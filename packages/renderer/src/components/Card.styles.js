@@ -7,6 +7,7 @@ configureCookbookStates();
 export const CardRoot = defineComponent("Card", {
   as: "article",
   "data-element": "Card",
+  "data-block": "",
   styles: {
     display: "grid",
     gap: "1.5x",
