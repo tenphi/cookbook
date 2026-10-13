@@ -1,4 +1,5 @@
 type SearchResult = { url: string; sub_results?: SearchResult[] };
+import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
 type PagefindOptions = Record<string, unknown> & {
   processResult?: (result: SearchResult) => SearchResult | void;
 };
@@ -12,6 +13,12 @@ export function initializeSearch(
 ): void {
   if (element.dataset.initialized) return;
   element.dataset.initialized = "true";
+  const listeners = new AbortController();
+  // Astro strips transition attributes from unhydrated framework roots. Apply
+  // the public persistence hook here and to the incoming matching search root.
+  const persistenceKey = element.dataset.searchKey;
+  if (persistenceKey)
+    element.setAttribute("data-astro-transition-persist", persistenceKey);
   const open = element.querySelector<HTMLButtonElement>("[data-open-modal]")!;
   const close = element.querySelector<HTMLButtonElement>("[data-close-modal]")!;
   const dialog = element.querySelector("dialog")!;
@@ -160,11 +167,37 @@ export function initializeSearch(
     document.body.removeAttribute("data-search-modal-open");
     returnFocus?.focus();
   });
-  window.addEventListener("keydown", (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-      event.preventDefault();
-      if (dialog.open && !closing) void hide();
-      else void show();
-    }
-  });
+  document.addEventListener(
+    "astro:before-swap",
+    (event) => {
+      // Keep the query and lazy engine for matching localized search shells,
+      // while dismissing the modal before the destination content is displayed.
+      generation += 1;
+      returnFocus = null;
+      if (dialog.open) dialog.close();
+      dialog.removeAttribute("data-open");
+      document.body.removeAttribute("data-search-modal-open");
+      const next = (event as TransitionBeforeSwapEvent).newDocument;
+      const nextRoot = persistenceKey
+        ? [...next.querySelectorAll<HTMLElement>("site-search")].find(
+            (root) => root.dataset.searchKey === persistenceKey,
+          )
+        : undefined;
+      if (nextRoot)
+        nextRoot.setAttribute("data-astro-transition-persist", persistenceKey!);
+      else listeners.abort();
+    },
+    { signal: listeners.signal },
+  );
+  window.addEventListener(
+    "keydown",
+    (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        if (dialog.open && !closing) void hide();
+        else void show();
+      }
+    },
+    { signal: listeners.signal },
+  );
 }

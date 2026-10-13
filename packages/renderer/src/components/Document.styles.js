@@ -183,6 +183,19 @@ export default function DocumentStyles() {
         whiteSpace: { "": null, "@own(sr-only)": "nowrap" },
         border: { "": null, "@own(sr-only)": "0" },
       },
+      RouteAnnouncer: {
+        // Astro's public router creates this class; its generated markup has
+        // no owned data-element hook. Keep the bridge scoped to its announcer.
+        $: ".astro-route-announcer",
+        position: "absolute",
+        inset: "0 top, 0 left",
+        "$visually-hidden-size": "1px",
+        inlineSize: "$visually-hidden-size",
+        blockSize: "$visually-hidden-size",
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+      },
       Strong: { $: ":where(strong), :where(b)", preset: "strong" },
       Link: { $: "a", color: "#accent-text" },
       NarrowBlock: {

@@ -59,7 +59,16 @@ const id = `select-${crypto.randomUUID()}`;
 <script>
   import { initializePopoverMotion } from "../client/popover-motion.js";
 
-  document
-    .querySelectorAll<HTMLElement>("[data-select-popover-panel]")
-    .forEach((panel) => initializePopoverMotion(panel));
+  const initialized = new WeakSet<HTMLElement>();
+  function initialize(): void {
+    document
+      .querySelectorAll<HTMLElement>("[data-select-popover-panel]")
+      .forEach((panel) => {
+        if (initialized.has(panel)) return;
+        initialized.add(panel);
+        initializePopoverMotion(panel);
+      });
+  }
+  initialize();
+  document.addEventListener("astro:page-load", initialize);
 </script>

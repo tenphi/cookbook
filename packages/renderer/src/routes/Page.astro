@@ -21,6 +21,7 @@ import { MainContentRoot } from "../components/MainContent.styles.js";
 import { BannerRoot } from "../components/Banner.styles.js";
 import { TableOfContentsLayoutRoot } from "../components/TableOfContentsLayout.styles.js";
 import { TableOfContentsRoot } from "../components/TableOfContents.styles.js";
+import AppearanceInit from "../components/AppearanceInit.astro";
 
 interface Props {
   frontmatter: Record<string, any>;
@@ -43,7 +44,6 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
 <html
   lang={route.lang}
   dir={route.dir}
-  data-theme="dark"
   data-has-sidebar={route.hasSidebar ? "" : undefined}
   data-has-toc={route.toc ? "" : undefined}
   data-has-hero={data.hero ? "" : undefined}
@@ -51,6 +51,9 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <AppearanceInit />
+    <meta name="astro-view-transitions-enabled" content="true" />
+    <meta name="astro-view-transitions-fallback" content="swap" />
     <DocumentStyles />
     <Head />
   </head>
@@ -85,6 +88,7 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
         <MainPaneRoot className="main-pane">
           <MainContentRoot
             id="main-content"
+            tabIndex={-1}
             data-pagefind-body={indexed ? "" : undefined}
             lang={route.entryMeta.lang}
             dir={route.entryMeta.dir}
@@ -132,6 +136,7 @@ const indexed = route.id !== "/404" && data.pagefind !== false && !data.draft;
       </div>
     </PageFrame>
     <script>
+      import "../client/client-navigation.js";
       import "../client/table-of-contents.js";
     </script>
   </body>

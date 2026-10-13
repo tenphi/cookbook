@@ -574,6 +574,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "DesktopBlock",
     "DesktopFlex",
     "ScreenReaderOnly",
+    "RouteAnnouncer",
     "Strong",
     "Link",
     "NarrowBlock",
