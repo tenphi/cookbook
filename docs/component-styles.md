@@ -215,7 +215,7 @@ it stays complete when a surface changes.
 
 #### Page shell
 
-- `Document`: `All`, `BlockSpacing`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
+- `Document`: `All`, `BlockSpacing`, `Body`, `Control`, `Pointer`, `ResponsiveWidth`, `ResponsiveHeight`, `Hidden`, `PrintHidden`, `DesktopBlock`, `DesktopFlex`, `ScreenReaderOnly`, `RouteAnnouncer`, `Strong`, `Link`, `NarrowBlock`, `MobileBlock`, `Code`, `FocusRing`, `CurrentLink`, `SearchOpen`
 - `Layout`: `Islands`
 - `PageFrame`: `MainFrame`, `SidebarFrame`, `Columns`
 - `MainPane`: None

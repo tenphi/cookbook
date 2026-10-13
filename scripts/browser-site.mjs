@@ -28,6 +28,7 @@ try {
     "custom-header",
     "sidebar-badges",
     "branded-badges",
+    "client-navigation",
   ]) {
     const site = join(fixture, name);
     await cp(source, site, { recursive: true });
@@ -41,7 +42,31 @@ try {
       join(site, "astro.config.mjs"),
       `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",integrations:[cookbook()]};`,
     );
-    if (name === "sidebar-badges" || name === "branded-badges") {
+    if (name === "client-navigation") {
+      const config = globalThis.structuredClone(originalConfig);
+      config.navigation = {
+        tabs: [
+          {
+            label: "Guide",
+            link: "/guide",
+            items: [
+              {
+                label: "Guides",
+                items: [
+                  { label: "Getting started", items: ["/guide", "/contents"] },
+                  { label: "Examples", items: ["/prose", "/heading-links"] },
+                ],
+              },
+            ],
+          },
+          { label: "Versions", link: "/v1", items: ["/v1", "/v1/guide"] },
+        ],
+      };
+      await writeFile(
+        join(site, "docs.config.mjs"),
+        `export default ${JSON.stringify(config)};`,
+      );
+    } else if (name === "sidebar-badges" || name === "branded-badges") {
       await mkdir(join(site, "badge-docs/reference"), { recursive: true });
       for (const [path, content] of Object.entries({
         "index.md": "# Cookbook\n\nBrowse the guides and API reference.\n",

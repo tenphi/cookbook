@@ -21,6 +21,27 @@ navigation: {
 }
 ```
 
+## Client navigation
+
+Internal page links use client navigation over the generated static HTML. The
+current page stays visible while the next page and its styles load, then swaps
+without a full-page fade. Appearance preferences, sidebar expansion choices, and
+desktop sidebar scroll within the same navigation section are preserved. Article
+scroll resets to the top on page changes, including Back and Forward; links with
+fragments still navigate to their heading. The current page and its ancestors
+update from the destination markup. Mobile navigation and other open panels close.
+
+Search keeps its query and loaded engine between pages in the same language,
+and closes when a result is followed. Language changes initialize the translated
+search interface. External links, downloads, modified clicks, and links marked
+`data-astro-reload` keep normal browser behavior. Without JavaScript, page links
+use normal document navigation.
+
+Custom browser scripts should attach behavior through custom-element lifecycle
+callbacks or initialize on `astro:page-load`; bundled scripts are not rerun on
+every client navigation. The router and appearance initialization belong to the common page shell
+and remain available with replacement Header, Head, and PageFrame components.
+
 ## Search
 
 The production build creates a local Pagefind index. Readers can select Search
