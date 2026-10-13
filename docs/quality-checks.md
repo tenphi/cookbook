@@ -49,10 +49,12 @@ rejects the TypeScript 7 API. Runtime compilation and lint parsing are separate.
 
 The reference build enforces separate limits for initial page JavaScript,
 lazy search assets, font files, images, and extracted Tasty CSS. A default guide
-currently loads about 9 KB of first-party JavaScript initially; search is lazy.
+currently loads about 22 KB of first-party JavaScript initially (about 10 KB
+gzipped), including Astro's built-in hover prefetching; search and the client
+router remain lazy. The initial JavaScript budget is 24 KiB.
 The checked reference output contains about 73 KB of fonts, 66 KB of images and
-icons, and a 189 KB shared stylesheet. The guide's first-party HTML, CSS, and
-initial JavaScript total about 33 KB when gzipped. Actual network transfers vary
+icons, and a 181 KB shared stylesheet. The guide's first-party HTML, CSS, and
+initial JavaScript total about 40 KB when gzipped. Actual network transfers vary
 with hosting compression and caching. `node scripts/check-reference-budgets.mjs`
 prints current raw budgets and the gzip estimate; neither includes external
 analytics.

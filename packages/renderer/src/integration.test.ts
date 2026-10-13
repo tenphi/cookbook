@@ -84,7 +84,10 @@ function graph(name: string): DocsGraph {
   } as unknown as DocsGraph;
 }
 
-async function setup(schema: FrontmatterSchema) {
+async function setup(
+  schema: FrontmatterSchema,
+  prefetch?: HookParameters<"astro:config:setup">["config"]["prefetch"],
+) {
   const updateConfig = vi.fn();
   const integration = cookbook({
     root,
@@ -96,6 +99,7 @@ async function setup(schema: FrontmatterSchema) {
     command: "build",
     config: {
       output: "static",
+      prefetch,
       root: pathToFileURL(`${root}/`),
       publicDir: pathToFileURL(`${root}/public/`),
       srcDir: pathToFileURL(`${root}/src/`),
@@ -132,8 +136,27 @@ async function setup(schema: FrontmatterSchema) {
     vi.mocked(sitemap).mock.calls[0]![0]!.filter!(
       `https://example.com/manual/${name}/`,
     );
-  return { integration, load, invalidate, included };
+  return { integration, load, invalidate, included, updateConfig };
 }
+
+describe("page prefetch configuration", () => {
+  it.each([
+    undefined,
+    false,
+    true,
+    { prefetchAll: false, defaultStrategy: "tap" as const },
+  ])(
+    "defaults to hover while preserving an explicit Astro value: %j",
+    async (prefetch) => {
+      vi.mocked(createDocsGraph).mockResolvedValue(graph("prefetch"));
+      const { updateConfig } = await setup(async (data) => data, prefetch);
+      expect(
+        updateConfig.mock.calls.find(([config]) => "prefetch" in config)?.[0]
+          .prefetch,
+      ).toEqual(prefetch ?? { prefetchAll: true, defaultStrategy: "hover" });
+    },
+  );
+});
 
 describe("graph refresh publication", () => {
   it("keeps the last graph visible while asynchronous schema validation is pending", async () => {

@@ -1,6 +1,27 @@
 // Use Astro's public router without ClientRouter's vendor stylesheet. Cookbook
 // owns link interception and extracted accessibility styles; Astro owns fetch,
 // stylesheet readiness, script execution, history, and route announcements.
+// Prefetch expects an initial page-load event before later route swaps. When
+// the router is still lazy, supply it after all native load listeners finish.
+let pageLoadNotified = false;
+document.addEventListener(
+  "astro:page-load",
+  () => {
+    pageLoadNotified = true;
+  },
+  { once: true },
+);
+window.addEventListener(
+  "load",
+  () => {
+    window.setTimeout(() => {
+      if (!pageLoadNotified)
+        document.dispatchEvent(new Event("astro:page-load"));
+    }, 0);
+  },
+  { once: true },
+);
+
 let router: Promise<typeof import("./navigation-router.js")> | undefined;
 function loadRouter() {
   return (router ??= import("./navigation-router.js").catch(

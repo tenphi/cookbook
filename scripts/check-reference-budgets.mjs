@@ -489,7 +489,8 @@ async function checkAssetBudgets() {
   budgets.push([
     "initial page JavaScript",
     [...initial].reduce((sum, file) => sum + (sizes.get(file) ?? 0), 0),
-    20 * 1024,
+    // Astro's built-in hover prefetch adds ~2.6 KB to the measured initial JS.
+    24 * 1024,
   ]);
   for (const [label, bytes, budget] of budgets) {
     if (bytes > budget)
