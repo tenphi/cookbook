@@ -5,7 +5,8 @@
 ---
 
 Add client navigation over static documentation pages with preserved appearance,
-sidebar state and scroll, and localized search queries. Reset article scroll on
+sidebar state and scroll, and localized search queries. Load the router on link
+hover, focus, or click to keep the initial page lightweight. Reset article scroll on
 page changes while retaining fragment navigation. Apply saved appearance before
 the first paint, including when Head or Header is replaced. Custom client scripts
 can initialize on `astro:page-load` or use custom-element lifecycle callbacks.

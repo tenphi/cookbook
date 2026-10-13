@@ -24,6 +24,8 @@ navigation: {
 ## Client navigation
 
 Internal page links use client navigation over the generated static HTML. The
+router loads when an internal page link is hovered, focused, or clicked, so it
+does not add to the initial page download for readers who stay on one page. The
 current page stays visible while the next page and its styles load, then swaps
 without a full-page fade. Appearance preferences, sidebar expansion choices, and
 desktop sidebar scroll within the same navigation section are preserved. Article

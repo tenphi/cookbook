@@ -1,11 +1,69 @@
 import { test, expect } from "@playwright/test";
 
+test("the first click loads the router while keeping the outgoing page visible", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  expect(await page.evaluate(() => history.scrollRestoration)).toBe("auto");
+  await page
+    .locator('cookbook-table-of-contents a[href="#update-the-site"]')
+    .click();
+  await expect(page).toHaveURL(/#update-the-site$/);
+  expect(await page.evaluate(() => history.scrollRestoration)).toBe("auto");
+  await page.evaluate(() =>
+    Object.assign(window, { originalDocument: document }),
+  );
+  let release!: () => void;
+  const ready = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/_astro/*.js", async (route) => {
+    await ready;
+    await route.continue();
+  });
+  const requested = page.waitForRequest(
+    (request) => request.resourceType() === "script",
+  );
+  await page
+    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .evaluate((link: HTMLAnchorElement) => link.click());
+  await requested;
+  await expect(page).toHaveURL(/\/manual\/guide\/?#update-the-site$/);
+  await expect(
+    page.getByRole("heading", { name: "Guide", exact: true }),
+  ).toBeVisible();
+  release();
+  await expect(page).toHaveURL(/\/manual\/contents\/?$/);
+  expect(
+    await page.evaluate(() => (window as any).originalDocument === document),
+  ).toBe(true);
+});
+
+test("a failed router download falls back to native document navigation", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  await page.evaluate(() =>
+    Object.assign(window, { originalDocument: document }),
+  );
+  await page.route("**/_astro/*.js", (route) => route.abort());
+  await page
+    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .evaluate((link: HTMLAnchorElement) => link.click());
+  await expect(page).toHaveURL(/\/manual\/contents\/?$/);
+  await expect(
+    page.getByRole("heading", { name: "Contents tracking", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() => (window as any).originalDocument === document),
+  ).toBe(false);
+});
+
 test("navigation keeps the document and sidebar scroll while resetting article scroll", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 360 });
   await page.goto("/manual/guide/");
-  await page.waitForFunction(() => history.scrollRestoration === "manual");
   const before = await page.evaluate(() => {
     const sidebar = document.querySelector<HTMLElement>("#cookbook__sidebar")!;
     sidebar.scrollTop = 100;
@@ -129,7 +187,6 @@ test("native document navigation remains available with reload links and without
   browser,
 }) => {
   await page.goto("/manual/guide/");
-  await page.waitForFunction(() => history.scrollRestoration === "manual");
   await page.evaluate(() => {
     Object.assign(window, { originalDocument: document });
     document
@@ -196,13 +253,17 @@ test("fragment links keep their destination and newly swapped controls initializ
     document.addEventListener(
       "astro:after-swap",
       () => {
-        Object.assign(window, {
-          tabsAtSwap: {
-            tabs: document.querySelectorAll('[role="tab"]').length,
-            panels: document.querySelectorAll('[role="tabpanel"]:not([hidden])')
-              .length,
-          },
-        });
+        // Observe after synchronous swap listeners, before the next paint.
+        queueMicrotask(() =>
+          Object.assign(window, {
+            tabsAtSwap: {
+              tabs: document.querySelectorAll('[role="tab"]').length,
+              panels: document.querySelectorAll(
+                '[role="tabpanel"]:not([hidden])',
+              ).length,
+            },
+          }),
+        );
       },
       { once: true },
     );
@@ -225,6 +286,9 @@ test("fragment links keep their destination and newly swapped controls initializ
   await page.getByRole("link", { name: "Start", exact: true }).click();
   await expect(page).toHaveURL(/\/manual\/$/);
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  await page.goBack();
+  await expect(page).toHaveURL(/#maintenance$/);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
 });
 
 test("client navigation works with replaced Head and Header and without view transitions", async ({
@@ -237,7 +301,6 @@ test("client navigation works with replaced Head and Header and without view tra
     localStorage.setItem("cookbook-theme", "light");
   });
   await page.goto("/custom-header/guide/");
-  await page.waitForFunction(() => history.scrollRestoration === "manual");
   await page.evaluate(() =>
     Object.assign(window, { originalDocument: document }),
   );
