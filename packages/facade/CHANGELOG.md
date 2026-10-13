@@ -1,5 +1,22 @@
 # @tenphi/cookbook
 
+## 0.24.0
+
+### Minor Changes
+
+- [#149](https://github.com/tenphi/cookbook/pull/149) [`fefabb1`](https://github.com/tenphi/cookbook/commit/fefabb15c2c00e0be78cf4b57541dae4ea733223) Thanks [@tenphi](https://github.com/tenphi)! - Add client navigation over static documentation pages with preserved appearance,
+  sidebar state and scroll, and localized search queries. Load the router on link
+  hover, focus, or click to keep the initial page lightweight. Reset article scroll on
+  page changes while retaining fragment navigation. Apply saved appearance before
+  the first paint, including when Head or Header is replaced. Custom client scripts
+  can initialize on `astro:page-load` or use custom-element lifecycle callbacks.
+
+### Patch Changes
+
+- Updated dependencies [[`fefabb1`](https://github.com/tenphi/cookbook/commit/fefabb15c2c00e0be78cf4b57541dae4ea733223)]:
+  - @tenphi/renderer@0.24.0
+  - @tenphi/docs@0.24.0
+
 ## 0.23.0
 
 ### Minor Changes
