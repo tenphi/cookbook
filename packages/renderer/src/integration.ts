@@ -444,11 +444,25 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         let markdownRenderer: ReturnType<
           typeof markdownRuntime.markdown.processor.createRenderer
         >;
+        const prefetch = context.config.prefetch ?? {
+          prefetchAll: true,
+          defaultStrategy: "hover" as const,
+        };
+        if (prefetch !== false) {
+          const focusScript = fileURLToPath(
+            new URL("./client/prefetch-focus.js", import.meta.url),
+          );
+          context.injectScript(
+            "page",
+            `import { initializePrefetchFocus } from ${JSON.stringify(focusScript)}; initializePrefetchFocus(${JSON.stringify(typeof prefetch === "object" ? prefetch : {})});`,
+          );
+        }
         context.updateConfig({
           ...(configuredSite && !context.config.site
             ? { site: configuredSite }
             : {}),
           base,
+          prefetch,
           markdown: {
             syntaxHighlight: "shiki",
             shikiConfig: cookbookShikiConfig(

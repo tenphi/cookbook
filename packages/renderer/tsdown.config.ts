@@ -27,6 +27,7 @@ export default defineConfig({
     "client/navigation": "src/client/navigation.ts",
     "client/client-navigation": "src/client/client-navigation.ts",
     "client/navigation-router": "src/client/navigation-router.ts",
+    "client/prefetch-focus": "src/client/prefetch-focus.ts",
     "client/sidebar": "src/client/sidebar.ts",
     "client/table-of-contents": "src/client/table-of-contents.ts",
     "markdown/rendered-content": "src/markdown/rendered-content.ts",

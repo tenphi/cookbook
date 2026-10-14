@@ -33,6 +33,25 @@ scroll resets to the top on page changes, including Back and Forward; links with
 fragments still navigate to their heading. The current page and its ancestors
 update from the destination markup. Mobile navigation and other open panels close.
 
+Cookbook enables Astro's built-in hover prefetching by default. Hovering over or
+focusing an internal link for about 80 ms downloads the destination HTML in the
+background. Moving across links briefly does not prefetch them, and repeated
+links to the same page share a prefetch. When the browser reports data-saving
+mode or a slow connection, Astro waits for tap intent instead.
+
+Prefetching warms the browser's HTTP cache. Static hosting should send cache
+headers such as `Cache-Control` or `ETag` so navigation can reuse the response;
+uncacheable responses may still be downloaded again on click. Browser and private
+session policies can also limit cache reuse. Destination stylesheets remain part
+of the router's preparation before the page swap.
+
+Set `prefetch: false` in `astro.config.mjs` to disable page prefetching while
+retaining client navigation. Cookbook preserves any explicit Astro `prefetch`
+configuration, including `prefetchAll: false` for selective prefetching. For a
+single link, use `data-astro-prefetch="false"` to opt out or
+`data-astro-prefetch` to opt in. See [Astro's prefetch guide](https://docs.astro.build/en/guides/prefetch/)
+for the supported strategies.
+
 Search keeps its query and loaded engine between pages in the same language,
 and closes when a result is followed. Language changes initialize the translated
 search interface. External links, downloads, modified clicks, and links marked
@@ -41,8 +60,9 @@ use normal document navigation.
 
 Custom browser scripts should attach behavior through custom-element lifecycle
 callbacks or initialize on `astro:page-load`; bundled scripts are not rerun on
-every client navigation. The router and appearance initialization belong to the common page shell
-and remain available with replacement Header, Head, and PageFrame components.
+every client navigation. The router and appearance initialization belong to the
+common page shell and remain available with replacement Header, Head, and
+PageFrame components.
 
 ## Search
 

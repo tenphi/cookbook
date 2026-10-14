@@ -40,7 +40,7 @@ try {
     await writeFile(join(site, "package.json"), '{"type":"module"}');
     await writeFile(
       join(site, "astro.config.mjs"),
-      `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",integrations:[cookbook()]};`,
+      `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",${name === "wide-logo" ? "prefetch:false," : name === "tall-logo" ? "prefetch:{prefetchAll:false}," : ""}integrations:[cookbook()]};`,
     );
     if (name === "client-navigation") {
       const config = globalThis.structuredClone(originalConfig);
@@ -232,6 +232,7 @@ const types = {
   ".txt": "text/plain",
   ".md": "text/markdown",
 };
+let requestId = 0;
 const server = createServer(async (req, res) => {
   try {
     const path = decodeURIComponent(
@@ -254,6 +255,10 @@ const server = createServer(async (req, res) => {
       types[extname(file)] ?? "application/octet-stream",
     );
     res.setHeader("content-security-policy", "style-src-attr 'none'");
+    // Match cacheable static hosting. A reused ID proves that navigation did
+    // not fetch another copy from the server after a hover prefetch.
+    res.setHeader("cache-control", "public, max-age=60");
+    res.setHeader("x-cookbook-request-id", String(++requestId));
     res.end(await readFile(file));
   } catch {
     res.writeHead(404).end("Not found");
