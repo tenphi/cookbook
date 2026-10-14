@@ -1,5 +1,22 @@
 # @tenphi/renderer
 
+## 0.25.0
+
+### Minor Changes
+
+- [#151](https://github.com/tenphi/cookbook/pull/151) [`cd06973`](https://github.com/tenphi/cookbook/commit/cd0697360131f35e77f4472c7307d073776d9f41) Thanks [@tenphi](https://github.com/tenphi)! - Enable Astro's built-in hover/focus page prefetching by default. Brief pointer
+  crossings do not prefetch pages, and data-saving or slow connections fall back
+  to tap intent. Preserve explicit Astro prefetch settings, including disabling
+  prefetching with `prefetch: false`. Notify the initial page-load lifecycle when
+  the router is still lazy so prefetching also works after the first client
+  navigation, and retain keyboard-focus prefetching when the document body is
+  replaced.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tenphi/docs@0.25.0
+
 ## 0.24.0
 
 ### Minor Changes
