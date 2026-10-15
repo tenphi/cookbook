@@ -1,5 +1,25 @@
 # @tenphi/cookbook
 
+## 0.25.1
+
+### Patch Changes
+
+- [#153](https://github.com/tenphi/cookbook/pull/153) [`c3448e8`](https://github.com/tenphi/cookbook/commit/c3448e866b5fafb84608e6220fd03bf0623be570) Thanks [@tenphi](https://github.com/tenphi)! - Follow Astro's `trailingSlash` and `build.format` for page URLs. Sites built
+  with `build.format: "file"` now resolve every page instead of rendering an
+  untitled `noindex` fallback, and `check-build` accepts `guide.html` output.
+  Internal links, alias redirects, language and version switchers, search
+  results, canonicals, and `llms.txt` now share one URL format. With the default
+  directory output, internal links end with a slash (`/guide/`) to match their
+  canonicals and avoid a host redirect on every navigation.
+
+- [#153](https://github.com/tenphi/cookbook/pull/153) [`c3448e8`](https://github.com/tenphi/cookbook/commit/c3448e866b5fafb84608e6220fd03bf0623be570) Thanks [@tenphi](https://github.com/tenphi)! - Support GFM table column alignment. Astro's default Markdown processor emits
+  `style="text-align: …"` for aligned columns, which failed the Tasty-only output
+  check. Aligned cells now receive a `data-align` modifier styled by
+  `MarkdownTable.Cell`, under both Markdown processors.
+- Updated dependencies [[`c3448e8`](https://github.com/tenphi/cookbook/commit/c3448e866b5fafb84608e6220fd03bf0623be570), [`c3448e8`](https://github.com/tenphi/cookbook/commit/c3448e866b5fafb84608e6220fd03bf0623be570)]:
+  - @tenphi/docs@0.25.1
+  - @tenphi/renderer@0.25.1
+
 ## 0.25.0
 
 ### Minor Changes
