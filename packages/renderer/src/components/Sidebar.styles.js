@@ -254,6 +254,9 @@ export const SidebarRoot = defineComponent("Sidebar", {
         '@own((:hover | :focus-visible) & ![aria-current="page"])':
           "#surface-2-hover",
       },
+      // Lift the focus ring above the next item's fill.
+      position: { "": null, "@own(:focus-visible)": "relative" },
+      zIndex: { "": null, "@own(:focus-visible)": "1" },
     },
     SummaryMarker: {
       $: "cookbook-sidebar summary::marker, summary::-webkit-details-marker",

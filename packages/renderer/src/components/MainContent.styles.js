@@ -10,6 +10,9 @@ export const MainContentRoot = defineComponent("MainContent", {
   styles: {
     "@property": TASTY_SPACING_PROPERTIES,
     padding: "0 0 5rem",
+    // A focus target for the skip link and page swaps, not a control. Clicking
+    // its text focuses it, so keyboard scrolling would otherwise show a ring.
+    outline: "none",
     // Layout spacing is a default; generated Markdown owns prose spacing.
     ContentSpacing: {
       $: ":where(Panel > Container) > * + *",

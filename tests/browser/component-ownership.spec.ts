@@ -66,6 +66,34 @@ test("top-level sidebar sections keep their gap while other entries stay flush",
   ).toHaveCSS("margin-block-start", "0px");
 });
 
+test("keyboard-focused sidebar links stack their ring above the next item", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  const link = page.locator('cookbook-sidebar a:not([aria-current="page"])');
+  await expect(link.first()).toHaveCSS("z-index", "auto");
+  await link.first().focus();
+  await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Tab");
+  await expect(link.first()).toBeFocused();
+  await expect(link.first()).toHaveCSS("position", "relative");
+  await expect(link.first()).toHaveCSS("z-index", "1");
+});
+
+test("main content hides its focus ring after a click and keyboard scrolling", async ({
+  page,
+}) => {
+  await page.goto("/manual/guide/");
+  await page.locator("#main-content p").first().click();
+  await page.keyboard.press("ArrowDown");
+  const main = page.locator("#main-content");
+  await expect(main).toBeFocused();
+  expect(
+    await main.evaluate((element) => element.matches(":focus-visible")),
+  ).toBe(true);
+  await expect(main).toHaveCSS("outline-style", "none");
+});
+
 test("anatomy overrides stay scoped to copy controls and selector panels", async ({
   page,
 }) => {
@@ -583,14 +611,23 @@ test("pagination hover preserves geometry and configured border widths", async (
               height,
               borderWidth: style.borderWidth,
               borderStyle: style.borderStyle,
+              borderColor: style.borderTopColor,
+              themeBorder: getComputedStyle(document.documentElement)
+                .getPropertyValue("--border-color")
+                .trim(),
             };
           });
         const before = await geometry();
+        // Links are bordered at rest, not only on hover.
+        expect(before.borderColor).toBe(before.themeBorder);
         await link.hover();
         expect(await geometry()).toEqual(before);
         if (site === "custom-header") {
           expect(before.borderWidth).toBe("3px");
           expect(before.borderStyle).toBe("dashed");
+        } else {
+          expect(before.borderWidth).toBe("1px");
+          expect(before.borderStyle).toBe("solid");
         }
       }
     }
