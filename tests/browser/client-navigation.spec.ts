@@ -59,6 +59,35 @@ test("a failed router download falls back to native document navigation", async 
   ).toBe(false);
 });
 
+test("skipped view transitions leave no unhandled rejections", async ({
+  page,
+}) => {
+  const errors: Error[] = [];
+  page.on("pageerror", (error) => errors.push(error));
+  await page.addInitScript(() => {
+    const observed = { swaps: 0, rejections: [] as string[] };
+    Object.assign(window, { observed });
+    document.addEventListener("astro:after-swap", () => observed.swaps++);
+    window.addEventListener("unhandledrejection", (event) =>
+      observed.rejections.push(String(event.reason)),
+    );
+  });
+  await page.goto("/manual/guide/");
+  await page.locator('cookbook-sidebar a[href="/manual/contents/"]').click();
+  await expect(page).toHaveURL(/\/manual\/contents\/?$/);
+  await page.goBack();
+  // Both swaps keep this document, so its listeners observe each navigation.
+  await expect
+    .poll(() => page.evaluate(() => (window as any).observed.swaps))
+    .toBe(2);
+  // Unhandled rejections are reported in a task after the swap.
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve)));
+  expect(
+    await page.evaluate(() => (window as any).observed.rejections),
+  ).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
 test("navigation keeps the document and sidebar scroll while resetting article scroll", async ({
   page,
 }) => {

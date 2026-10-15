@@ -7,6 +7,9 @@ document.addEventListener("astro:before-swap", (event) => {
   const transition = event as TransitionBeforeSwapEvent;
   // Instant swaps avoid the browser's default full-page crossfade.
   transition.viewTransition.skipTransition();
+  void transition.viewTransition.ready.catch(() => {
+    // Skipping rejects `ready` with an AbortError that nothing else observes.
+  });
   for (const name of ["data-theme", "data-contrast"]) {
     const value = document.documentElement.getAttribute(name);
     if (value === null)
