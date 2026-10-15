@@ -2,6 +2,23 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.25.4
+
+### Patch Changes
+
+- [#162](https://github.com/tenphi/cookbook/pull/162) [`bf5b10a`](https://github.com/tenphi/cookbook/commit/bf5b10a49e3afb55efa63258258755f12143ade0) Thanks [@tenphi](https://github.com/tenphi)! - Store the reader's color scheme and contrast in one `cookbook-appearance` object,
+  `{ theme, contrast }`, and document it as a stable contract. Another app on the
+  same origin, such as a product site that serves the docs under `/docs/`, can now
+  share the preference. A scheme saved under the previous `cookbook-theme` key is
+  still read and moves into the object on the next change.
+
+- [#160](https://github.com/tenphi/cookbook/pull/160) [`07c308c`](https://github.com/tenphi/cookbook/commit/07c308c1ad52043bfaeec348554552e5afdb7eb4) Thanks [@tenphi](https://github.com/tenphi)! - Polish focus and pagination styles:
+
+  - Keyboard-focused sidebar links draw their focus ring above the next item.
+  - The main content no longer shows a focus ring after a click followed by
+    keyboard scrolling. It remains the skip-link and page-swap focus target.
+  - Previous/Next pagination links show their border at rest again.
+
 ## 0.25.3
 
 ### Patch Changes
