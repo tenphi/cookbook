@@ -158,7 +158,9 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(top-level)": "0 start",
+        // States add no specificity, so leave sections to GroupSpacing rather
+        // than depending on the order of the two rules.
+        "@own(top-level & !section)": "0 start",
       },
     },
     GroupSpacing: {

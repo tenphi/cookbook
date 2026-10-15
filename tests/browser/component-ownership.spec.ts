@@ -49,6 +49,23 @@ test("current sidebar link retains its appearance while hovered", async ({
   await expect(current).toHaveCSS("font-weight", before.weight);
 });
 
+test("top-level sidebar sections keep their gap while other entries stay flush", async ({
+  page,
+}) => {
+  await page.goto("/sidebar-badges/");
+  const sections = page.locator("cookbook-sidebar > ul > li[data-section]");
+  await expect(sections).toHaveCount(2);
+  await expect(sections.nth(1)).toHaveCSS("margin-block-start", "20px");
+  await page.goto("/manual/guide/");
+  await expect(
+    page
+      .locator(
+        "cookbook-sidebar > ul > li:not([data-section]) + li:not([data-section])",
+      )
+      .first(),
+  ).toHaveCSS("margin-block-start", "0px");
+});
+
 test("anatomy overrides stay scoped to copy controls and selector panels", async ({
   page,
 }) => {
