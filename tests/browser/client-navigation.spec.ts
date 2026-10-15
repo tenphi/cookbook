@@ -139,8 +139,10 @@ test("saved appearance is correct before delayed modules and survives every swap
   page,
 }) => {
   await page.addInitScript(() => {
-    localStorage.setItem("cookbook-theme", "light");
-    localStorage.setItem("cookbook-appearance", '{"contrast":"more"}');
+    localStorage.setItem(
+      "cookbook-appearance",
+      '{"theme":"light","contrast":"more"}',
+    );
     Object.assign(window, { paintedSchemes: [] });
     const record = () => {
       if (document.body)
@@ -327,6 +329,7 @@ test("client navigation works with replaced Head and Header and without view tra
     Object.defineProperty(document, "startViewTransition", {
       value: undefined,
     });
+    // A scheme saved under the legacy key still applies.
     localStorage.setItem("cookbook-theme", "light");
   });
   await page.goto("/custom-header/guide/");

@@ -7,71 +7,104 @@ function storage(values: Record<string, string> = {}) {
     setItem: (key: string, value: string) => {
       values[key] = value;
     },
+    removeItem: (key: string) => {
+      delete values[key];
+    },
   };
 }
 
 describe("appearance preferences", () => {
-  it("restores existing independent scheme and contrast choices", () => {
+  it("restores independent theme and contrast choices from one object", () => {
+    const saved = storage({
+      "cookbook-appearance": JSON.stringify({
+        theme: "dark",
+        contrast: "more",
+      }),
+    });
+    expect(loadPreferences(saved)).toEqual({
+      theme: "dark",
+      contrast: "more",
+    });
+    storePreferences({ theme: "light", contrast: "more" }, saved);
+    expect(loadPreferences(saved)).toEqual({
+      theme: "light",
+      contrast: "more",
+    });
+    storePreferences({ theme: "light", contrast: "normal" }, saved);
+    expect(JSON.parse(saved.getItem("cookbook-appearance")!)).toEqual({
+      theme: "light",
+      contrast: "normal",
+    });
+  });
+
+  it("persists system choices without losing other fields", () => {
+    const saved = storage({
+      "cookbook-appearance": JSON.stringify({ contrast: "more", other: true }),
+    });
+    storePreferences({ theme: "system", contrast: "system" }, saved);
+    expect(JSON.parse(saved.getItem("cookbook-appearance")!)).toEqual({
+      theme: "system",
+      contrast: "system",
+      other: true,
+    });
+    expect(loadPreferences(saved)).toEqual({
+      theme: "system",
+      contrast: "system",
+    });
+  });
+
+  it("reads a scheme saved under the legacy key and removes it on save", () => {
     const saved = storage({
       "cookbook-theme": "dark",
       "cookbook-appearance": JSON.stringify({ contrast: "more" }),
     });
     expect(loadPreferences(saved)).toEqual({
-      scheme: "dark",
+      theme: "dark",
       contrast: "more",
     });
-    storePreferences({ scheme: "light", contrast: "more" }, saved);
-    expect(loadPreferences(saved)).toEqual({
-      scheme: "light",
+    storePreferences(loadPreferences(saved), saved);
+    expect(saved.getItem("cookbook-theme")).toBeNull();
+    expect(JSON.parse(saved.getItem("cookbook-appearance")!)).toEqual({
+      theme: "dark",
       contrast: "more",
-    });
-    storePreferences({ scheme: "light", contrast: "normal" }, saved);
-    expect(loadPreferences(saved)).toEqual({
-      scheme: "light",
-      contrast: "normal",
     });
   });
 
-  it("persists Auto using Cookbook storage without losing other preferences", () => {
+  it("prefers the object's theme over the legacy key", () => {
     const saved = storage({
-      "cookbook-appearance": JSON.stringify({ contrast: "more", other: true }),
+      "cookbook-theme": "dark",
+      "cookbook-appearance": JSON.stringify({ theme: "system" }),
     });
-    storePreferences({ scheme: "auto", contrast: "system" }, saved);
-    expect(saved.getItem("cookbook-theme")).toBe("");
-    expect(JSON.parse(saved.getItem("cookbook-appearance")!)).toEqual({
-      contrast: "system",
-      other: true,
-    });
-    expect(loadPreferences(saved)).toEqual({
-      scheme: "auto",
-      contrast: "system",
-    });
+    expect(loadPreferences(saved).theme).toBe("system");
   });
 
   it.each(["{broken", "null", "[]", '"more"', '{"contrast":"invalid"}'])(
-    "recovers from malformed contrast data: %s",
+    "recovers from malformed appearance data: %s",
     (value) => {
-      const saved = storage({
-        "cookbook-theme": "light",
-        "cookbook-appearance": value,
-      });
+      const saved = storage({ "cookbook-appearance": value });
       expect(loadPreferences(saved)).toEqual({
-        scheme: "light",
+        theme: "system",
         contrast: "system",
       });
-      storePreferences({ scheme: "dark", contrast: "more" }, saved);
+      storePreferences({ theme: "dark", contrast: "more" }, saved);
       expect(loadPreferences(saved)).toEqual({
-        scheme: "dark",
+        theme: "dark",
         contrast: "more",
       });
     },
   );
 
   it("uses system defaults for unknown values or unavailable storage", () => {
-    expect(loadPreferences(storage({ "cookbook-theme": "invalid" }))).toEqual({
-      scheme: "auto",
-      contrast: "system",
-    });
+    expect(
+      loadPreferences(
+        storage({
+          "cookbook-appearance": JSON.stringify({
+            theme: "invalid",
+            contrast: "invalid",
+          }),
+        }),
+      ),
+    ).toEqual({ theme: "system", contrast: "system" });
     const unavailable = {
       getItem: () => {
         throw new Error("Storage unavailable");
@@ -79,13 +112,16 @@ describe("appearance preferences", () => {
       setItem: () => {
         throw new Error("Storage unavailable");
       },
+      removeItem: () => {
+        throw new Error("Storage unavailable");
+      },
     };
     expect(loadPreferences(unavailable)).toEqual({
-      scheme: "auto",
+      theme: "system",
       contrast: "system",
     });
     expect(() =>
-      storePreferences({ scheme: "dark", contrast: "more" }, unavailable),
+      storePreferences({ theme: "dark", contrast: "more" }, unavailable),
     ).not.toThrow();
   });
 });
