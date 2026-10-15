@@ -68,6 +68,36 @@ it("validates emitted navigation, fonts, metadata and legitimate direct draft li
     "DOCS_OUTPUT_FRAGMENT_MISSING",
   );
 });
+it("resolves pages from Astro's file build format", async () => {
+  const page = (path: string, link: string) =>
+    `<html><head><link rel="canonical" href="https://example.com/manual${path}"></head><body><h1 id="top">Guide</h1><a href="${link}">Next</a></body></html>`;
+  const published = (route: string, path: string) => ({
+    route,
+    url: `https://example.com/manual${path}`,
+    canonical: `https://example.com/manual${path}`,
+    index: true,
+    sitemap: true,
+  });
+  const directory = await createDocsFixture({
+    "index.html": page("", "/manual/guide#top"),
+    "guide.html": page("/guide", "/manual"),
+    "llms.txt": "# Docs",
+    "sitemap-0.xml":
+      "<urlset><url><loc>https://example.com/manual</loc></url><url><loc>https://example.com/manual/guide</loc></url></urlset>",
+    "_cookbook/publishing.json": JSON.stringify({
+      base: "/manual/",
+      site: "https://example.com",
+      pages: [published("/", ""), published("/guide", "/guide")],
+    }),
+  });
+  roots.push(directory);
+  expect(await validateBuiltDocs({ directory })).toMatchObject({
+    ok: true,
+    pages: 2,
+    diagnostics: [],
+  });
+});
+
 it("reports a missing build separately from a successful preflight", async () => {
   expect(
     await validateBuiltDocs({ directory: "/nonexistent-cookbook-output" }),

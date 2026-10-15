@@ -1,5 +1,7 @@
 import {
+  routePath,
   routeVersion,
+  type TrailingSlash,
   type DocsConfig,
   type DocsRoute,
   type SiteVersion,
@@ -11,7 +13,9 @@ export function versionLinks(
   routes: DocsRoute[],
   currentPath: string,
   base = "/",
-  options: Pick<DocsConfig, "locales" | "defaultLocale"> = {},
+  options: Pick<DocsConfig, "locales" | "defaultLocale"> & {
+    trailingSlash?: TrailingSlash;
+  } = {},
 ): { current?: SiteVersion; links: Array<SiteVersion & { href: string }> } {
   const path = normalizeNavigationPath(currentPath);
   const first = path.split("/")[1];
@@ -30,7 +34,6 @@ export function versionLinks(
       .filter((route) => route.discoverable !== false)
       .map((route) => route.route),
   );
-  const prefix = base.replace(/\/$/, "");
   const defaultLocale =
     options.defaultLocale ??
     (options.locales?.root
@@ -61,7 +64,9 @@ export function versionLinks(
         ),
       ];
       const route = candidates.find((route) => available.has(route));
-      return route ? [{ ...version, href: `${prefix}${route}` || "/" }] : [];
+      return route
+        ? [{ ...version, href: routePath(route, base, options.trailingSlash) }]
+        : [];
     }),
   };
 }

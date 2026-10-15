@@ -2,6 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { resolve, sep } from "node:path";
 import { fromHtml } from "hast-util-from-html";
 import type { Element, Root } from "hast";
+import { routePath } from "../publishing.js";
 import type { DocsDiagnostic, DocsGraph } from "../types.js";
 
 export interface BuiltDocsOptions {
@@ -96,6 +97,11 @@ export async function validateBuiltDocs(
   for (const file of files.filter((file) => file.endsWith(".html"))) {
     pagePaths.set(normalizePath(urlForFile(file)), file);
     pagePaths.set(normalizePath(`${base}/${file}`), file);
+    // Astro's file build format serves guide.html as /guide.
+    pagePaths.set(
+      normalizePath(`${base}/${file.replace(/\.html$/, "")}`),
+      file,
+    );
     const tree = fromHtml(await readFile(resolve(directory, file), "utf8"));
     const elements: Element[] = [];
     const visit = (node: Root | Element | Root["children"][number]) => {
@@ -205,7 +211,11 @@ export async function validateBuiltDocs(
   const expected = [...manifest.pages];
   if (options.graph)
     for (const route of options.graph.routes) {
-      const url = `${base}${route.route === "/" ? "/" : `${route.route}/`}`;
+      const url = routePath(
+        route.route,
+        base,
+        options.graph.config.build.trailingSlash,
+      );
       if (!resolveLocal(url, `${base}/`)) continue;
       if (!manifest.pages.some((page) => page.route === route.route)) {
         const entry = options.graph.entryByRoute(route.route);

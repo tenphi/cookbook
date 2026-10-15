@@ -105,6 +105,8 @@ async function setup(
       srcDir: pathToFileURL(`${root}/src/`),
       cacheDir: pathToFileURL(`${root}/.astro/`),
       base: "/manual/",
+      trailingSlash: "ignore",
+      build: { format: "directory" },
       integrations: [],
       image: {},
       markdown: {

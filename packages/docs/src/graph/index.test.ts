@@ -182,7 +182,7 @@ components:
 
     expect(graph.routes.map(({ route }) => route)).toEqual(["/", "/guide"]);
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
-      "/manual/guide#same-heading",
+      "/manual/guide/#same-heading",
     );
     expect(graph.entryByRoute("/")?.transformedBody).not.toContain(
       "github.com/example/fixture",
@@ -193,6 +193,22 @@ components:
     expect(
       graph.entryByRoute("/guide")?.headings.map(({ slug }) => slug),
     ).toContain("same-heading-1");
+
+    // Astro's file build format serves guide.html as /manual/guide and keeps
+    // the home as the directory index /manual/.
+    const fileFormat = await createDocsGraph({
+      root,
+      base: "/manual",
+      trailingSlash: "index",
+      config: { site: { url: "https://docs.example.com" } },
+    });
+    expect(fileFormat.entryByRoute("/")?.transformedBody).toContain(
+      "/manual/guide#same-heading",
+    );
+    expect(fileFormat.routes.map(({ canonical }) => canonical)).toEqual([
+      "https://docs.example.com/manual/",
+      "https://docs.example.com/manual/guide",
+    ]);
     expect(graph.diagnostics).toContainEqual(
       expect.objectContaining({
         code: "DOCS_HEADING_DUPLICATE",
@@ -446,7 +462,7 @@ Welcome to the fixture documentation.
     );
     expect(home?.frontmatter.template).toBe("splash");
     expect(home?.frontmatter.hero?.actions?.[0]?.text).toBe("Begin");
-    expect(home?.frontmatter.hero?.actions?.[0]?.link).toBe("/manual/guide");
+    expect(home?.frontmatter.hero?.actions?.[0]?.link).toBe("/manual/guide/");
     expect(home?.frontmatter.hero?.image).toMatchObject({
       file: expect.stringMatching(
         /^\/manual\/_tasty-assets\/[a-f0-9]{12}-hero\.svg$/,
@@ -655,10 +671,10 @@ banner: {}
     });
 
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
-      "[API](/manual/api?plain=1#usage)",
+      "[API](/manual/api/?plain=1#usage)",
     );
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
-      "[guide](/manual/guide)",
+      "[guide](/manual/guide/)",
     );
     expect(graph.entryByRoute("/")?.transformedBody).toContain(
       "[issue](https://github.com/example/monorepo/issues/42)",

@@ -8,6 +8,7 @@ import {
   type HeadConfig,
   type SiteConfig,
   type DocsConfig,
+  type TrailingSlash,
 } from "@tenphi/docs";
 
 export function pageMetadata(
@@ -15,6 +16,7 @@ export function pageMetadata(
   content: {
     site: SiteConfig;
     base: string;
+    trailingSlash?: TrailingSlash;
     routes: DocsRoute[];
     locales?: DocsConfig["locales"];
   },
@@ -24,7 +26,7 @@ export function pageMetadata(
   const publishing = pagePublishing(entry, {
     site: content.site,
     ...(content.locales ? { locales: content.locales } : {}),
-    build: { base: content.base },
+    build: { base: content.base, trailingSlash: content.trailingSlash },
   });
   const { canonical, title, image, index } = publishing;
   const owned = new Set([
@@ -117,7 +119,12 @@ export function pageMetadata(
           url:
             route.route === entry.route
               ? canonical
-              : routeUrl(route.route, content.base, content.site.url),
+              : routeUrl(
+                  route.route,
+                  content.base,
+                  content.site.url,
+                  content.trailingSlash,
+                ),
         }));
     if (configured && crumbs.at(-1)?.url !== canonical)
       throw new Error(

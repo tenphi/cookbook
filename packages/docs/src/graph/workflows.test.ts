@@ -46,10 +46,10 @@ describe("repository authoring workflows", () => {
       "/v2/getting-started",
     ]);
     expect(graph.entryByRoute("/v1")?.transformedBody).toContain(
-      "[Guide](/v1/getting-started)",
+      "[Guide](/v1/getting-started/)",
     );
     expect(graph.entryByRoute("/v1")?.transformedBody).toContain(
-      "[Other](/v2/getting-started)",
+      "[Other](/v2/getting-started/)",
     );
     expect(graph.entryBySource("docs/guide.md")).toBeUndefined();
     expect(graph.entryBySource("docs/guide.md", "v2")?.route).toBe(
@@ -145,7 +145,7 @@ describe("repository authoring workflows", () => {
     const body = graph.entryByRoute("/")?.transformedBody ?? "";
     expect(graph.diagnostics).toEqual([]);
     expect(body).toContain("<details><summary>More</summary>Useful prose");
-    expect(body).toContain('href="/guide"');
+    expect(body).toContain('href="/guide/"');
     expect(body).toContain("/_tasty-assets/");
     expect(body).toContain("<strong>important</strong>");
     expect(body).not.toMatch(/onclick|onerror|<script|bad\(\)/);

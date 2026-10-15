@@ -616,7 +616,9 @@ build: {
 `strict` makes missing internal links errors instead of warnings. `ci` makes
 missing heading fragments errors and defaults to `true` when `CI=true`.
 Cookbook derives its public base path from Astro's top-level `base` setting so
-routes and assets cannot drift between two configurations. An empty `cacheDir`
+routes and assets cannot drift between two configurations. Page URLs likewise
+follow Astro's `trailingSlash` and `build.format`; see
+[Deployment](./deployment.md#github-pages). An empty `cacheDir`
 uses `~/.cache/cookbook`; set an explicit path to relocate downloaded package
 artifacts. Package limits protect builds from unexpected registry artifacts;
 raise them deliberately for a reviewed package.

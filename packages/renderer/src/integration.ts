@@ -27,7 +27,9 @@ import {
   createDocsGraph,
   assertValidDocs,
   resolveDocsProject,
+  routePath,
   type DocsConfig,
+  type TrailingSlash,
 } from "@tenphi/docs";
 import {
   configure,
@@ -263,6 +265,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   let projectRoot = options.root;
   let graphConfig = options.config;
   let graphBase = "/";
+  let graphTrailingSlash: TrailingSlash = "always";
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
@@ -276,6 +279,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         ...(projectRoot ? { root: projectRoot } : {}),
         ...(graphConfig ? { config: graphConfig } : {}),
         base: graphBase,
+        trailingSlash: graphTrailingSlash,
       });
       assertValidDocs(candidate);
       await validatePluginFrontmatter(
@@ -381,6 +385,13 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           };
         siteIconBase = base;
         graphBase = base;
+        // Match Astro's page URLs: x/index.html is served as /x/, x.html as /x.
+        graphTrailingSlash =
+          context.config.trailingSlash !== "ignore"
+            ? context.config.trailingSlash
+            : context.config.build.format === "directory"
+              ? "always"
+              : "index";
         context.config.integrations.push(
           sitemap({
             serialize: (item) => {
@@ -398,7 +409,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                 ).map(({ lang, route }) => ({
                   lang,
                   url: new URL(
-                    `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+                    routePath(route, graphBase, graphTrailingSlash),
                     item.url,
                   ).href,
                 })),
@@ -600,6 +611,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                         }
                       : documentedSite(loaded),
                     base: loaded.config.build.base,
+                    trailingSlash: loaded.config.build.trailingSlash,
                     search:
                       loaded.config.search.enabled ||
                       typeof options.config?.components?.overrides?.Search ===
@@ -654,6 +666,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           root: projectRoot,
           ...(graphConfig ? { config: graphConfig } : {}),
           base: graphBase,
+          trailingSlash: graphTrailingSlash,
         });
         assertValidDocs(graph);
         context.injectRoute({

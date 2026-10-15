@@ -57,10 +57,15 @@ export function initializeSearch(
       // @ts-expect-error Pagefind publishes no declarations for its default UI.
       const { PagefindUI } = await import("@pagefind/default-ui");
       const translations = JSON.parse(element.dataset.translations ?? "{}");
-      const format = (url: string) =>
-        element.hasAttribute("data-strip-trailing-slash")
-          ? url.replace(/(.)\/(#.*)?$/, "$1$2")
-          : url;
+      // Pagefind names pages by their files: x/ for x/index.html, x.html otherwise.
+      const format = (url: string) => {
+        const trailingSlash = element.dataset.trailingSlash;
+        if (trailingSlash === "always") return url;
+        const page = url.replace(/\.html(?=#|$)/, "");
+        return trailingSlash === "never"
+          ? page.replace(/(.)\/(#.*)?$/, "$1$2")
+          : page;
+      };
       new PagefindUI({
         ...options,
         element: element.querySelector("[data-search-results]"),

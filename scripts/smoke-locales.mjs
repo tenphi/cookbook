@@ -59,7 +59,7 @@ try {
   const sidebar = window.document.querySelector("cookbook-sidebar");
   assert.deepEqual(
     [...sidebar.querySelectorAll("a")].map((a) => a.getAttribute("href")),
-    ["/manual/", "/manual/fr/guide", "/manual/only-en"],
+    ["/manual/", "/manual/fr/guide/", "/manual/only-en/"],
   );
   const alternates = [
     ...window.document.querySelectorAll('link[rel="alternate"][hreflang]'),
@@ -144,7 +144,7 @@ try {
     prefixed.document
       .querySelector("[data-element=SiteTitle]")
       .getAttribute("href"),
-    "/manual/en",
+    "/manual/en/",
   );
   assert.equal(
     prefixed.document.querySelector('link[hreflang="en"]').getAttribute("href"),

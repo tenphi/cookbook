@@ -155,8 +155,8 @@ try {
       },
     })};\n`,
   );
-  await waitFor("/v1/live/", 'href="/v1/next"');
-  await waitFor("/v2/live/", 'href="/v2/next"');
+  await waitFor("/v1/live/", 'href="/v1/next/"');
+  await waitFor("/v2/live/", 'href="/v2/next/"');
   await write("docs/live.mdx", "# Edited MDX\n\n[Next](./next.mdx)\n");
   await waitFor("/v2/live/", "Edited MDX");
   await writeFile(
@@ -230,8 +230,8 @@ try {
     join(app, "dist/v2/next/index.html"),
     "utf8",
   );
-  assert.ok(publishedOutput.includes('href="/manual/v2/draft"'));
-  assert.ok(!publishedOutput.includes('href="/manual/v2/draft/"'));
+  // The authored link stays valid; drafts stay out of the sidebar and pagination.
+  assert.equal(publishedOutput.split('href="/manual/v2/draft/"').length, 2);
   assert.ok(
     !(await readFile(join(app, "dist/llms.txt"), "utf8")).includes(
       "PrivatePreviewPhrase",

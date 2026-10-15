@@ -1,8 +1,10 @@
-import type {
-  DocsConfig,
-  DocsHeading,
-  DocsRoute,
-  HeadConfig,
+import {
+  routePath,
+  type DocsConfig,
+  type DocsHeading,
+  type DocsRoute,
+  type HeadConfig,
+  type TrailingSlash,
 } from "@tenphi/docs";
 import {
   localeHref,
@@ -63,6 +65,7 @@ export interface CookbookRoute {
 type Content = {
   routes: DocsRoute[];
   base: string;
+  trailingSlash?: TrailingSlash;
   site: { title?: string; description?: string };
   locales?: DocsConfig["locales"];
   defaultLocale?: string;
@@ -134,7 +137,7 @@ export function createRouteContext(input: {
     dir,
     hasSidebar: frontmatter.template !== "splash",
     siteTitle: content.site.title ?? "Documentation",
-    siteTitleHref: content.base,
+    siteTitleHref: routePath("/", content.base, content.trailingSlash),
     entry: { data: frontmatter },
     entryMeta: { lang, dir, locale },
     sidebar,

@@ -1,9 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { pagePublishing, routeVersion, validateSeo } from "./publishing.js";
+import {
+  pagePublishing,
+  routePath,
+  routeVersion,
+  validateSeo,
+} from "./publishing.js";
 import { defineDocsConfig, mergeDocsConfig } from "./config/index.js";
 
 const page = { route: "/guide", title: "Guide", frontmatter: {} };
 describe("publishing policy", () => {
+  it("formats page routes for directory and file build output", () => {
+    expect(routePath("/")).toBe("/");
+    expect(routePath("/", "/", "never")).toBe("/");
+    expect(routePath("/", "/manual/")).toBe("/manual/");
+    expect(routePath("/", "/manual/", "index")).toBe("/manual/");
+    expect(routePath("/", "/manual/", "never")).toBe("/manual");
+    expect(routePath("/guide", "/manual")).toBe("/manual/guide/");
+    expect(routePath("/guide", "/manual/", "index")).toBe("/manual/guide");
+    expect(routePath("/guide", "/manual/", "never")).toBe("/manual/guide");
+  });
   it("deduplicates titles and supports templates/full page titles", () => {
     expect(
       pagePublishing(

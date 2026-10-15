@@ -179,6 +179,14 @@ describe("section navigation", () => {
     );
   });
 
+  it("matches pages rendered by Astro's file build format", () => {
+    expect(navigationPath("/manual/api/client.html", "/manual/")).toBe(
+      "/api/client",
+    );
+    expect(navigationPath("/manual/index.html", "/manual/")).toBe("/");
+    expect(navigationPath("/index.html")).toBe("/");
+  });
+
   it("builds sidebars from graph routes", () => {
     const routes = [
       {

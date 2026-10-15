@@ -120,10 +120,18 @@ describe("locale routing", () => {
     expect(localeTarget("/", "fr", routes, options)).toBe("/");
     expect(
       localeHref("/guide#install", "/fr/guide", routes, options, "/manual/"),
-    ).toBe("/manual/fr/guide#install");
+    ).toBe("/manual/fr/guide/#install");
     expect(
       localeHref("/guide?mode=short#install", "/guide", routes, {}, "/manual/"),
-    ).toBe("/manual/guide?mode=short#install");
+    ).toBe("/manual/guide/?mode=short#install");
+    expect(
+      localeHref("/guide#install", "/guide", routes, {
+        trailingSlash: "index",
+      }),
+    ).toBe("/guide#install");
+    expect(localeHref("/feed.xml", "/guide", routes, {}, "/manual/")).toBe(
+      "/manual/feed.xml",
+    );
     expect(localeHref("//example.com", "/fr/guide", routes, options)).toBe(
       "//example.com",
     );

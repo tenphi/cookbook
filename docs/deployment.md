@@ -42,6 +42,13 @@ served at `https://owner.github.io/repository/`, set Astro's
 `base: "/repository/"`; Cookbook derives the same base for its graph and
 assets.
 
+Page URLs follow Astro's `trailingSlash` and `build.format`. The default
+directory output writes `guide/index.html`, so links, canonicals, and `llms.txt`
+use `/guide/`. `build.format: "file"` writes `guide.html` and uses `/guide`,
+while the home remains the directory index at the base. `trailingSlash` set to
+`"always"` or `"never"` overrides both. Either way, readers follow the URL the
+host serves directly instead of a redirect.
+
 ## Custom domains
 
 Set Cookbook's canonical site metadata to the HTTPS origin. The integration

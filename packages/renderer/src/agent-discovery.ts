@@ -1,13 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { renderAgentMarkdown, type DocsGraph } from "@tenphi/docs";
+import { renderAgentMarkdown, routeUrl, type DocsGraph } from "@tenphi/docs";
 import { agentPagePath } from "./page-metadata.js";
 import { outputPathForPublicAsset } from "./output-path.js";
-
-function sitePath(base: string, route: string): string {
-  const prefix = base === "/" ? "" : `/${base.replace(/^\/+|\/+$/g, "")}`;
-  return `${prefix}${route === "/" ? "/" : `${route}/`}`;
-}
 
 function pageUrl(site: string | undefined, path: string): string {
   return site ? new URL(path, site).href : path;
@@ -35,7 +30,12 @@ export function renderLlmsTxt(graph: DocsGraph): string {
   );
   for (const entry of graph.entries) {
     if (!discoverable.has(entry.route)) continue;
-    const url = pageUrl(site.url, sitePath(build.base, entry.route));
+    const url = routeUrl(
+      entry.route,
+      build.base,
+      site.url,
+      build.trailingSlash,
+    );
     lines.push(
       `- [${markdownLabel(entry.title)}](${url})${entry.description ? `: ${singleLine(entry.description)}` : ""}${site.seo?.copyPage === false ? "" : ` ([Markdown](${pageUrl(site.url, agentPagePath(entry.route, build.base))}))`}`,
     );
@@ -87,9 +87,11 @@ export async function writeAgentDiscovery(
       );
     pages.push({
       route: entry.route,
-      url: pageUrl(
+      url: routeUrl(
+        entry.route,
+        graph.config.build.base,
         graph.config.site.url,
-        sitePath(graph.config.build.base, entry.route),
+        graph.config.build.trailingSlash,
       ),
       canonical: route.canonical,
       index: route.indexable !== false,

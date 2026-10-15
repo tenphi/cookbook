@@ -1326,6 +1326,7 @@ export function normalizeDocsConfig(
       strict: true,
       ci: process.env.CI === "true",
       base: "/",
+      trailingSlash: "always",
       cacheDir: "",
       maxArtifactBytes: 25 * 1024 * 1024,
       maxUnpackedBytes: 100 * 1024 * 1024,

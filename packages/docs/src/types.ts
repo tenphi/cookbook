@@ -887,6 +887,13 @@ export interface ComponentsConfig {
   overrides?: Record<string, string | false>;
 }
 
+/**
+ * Which page URLs end with a slash, derived from Astro's `trailingSlash` and
+ * `build.format`. `"index"` describes the file format: pages are written as
+ * `guide.html`, while the base home is still a directory `index.html`.
+ */
+export type TrailingSlash = "always" | "never" | "index";
+
 export interface BuildConfig {
   strict?: boolean;
   ci?: boolean;
@@ -952,7 +959,7 @@ export interface NormalizedDocsConfig {
     MarkdownConfig;
   search: Required<SearchConfig>;
   components: ComponentsConfig;
-  build: Required<BuildConfig> & { base: string };
+  build: Required<BuildConfig> & { base: string; trailingSlash: TrailingSlash };
 }
 
 export interface DocsFrontmatter {
@@ -1108,4 +1115,6 @@ export interface CreateDocsGraphOptions {
   lock?: CookbookLock;
   /** Public URL base used when rewriting routes and assets. */
   base?: string;
+  /** Which page URLs end with a slash, following the site's URL format. */
+  trailingSlash?: TrailingSlash;
 }

@@ -245,11 +245,13 @@ export function activeNavigationTab(
 
 export function navigationPath(pathname: string, base = "/"): string {
   const normalizedBase = normalizeNavigationPath(base);
+  // Astro's file build format renders /guide and / as guide.html and index.html.
+  const page = pathname.replace(/(?:\/index)?\.html$/, "");
   const withoutBase =
     normalizedBase !== "/" &&
-    (pathname === normalizedBase || pathname.startsWith(`${normalizedBase}/`))
-      ? pathname.slice(normalizedBase.length) || "/"
-      : pathname;
+    (page === normalizedBase || page.startsWith(`${normalizedBase}/`))
+      ? page.slice(normalizedBase.length) || "/"
+      : page;
   return normalizeNavigationPath(withoutBase);
 }
 

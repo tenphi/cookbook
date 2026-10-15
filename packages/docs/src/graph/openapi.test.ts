@@ -133,7 +133,7 @@ it("produces routable reference links under a deployment base with complete cont
     "/manual/api/read-thing",
   );
   expect(graph.entryByRoute("/api/read-thing")!.transformedBody).toContain(
-    "[All operations](/manual/api)",
+    "[All operations](/manual/api/)",
   );
 });
 

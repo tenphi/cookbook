@@ -137,7 +137,7 @@ try {
   for (const text of ["HTTP bearer", "Override", "Example: result"])
     assert.ok(article.includes(text));
   assert.equal(api.querySelectorAll("tbody tr").length, 1);
-  assert.ok(api.querySelector('a[href="/manual/api"]'));
+  assert.ok(api.querySelector('a[href="/manual/api/"]'));
   assert.ok(!api.querySelector("[style]"));
   await apiWindow.happyDOM.close();
   config.tableOfContents = false;
