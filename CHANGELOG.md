@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.25.2
+
+### Patch Changes
+
+- [#155](https://github.com/tenphi/cookbook/pull/155) [`b5cc407`](https://github.com/tenphi/cookbook/commit/b5cc40780d9614d573c2aaf1f3c4698b6265768e) Thanks [@tenphi](https://github.com/tenphi)! - Stop client navigation from logging `Uncaught (in promise) AbortError:
+
 ## 0.25.1
 
 ### Patch Changes
