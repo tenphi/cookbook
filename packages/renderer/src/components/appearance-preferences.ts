@@ -1,22 +1,25 @@
-// `cookbook-theme` and `cookbook-appearance` are a documented contract that
-// other apps on the same origin read and write (docs/theme-and-components.md,
-// "Reader appearance"). Keep their names and value formats compatible.
-type Scheme = "light" | "dark" | "auto";
-type Contrast = "normal" | "more" | "system";
-type Preferences = { scheme: Scheme; contrast: Contrast };
-type PreferenceStorage = Pick<Storage, "getItem" | "setItem">;
+// `cookbook-appearance` is a documented contract that other apps on the same
+// origin read and write (docs/theme-and-components.md, "Reader appearance").
+// Keep its key and value format compatible; appearance-bootstrap.js reads it too.
+export const APPEARANCE_KEY = "cookbook-appearance";
+// The color scheme used to live in its own key. It is still read when the
+// object has no `theme`, and removed on the next save.
+export const LEGACY_THEME_KEY = "cookbook-theme";
 
-export const parseScheme = (value: unknown): Scheme =>
-  value === "light" || value === "dark" ? value : "auto";
+type Theme = "light" | "dark" | "system";
+type Contrast = "normal" | "more" | "system";
+type Preferences = { theme: Theme; contrast: Contrast };
+type PreferenceStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+export const parseTheme = (value: unknown): Theme =>
+  value === "light" || value === "dark" ? value : "system";
 
 export const parseContrast = (value: unknown): Contrast =>
   value === "normal" || value === "more" ? value : "system";
 
 function storedAppearance(storage: PreferenceStorage): Record<string, unknown> {
   try {
-    const value: unknown = JSON.parse(
-      storage.getItem("cookbook-appearance") ?? "{}",
-    );
+    const value: unknown = JSON.parse(storage.getItem(APPEARANCE_KEY) ?? "{}");
     return value && typeof value === "object" && !Array.isArray(value)
       ? (value as Record<string, unknown>)
       : {};
@@ -26,11 +29,14 @@ function storedAppearance(storage: PreferenceStorage): Record<string, unknown> {
 }
 
 export function loadPreferences(storage?: PreferenceStorage): Preferences {
-  const preferences: Preferences = { scheme: "auto", contrast: "system" };
+  const preferences: Preferences = { theme: "system", contrast: "system" };
   try {
     storage ??= localStorage;
-    preferences.scheme = parseScheme(storage.getItem("cookbook-theme"));
-    preferences.contrast = parseContrast(storedAppearance(storage).contrast);
+    const stored = storedAppearance(storage);
+    preferences.theme = parseTheme(
+      "theme" in stored ? stored.theme : storage.getItem(LEGACY_THEME_KEY),
+    );
+    preferences.contrast = parseContrast(stored.contrast);
   } catch {
     // System defaults work even when browser storage is unavailable.
   }
@@ -44,16 +50,14 @@ export function storePreferences(
   try {
     storage ??= localStorage;
     storage.setItem(
-      "cookbook-theme",
-      value.scheme === "auto" ? "" : value.scheme,
-    );
-    storage.setItem(
-      "cookbook-appearance",
+      APPEARANCE_KEY,
       JSON.stringify({
         ...storedAppearance(storage),
+        theme: value.theme,
         contrast: value.contrast,
       }),
     );
+    storage.removeItem(LEGACY_THEME_KEY);
   } catch {
     // The current page still updates when preferences cannot be persisted.
   }

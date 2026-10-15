@@ -385,32 +385,32 @@ ESLint and oxlint examples.
 
 ## Reader appearance
 
-The Appearance menu stores each reader's color scheme and contrast in
-`localStorage`. These keys are a stable contract, so another app on the same
-origin can share one preference with the documentation. A typical example is a
-product site that serves Cookbook under `/docs/`.
-
-| Key                   | Value                                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------------------------ |
-| `cookbook-theme`      | `"light"` or `"dark"`. An empty string or a missing key follows the system color scheme.               |
-| `cookbook-appearance` | A JSON object whose `contrast` is `"normal"`, `"more"`, or `"system"`. Keep other fields when writing. |
-
-Cookbook applies a stored choice before the first paint, as `data-theme` and
-`data-contrast` on `<html>`. Open pages follow changes made in other tabs through
-the `storage` event. Your app can map the same values onto its own attributes:
+The Appearance menu stores each reader's color scheme and contrast in one
+`localStorage` entry. Its key and format are a stable contract, so another app
+on the same origin can share the preference with the documentation. A typical
+example is a product site that serves Cookbook under `/docs/`.
 
 ```ts
-const theme = localStorage.getItem("cookbook-theme"); // "light", "dark", or ""
-const appearance = JSON.parse(
-  localStorage.getItem("cookbook-appearance") ?? "{}",
-);
-
-localStorage.setItem("cookbook-theme", "dark");
-localStorage.setItem(
-  "cookbook-appearance",
-  JSON.stringify({ ...appearance, contrast: "more" }),
-);
+// localStorage["cookbook-appearance"], stored as JSON
+type CookbookAppearance = {
+  theme?: "light" | "dark" | "system";
+  contrast?: "normal" | "more" | "system";
+};
 ```
+
+A missing or unrecognized field means `"system"`, which follows the reader's
+operating system. Keep any other fields when you write the object:
+
+```ts
+const key = "cookbook-appearance";
+const appearance = JSON.parse(localStorage.getItem(key) ?? "{}") ?? {};
+
+localStorage.setItem(key, JSON.stringify({ ...appearance, theme: "dark" }));
+```
+
+Cookbook applies the stored choice before the first paint, as `data-theme` and
+`data-contrast` on `<html>`. Open pages follow changes made in other tabs through
+the `storage` event. Your app can map the same values onto its own attributes.
 
 Browsers keep `localStorage` per origin: the scheme, host, and port must all
 match, so a docs subdomain does not share the preference.

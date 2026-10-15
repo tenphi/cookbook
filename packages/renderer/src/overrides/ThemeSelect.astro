@@ -11,7 +11,11 @@ const id = `appearance-${crypto.randomUUID()}`;
 const schemes = [
   { value: "light", label: Astro.locals.t("themeSelect.light"), icon: "sun" },
   { value: "dark", label: Astro.locals.t("themeSelect.dark"), icon: "moon" },
-  { value: "auto", label: Astro.locals.t("themeSelect.auto"), icon: "laptop" },
+  {
+    value: "system",
+    label: Astro.locals.t("themeSelect.auto"),
+    icon: "laptop",
+  },
 ] as const;
 const contrasts = [
   { value: "normal", label: ui.normalContrast, icon: "normal" },
@@ -46,7 +50,7 @@ const contrasts = [
               name={`${id}-scheme`}
               value={value}
               data-appearance-scheme
-              checked={value === "auto"}
+              checked={value === "system"}
             />
             <Icon name={icon} />
             <span>{label}</span>
@@ -83,9 +87,11 @@ const contrasts = [
 
 <script>
   import {
+    APPEARANCE_KEY,
+    LEGACY_THEME_KEY,
     loadPreferences,
     storePreferences,
-    parseScheme,
+    parseTheme,
     parseContrast,
   } from "../components/appearance-preferences.js";
   import { initializePopoverMotion } from "../client/popover-motion.js";
@@ -95,11 +101,11 @@ const contrasts = [
 
   function applyPreferences(): void {
     document.documentElement.dataset.theme =
-      current.scheme === "auto"
+      current.theme === "system"
         ? systemScheme.matches
           ? "light"
           : "dark"
-        : current.scheme;
+        : current.theme;
     if (current.contrast === "system") {
       delete document.documentElement.dataset.contrast;
     } else {
@@ -108,7 +114,7 @@ const contrasts = [
     document
       .querySelectorAll<HTMLInputElement>("[data-appearance-scheme]")
       .forEach((input) => {
-        input.checked = input.value === current.scheme;
+        input.checked = input.value === current.theme;
       });
     document
       .querySelectorAll<HTMLInputElement>("[data-appearance-contrast]")
@@ -118,12 +124,13 @@ const contrasts = [
   }
 
   systemScheme.addEventListener("change", () => {
-    if (current.scheme === "auto") applyPreferences();
+    if (current.theme === "system") applyPreferences();
   });
   window.addEventListener("storage", (event) => {
     if (
       !event.key ||
-      ["cookbook-theme", "cookbook-appearance"].includes(event.key)
+      event.key === APPEARANCE_KEY ||
+      event.key === LEGACY_THEME_KEY
     ) {
       current = loadPreferences();
       applyPreferences();
@@ -139,7 +146,7 @@ const contrasts = [
         const input = event.target;
         if (!(input instanceof HTMLInputElement)) return;
         if (input.hasAttribute("data-appearance-scheme")) {
-          current.scheme = parseScheme(input.value);
+          current.theme = parseTheme(input.value);
         } else if (input.hasAttribute("data-appearance-contrast")) {
           current.contrast = parseContrast(input.value);
         } else return;
