@@ -1,14 +1,42 @@
-import type { DocsConfig, DocsEntry, SiteVersion } from "./types.js";
+import type {
+  DocsConfig,
+  DocsEntry,
+  SiteVersion,
+  TrailingSlash,
+} from "./types.js";
 
 export type PublishingConfig = Pick<
   DocsConfig,
   "site" | "locales" | "defaultLocale"
 > & {
-  build?: DocsConfig["build"] & { base?: string };
+  build?: DocsConfig["build"] & {
+    base?: string;
+    trailingSlash?: TrailingSlash | undefined;
+  };
 };
 
-export function routeUrl(route: string, base = "/", site?: string): string {
-  const path = `${base.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`;
+/**
+ * Public path of a page route below the deployment base, in the form a static
+ * host serves without a redirect, so links, canonicals, and agent indexes agree.
+ */
+export function routePath(
+  route: string,
+  base = "/",
+  trailingSlash: TrailingSlash = "always",
+): string {
+  const path = `${base.replace(/\/+$/, "")}${route.replace(/\/+$/, "")}`;
+  const slash =
+    trailingSlash === "always" || (trailingSlash === "index" && route === "/");
+  return slash ? `${path}/` : path || "/";
+}
+
+export function routeUrl(
+  route: string,
+  base = "/",
+  site?: string,
+  trailingSlash: TrailingSlash = "always",
+): string {
+  const path = routePath(route, base, trailingSlash);
   return site ? new URL(path, site).href : path;
 }
 
@@ -44,7 +72,12 @@ export function pagePublishing(
     seo?.index !== false &&
     version?.index !== false &&
     page?.index !== false;
-  const url = routeUrl(entry.route, config.build?.base, config.site?.url);
+  const url = routeUrl(
+    entry.route,
+    config.build?.base,
+    config.site?.url,
+    config.build?.trailingSlash,
+  );
   const canonical = page?.canonical ?? url;
   const siteTitle = config.site?.title ?? "Documentation";
   const title =

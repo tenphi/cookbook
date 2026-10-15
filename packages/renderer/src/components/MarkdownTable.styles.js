@@ -22,6 +22,12 @@ export function MarkdownTableStyles() {
         $: "th, td",
         padding: "($gap * 1.5) ($gap * 2)",
         verticalAlign: "top",
+        textAlign: {
+          "": null,
+          "@own(align=left)": "left",
+          "@own(align=center)": "center",
+          "@own(align=right)": "right",
+        },
         // Change only color; border widths and styles belong to other rules or theme overrides.
         // eslint-disable-next-line tasty/prefer-shorthand-property
         borderColor: "#border",
@@ -36,7 +42,7 @@ export function MarkdownTableStyles() {
         $: "th",
         color: "#text",
         fill: "#surface-2",
-        textAlign: "start",
+        textAlign: { "": "start", "@own(align)": null },
         radius: {
           "@own(:is(thead:first-child tr:first-child >) & :first-child & !:last-child)":
             "($card-radius - $border-width) top-left",

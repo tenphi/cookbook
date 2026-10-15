@@ -21,8 +21,7 @@ const translations = {
   data-search-key={`cookbook-search:${import.meta.env.BASE_URL}:${Astro.locals.cookbookRoute.lang}`}
   data-search-base={import.meta.env.BASE_URL}
   data-translations={JSON.stringify(translations)}
-  data-strip-trailing-slash={import.meta.env.TRAILING_SLASH === "never" ||
-    undefined}
+  data-trailing-slash={content.trailingSlash}
 >
   <SearchButtonRoot
     type="button"

@@ -1,4 +1,5 @@
 ---
+import { routePath } from "@tenphi/docs";
 import { pageMetadata } from "../page-metadata.js";
 import { content } from "virtual:cookbook/config";
 import { localeAlternates, messages } from "../localization.js";
@@ -38,7 +39,7 @@ if (Astro.site && indexedRoutes.some((route) => route.route === current)) {
         rel: "alternate",
         hreflang: lang,
         href: new URL(
-          `${content.base.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+          routePath(route, content.base, content.trailingSlash),
           Astro.site,
         ).href,
       },

@@ -17,15 +17,20 @@ describe("version navigation", () => {
     expect(versionLinks(versions, routes, "/v1/guide", "/manual")).toEqual({
       current: versions[1],
       links: [
-        { ...versions[0], href: "/manual/guide" },
-        { ...versions[1], href: "/manual/v1/guide" },
+        { ...versions[0], href: "/manual/guide/" },
+        { ...versions[1], href: "/manual/v1/guide/" },
       ],
     });
+    expect(
+      versionLinks(versions, routes, "/v1/guide", "/manual", {
+        trailingSlash: "never",
+      }).links.map(({ href }) => href),
+    ).toEqual(["/manual/guide", "/manual/v1/guide"]);
   });
 
   it("falls back to the target version root if a page is missing", () => {
     const links = versionLinks(versions, routes, "/new-only").links;
-    expect(links[1]?.href).toBe("/v1");
+    expect(links[1]?.href).toBe("/v1/");
   });
 });
 
@@ -48,7 +53,7 @@ it("keeps locale prefixes and falls back only to real non-draft version pages", 
     }),
   ).toMatchObject({
     current: versions[1],
-    links: [{ href: "/manual/fr/guide" }, { href: "/manual/fr/v1/guide" }],
+    links: [{ href: "/manual/fr/guide/" }, { href: "/manual/fr/v1/guide/" }],
   });
   const hidden = localized.map((route) =>
     route.route === "/fr/v1/guide" ? { ...route, discoverable: false } : route,
@@ -60,5 +65,5 @@ it("keeps locale prefixes and falls back only to real non-draft version pages", 
         fr: { label: "Français" },
       },
     }).links[1]?.href,
-  ).toBe("/v1/guide");
+  ).toBe("/v1/guide/");
 });

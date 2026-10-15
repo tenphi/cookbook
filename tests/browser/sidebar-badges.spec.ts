@@ -14,11 +14,11 @@ test("sidebar badges preserve labels, escape text, and stay visible in narrow na
   ).toHaveText("BETA");
   await expect(
     sidebar.locator(
-      'a[href="/sidebar-badges/deploying"] [data-element="Badge"]',
+      'a[href="/sidebar-badges/deploying/"] [data-element="Badge"]',
     ),
   ).toHaveCount(0);
   const experimental = sidebar.locator(
-    'a[href="/sidebar-badges/reference/experimental"]',
+    'a[href="/sidebar-badges/reference/experimental/"]',
   );
   await expect(experimental.locator('[data-element="Badge"]')).toHaveText(
     "ALPHA < BETA",

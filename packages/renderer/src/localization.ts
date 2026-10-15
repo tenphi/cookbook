@@ -1,4 +1,10 @@
-import type { DocsConfig, DocsRoute, NavigationItem } from "@tenphi/docs";
+import {
+  routePath,
+  type DocsConfig,
+  type DocsRoute,
+  type NavigationItem,
+  type TrailingSlash,
+} from "@tenphi/docs";
 import {
   normalizeNavigationPath,
   type ResolvedNavigationLayout,
@@ -8,6 +14,8 @@ type LocaleOptions = {
   locales?: DocsConfig["locales"] | undefined;
   defaultLocale?: DocsConfig["defaultLocale"] | undefined;
   translations?: DocsConfig["translations"] | undefined;
+  /** Which page URLs end with a slash, following the site's URL format. */
+  trailingSlash?: TrailingSlash | undefined;
 };
 
 export function routeLocale(path: string, options: LocaleOptions): string {
@@ -87,10 +95,12 @@ export function localeHref(
   const target = options.locales
     ? localeTarget(path, routeLocale(currentPath, options), routes, options)
     : normalizeNavigationPath(path);
-  return (
-    `${base.replace(/\/$/, "")}${target ?? normalizeNavigationPath(path)}${suffix}` ||
-    "/"
-  );
+  const route = target ?? normalizeNavigationPath(path);
+  // Only page routes follow the site's URL format; other paths stay as written.
+  const href = routes.some((page) => page.route === route)
+    ? routePath(route, base, options.trailingSlash)
+    : `${base.replace(/\/$/, "")}${route}` || "/";
+  return `${href}${suffix}`;
 }
 
 /** Resolve navigation against the current locale's available routes. */

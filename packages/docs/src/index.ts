@@ -42,7 +42,12 @@ export type * from "./types.js";
 
 export { resolveColorTheme } from "./theme/palette.js";
 
-export { pagePublishing, routeUrl, routeVersion } from "./publishing.js";
+export {
+  pagePublishing,
+  routePath,
+  routeUrl,
+  routeVersion,
+} from "./publishing.js";
 
 export { renderAgentMarkdown } from "./agent-markdown.js";
 

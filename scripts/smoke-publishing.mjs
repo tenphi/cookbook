@@ -194,7 +194,7 @@ try {
   assert.match(llms, /\[Markdown\]/);
   assert.equal(manifest.pages.find((p) => p.route === "/alias").sitemap, false);
   assert.ok(
-    guide.querySelector('a[href="/manual/v1/guide"]'),
+    guide.querySelector('a[href="/manual/v1/guide/"]'),
     "non-indexed versions stay in navigation",
   );
   config.site.seo.index = false;

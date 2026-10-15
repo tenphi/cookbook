@@ -1,5 +1,5 @@
 import { validateTableOfContents } from "../table-of-contents.js";
-import { pagePublishing, validateSeo } from "../publishing.js";
+import { pagePublishing, routePath, validateSeo } from "../publishing.js";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { readFile, stat } from "node:fs/promises";
@@ -98,9 +98,16 @@ export async function createDocsGraph(
 ): Promise<DocsGraph> {
   const root = resolve(options.root ?? process.cwd());
   const normalized = normalizeDocsConfig(options.config);
-  const config: NormalizedDocsConfig = options.base
-    ? { ...normalized, build: { ...normalized.build, base: options.base } }
-    : normalized;
+  const config: NormalizedDocsConfig = {
+    ...normalized,
+    build: {
+      ...normalized.build,
+      ...(options.base ? { base: options.base } : {}),
+      ...(options.trailingSlash !== undefined
+        ? { trailingSlash: options.trailingSlash }
+        : {}),
+    },
+  };
   const diagnostics: DocsDiagnostic[] = [];
   const lock = options.lock ?? (await readDocsLock(root));
   const collected = await collectSources(root, config, lock, diagnostics);
@@ -971,7 +978,7 @@ async function rewriteLink(
     if (!target || slash < 0)
       missingLink(diagnostics, entry, node, node.url, config);
     else {
-      node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+      node.url = `${pageHref(target.route, config)}${query}${fragment ? `#${fragment}` : ""}`;
       reference.resolved = node.url;
       reference.targetSource = target.sourcePath;
       validateFragment(fragment, target, entry, node, diagnostics, config);
@@ -999,7 +1006,7 @@ async function rewriteLink(
       : undefined;
     if (!target) return;
     const { query, fragment } = splitReference(node.url);
-    node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+    node.url = `${pageHref(target.route, config)}${query}${fragment ? `#${fragment}` : ""}`;
     reference.resolved = node.url;
     reference.targetSource = target.sourcePath;
     if (fragment) reference.fragment = fragment;
@@ -1012,7 +1019,7 @@ async function rewriteLink(
     const target = routeMap.get(normalizeRoute(pathname));
     if (!target) missingLink(diagnostics, entry, node, node.url, config);
     else {
-      node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+      node.url = `${pageHref(target.route, config)}${query}${fragment ? `#${fragment}` : ""}`;
       reference.resolved = node.url;
       reference.targetSource = target.sourcePath;
       if (fragment) reference.fragment = fragment;
@@ -1062,7 +1069,7 @@ async function rewriteLink(
     missingLink(diagnostics, entry, node, node.url, config);
     return;
   }
-  node.url = `${withBase(target.route, config.build.base)}${query}${fragment ? `#${fragment}` : ""}`;
+  node.url = `${pageHref(target.route, config)}${query}${fragment ? `#${fragment}` : ""}`;
   reference.resolved = node.url;
   reference.targetSource = target.sourcePath;
   if (fragment) reference.fragment = fragment;
@@ -1454,6 +1461,10 @@ function repositoryMetadata(
 
 function unsafeProtocol(url: string): boolean {
   return /^(?:javascript|vbscript|data):/i.test(url.trim());
+}
+
+function pageHref(route: string, config: NormalizedDocsConfig): string {
+  return routePath(route, config.build.base, config.build.trailingSlash);
 }
 
 function withBase(route: string, base: string): string {

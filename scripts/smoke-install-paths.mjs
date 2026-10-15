@@ -408,7 +408,7 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api
     }
     if (
       !html.includes("Packed site") ||
-      !html.includes('href="/manual/guide"')
+      !html.includes('href="/manual/guide/"')
     ) {
       throw new Error(
         "Packed-package site did not contain the expected generated content.",

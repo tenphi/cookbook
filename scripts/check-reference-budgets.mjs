@@ -266,14 +266,14 @@ for (const route of [
   "quality-checks",
   "troubleshooting",
 ]) {
-  if (!initialSidebar.includes(`href="/${route}"`))
+  if (!initialSidebar.includes(`href="/${route}/"`))
     throw new Error(`Missing guide journey: ${route}`);
 }
 const referenceSidebar = sidebarHtml(
   await readFile(join(output, "component-styles/index.html"), "utf8"),
 );
 if (
-  !/<a\b[^>]*href="\/component-styles"[^>]*aria-current="page"/.test(
+  !/<a\b[^>]*href="\/component-styles\/"[^>]*aria-current="page"/.test(
     referenceSidebar,
   )
 ) {
@@ -288,7 +288,7 @@ for (const route of [
   "cli",
   "architecture",
 ]) {
-  if (!referenceSidebar.includes(`href="/${route}"`))
+  if (!referenceSidebar.includes(`href="/${route}/"`))
     throw new Error(`Missing reference page: ${route}`);
 }
 for (const [pattern, label] of [

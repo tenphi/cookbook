@@ -5,6 +5,7 @@ declare module "virtual:cookbook/config" {
     DocsHeading,
     DocsRoute,
     SiteConfig,
+    TrailingSlash,
   } from "@tenphi/docs";
   import type { AstroComponentFactory } from "astro/runtime/server/index.js";
   export const content: {
@@ -21,6 +22,7 @@ declare module "virtual:cookbook/config" {
     redirects: Record<string, string>;
     site: SiteConfig;
     base: string;
+    trailingSlash: TrailingSlash;
     search: boolean;
     tableOfContents: DocsConfig["tableOfContents"];
     logo: import("./site-logo.js").SiteLogoSet["logo"];

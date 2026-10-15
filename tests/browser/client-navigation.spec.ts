@@ -25,7 +25,7 @@ test("the first click loads the router while keeping the outgoing page visible",
     (request) => request.resourceType() === "script",
   );
   await page
-    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .locator('cookbook-sidebar a[href="/manual/contents/"]')
     .evaluate((link: HTMLAnchorElement) => link.click());
   await requested;
   await expect(page).toHaveURL(/\/manual\/guide\/?#update-the-site$/);
@@ -48,7 +48,7 @@ test("a failed router download falls back to native document navigation", async 
   );
   await page.route("**/_astro/*.js", (route) => route.abort());
   await page
-    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .locator('cookbook-sidebar a[href="/manual/contents/"]')
     .evaluate((link: HTMLAnchorElement) => link.click());
   await expect(page).toHaveURL(/\/manual\/contents\/?$/);
   await expect(
@@ -77,7 +77,7 @@ test("navigation keeps the document and sidebar scroll while resetting article s
   expect(before.sidebar).toBeGreaterThan(0);
   expect(before.content).toBeGreaterThan(0);
   await page
-    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .locator('cookbook-sidebar a[href="/manual/contents/"]')
     .evaluate((link: HTMLAnchorElement) => link.click());
   await expect(page).toHaveURL(/\/manual\/contents\/?$/);
   await expect(page.locator("#main-content")).toBeFocused();
@@ -96,7 +96,7 @@ test("navigation keeps the document and sidebar scroll while resetting article s
   });
   await expect(
     page.locator('cookbook-sidebar [aria-current="page"]'),
-  ).toHaveAttribute("href", "/manual/contents");
+  ).toHaveAttribute("href", "/manual/contents/");
   await page.evaluate(() => window.scrollTo(0, 600));
   await page.goBack();
   await expect(page).toHaveURL(/\/manual\/guide\/?$/);
@@ -190,10 +190,10 @@ test("native document navigation remains available with reload links and without
   await page.evaluate(() => {
     Object.assign(window, { originalDocument: document });
     document
-      .querySelector('cookbook-sidebar a[href="/manual/contents"]')!
+      .querySelector('cookbook-sidebar a[href="/manual/contents/"]')!
       .setAttribute("data-astro-reload", "");
   });
-  await page.locator('cookbook-sidebar a[href="/manual/contents"]').click();
+  await page.locator('cookbook-sidebar a[href="/manual/contents/"]').click();
   await expect(page).toHaveURL(/\/manual\/contents\/?$/);
   expect(
     await page.evaluate(() => (window as any).originalDocument === document),
@@ -201,7 +201,7 @@ test("native document navigation remains available with reload links and without
   const context = await browser.newContext({ javaScriptEnabled: false });
   const native = await context.newPage();
   await native.goto("http://127.0.0.1:4350/manual/guide/");
-  await native.locator('cookbook-sidebar a[href="/manual/contents"]').click();
+  await native.locator('cookbook-sidebar a[href="/manual/contents/"]').click();
   await expect(native).toHaveURL(/\/manual\/contents\/?$/);
   await expect(
     native.getByRole("heading", { name: "Contents tracking", exact: true }),
@@ -226,20 +226,20 @@ test("sidebar disclosures survive swaps and navigation sections stay independent
   await examples.locator(":scope > summary").click();
   await expect(examples).toHaveAttribute("open");
   await page
-    .locator('cookbook-sidebar a[href="/client-navigation/contents"]')
+    .locator('cookbook-sidebar a[href="/client-navigation/contents/"]')
     .click();
   await expect(page).toHaveURL(/\/client-navigation\/contents\/?$/);
   await expect(examples).toHaveAttribute("open");
   await expect(started).toHaveAttribute("open");
   await page
-    .locator('[data-element=TopNavigation] a[href="/client-navigation/v1"]')
+    .locator('[data-element=TopNavigation] a[href="/client-navigation/v1/"]')
     .click();
   await expect(page).toHaveURL(/\/client-navigation\/v1\/?$/);
   await expect(
-    page.locator('cookbook-sidebar a[href="/client-navigation/contents"]'),
+    page.locator('cookbook-sidebar a[href="/client-navigation/contents/"]'),
   ).toHaveCount(0);
   await page
-    .locator('[data-element=TopNavigation] a[href="/client-navigation/guide"]')
+    .locator('[data-element=TopNavigation] a[href="/client-navigation/guide/"]')
     .click();
   await expect(page).toHaveURL(/\/client-navigation\/guide\/?$/);
   await expect(examples).toHaveAttribute("open");
@@ -305,7 +305,7 @@ test("client navigation works with replaced Head and Header and without view tra
     Object.assign(window, { originalDocument: document }),
   );
   await page
-    .locator('cookbook-sidebar a[href="/custom-header/contents"]')
+    .locator('cookbook-sidebar a[href="/custom-header/contents/"]')
     .click();
   await expect(page).toHaveURL(/\/custom-header\/contents\/?$/);
   expect(
@@ -325,7 +325,7 @@ test("mobile navigation closes and releases inert content after a page swap", as
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/manual/guide/");
   await page.getByRole("button", { name: /Menu/ }).click();
-  await page.locator('cookbook-sidebar a[href="/manual/contents"]').click();
+  await page.locator('cookbook-sidebar a[href="/manual/contents/"]').click();
   await expect(page).toHaveURL(/\/manual\/contents\/?$/);
   await expect(page.locator("#cookbook__sidebar")).not.toBeVisible();
   await expect(page.locator("#main-content")).toBeFocused();

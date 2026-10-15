@@ -27,13 +27,13 @@ test("brief hover crossings do not fetch a page", async ({ page }) => {
     requests.push(new URL(request.url()).pathname),
   );
   await page
-    .locator('cookbook-sidebar a[href="/manual/contents"]')
+    .locator('cookbook-sidebar a[href="/manual/contents/"]')
     .evaluate((link) => {
       link.dispatchEvent(new MouseEvent("mouseenter"));
       link.dispatchEvent(new MouseEvent("mouseleave"));
     });
   await page.waitForTimeout(180);
-  expect(requests).not.toContain("/manual/contents");
+  expect(requests).not.toContain("/manual/contents/");
 });
 
 for (const intent of ["hover", "focus"] as const) {
@@ -42,17 +42,17 @@ for (const intent of ["hover", "focus"] as const) {
   }) => {
     await page.goto("/manual/guide/");
     await page
-      .locator('cookbook-sidebar a[href="/manual/contents"]')
+      .locator('cookbook-sidebar a[href="/manual/contents/"]')
       .evaluate((link: HTMLAnchorElement) => link.click());
     await expect(page).toHaveURL(/\/manual\/contents\/?$/);
     await expect(page.locator("#main-content")).toBeFocused();
     const loaded = page.waitForResponse(
       (response) =>
-        new URL(response.url()).pathname === "/manual/heading-links",
+        new URL(response.url()).pathname === "/manual/heading-links/",
       { timeout: 3000 },
     );
     const link = page.locator(
-      'cookbook-sidebar a[href="/manual/heading-links"]',
+      'cookbook-sidebar a[href="/manual/heading-links/"]',
     );
     if (intent === "hover") await link.hover();
     else await link.focus();
@@ -81,7 +81,9 @@ for (const warmRouter of [false, true]) {
     await page.goto("/manual/", { waitUntil: "domcontentloaded" });
     expect(await page.evaluate(() => document.readyState)).not.toBe("complete");
     if (warmRouter) {
-      await page.locator('cookbook-sidebar a[href="/manual/contents"]').hover();
+      await page
+        .locator('cookbook-sidebar a[href="/manual/contents/"]')
+        .hover();
       await page.waitForFunction(() => history.scrollRestoration === "manual");
     }
     release();
@@ -99,9 +101,9 @@ for (const intent of ["hover", "focus"] as const) {
     cacheablePage: page,
   }) => {
     await page.goto("/manual/guide/");
-    const link = page.locator('cookbook-sidebar a[href="/manual/contents"]');
+    const link = page.locator('cookbook-sidebar a[href="/manual/contents/"]');
     const warmed = page.waitForResponse(
-      (response) => new URL(response.url()).pathname === "/manual/contents",
+      (response) => new URL(response.url()).pathname === "/manual/contents/",
     );
     if (intent === "hover") await link.hover();
     else await link.focus();
@@ -110,7 +112,7 @@ for (const intent of ["hover", "focus"] as const) {
     const requestId = first.headers()["x-cookbook-request-id"];
     expect(requestId).toBeTruthy();
     const navigated = page.waitForResponse(
-      (response) => new URL(response.url()).pathname === "/manual/contents",
+      (response) => new URL(response.url()).pathname === "/manual/contents/",
     );
     await link.click();
     const second = await navigated;
@@ -130,9 +132,9 @@ test("repeat hover and fragment variants do not download the same page again", a
   page.on("request", (request) =>
     requests.push(new URL(request.url()).pathname),
   );
-  const link = page.locator('cookbook-sidebar a[href="/manual/contents"]');
+  const link = page.locator('cookbook-sidebar a[href="/manual/contents/"]');
   const warmed = page.waitForResponse(
-    (response) => new URL(response.url()).pathname === "/manual/contents",
+    (response) => new URL(response.url()).pathname === "/manual/contents/",
   );
   await link.hover();
   await (await warmed).finished();
@@ -141,13 +143,13 @@ test("repeat hover and fragment variants do not download the same page again", a
   await page.waitForTimeout(180);
   await page.evaluate(() => {
     const anchor = document.createElement("a");
-    anchor.href = "/manual/contents#section-2";
+    anchor.href = "/manual/contents/#section-2";
     anchor.textContent = "Prefetch fragment fixture";
     document.getElementById("main-content")!.append(anchor);
   });
   await page.getByRole("link", { name: "Prefetch fragment fixture" }).hover();
   await page.waitForTimeout(180);
-  expect(requests.filter((path) => path === "/manual/contents")).toHaveLength(
+  expect(requests.filter((path) => path === "/manual/contents/")).toHaveLength(
     1,
   );
 });
@@ -170,18 +172,18 @@ for (const connection of [
     page.on("request", (request) =>
       requests.push(new URL(request.url()).pathname),
     );
-    const link = page.locator('cookbook-sidebar a[href="/manual/contents"]');
+    const link = page.locator('cookbook-sidebar a[href="/manual/contents/"]');
     await link.hover();
     await page.waitForTimeout(180);
-    expect(requests).not.toContain("/manual/contents");
+    expect(requests).not.toContain("/manual/contents/");
     const warmed = page.waitForResponse(
-      (response) => new URL(response.url()).pathname === "/manual/contents",
+      (response) => new URL(response.url()).pathname === "/manual/contents/",
     );
     await link.dispatchEvent("touchstart");
     await (await warmed).finished();
-    expect(requests.filter((path) => path === "/manual/contents")).toHaveLength(
-      1,
-    );
+    expect(
+      requests.filter((path) => path === "/manual/contents/"),
+    ).toHaveLength(1);
   });
 }
 
@@ -193,10 +195,10 @@ test("explicit Astro false disables prefetching while preserving client navigati
   page.on("request", (request) =>
     requests.push(new URL(request.url()).pathname),
   );
-  const link = page.locator('cookbook-sidebar a[href="/wide-logo/contents"]');
+  const link = page.locator('cookbook-sidebar a[href="/wide-logo/contents/"]');
   await link.hover();
   await page.waitForTimeout(180);
-  expect(requests).not.toContain("/wide-logo/contents");
+  expect(requests).not.toContain("/wide-logo/contents/");
   await link.click();
   await expect(page).toHaveURL(/\/wide-logo\/contents\/?$/);
   await expect(page.locator("#main-content")).toBeFocused();
@@ -210,13 +212,13 @@ test("Astro selective prefetch and individual opt-outs remain supported", async 
   page.on("request", (request) =>
     requests.push(new URL(request.url()).pathname),
   );
-  await page.locator('cookbook-sidebar a[href="/tall-logo/contents"]').hover();
+  await page.locator('cookbook-sidebar a[href="/tall-logo/contents/"]').hover();
   await page.waitForTimeout(180);
-  expect(requests).not.toContain("/tall-logo/contents");
+  expect(requests).not.toContain("/tall-logo/contents/");
   await page.evaluate(() => {
     for (const [path, enabled] of [
-      ["/contents", "true"],
-      ["/heading-links", "false"],
+      ["/contents/", "true"],
+      ["/heading-links/", "false"],
     ]) {
       const anchor = document.createElement("a");
       anchor.href = `/tall-logo${path}`;
@@ -227,9 +229,9 @@ test("Astro selective prefetch and individual opt-outs remain supported", async 
   });
   await page.getByRole("link", { name: "Prefetch false", exact: true }).hover();
   await page.waitForTimeout(180);
-  expect(requests).not.toContain("/tall-logo/heading-links");
+  expect(requests).not.toContain("/tall-logo/heading-links/");
   const warmed = page.waitForResponse(
-    (response) => new URL(response.url()).pathname === "/tall-logo/contents",
+    (response) => new URL(response.url()).pathname === "/tall-logo/contents/",
   );
   await page.getByRole("link", { name: "Prefetch true", exact: true }).hover();
   await (await warmed).finished();

@@ -27,7 +27,9 @@ import {
   createDocsGraph,
   assertValidDocs,
   resolveDocsProject,
+  routePath,
   type DocsConfig,
+  type TrailingSlash,
 } from "@tenphi/docs";
 import {
   configure,
@@ -43,6 +45,10 @@ import {
 } from "./navigation.js";
 import { rehypeMermaid, satteriMermaid } from "./markdown/rehype-mermaid.js";
 import { rehypeAlerts, satteriAlerts } from "./markdown/rehype-alerts.js";
+import {
+  rehypeTableAlignment,
+  satteriTableAlignment,
+} from "./markdown/rehype-table-alignment.js";
 import {
   rehypeTableScroll,
   satteriTableScroll,
@@ -259,6 +265,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
   let projectRoot = options.root;
   let graphConfig = options.config;
   let graphBase = "/";
+  let graphTrailingSlash: TrailingSlash = "always";
   let graph: Awaited<ReturnType<typeof createDocsGraph>> | undefined;
   let siteIconBase = "/";
   let siteIcons: SiteIconSet | undefined;
@@ -272,6 +279,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
         ...(projectRoot ? { root: projectRoot } : {}),
         ...(graphConfig ? { config: graphConfig } : {}),
         base: graphBase,
+        trailingSlash: graphTrailingSlash,
       });
       assertValidDocs(candidate);
       await validatePluginFrontmatter(
@@ -377,6 +385,13 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           };
         siteIconBase = base;
         graphBase = base;
+        // Match Astro's page URLs: x/index.html is served as /x/, x.html as /x.
+        graphTrailingSlash =
+          context.config.trailingSlash !== "ignore"
+            ? context.config.trailingSlash
+            : context.config.build.format === "directory"
+              ? "always"
+              : "index";
         context.config.integrations.push(
           sitemap({
             serialize: (item) => {
@@ -394,7 +409,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                 ).map(({ lang, route }) => ({
                   lang,
                   url: new URL(
-                    `${graphBase.replace(/\/$/, "")}${route === "/" ? "/" : `${route}/`}`,
+                    routePath(route, graphBase, graphTrailingSlash),
                     item.url,
                   ).href,
                 })),
@@ -596,6 +611,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                         }
                       : documentedSite(loaded),
                     base: loaded.config.build.base,
+                    trailingSlash: loaded.config.build.trailingSlash,
                     search:
                       loaded.config.search.enabled ||
                       typeof options.config?.components?.overrides?.Search ===
@@ -650,6 +666,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
           root: projectRoot,
           ...(graphConfig ? { config: graphConfig } : {}),
           base: graphBase,
+          trailingSlash: graphTrailingSlash,
         });
         assertValidDocs(graph);
         context.injectRoute({
@@ -938,6 +955,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
     if (!plugins.includes(rehypeAlerts)) plugins.push(rehypeAlerts);
+    if (!plugins.includes(rehypeTableAlignment))
+      plugins.push(rehypeTableAlignment);
     if (!plugins.includes(rehypeTableScroll)) plugins.push(rehypeTableScroll);
     if (!plugins.includes(rehypePageAffordances))
       plugins.push(rehypePageAffordances);
@@ -949,6 +968,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
     if (!plugins.includes(satteriAlerts)) plugins.push(satteriAlerts);
+    if (!plugins.includes(satteriTableAlignment))
+      plugins.push(satteriTableAlignment);
     if (!plugins.includes(satteriTableScroll)) plugins.push(satteriTableScroll);
     if (!plugins.includes(satteriPageAffordances))
       plugins.push(satteriPageAffordances);

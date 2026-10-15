@@ -86,8 +86,8 @@ try {
   assert.equal((html.match(/data-element="Light"/g) ?? []).length, 2);
   assert.equal((html.match(/data-element="Dark"/g) ?? []).length, 2);
   assert.ok(html.includes('width="96" height="32"'));
-  assert.match(html, /data-element="LogoLink" href="\/showcase"/);
-  assert.match(html, /data-element="HomeLink" href="\/showcase"/);
+  assert.match(html, /data-element="LogoLink" href="\/showcase\/"/);
+  assert.match(html, /data-element="HomeLink" href="\/showcase\/"/);
   assert.ok(html.includes("Review ready"));
   assert.ok(html.includes("data-demo-badge"));
   const paths = await readdir(join(fixture, "dist"), { recursive: true });
