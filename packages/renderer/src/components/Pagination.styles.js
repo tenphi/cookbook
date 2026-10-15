@@ -22,7 +22,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       gap: "$gap",
       inlineSize: "100%",
       padding: "($gap * 2)",
-      border: "#clear",
+      border: true,
       color: "#text-soft",
       fill: "#surface-2",
       shadow: "none",
