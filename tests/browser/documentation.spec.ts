@@ -755,7 +755,7 @@ test("locale/version navigation keeps prefixes and drafts remain direct-only", a
     await page.locator('meta[name="robots"]').getAttribute("content"),
   ).toContain("noindex");
   expect(
-    await page.locator('cookbook-sidebar a[href="/manual/draft"]').count(),
+    await page.locator('cookbook-sidebar a[href="/manual/draft/"]').count(),
   ).toBe(0);
 });
 
