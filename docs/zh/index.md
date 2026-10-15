@@ -5,7 +5,7 @@ template: splash
 seo:
   title: Cookbook — 与代码保持同步、契合产品风格的文档
 hero:
-  title: 与代码放在一起的文档。
+  title: 与代码放在一起的文档
   tagline: Cookbook 是一套 Astro 文档工具。将仓库中的 Markdown 或已发布的 npm 包转换为可搜索的静态站点，再根据产品调整颜色、字体排版和组件。
   image:
     html: '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'

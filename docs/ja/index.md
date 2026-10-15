@@ -5,7 +5,7 @@ template: splash
 seo:
   title: Cookbook — コードとともに保ち、製品に合わせて整えるドキュメント
 hero:
-  title: コードと同じ場所にあるドキュメント。
+  title: コードと同じ場所にあるドキュメント
   tagline: Cookbook は Astro 向けのドキュメントツールキットです。リポジトリの Markdown や公開済み npm パッケージを、検索できる静的サイトに変換し、色、タイポグラフィ、コンポーネントを製品に合わせて調整できます。
   image:
     html: '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="currentColor"/><path fill="#fff" d="M14.8 16c6.7.2 12.3 2 16.7 5.4v28.4c-4.4-3.1-10-4.7-16.6-4.9a3 3 0 0 1-2.9-3V19a3 3 0 0 1 2.8-3Z"/><path fill="#fff" d="M49.2 16c-6.7.2-12.3 2-16.7 5.4v28.4c4.4-3.1 10-4.7 16.6-4.9a3 3 0 0 0 2.9-3V19a3 3 0 0 0-2.8-3Z"/></svg>'
