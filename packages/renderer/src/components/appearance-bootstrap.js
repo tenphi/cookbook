@@ -1,4 +1,5 @@
 // Kept dependency-free for the page shell's synchronous, pre-paint script.
+// Reads the documented storage contract in appearance-preferences.ts.
 (() => {
   const root = globalThis.document.documentElement;
   try {

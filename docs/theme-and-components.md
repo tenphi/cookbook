@@ -383,6 +383,38 @@ Adopt Cookbook's Tasty validation preset and register your additional names.
 See [Linting custom styles](./custom-components.md#linting-custom-styles) for
 ESLint and oxlint examples.
 
+## Reader appearance
+
+The Appearance menu stores each reader's color scheme and contrast in
+`localStorage`. These keys are a stable contract, so another app on the same
+origin can share one preference with the documentation. A typical example is a
+product site that serves Cookbook under `/docs/`.
+
+| Key                   | Value                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------ |
+| `cookbook-theme`      | `"light"` or `"dark"`. An empty string or a missing key follows the system color scheme.               |
+| `cookbook-appearance` | A JSON object whose `contrast` is `"normal"`, `"more"`, or `"system"`. Keep other fields when writing. |
+
+Cookbook applies a stored choice before the first paint, as `data-theme` and
+`data-contrast` on `<html>`. Open pages follow changes made in other tabs through
+the `storage` event. Your app can map the same values onto its own attributes:
+
+```ts
+const theme = localStorage.getItem("cookbook-theme"); // "light", "dark", or ""
+const appearance = JSON.parse(
+  localStorage.getItem("cookbook-appearance") ?? "{}",
+);
+
+localStorage.setItem("cookbook-theme", "dark");
+localStorage.setItem(
+  "cookbook-appearance",
+  JSON.stringify({ ...appearance, contrast: "more" }),
+);
+```
+
+Browsers keep `localStorage` per origin: the scheme, host, and port must all
+match, so a docs subdomain does not share the preference.
+
 ## Static behavior
 
 The page content remains readable without client JavaScript. Search, menus,

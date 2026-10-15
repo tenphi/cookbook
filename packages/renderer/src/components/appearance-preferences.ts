@@ -1,3 +1,6 @@
+// `cookbook-theme` and `cookbook-appearance` are a documented contract that
+// other apps on the same origin read and write (docs/theme-and-components.md,
+// "Reader appearance"). Keep their names and value formats compatible.
 type Scheme = "light" | "dark" | "auto";
 type Contrast = "normal" | "more" | "system";
 type Preferences = { scheme: Scheme; contrast: Contrast };
