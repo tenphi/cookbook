@@ -2,6 +2,14 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.25.3
+
+### Patch Changes
+
+- [#158](https://github.com/tenphi/cookbook/pull/158) [`7778fc9`](https://github.com/tenphi/cookbook/commit/7778fc9c564401ae6554466e04dfa97805184c85) Thanks [@tenphi](https://github.com/tenphi)! - Restore the gap above top-level sidebar sections. `Sidebar.TopLevelSpacing`
+  no longer applies to sections, so `Sidebar.GroupSpacing` sets their spacing
+  regardless of stylesheet order.
+
 ## 0.25.2
 
 ### Patch Changes
