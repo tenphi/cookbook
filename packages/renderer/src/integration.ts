@@ -44,6 +44,10 @@ import {
 import { rehypeMermaid, satteriMermaid } from "./markdown/rehype-mermaid.js";
 import { rehypeAlerts, satteriAlerts } from "./markdown/rehype-alerts.js";
 import {
+  rehypeTableAlignment,
+  satteriTableAlignment,
+} from "./markdown/rehype-table-alignment.js";
+import {
   rehypeTableScroll,
   satteriTableScroll,
 } from "./markdown/rehype-table-scroll.js";
@@ -938,6 +942,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(rehypeMermaid)) plugins.push(rehypeMermaid);
     if (!plugins.includes(rehypeAlerts)) plugins.push(rehypeAlerts);
+    if (!plugins.includes(rehypeTableAlignment))
+      plugins.push(rehypeTableAlignment);
     if (!plugins.includes(rehypeTableScroll)) plugins.push(rehypeTableScroll);
     if (!plugins.includes(rehypePageAffordances))
       plugins.push(rehypePageAffordances);
@@ -949,6 +955,8 @@ function registerCookbookMarkdownPlugins(processor: {
       : [];
     if (!plugins.includes(satteriMermaid)) plugins.push(satteriMermaid);
     if (!plugins.includes(satteriAlerts)) plugins.push(satteriAlerts);
+    if (!plugins.includes(satteriTableAlignment))
+      plugins.push(satteriTableAlignment);
     if (!plugins.includes(satteriTableScroll)) plugins.push(satteriTableScroll);
     if (!plugins.includes(satteriPageAffordances))
       plugins.push(satteriPageAffordances);
