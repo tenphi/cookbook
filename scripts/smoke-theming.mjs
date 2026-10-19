@@ -106,7 +106,7 @@ try {
   assert.doesNotMatch(html, /<style\b/);
   assert.doesNotMatch(html, /<[a-z][^>]*\sstyle\s*=/i);
   assert.ok(html.includes("data-syntax-keyword"));
-  assert.ok(html.includes('sandbox=""'));
+  assert.ok(html.includes('sandbox="allow-forms"'));
   assert.match(css, /blockquote[^{}]*\{[^{}]*padding-inline:\s*29px 0/);
   assert.match(
     css,

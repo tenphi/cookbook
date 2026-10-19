@@ -14,6 +14,8 @@ export interface PreviewProps {
   javascript?: string;
   /** Public-directory paths, such as `/demo/button.js`, inlined as classic scripts before `javascript`. */
   scripts?: string[];
+  /** The frame's minimum height as a CSS length, such as `18rem`; defaults to `10rem`. */
+  height?: string;
 }
 export type StepsProps = Record<string, never>;
 export interface TabsProps {
