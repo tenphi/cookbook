@@ -38,7 +38,10 @@ export const PreviewRoot = defineComponent("Preview", {
     Frame: {
       display: "block",
       width: "100%",
-      height: "min 10rem",
+      // A scripted preview grows to fit its content (client/preview-height.ts)
+      // between its minimum height and the window's height. The cap also stops
+      // content sized by the frame itself, such as `100vh`, growing forever.
+      height: "10rem 100vh",
       border: "0",
       fill: "#surface",
     },
@@ -79,7 +82,10 @@ export const PreviewRoot = defineComponent("Preview", {
   elements: previewElements,
 });
 
-/** Render-time styles for one preview's `height` prop, a validated CSS length. */
+/**
+ * Render-time styles for one preview's `height` prop, a validated CSS length.
+ * It replaces the minimum height and keeps the window-height cap.
+ */
 export function previewHeightStyles(height) {
-  return { Frame: { height: `min ${height}` } };
+  return { Frame: { height: `${height} 100vh` } };
 }

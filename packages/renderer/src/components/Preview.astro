@@ -30,6 +30,7 @@ const ui = messages(
       title={title}
       sandbox={preview.sandbox}
       srcDoc={preview.document}
+      data-buffer={preview.buffer}
     />
   </PreviewRoot.Stage>
   <PreviewRoot.Code>
@@ -37,3 +38,9 @@ const ui = messages(
     <PreviewRoot.Pre><code>{preview.source}</code></PreviewRoot.Pre>
   </PreviewRoot.Code>
 </PreviewRoot>
+
+<script>
+  import { initializePreviewHeight } from "../client/preview-height.js";
+
+  initializePreviewHeight();
+</script>

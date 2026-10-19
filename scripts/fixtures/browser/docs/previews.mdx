@@ -1,0 +1,53 @@
+---
+title: Previews
+---
+
+import { Preview } from "@tenphi/cookbook/components";
+
+<Preview
+  title="Growing preview"
+  css={"#content { height: 400px; }"}
+  html={'<div id="content"></div>'}
+  javascript={"document.body.dataset.scripted = '';"}
+/>
+
+<Preview
+  title="Reserved preview"
+  height="20rem"
+  css={"#content { height: 100px; }"}
+  html={'<div id="content"></div>'}
+  javascript={"document.body.dataset.scripted = '';"}
+/>
+
+<Preview
+  title="Picker preview"
+  height="30rem"
+  buffer="12rem"
+  css={
+    "#content { position: relative; height: 100px; } ul { position: absolute; top: 100%; height: 180px; margin: 0; }"
+  }
+  html={'<div id="content"><ul></ul></div>'}
+  javascript={"document.body.dataset.scripted = '';"}
+/>
+
+<Preview
+  title="Wrapping preview"
+  html={"<p>A paragraph that wraps onto more lines as the page gets narrower, so the frame grows to fit it.</p>".repeat(
+    3,
+  )}
+  javascript={"document.body.dataset.scripted = '';"}
+/>
+
+<Preview
+  title="Markup preview"
+  buffer="12rem"
+  css={"#content { height: 400px; }"}
+  html={'<div id="content"></div>'}
+/>
+
+<Preview
+  title="Viewport preview"
+  css={"body { min-height: 100vh; }"}
+  html={"<p>Sized by the frame.</p>"}
+  javascript={"document.body.dataset.scripted = '';"}
+/>

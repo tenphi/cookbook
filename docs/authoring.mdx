@@ -154,20 +154,66 @@ shows each inlined file as a `<script src>` tag. Every preview embeds its own
 copy, so keep demo bundles small. A missing file or a path outside the public
 directory fails the build.
 
-The frame is at least `10rem` tall, and content outside it is clipped. Give a
-demo with an overlay, such as a listbox, a popover, or a modal dialog, more
-room with `height`, the frame's minimum height as a CSS length such as `18rem`
-or `320px`. Any other value, including a percentage or `calc()`, fails the
-build. To change every preview, style `theme.styles.Preview.Frame` instead.
+A preview that runs scripts, with `javascript` or `scripts`, fits its frame to
+its content. The frame grows and shrinks as the content changes, the page
+width changes, or fonts load. It is at least `10rem` tall and at most as tall
+as the browser window; taller content scrolls inside the frame. A preview
+without scripts keeps a `10rem` frame, and content beyond it scrolls.
+
+```mdx
+<Preview
+  title="Growing list"
+  html={'<button type="button">Add item</button><ol></ol>'}
+  javascript={
+    "document.querySelector('button').addEventListener('click', () => document.querySelector('ol').append(document.createElement('li')));"
+  }
+/>
+```
+
+<Preview
+  title="Growing list"
+  html={'<button type="button">Add item</button><ol></ol>'}
+  javascript={
+    "document.querySelector('button').addEventListener('click', () => document.querySelector('ol').append(document.createElement('li')));"
+  }
+/>
+
+The frame fits the content in the document's flow. An overlay, such as a
+listbox, a popover, a modal dialog, or an absolutely positioned menu, doesn't
+make it taller when it opens, so reserve room for it:
+
+- `buffer` adds room below the content for a picker's list, such as a select's
+  or a combobox's. The room follows the content as the page width changes it.
+  It defaults to `0`. A preview without scripts can't measure its content, so
+  `buffer` has no effect there.
+- `height` sets the frame's minimum height in place of `10rem`, for an overlay
+  that uses the whole frame, such as a modal dialog. It also applies to
+  previews without scripts.
+
+The frame is as tall as the content plus `buffer`, up to the window's height,
+and never shorter than `height`. Both take a CSS length, such as `12rem` or `320px`; any other value, including
+a percentage or `calc()`, fails the build. To change every preview, style
+`theme.styles.Preview.Frame` instead.
 
 ```mdx
 <Preview
   title="Library select"
-  height="18rem"
+  buffer="15rem"
   html={"<acme-select label='Fruit'></acme-select>"}
   scripts={["/demo/select.js"]}
 />
+
+<Preview
+  title="Library dialog"
+  height="24rem"
+  html={"<acme-dialog open>Saved</acme-dialog>"}
+  scripts={["/demo/dialog.js"]}
+/>
 ```
+
+Don't size the content by the frame, for example with `100vh` or
+`height: 100%` on the root element: the frame can't fit such content, and it
+can grow to the window's height.
 
 Forms in a preview can be submitted. To show what a form sends, call
 `event.preventDefault()` in a `submit` listener and read its `FormData`;
@@ -216,12 +262,12 @@ markers remain visible independently of their theme-aware backgrounds:
 
 ## Component props
 
-| Component | Props and behavior                                                                                                                         |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                                  |
-| `Steps`   | Ordered list container; supply `li` elements                                                                                               |
-| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                |
-| `Preview` | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, and frame `height`; isolates examples in a sandboxed iframe |
+| Component | Props and behavior                                                                                                                                                                              |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                                                                                       |
+| `Steps`   | Ordered list container; supply `li` elements                                                                                                                                                    |
+| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                                                                     |
+| `Preview` | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, minimum frame `height`, and overlay `buffer`; isolates examples in a sandboxed iframe that fits scripted content |
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are
