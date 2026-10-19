@@ -2,6 +2,18 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.27.0
+
+### Minor Changes
+
+- [#165](https://github.com/tenphi/cookbook/pull/165) [`4647fe2`](https://github.com/tenphi/cookbook/commit/4647fe23e20fd699f40f5da58eeb7fcbbe4e5cb8) Thanks [@tenphi](https://github.com/tenphi)! - Add a `height` prop to `Preview` for demos that need more room, such as a
+  listbox, a popover, or a modal dialog. It sets the frame's minimum height to a
+  CSS length, such as `18rem`, in place of the default `10rem`; any other value
+  fails the build. Forms in previews can now be submitted: the frame's sandbox
+  includes `allow-forms`, so a `submit` listener can call `event.preventDefault()`
+  and show the form's data. The frame keeps its opaque origin, and a submission
+  can navigate only the frame, never the documentation page.
+
 ## 0.26.0
 
 ### Minor Changes
