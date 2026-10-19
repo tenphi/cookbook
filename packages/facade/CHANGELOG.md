@@ -1,5 +1,24 @@
 # @tenphi/cookbook
 
+## 0.26.0
+
+### Minor Changes
+
+- [#163](https://github.com/tenphi/cookbook/pull/163) [`42dedd7`](https://github.com/tenphi/cookbook/commit/42dedd772adc44a96f8429c6e7c740db5c8f3107) Thanks [@tenphi](https://github.com/tenphi)! - Add a `scripts` prop to `Preview` for demos that run your own library code.
+  List files from the site's public directory, such as `["/demo/button.js"]`;
+  Cookbook inlines them as classic scripts, in order, before `javascript`, so the
+  preview stays in its opaque-origin sandbox and also works in `astro dev`,
+  `astro preview`, and offline, where a `<script src>` request from the frame
+  fails. View source shows each file as a `<script src>` tag, and a missing path
+  or one outside the public directory fails the build. Authored `javascript` that
+  contains `</script>` no longer ends the preview's script early.
+
+### Patch Changes
+
+- Updated dependencies [[`42dedd7`](https://github.com/tenphi/cookbook/commit/42dedd772adc44a96f8429c6e7c740db5c8f3107)]:
+  - @tenphi/renderer@0.26.0
+  - @tenphi/docs@0.26.0
+
 ## 0.25.4
 
 ### Patch Changes
