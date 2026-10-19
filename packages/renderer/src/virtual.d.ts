@@ -30,6 +30,8 @@ declare module "virtual:cookbook/config" {
     defaultLocale: DocsConfig["defaultLocale"];
     translations: DocsConfig["translations"];
     head: DocsConfig["head"];
+    /** Astro's public directory; Preview inlines `scripts` from it. */
+    publicDir: string;
   };
   export const mdxLoaders: Record<
     string,

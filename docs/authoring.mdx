@@ -130,6 +130,28 @@ import { Preview } from "@tenphi/cookbook/components";
   css={"button { padding: 0.75rem; }"}
 />
 
+To demonstrate your own library, build it into the site's public directory
+(`public/` by default) and list the files in `scripts` by their public path,
+without the Astro `base`. Cookbook inlines each file, in order, before
+`javascript`, so the authored code can use what they define:
+
+```mdx
+<Preview
+  title="Library button"
+  html={"<acme-button>Save</acme-button>"}
+  scripts={["/demo/button.js"]}
+  javascript={"document.querySelector('acme-button').loading = true;"}
+/>
+```
+
+Inlining keeps the preview isolated and needs no request, so the demo works in
+`astro dev`, `astro preview`, and offline as well as on the deployed site. A
+`<script src>` in `html` is a cross-site request from the sandboxed frame:
+`astro dev` rejects it, and Chrome blocks it from local servers. View source
+shows each inlined file as a `<script src>` tag. Every preview embeds its own
+copy, so keep demo bundles small. A missing file or a path outside the public
+directory fails the build.
+
 ## Cookbook logo
 
 `Logo` renders the Cookbook mark. Use `label` when it carries meaning or
@@ -149,12 +171,12 @@ markers remain visible independently of their theme-aware backgrounds:
 
 ## Component props
 
-| Component | Props and behavior                                                                                  |
-| --------- | --------------------------------------------------------------------------------------------------- |
-| `Card`    | Optional `title` and `href`; renders an article or link with slot content                           |
-| `Steps`   | Ordered list container; supply `li` elements                                                        |
-| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                         |
-| `Preview` | Required `title`; optional `html`, `css`, and `javascript`; isolates examples in a sandboxed iframe |
+| Component | Props and behavior                                                                                                         |
+| --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                  |
+| `Steps`   | Ordered list container; supply `li` elements                                                                               |
+| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                |
+| `Preview` | Required `title`; optional `html`, `css`, `javascript`, and public-file `scripts`; isolates examples in a sandboxed iframe |
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are

@@ -160,6 +160,14 @@ describe("page prefetch configuration", () => {
   );
 });
 
+it("passes Astro's public directory to Preview scripts", async () => {
+  vi.mocked(createDocsGraph).mockResolvedValue(graph("public"));
+  const { load } = await setup({ parse: (data) => data });
+  expect(await load()).toContain(
+    `"publicDir":${JSON.stringify(`${root}/public/`)}`,
+  );
+});
+
 describe("graph refresh publication", () => {
   it("keeps the last graph visible while asynchronous schema validation is pending", async () => {
     let finish!: () => void;
