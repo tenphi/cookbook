@@ -2,6 +2,22 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.28.0
+
+### Minor Changes
+
+- [#167](https://github.com/tenphi/cookbook/pull/167) [`6019743`](https://github.com/tenphi/cookbook/commit/601974300bff2a73904dc6fd1e9087f65e22c53a) Thanks [@tenphi](https://github.com/tenphi)! - `Preview` frames that run scripts now fit their content. The frame grows and
+  shrinks as the demo's content, the page width, or its fonts change, from its
+  minimum height (`10rem`, or the `height` prop) up to the browser window's
+  height; taller content scrolls inside the frame, as before. The frame keeps its
+  opaque origin: a small script in the preview document reports the content's
+  height to the page with `postMessage`. Overlays such as a listbox, a popover,
+  or a modal dialog aren't measured, so a new `buffer` prop adds room below the
+  content, such as `15rem` for a select's list, and that room follows the content
+  as the page width changes. `buffer` takes a CSS length like `height`; any other
+  value fails the build. Previews without scripts keep their `10rem` frame and
+  ignore `buffer`.
+
 ## 0.27.0
 
 ### Minor Changes
