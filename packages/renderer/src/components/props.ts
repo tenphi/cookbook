@@ -12,6 +12,8 @@ export interface PreviewProps {
   html?: string;
   css?: string;
   javascript?: string;
+  /** Public-directory paths, such as `/demo/button.js`, inlined as classic scripts before `javascript`. */
+  scripts?: string[];
 }
 export type StepsProps = Record<string, never>;
 export interface TabsProps {

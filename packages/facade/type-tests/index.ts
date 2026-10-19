@@ -88,11 +88,15 @@ const tab: ComponentProps<typeof Tab> = { label: "npm" };
 const missingTabLabel: ComponentProps<typeof Tab> = {};
 // @ts-expect-error A preview requires its title.
 const missingTitle: ComponentProps<typeof Preview> = { html: "<p>Preview</p>" };
+const scripted: ComponentProps<typeof Preview> = {
+  title: "Library button",
+  scripts: ["/demo/button.js"],
+};
 const logo: ComponentProps<typeof Logo> = {
   label: "Product",
   decorative: true,
 };
-void [tab, missingTabLabel, missingTitle, logo];
+void [tab, missingTabLabel, missingTitle, scripted, logo];
 
 defineDocsConfig({
   navigation: [

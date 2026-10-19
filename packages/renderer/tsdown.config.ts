@@ -12,6 +12,7 @@ export default defineConfig({
     "eslint-plugin": "src/eslint-plugin.ts",
     "theme/shiki-theme": "src/theme/shiki-theme.ts",
     "page-metadata": "src/page-metadata.ts",
+    "preview-document": "src/preview-document.ts",
     localization: "src/localization.ts",
     "route-context": "src/route-context.ts",
     ui: "src/ui.ts",

@@ -624,6 +624,7 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
                       ...(siteIcons?.head ?? []),
                       ...(options.config?.head ?? []),
                     ],
+                    publicDir: fileURLToPath(context.config.publicDir),
                   };
                 },
                 navigation,

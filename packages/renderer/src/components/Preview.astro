@@ -1,12 +1,17 @@
 ---
 import { messages, requestLanguage } from "../localization.js";
+import { buildPreview } from "../preview-document.js";
 import { content } from "virtual:cookbook/config";
 import { PreviewRoot } from "./Preview.styles.js";
 
 import type { PreviewProps as Props } from "./props.js";
 
-const { title, html = "", css = "", javascript } = Astro.props;
-const source = `<!doctype html><meta charset="utf-8"><style>${css}</style>${html}${javascript ? `<script>${javascript}<\/script>` : ""}`;
+const { title } = Astro.props;
+const preview = await buildPreview(
+  Astro.props,
+  content.publicDir,
+  Astro.url.pathname,
+);
 const ui = messages(
   requestLanguage(Astro.url.pathname, content.base, content),
   content,
@@ -18,12 +23,12 @@ const ui = messages(
   <PreviewRoot.Stage>
     <PreviewRoot.Frame
       title={title}
-      sandbox={javascript ? "allow-scripts" : ""}
-      srcDoc={source}
+      sandbox={preview.sandbox}
+      srcDoc={preview.document}
     />
   </PreviewRoot.Stage>
   <PreviewRoot.Code>
     <PreviewRoot.Summary>{ui.viewSource}</PreviewRoot.Summary>
-    <PreviewRoot.Pre><code>{source}</code></PreviewRoot.Pre>
+    <PreviewRoot.Pre><code>{preview.source}</code></PreviewRoot.Pre>
   </PreviewRoot.Code>
 </PreviewRoot>
