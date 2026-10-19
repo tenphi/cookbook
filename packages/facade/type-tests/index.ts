@@ -95,6 +95,7 @@ const scripted: ComponentProps<typeof Preview> = {
 const tall: ComponentProps<typeof Preview> = {
   title: "Library select",
   height: "18rem",
+  buffer: "12rem",
 };
 const logo: ComponentProps<typeof Logo> = {
   label: "Product",

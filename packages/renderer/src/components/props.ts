@@ -16,6 +16,8 @@ export interface PreviewProps {
   scripts?: string[];
   /** The frame's minimum height as a CSS length, such as `18rem`; defaults to `10rem`. */
   height?: string;
+  /** Room below the content of a preview that runs scripts, as a CSS length such as `12rem`, for overlays like a listbox; defaults to `0`. */
+  buffer?: string;
 }
 export type StepsProps = Record<string, never>;
 export interface TabsProps {
