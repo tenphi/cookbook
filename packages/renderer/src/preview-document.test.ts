@@ -1,7 +1,17 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  createServerStyleCollector,
+  runWithCollector,
+} from "@tenphi/tasty/ssr";
 import { afterAll, beforeAll, expect, it } from "vitest";
+import {
+  PreviewRoot,
+  previewHeightStyles,
+} from "./components/Preview.styles.js";
 import { buildPreview } from "./preview-document.js";
 
 let root: string;
@@ -27,9 +37,9 @@ it("keeps markup-only previews without scripts", async () => {
     document:
       '<!doctype html><meta charset="utf-8"><style>p{}</style><p>Hi</p>',
     source: '<!doctype html><meta charset="utf-8"><style>p{}</style><p>Hi</p>',
-    sandbox: "",
+    sandbox: "allow-forms",
   });
-  expect((await build({ scripts: [] })).sandbox).toBe("");
+  expect((await build({ scripts: [] })).sandbox).toBe("allow-forms");
 });
 
 it("inlines public scripts in order before the authored JavaScript", async () => {
@@ -38,7 +48,7 @@ it("inlines public scripts in order before the authored JavaScript", async () =>
     scripts: ["/demo/lib.js", "/demo/button.js"],
     javascript: "lib.start();",
   });
-  expect(preview.sandbox).toBe("allow-scripts");
+  expect(preview.sandbox).toBe("allow-forms allow-scripts");
   expect(preview.document).toBe(
     '<!doctype html><meta charset="utf-8"><style></style><button>Go</button>' +
       "<script>window.lib = 1;</script>" +
@@ -52,13 +62,13 @@ it("inlines public scripts in order before the authored JavaScript", async () =>
       "<script>lib.start();</script>",
   );
   expect((await build({ scripts: ["/demo/lib.js"] })).sandbox).toBe(
-    "allow-scripts",
+    "allow-forms allow-scripts",
   );
 });
 
 it("escapes closing script tags in authored JavaScript", async () => {
   const preview = await build({ javascript: 'x = "</Script>";' });
-  expect(preview.sandbox).toBe("allow-scripts");
+  expect(preview.sandbox).toBe("allow-forms allow-scripts");
   expect(preview.document).toContain('<script>x = "<\\/Script>";</script>');
   expect(preview.source).toContain('<script>x = "<\\/Script>";</script>');
 });
@@ -82,4 +92,51 @@ it("resolves site-root paths inside the public directory, not the filesystem roo
   await expect(
     build({ scripts: [join(publicDir, "demo/lib.js")] }),
   ).rejects.toThrow("must be a readable file");
+});
+
+it("lets forms submit while the frame keeps its opaque origin", async () => {
+  // Without allow-same-origin or allow-top-navigation, a submission can only
+  // navigate the frame itself.
+  expect((await build({ html: "<form></form>" })).sandbox).toBe("allow-forms");
+  expect(
+    (await build({ html: "<form></form>", javascript: "submit();" })).sandbox,
+  ).toBe("allow-forms allow-scripts");
+});
+
+it.each(["18rem", "320px", "1.5em", ".5in", "60dvh", "40vmin"])(
+  "keeps the CSS length %s as the frame height",
+  async (height) => {
+    expect((await build({ height })).height).toBe(height);
+  },
+);
+
+it.each([
+  "",
+  "18",
+  "-18rem",
+  "50%",
+  "2x",
+  " 18rem",
+  "min 18rem",
+  "calc(10rem + 1px)",
+  "18rem; color: red",
+])("rejects the frame height %j", async (height) => {
+  await expect(build({ height })).rejects.toThrow(
+    `Preview on /guide/: height ${height} must be a CSS length, such as 18rem or 320px.`,
+  );
+});
+
+it("replaces the frame's minimum height and keeps its other styles", () => {
+  const collector = createServerStyleCollector();
+  runWithCollector(collector, () =>
+    renderToStaticMarkup(
+      createElement(PreviewRoot, { styles: previewHeightStyles("18rem") }),
+    ),
+  );
+  const frame = collector
+    .getCSS()
+    .match(/\[data-element="Frame"\]\s*\{([^}]*)\}/)?.[1];
+  expect(frame).toMatch(/min-height:\s*18rem/);
+  expect(frame).toMatch(/display:\s*block/);
+  expect(frame).not.toContain("10rem");
 });

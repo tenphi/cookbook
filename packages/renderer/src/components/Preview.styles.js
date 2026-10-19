@@ -78,3 +78,8 @@ export const PreviewRoot = defineComponent("Preview", {
   },
   elements: previewElements,
 });
+
+/** Render-time styles for one preview's `height` prop, a validated CSS length. */
+export function previewHeightStyles(height) {
+  return { Frame: { height: `min ${height}` } };
+}

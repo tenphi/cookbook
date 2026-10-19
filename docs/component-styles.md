@@ -475,7 +475,8 @@ shadow-root templates), and non-Tasty stylesheets throughout documentation HTML.
 It parses actual markup, so escaped examples and strings in scripts are allowed.
 The explicit exception is the separate document in a sandboxed `Preview` iframe;
 it cannot access its parent's origin. Configure its size with
-`theme.styles.Preview.Frame`. The documentation shell supports the CSP directive
+`theme.styles.Preview.Frame`, or one preview's minimum height with its `height`
+prop. The documentation shell supports the CSP directive
 `style-src-attr 'none'`. A host's CSP may also restrict the preview document; when
 using that directive, authored previews must use style blocks rather than style
 attributes.

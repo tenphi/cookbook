@@ -2,9 +2,15 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PreviewProps } from "./components/props.js";
 
+// The frame's height becomes generated CSS, so accept only a plain length.
+// Percentages are rejected because the frame's container has no fixed height.
+const CSS_LENGTH =
+  /^(?:\d+|\d*\.\d+)(?:px|r?em|ch|ex|r?lh|[dls]?v(?:h|w|min|max)|cm|mm|in|pt|pc)$/;
+
 /**
- * Build a Preview's frame document and its "View source" text. Public scripts
- * are inlined so they run in the opaque-origin sandbox without a request.
+ * Build a Preview's frame document, its "View source" text and the frame's
+ * settings. Public scripts are inlined so they run in the opaque-origin sandbox
+ * without a request.
  */
 export async function buildPreview(
   {
@@ -12,10 +18,15 @@ export async function buildPreview(
     css = "",
     javascript,
     scripts = [],
+    height,
   }: Omit<PreviewProps, "title">,
   publicDir: string,
   page: string,
 ) {
+  if (height !== undefined && !CSS_LENGTH.test(height))
+    throw Error(
+      `Preview on ${page}: height ${height} must be a CSS length, such as 18rem or 320px.`,
+    );
   const files = await Promise.all(
     scripts.map((src) => readPublicScript(src, publicDir, page)),
   );
@@ -27,7 +38,12 @@ export async function buildPreview(
       markup +
       scripts.map((src) => `<script src="${src}"></script>`).join("") +
       authored,
-    sandbox: scripts.length || javascript ? "allow-scripts" : "",
+    // A submitted form can navigate only the frame itself, as a link can.
+    sandbox:
+      scripts.length || javascript
+        ? "allow-forms allow-scripts"
+        : "allow-forms",
+    height,
   };
 }
 

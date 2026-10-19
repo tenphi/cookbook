@@ -154,6 +154,49 @@ shows each inlined file as a `<script src>` tag. Every preview embeds its own
 copy, so keep demo bundles small. A missing file or a path outside the public
 directory fails the build.
 
+The frame is at least `10rem` tall, and content outside it is clipped. Give a
+demo with an overlay, such as a listbox, a popover, or a modal dialog, more
+room with `height`, the frame's minimum height as a CSS length such as `18rem`
+or `320px`. Any other value, including a percentage or `calc()`, fails the
+build. To change every preview, style `theme.styles.Preview.Frame` instead.
+
+```mdx
+<Preview
+  title="Library select"
+  height="18rem"
+  html={"<acme-select label='Fruit'></acme-select>"}
+  scripts={["/demo/select.js"]}
+/>
+```
+
+Forms in a preview can be submitted. To show what a form sends, call
+`event.preventDefault()` in a `submit` listener and read its `FormData`;
+otherwise the submission navigates the frame away from the demo. The
+documentation page itself is never navigated, and the frame keeps its separate
+origin.
+
+```mdx
+<Preview
+  title="Form data"
+  html={
+    '<form><label>Name <input name="name" value="Ada"></label> <button>Send</button></form><output></output>'
+  }
+  javascript={
+    "document.querySelector('form').addEventListener('submit', (event) => { event.preventDefault(); document.querySelector('output').value = JSON.stringify(Object.fromEntries(new FormData(event.target))); });"
+  }
+/>
+```
+
+<Preview
+  title="Form data"
+  html={
+    '<form><label>Name <input name="name" value="Ada"></label> <button>Send</button></form><output></output>'
+  }
+  javascript={
+    "document.querySelector('form').addEventListener('submit', (event) => { event.preventDefault(); document.querySelector('output').value = JSON.stringify(Object.fromEntries(new FormData(event.target))); });"
+  }
+/>
+
 ## Cookbook logo
 
 `Logo` renders the Cookbook mark. Use `label` when it carries meaning or
@@ -173,12 +216,12 @@ markers remain visible independently of their theme-aware backgrounds:
 
 ## Component props
 
-| Component | Props and behavior                                                                                                         |
-| --------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                  |
-| `Steps`   | Ordered list container; supply `li` elements                                                                               |
-| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                |
-| `Preview` | Required `title`; optional `html`, `css`, `javascript`, and public-file `scripts`; isolates examples in a sandboxed iframe |
+| Component | Props and behavior                                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                                  |
+| `Steps`   | Ordered list container; supply `li` elements                                                                                               |
+| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                |
+| `Preview` | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, and frame `height`; isolates examples in a sandboxed iframe |
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are

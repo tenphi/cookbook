@@ -92,11 +92,15 @@ const scripted: ComponentProps<typeof Preview> = {
   title: "Library button",
   scripts: ["/demo/button.js"],
 };
+const tall: ComponentProps<typeof Preview> = {
+  title: "Library select",
+  height: "18rem",
+};
 const logo: ComponentProps<typeof Logo> = {
   label: "Product",
   decorative: true,
 };
-void [tab, missingTabLabel, missingTitle, scripted, logo];
+void [tab, missingTabLabel, missingTitle, scripted, tall, logo];
 
 defineDocsConfig({
   navigation: [

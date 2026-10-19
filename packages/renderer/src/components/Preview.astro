@@ -2,7 +2,7 @@
 import { messages, requestLanguage } from "../localization.js";
 import { buildPreview } from "../preview-document.js";
 import { content } from "virtual:cookbook/config";
-import { PreviewRoot } from "./Preview.styles.js";
+import { PreviewRoot, previewHeightStyles } from "./Preview.styles.js";
 
 import type { PreviewProps as Props } from "./props.js";
 
@@ -18,7 +18,12 @@ const ui = messages(
 );
 ---
 
-<PreviewRoot className="td-preview" data-not-content="" aria-label={title}>
+<PreviewRoot
+  className="td-preview"
+  data-not-content=""
+  aria-label={title}
+  styles={preview.height && previewHeightStyles(preview.height)}
+>
   <PreviewRoot.Caption><strong>{title}</strong></PreviewRoot.Caption>
   <PreviewRoot.Stage>
     <PreviewRoot.Frame
