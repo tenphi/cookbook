@@ -8,7 +8,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
   "data-element": "Sidebar",
   styles: {
     "$sidebar-transition": "120ms",
-    display: { "@md": "block" },
+    display: { "": null, "@md": "block" },
     visibility: {
       "": "visible",
       "!@md": "hidden",
@@ -19,11 +19,11 @@ export const SidebarRoot = defineComponent("Sidebar", {
     blockInset: { "": "$docs-nav-height start, 0 end", "!@md": "0" },
     inlineInset: {
       "": "0 start, auto end",
-      "@md": "max(0px, calc((100% - $layout-width) / 2)) start, auto end",
+      "@md": "max(0px, ((100% - $layout-width) / 2)) start, auto end",
     },
     inlineSize: {
       "": "$sidebar-width",
-      "!@md": "min(22rem, calc(100% - 2rem))",
+      "!@md": "min(22rem, (100% - 2rem))",
     },
     blockSize: "auto",
     margin: "0",
@@ -65,7 +65,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       hide: { "": true, "!@md": false },
       alignItems: "center",
       justifyContent: "space-between",
-      gap: "$gap",
+      gap: "1x",
     },
     HomeLink: {
       display: "flex",
@@ -73,7 +73,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
       textDecoration: "none",
       inlineSize: "min 0",
       padding: "0",
-      gap: "$gap",
+      gap: "1x",
       color: "#text",
       preset: "h4",
     },
@@ -137,10 +137,10 @@ export const SidebarRoot = defineComponent("Sidebar", {
       flow: "column",
       blockSize: "min 100%",
       inlinePadding: "$docs-sidebar-pad-x",
-      gap: "($gap * 2)",
+      gap: "2x",
       blockPadding: {
-        "": "($gap * 3) start, ($gap * 6) end",
-        "!@md": "($gap * 2) start, ($gap * 6) end",
+        "": "3x start, 6x end",
+        "!@md": "2x start, 6x end",
       },
     },
     Tree: { $: "cookbook-sidebar", display: "block" },
@@ -167,27 +167,27 @@ export const SidebarRoot = defineComponent("Sidebar", {
       $: "ul > li + li",
       blockMargin: {
         "": null,
-        "@own(top-level & section)": "($gap * 2.5) start",
+        "@own(top-level & section)": "2.5x start",
       },
     },
     NestedItem: {
       $: "cookbook-sidebar details > ul > li",
-      inlineMargin: "($gap * 1.5) start",
+      inlineMargin: "1.5x start",
     },
     SectionHeading: {
       $: "SectionHeading",
-      margin: "0 0 1bw",
-      padding: "($gap * 0.75) ($gap * 1.25)",
+      margin: "1bw bottom",
+      padding: "0.75x 1.25x",
       color: "#text",
       preset: "small / strong",
     },
     Control: {
       $: "cookbook-sidebar summary, cookbook-sidebar a",
       blockSize: "min 2.25rem",
-      padding: "($gap * 0.75) ($gap * 1.25)",
+      padding: "0.75x 1.25x",
       color: "#sidebar-text",
       preset: "navigation",
-      radius: "$radius",
+      radius: "1r",
       textDecoration: "none",
     },
     Summary: {
@@ -267,7 +267,8 @@ export const SidebarRoot = defineComponent("Sidebar", {
       flexShrink: "0",
       inlineSize: "1rem",
       blockSize: "1rem",
-      // Tasty and browsers support :dir(); the lint rule's pseudo list omits it.
+      // Tasty and browsers support :dir(); the lint rule's pseudo list omits it
+      // (tenphi/eslint-plugin-tasty#77).
       // eslint-disable-next-line tasty/valid-state-key
       transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
     },

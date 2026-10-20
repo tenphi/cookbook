@@ -10,23 +10,24 @@ export const PaginationRoot = defineComponent("Pagination", {
   as: "div",
   "data-element": "Pagination",
   styles: {
-    display: { "": "grid", "@media:print": "none" },
-    gap: "($gap * 2)",
+    display: "grid",
+    hide: { "": false, "@media:print": true },
+    gap: "2x",
     gridColumns: { "": "repeat(2, minmax(0, 1fr))", "!@sm": "1fr" },
     Link: {
       $: "a",
-      radius: "$radius",
+      radius: "1r",
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-start",
-      gap: "$gap",
+      gap: "1x",
       inlineSize: "100%",
-      padding: "($gap * 2)",
+      padding: "2x",
       border: true,
       color: "#text-soft",
       fill: "#surface-2",
       shadow: "none",
-      transition: "color $transition, background-color $transition",
+      transition: "color, fill",
       textDecoration: "none",
       overflowWrap: "anywhere",
     },
@@ -35,12 +36,12 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (!@sm)': "auto",
+        '@own([rel="prev"]) & !@sm': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="prev"])': "1",
-        '(@own([rel="prev"])) & (!@sm)': "auto",
+        '@own([rel="prev"]) & !@sm': "auto",
       },
     },
     NextLink: {
@@ -50,16 +51,16 @@ export const PaginationRoot = defineComponent("Pagination", {
       gridColumn: {
         "": null,
         '@own([rel="next"])': "2",
-        '(@own([rel="next"])) & (!@sm)': "auto",
+        '@own([rel="next"]) & !@sm': "auto",
       },
       gridRow: {
         "": null,
         '@own([rel="next"])': "1",
-        '(@own([rel="next"])) & (!@sm)': "auto",
+        '@own([rel="next"]) & !@sm': "auto",
       },
     },
     NextIcon: {
-      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
       // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[rel="next"]::before',
       order: "1",
@@ -107,7 +108,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
     PreviousIconRtl: {
-      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
       // eslint-disable-next-line tasty/no-state-in-selector
       $: '&:is([dir="rtl"] *) a[rel="prev"]::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
@@ -115,7 +116,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextIconRtl: {
-      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
       // eslint-disable-next-line tasty/no-state-in-selector
       $: '&:is([dir="rtl"] *) a[rel="next"]::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.

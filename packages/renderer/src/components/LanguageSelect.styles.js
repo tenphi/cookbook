@@ -21,10 +21,10 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
       ...languageSelectStyles.Trigger,
       inlineSize: "8rem",
       blockSize: "$control-height",
-      padding: "0 $gap",
+      padding: "0 1x",
       fill: "#clear",
       border: "0",
-      transition: "color $transition, fill $transition",
+      transition: "color, fill",
     },
     HoverTrigger: {
       // Reuse the shared, server-only popover anatomy.
@@ -106,14 +106,14 @@ export const LanguageSelectRoot = defineComponent("LanguageSelect", {
         "": null,
         "[data-sidebar]": "auto start, anchor(top) end",
       },
-      blockMargin: { "": null, "[data-sidebar]": "$gap end" },
+      blockMargin: { "": null, "[data-sidebar]": "1x end" },
       inlineInset: {
         "": null,
-        "[data-sidebar]": "$gap start, auto end",
+        "[data-sidebar]": "1x start, auto end",
       },
       inlineSize: {
         "": null,
-        "[data-sidebar]": "min(20rem, calc(100vw - 4rem))",
+        "[data-sidebar]": "min(20rem, (100vw - 4rem))",
       },
       blockSize: {
         "": null,

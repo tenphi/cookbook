@@ -20,7 +20,6 @@ import type {
   RefAttributes,
 } from "react";
 import { resolveComponentStyles } from "./components/component-styles.js";
-import { inheritComponentParts } from "./components/inherit-component-parts.js";
 
 type InheritedParts<C> = {
   [
@@ -63,16 +62,12 @@ export function extendComponent<C extends ComponentType<any>>(
     styles?: Styles;
   },
 ): ComponentType<ComponentProps<C>> & InheritedParts<C> {
-  const extended = tasty(base, {
+  // Tasty copies the base's compound parts but types every base prop as
+  // optional. Conservatively keep the base's required props.
+  return tasty(base, {
     ...options,
     styles: resolveComponentStyles(name, options.styles ?? {}),
-  });
-  // Tasty's wrapper type erases compound exports and makes every prop optional.
-  // Restore the copied parts and conservatively keep the base's required props.
-  return inheritComponentParts(base, extended) as unknown as ComponentType<
-    ComponentProps<C>
-  > &
-    InheritedParts<C>;
+  }) as unknown as ComponentType<ComponentProps<C>> & InheritedParts<C>;
 }
 
 /** Create a named component with its built-in or custom theme styles merged into its defaults. */

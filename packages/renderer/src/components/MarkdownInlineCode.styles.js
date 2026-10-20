@@ -12,7 +12,7 @@ export function MarkdownInlineCodeStyles() {
       color: "#text-soft",
       fill: "#surface-3",
       preset: "inline-code",
-      radius: "($radius * 0.65)",
+      radius: "0.65r",
     }),
   );
   return null;

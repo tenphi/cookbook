@@ -66,6 +66,32 @@ rules, pass `resolveComponentStyles(name, baseStyles)` to `useGlobalStyles()`.
 Both merge `theme.customStyles[name]` into the complete base styles during
 server rendering. See [custom components](./custom-components.md).
 
+Direction-dependent styles now follow the page's writing direction. Override
+`Steps` with `inlinePadding` and `inlineBorder`, `Steps.Item`,
+`MarkdownCodeBlock.Pre`, and `SearchButton` with `inlinePadding` (and
+`blockPadding`), and the `SkipLink`, `HeaderLinks.Panel`, and
+`HeaderLinks.Close` positions with `blockInset` and `inlineInset`. A physical
+`padding`, `border`, or `inset` override no longer replaces those
+declarations. `MarkdownTable.HeaderCell` rounds both top corners of each cell
+in the first header row.
+
+Built-in styles hide elements with Tasty's `hide` instead of `display: none`.
+`hide` takes priority over `display`, so override `hide` to show or hide
+`MobileMenuToggle`, `Pagination`, `Search.Close`,
+`SearchResults.EngineControls`, `SearchResults.SuppressedClear`, and the
+`Document` utilities `PrintHidden`, `DesktopBlock`, `DesktopFlex`,
+`NarrowBlock`, and `MobileBlock`.
+
+`theme.styles.Card` overrides of `fill`, `shadow`, and `translate` now also
+apply to linked Cards. Their hover and pressed values are `:any-link & :hover`
+and `:any-link & :active` states of those properties, so a plain value such as
+`fill: "#surface"` also replaces them.
+
+The `clear` palette role is removed. Tasty 3.11 compiles `#clear` to
+`transparent` without reading a theme token, so a customized
+`theme.palette.clear` no longer has any effect. A leftover entry now defines an
+unused custom color; delete it.
+
 ## 0.19.x to 0.20
 
 Cookbook 0.20 generates a themed social preview image when a site has no

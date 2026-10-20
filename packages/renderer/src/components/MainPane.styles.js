@@ -12,8 +12,8 @@ export const MainPaneRoot = defineComponent("MainPane", {
     inlineSize: {
       "": "0 100% initial",
       "[data-has-sidebar] & [data-has-toc]":
-        "min(calc(100% - $sidebar-width), calc($content-width + (100% - $content-width - $sidebar-width) / 2))",
-      "([data-has-sidebar] & [data-has-toc]) & (!@lg)": "100%",
+        "min((100% - $sidebar-width), ($content-width + (100% - $content-width - $sidebar-width) / 2))",
+      "[data-has-sidebar] & [data-has-toc] & !@lg": "100%",
     },
   },
 });

@@ -15,12 +15,12 @@ export function MarkdownTableStyles() {
         borderSpacing: "0",
         color: "#text-soft",
         preset: "small",
-        border: "$border-width solid #border",
-        radius: "$card-radius",
+        border: true,
+        radius: "1cr",
       },
       Cell: {
         $: "th, td",
-        padding: "($gap * 1.5) ($gap * 2)",
+        padding: "1.5x 2x",
         verticalAlign: "top",
         textAlign: {
           "": null,
@@ -36,20 +36,17 @@ export function MarkdownTableStyles() {
         $: "tbody td",
         // Clear only the last row's end border; the theme may configure its start border.
         // eslint-disable-next-line tasty/prefer-shorthand-property
-        borderBlockEnd: { "@own(:is(tr:last-child >))": "0" },
+        borderBlockEnd: { "": null, "@own(:is(tr:last-child >))": "0" },
       },
       HeaderCell: {
         $: "th",
         color: "#text",
         fill: "#surface-2",
         textAlign: { "": "start", "@own(align)": null },
+        // Round only the top corners so the header row matches in either direction.
         radius: {
-          "@own(:is(thead:first-child tr:first-child >) & :first-child & !:last-child)":
-            "($card-radius - $border-width) top-left",
-          "@own(:is(thead:first-child tr:first-child >) & !:first-child & :last-child)":
-            "($card-radius - $border-width) top-right",
-          "@own(:is(thead:first-child tr:first-child >) & :first-child & :last-child)":
-            "($card-radius - $border-width) top",
+          "": null,
+          "@own(:is(thead:first-child tr:first-child >))": "(1cr - 1bw) top",
         },
       },
       Scroll: {

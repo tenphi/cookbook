@@ -22,7 +22,7 @@ export const PageFrameRoot = defineComponent("PageFrame", {
       inlinePadding: {
         "": null,
         "[data-has-sidebar]": "$sidebar-width start",
-        "([data-has-sidebar]) & (!@md)": "0 start",
+        "[data-has-sidebar] & !@md": "0 start",
       },
     },
     Columns: {

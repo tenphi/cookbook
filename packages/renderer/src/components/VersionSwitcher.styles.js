@@ -24,7 +24,7 @@ export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
       // eslint-disable-next-line tasty/no-style-spread
       ...versionSelectStyles.Trigger,
       blockSize: "min $control-height",
-      inlinePadding: "$gap",
+      inlinePadding: "1x",
       fill: "#surface-2",
       border: true,
       preset: "small / strong",
@@ -35,10 +35,10 @@ export const VersionSwitcherRoot = defineComponent("VersionSwitcher", {
       // eslint-disable-next-line tasty/no-style-spread
       ...versionSelectStyles.Panel,
       positionAnchor: "--version-trigger",
-      blockInset: "(anchor(bottom) + $gap) start, auto end",
+      blockInset: "(anchor(bottom) + 1x) start, auto end",
       inlineInset: {
-        "": "anchor(left) start, auto end",
-        "!@md": "auto start, anchor(right) end",
+        "": "anchor(start) start, auto end",
+        "!@md": "auto start, anchor(end) end",
       },
     },
   },

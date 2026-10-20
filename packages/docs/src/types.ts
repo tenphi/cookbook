@@ -333,7 +333,6 @@ export const COOKBOOK_PALETTE_NAMES = [
   "accent-surface-subtle",
   "accent-surface-2-subtle",
   "shadow",
-  "clear",
   "info",
   "info-text",
   "info-surface",

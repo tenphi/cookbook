@@ -9,7 +9,7 @@ export const SocialIconsRoot = defineComponent("SocialIcons", {
   styles: {
     display: "flex",
     alignItems: "center",
-    gap: "($gap * 0.5)",
+    gap: "0.5x",
     Link: {
       $: "a",
       display: "grid",

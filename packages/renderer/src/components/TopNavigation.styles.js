@@ -26,7 +26,7 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
       flexGrow: "0",
       flexShrink: "0",
       flexBasis: "auto",
-      blockPadding: "($gap * 1.25) start, $gap end",
+      blockPadding: "1.25x start, 1x end",
       color: "#text-soft",
       preset: "navigation",
       textDecoration: "none",
@@ -38,7 +38,7 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
       color: { "": null, '@own([aria-current="page"])': "#accent-text" },
     },
     ActiveIndicator: {
-      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
       // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[aria-current="page"]::after',
       "$indicator-height": "2px",
