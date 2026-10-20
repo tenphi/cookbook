@@ -391,9 +391,6 @@
             "shadow": {
               "$ref": "#/$defs/paletteColor"
             },
-            "clear": {
-              "$ref": "#/$defs/paletteColor"
-            },
             "info-text": {
               "$ref": "#/$defs/paletteColor"
             },

@@ -1,4 +1,3 @@
-import { TASTY_SPACING_PROPERTIES } from "../theme/tasty-config.js";
 import { configureCookbookStates } from "./tasty-states.js";
 import { defineComponent } from "../define-component.js";
 
@@ -8,8 +7,7 @@ export const MainContentRoot = defineComponent("MainContent", {
   as: "main",
   "data-element": "MainContent",
   styles: {
-    "@property": TASTY_SPACING_PROPERTIES,
-    padding: "0 0 5rem",
+    padding: "5rem bottom",
     // A focus target for the skip link and page swaps, not a control. Clicking
     // its text focuses it, so keyboard scrolling would otherwise show a ring.
     outline: "none",
@@ -17,7 +15,7 @@ export const MainContentRoot = defineComponent("MainContent", {
     ContentSpacing: {
       $: ":where(Panel > Container) > * + *",
       blockMargin: "$margin-block-start $margin-block-end",
-      "$margin-block-start": "($gap * 3)",
+      "$margin-block-start": "3x",
     },
     Container: {
       $: "Panel > Container",
@@ -27,12 +25,12 @@ export const MainContentRoot = defineComponent("MainContent", {
     Panel: {
       $: "Panel",
       "$padding-block-start": {
-        "": "($gap * 3)",
-        "@own(:nth-of-type(2))": "($gap * 2)",
+        "": "3x",
+        "@own(:nth-of-type(2))": "2x",
       },
       "$padding-block-end": {
-        "": "($gap * 3)",
-        "@own(:first-of-type)": "($gap * 2)",
+        "": "3x",
+        "@own(:first-of-type)": "2x",
       },
       blockPadding: "$padding-block-start $padding-block-end",
       inlinePadding: "$docs-content-pad-x",

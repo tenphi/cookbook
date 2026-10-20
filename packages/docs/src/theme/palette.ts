@@ -260,7 +260,6 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       intensity: [12, 20],
       tuning: { alphaMax: theme.glaze?.shadowTuning?.alphaMax ?? 0.28 },
     },
-    clear: { from: "#ffffff", mode: "fixed", opacity: 0 },
     ...statusColors("info", theme.palette?.info, "#2563eb"),
     ...statusColors("success", theme.palette?.success, "#16a34a"),
     ...statusColors("warning", theme.palette?.warning, "#d97706"),

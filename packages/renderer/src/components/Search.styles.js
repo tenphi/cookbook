@@ -20,7 +20,7 @@ export const SearchRoot = defineComponent("Search", {
     },
     Dialog: {
       $: "dialog",
-      radius: { "": "$card-radius", "!@md": "0" },
+      radius: { "": "1cr", "!@md": "0" },
       inlineSize: { "": "0 90% 40rem", "!@md": "100%" },
       blockSize: {
         "": "15rem max-content (100% - 8rem)",
@@ -54,7 +54,7 @@ export const SearchRoot = defineComponent("Search", {
       // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
     },
-    OpenDialog: { $: "dialog", display: { "": "", "@own([open])": "flex" } },
+    OpenDialog: { $: "dialog", display: { "": null, "@own([open])": "flex" } },
     EnteredDialog: {
       $: "dialog",
       opacity: { "": null, "@own([open] & [data-open])": "1" },
@@ -72,7 +72,7 @@ export const SearchRoot = defineComponent("Search", {
       },
     },
     EnteredBackdrop: {
-      // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
       // eslint-disable-next-line tasty/no-state-in-selector
       $: "dialog[open][data-open]::backdrop",
       opacity: { "": "1", "!@md": "0" },
@@ -83,8 +83,8 @@ export const SearchRoot = defineComponent("Search", {
       flow: "column",
       flexGrow: "1",
       blockSize: "min 0",
-      gap: "($gap * 2)",
-      padding: { "": "($gap * 3)", "!@md": "($gap * 2) ($gap * 2) 0" },
+      gap: "2x",
+      padding: { "": "3x", "!@md": "2x 2x 0" },
       overflow: "hidden",
     },
     Container: {
@@ -97,7 +97,8 @@ export const SearchRoot = defineComponent("Search", {
     },
     Close: {
       $: 'button[data-element="Close"]',
-      display: { "": "none", "!@md": "grid" },
+      display: "grid",
+      hide: { "": true, "!@md": false },
       placeItems: "center",
       alignSelf: "flex-end",
       flexShrink: "0",
@@ -110,7 +111,7 @@ export const SearchRoot = defineComponent("Search", {
       fill: "#clear",
       shadow: "none",
       cursor: "pointer",
-      transition: "color $transition, background-color $transition",
+      transition: "color, fill",
     },
     HoverClose: {
       $: 'button[data-element="Close"]',

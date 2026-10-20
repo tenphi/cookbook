@@ -53,7 +53,7 @@ export const PreviewRoot = defineComponent("Preview", {
       preset: "small",
       fill: "#surface-2",
       cursor: "pointer",
-      transition: "fill $transition",
+      transition: "fill",
     },
     HoverSummary: {
       $: "> details > summary",

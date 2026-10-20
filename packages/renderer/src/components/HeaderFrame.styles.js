@@ -13,7 +13,7 @@ export const HeaderFrameRoot = defineComponent("HeaderFrame", {
     inlineSize: "100%",
     blockSize: "$docs-nav-height",
     padding: "0 $docs-nav-pad-x",
-    blockBorder: "$border-width solid #border end",
+    blockBorder: "1bw solid #border end",
     fill: "#header",
     "$backdrop-blur": "16px",
     backdropFilter: "blur($backdrop-blur)",

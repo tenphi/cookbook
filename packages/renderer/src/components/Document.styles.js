@@ -3,7 +3,6 @@ import jetBrainsMonoLatin from "@fontsource-variable/jetbrains-mono/files/jetbra
 import onestLatin from "@fontsource-variable/onest/files/onest-latin-wght-normal.woff2?url";
 import { resolveComponentStyles } from "./component-styles.js";
 import { configureCookbookStates } from "./tasty-states.js";
-import { TASTY_SPACING_PROPERTIES } from "../theme/tasty-config.js";
 import { getDefaultFontUsage, getFontFaces } from "../theme/fonts.js";
 
 configureCookbookStates();
@@ -31,11 +30,7 @@ export default function DocumentStyles() {
         "": null,
         ":has(#cookbook__sidebar:popover-open) & !@md": "hidden",
       },
-      colorScheme: {
-        "": "dark",
-        '[data-theme="light"]': "light",
-        "![data-theme] & @system-light": "light",
-      },
+      colorScheme: { "": "dark", "@light": "light" },
       "$docs-nav-height": {
         "": "4.5rem",
         ":has(TopNavigation)": "7.25rem",
@@ -49,7 +44,7 @@ export default function DocumentStyles() {
       "$docs-nav-gap": { "": "0.75rem", "!@md": "0.5rem" },
       "$docs-sidebar-pad-x": "1.5rem",
       "$docs-content-pad-x": {
-        "": "clamp(1.5rem, calc((100% - $content-width) / 2), 4rem)",
+        "": "clamp(1.5rem, ((100% - $content-width) / 2), 4rem)",
         "!@md": "1rem",
       },
       "$docs-menu-button-size": { "": "2.5rem", "!@md": "2.25rem" },
@@ -64,10 +59,9 @@ export default function DocumentStyles() {
   useGlobalStyles(
     ":where(html)",
     resolveComponentStyles("Document", {
-      "@property": TASTY_SPACING_PROPERTIES,
       boxSizing: "border-box",
-      scrollBehavior: { "@reduced-motion": "auto" },
-      transitionDuration: { "@reduced-motion": "0.01ms" },
+      scrollBehavior: { "": null, "@reduced-motion": "auto" },
+      transitionDuration: { "": null, "@reduced-motion": "0.01ms" },
       "$margin-block-start": "0",
       "$margin-block-end": "0",
       blockSize: "min 100%",
@@ -76,12 +70,8 @@ export default function DocumentStyles() {
       All: {
         $: "&::before, &::after, *, *::before, *::after",
         boxSizing: "border-box",
-        scrollBehavior: {
-          "@reduced-motion": "auto",
-        },
-        transitionDuration: {
-          "@reduced-motion": "0.01ms",
-        },
+        scrollBehavior: { "": null, "@reduced-motion": "auto" },
+        transitionDuration: { "": null, "@reduced-motion": "0.01ms" },
       },
       BlockSpacing: {
         $: "*",
@@ -122,7 +112,7 @@ export default function DocumentStyles() {
         $: ":where(button), :where(input), :where(select), :where(textarea)",
         preset: "body",
         blockSize: "min $control-height",
-        radius: "$radius",
+        radius: "1r",
         shadow: "none",
       },
       Pointer: {
@@ -152,23 +142,17 @@ export default function DocumentStyles() {
       },
       PrintHidden: {
         $: "*",
-        display: { "": null, "@own(print-hidden) & @media:print": "none" },
+        hide: { "": null, "@own(print-hidden) & @media:print": true },
       },
       DesktopBlock: {
         $: "*",
-        display: {
-          "": null,
-          "@own(desktop-block)": "block",
-          "@own(desktop-block) & !@md": "none",
-        },
+        display: { "": null, "@own(desktop-block)": "block" },
+        hide: { "": null, "@own(desktop-block) & !@md": true },
       },
       DesktopFlex: {
         $: "*",
-        display: {
-          "": null,
-          "@own(desktop-flex)": "flex",
-          "@own(desktop-flex) & !@md": "none",
-        },
+        display: { "": null, "@own(desktop-flex)": "flex" },
+        hide: { "": null, "@own(desktop-flex) & !@md": true },
       },
       ScreenReaderOnly: {
         $: "*",
@@ -200,19 +184,13 @@ export default function DocumentStyles() {
       Link: { $: "a", color: "#accent-text" },
       NarrowBlock: {
         $: "*",
-        display: {
-          "": null,
-          "@own(narrow)": "none",
-          "@own(narrow) & !@lg": "block",
-        },
+        display: { "": null, "@own(narrow)": "block" },
+        hide: { "": null, "@own(narrow) & @lg": true },
       },
       MobileBlock: {
         $: "*",
-        display: {
-          "": null,
-          "@own(mobile)": "none",
-          "@own(mobile) & !@md": "block",
-        },
+        display: { "": null, "@own(mobile)": "block" },
+        hide: { "": null, "@own(mobile) & @md": true },
       },
       Code: {
         $: ":where(code), :where(kbd), :where(samp), :where(pre)",
@@ -228,7 +206,7 @@ export default function DocumentStyles() {
       },
       CurrentLink: {
         $: "a",
-        radius: { "": null, '@own([aria-current="page"])': "$radius" },
+        radius: { "": null, '@own([aria-current="page"])': "1r" },
       },
       SearchOpen: {
         $: "body",
@@ -251,7 +229,7 @@ export default function DocumentStyles() {
         ":is(h6)": "h6",
       },
       textWrap: "balance",
-      "$margin-block-start": { "": null, '[id="_top"]': "($gap * 2)" },
+      "$margin-block-start": { "": null, '[id="_top"]': "2x" },
       blockMargin: "$margin-block-start $margin-block-end",
     }),
   );

@@ -12,7 +12,7 @@ export const PackageVersionRoot = defineComponent("PackageVersion", {
     alignItems: "center",
     flexShrink: "0",
     blockSize: "min 1.5rem",
-    inlinePadding: "($gap * 0.75)",
+    inlinePadding: "0.75x",
     color: "#text-soft",
     fill: "#surface-2",
     border: true,

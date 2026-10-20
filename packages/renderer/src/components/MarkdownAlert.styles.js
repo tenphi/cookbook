@@ -8,7 +8,7 @@ export function MarkdownAlertStyles() {
   useGlobalStyles(
     ".cookbook-alert",
     resolveComponentStyles("MarkdownAlert", {
-      padding: "($gap * 2) ($gap * 2.5)",
+      padding: "2x 2.5x",
       color: {
         "": "#text-soft",
         "[data-note]": "#blue-text",
@@ -23,7 +23,7 @@ export function MarkdownAlertStyles() {
         "[data-caution]": "#warning",
         "[data-danger]": "#red",
       },
-      radius: "$card-radius",
+      radius: "1cr",
       fill: {
         "": "#surface-2",
         "[data-note]": "#blue-surface",
@@ -35,9 +35,9 @@ export function MarkdownAlertStyles() {
         $: "Title",
         display: "flex",
         alignItems: "center",
-        gap: "$gap",
+        gap: "1x",
         "$margin-block-start": "0",
-        "$margin-block-end": "$gap",
+        "$margin-block-end": "1x",
         blockMargin: "$margin-block-start $margin-block-end",
         inlineMargin: "0",
         color: "inherit",

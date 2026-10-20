@@ -16,7 +16,7 @@ export const HeroRoot = defineComponent("Hero", {
     gap: "clamp(2rem, 5vw, 5rem)",
     blockPadding: {
       "": "clamp(3rem, 8vw, 7rem) start, clamp(2rem, 6vw, 5rem) end",
-      "!@md": "($gap * 4) start, clamp(2rem, 6vw, 5rem) end",
+      "!@md": "4x start, clamp(2rem, 6vw, 5rem) end",
     },
     Visual: {
       $: "> img, > Visual",
@@ -34,7 +34,7 @@ export const HeroRoot = defineComponent("Hero", {
       hide: {
         "": null,
         '@own([data-hero-image="dark"])': false,
-        '(@own([data-hero-image="dark"])) & (@light)': true,
+        '@own([data-hero-image="dark"]) & @light': true,
       },
     },
     LightVisual: {
@@ -42,7 +42,7 @@ export const HeroRoot = defineComponent("Hero", {
       hide: {
         "": null,
         '@own([data-hero-image="light"])': true,
-        '(@own([data-hero-image="light"])) & (@light)': false,
+        '@own([data-hero-image="light"]) & @light': false,
       },
     },
     Stack: {
@@ -58,7 +58,7 @@ export const HeroRoot = defineComponent("Hero", {
       display: "flex",
       flow: "column",
       alignItems: "inherit",
-      gap: "($gap * 2)",
+      gap: "2x",
     },
     Title: {
       $: "h1",
@@ -80,22 +80,22 @@ export const HeroRoot = defineComponent("Hero", {
       display: "flex",
       flow: "row wrap",
       justifyContent: { "": "flex-start", "!@md": "center" },
-      gap: "($gap * 1.5)",
+      gap: "1.5x",
     },
     Action: {
       $: "Action",
       display: "inline-flex",
       alignItems: "center",
       blockSize: "min $control-height",
-      padding: "($gap * 1.25) ($gap * 2.5)",
-      gap: "$gap",
+      padding: "1.25x 2.5x",
+      gap: "1x",
       color: "#text",
       border: { "": true, "@own(minimal)": "#clear" },
       radius: "round",
       fill: "#surface-2",
       preset: "navigation / strong",
       textDecoration: "none",
-      transition: "fill $transition",
+      transition: "fill",
     },
     HoverAction: {
       $: "[data-element=Action]",

@@ -1,13 +1,12 @@
 ---
-import { CardLink, CardRoot } from "./Card.styles.js";
+import { CardRoot } from "./Card.styles.js";
 
 import type { CardProps as Props } from "./props.js";
 
 const { title, href } = Astro.props;
-const Root = href ? CardLink : CardRoot;
 ---
 
-<Root className="td-card" href={href}>
+<CardRoot as={href ? "a" : undefined} className="td-card" href={href}>
   {title && <h3>{title}</h3>}
   <div><slot /></div>
-</Root>
+</CardRoot>

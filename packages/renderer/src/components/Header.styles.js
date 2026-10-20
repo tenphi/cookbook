@@ -24,7 +24,7 @@ export const HeaderRoot = defineComponent("Header", {
       display: "flex",
       alignItems: "center",
       flow: "row",
-      gap: "$gap",
+      gap: "1x",
       overflow: "hidden",
       flexShrink: "1",
       inlineSize: "min 0",
@@ -70,7 +70,7 @@ export const HeaderRoot = defineComponent("Header", {
       flow: "row",
       alignItems: "center",
       justifyContent: "flex-end",
-      gap: "($gap * 0.5)",
+      gap: "0.5x",
     },
     Social: {
       display: "flex",

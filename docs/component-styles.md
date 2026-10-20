@@ -101,7 +101,8 @@ changes the renderer's responsive layout, so check the whole site when doing so.
 
 Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
 `@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
-needed because the pinned linter's simple pseudo-class list omits `:popover-open`.
+needed because the pinned linter's simple pseudo-class list omits `:popover-open`
+([tenphi/eslint-plugin-tasty#77](https://github.com/tenphi/eslint-plugin-tasty/issues/77)).
 
 ### Appearance and motion states
 
@@ -115,10 +116,9 @@ Use these shared aliases to match the site's appearance or respect motion prefer
 | `@system-light`   | `prefers-color-scheme: light`                              | Read the system preference directly         |
 | `@system-dark`    | `prefers-color-scheme: dark`                               | Read the system preference directly         |
 
-Use `@light` and `@dark` in component styles. They check the page root's
-`data-theme` attribute and use the system preference only when that attribute
-is absent. Document rules that style the root itself use `@system-light` and
-`@system-dark` within their automatic-theme branch. Keep scheme media queries
+Use `@light` and `@dark` in component styles and in document rules that style
+the root itself. They check the page root's `data-theme` attribute and use the
+system preference only when that attribute is absent. Keep scheme media queries
 in the shared state definitions instead of repeating them in style objects.
 
 ### State maps and validation
@@ -166,7 +166,9 @@ Syntax category sub-elements such as `Keyword` target descendant spans; use
 code element itself.
 
 Cookbook temporarily retains selectors for pseudo-element states that Tasty
-cannot yet compile correctly and four empty legacy customization hooks whose
+cannot yet compile correctly
+([tenphi/tasty#406](https://github.com/tenphi/tasty/issues/406)) and four empty
+legacy customization hooks whose
 conditional override scopes must remain compatible. Each has a narrow lint
 exception in its owning style module. Use state maps for new definitions.
 

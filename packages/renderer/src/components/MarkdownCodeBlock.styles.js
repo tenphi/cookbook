@@ -21,23 +21,22 @@ export function MarkdownCodeBlockStyles() {
         "$margin-block-end": "0",
         blockMargin: "$margin-block-start $margin-block-end",
         inlineMargin: "0",
-        padding: "0 3.75rem 0 1rem",
+        inlinePadding: "1rem 3.75rem",
         // Balance a single code line around the copy control, including the border.
-        blockPadding:
-          "max(0px, ($copy-button-size - 1lh) / 2 + $gap - $border-width)",
+        blockPadding: "max(0px, ($copy-button-size - 1lh) / 2 + 1x - 1bw)",
         overflowX: "auto",
         color: "#syntax-text",
         border: true,
         fill: "#syntax-bg",
-        radius: "$card-radius",
+        radius: "1cr",
         tabSize: "2",
       },
       CopyButton: {
         $: "> CopyButton",
         position: "absolute",
         zIndex: "1",
-        blockInset: "$gap start",
-        inlineInset: "$gap end",
+        blockInset: "1x start",
+        inlineInset: "1x end",
         "$margin-block-start": "0",
         "$margin-block-end": "0",
         blockMargin: "$margin-block-start $margin-block-end",
@@ -50,10 +49,10 @@ export function MarkdownCodeBlockStyles() {
         color: "#text-soft",
         border: true,
         fill: "#surface-2",
-        radius: "$radius",
+        radius: "1r",
         preset: "small / strong",
         cursor: "pointer",
-        transition: "color $transition, fill $transition",
+        transition: "color, fill",
       },
       HoverCopyButton: {
         $: '> [data-element="CopyButton"]',
@@ -118,7 +117,7 @@ export function MarkdownCodeBlockStyles() {
         preset: { "": null, diff: "code" },
       },
       EmptyDiffLine: {
-        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
         // eslint-disable-next-line tasty/no-state-in-selector
         $: "pre > code > Line:empty::before",
         content: { "": null, diff: '"\\200b"' },

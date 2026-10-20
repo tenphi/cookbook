@@ -46,7 +46,7 @@ export const StatusBadge = defineComponent("StatusBadge", {
   styles: {
     display: "inline-flex",
     padding: "0.5x 1x",
-    radius: "$radius",
+    radius: "1r",
     fill: "#surface-2",
     color: "#text",
     preset: "small",
@@ -251,9 +251,8 @@ export const ProjectButton = extendComponent("ProjectButton", Button, {
   type: "button",
   styles: {
     padding: "1x 2x",
-    radius: "$radius",
-    fill: "#surface",
-    Hover: { $: "&:hover", fill: "#surface-2-hover" },
+    radius: "1r",
+    fill: { "": "#surface", ":hover": "#surface-2-hover" },
   },
 });
 
@@ -264,8 +263,8 @@ export const CompactButton = extendComponent("CompactButton", ProjectButton, {
 
 `theme.styles.Button` customizes the shared foundation, including Cookbook's
 search and mobile-menu buttons. `theme.customStyles.ProjectButton` and
-`CompactButton` customize each derived component independently. `Button` has
-no named sub-elements; this example adds `Hover` to both descendants.
+`CompactButton` customize each derived component independently. This example
+adds a hover fill to both descendants.
 
 The merge order is the base component's configured styles and selected variant,
 the extension's styles, its named theme override, and styles passed while

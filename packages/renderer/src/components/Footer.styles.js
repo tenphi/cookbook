@@ -9,20 +9,20 @@ export const FooterRoot = defineComponent("Footer", {
   styles: {
     display: "flex",
     flow: "column",
-    gap: "($gap * 3)",
+    gap: "3x",
     Meta: {
       display: "flex",
       flow: "row wrap",
       justifyContent: "space-between",
-      gap: "($gap * 1.5) ($gap * 6)",
-      blockMargin: "($gap * 6) start",
+      gap: "1.5x 6x",
+      blockMargin: "6x start",
       color: "#text-muted",
       preset: "small",
     },
     MetaLink: {
       display: "flex",
       alignItems: "center",
-      gap: "$gap",
+      gap: "1x",
       inlineMargin: { "": "0", "@own(:only-child)": "auto start" },
       color: { "": "#text-muted", "@own(:hover)": "#text" },
       textDecoration: "none",
@@ -31,7 +31,7 @@ export const FooterRoot = defineComponent("Footer", {
       inlineMargin: { "": "0", "@own(:only-child)": "auto start" },
     },
     Credit: {
-      margin: "($gap * 3) auto",
+      margin: "3x auto",
       color: "#text",
       preset: "small",
       textAlign: "center",

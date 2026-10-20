@@ -24,11 +24,11 @@ export function MarkdownHeadingStyles() {
       Heading: {
         $: "> *",
         color: { "": null, "@own(:first-child)": "inherit" },
-        display: { "": "", "@own(:first-child)": "inline" },
+        display: { "": null, "@own(:first-child)": "inline" },
         inlinePadding: {
           "": null,
           "@own(:first-child)": "0 end",
-          "(@own(:first-child)) & (!@md)": "1.75rem end",
+          "@own(:first-child) & !@md": "1.75rem end",
         },
       },
       Link: {
@@ -51,10 +51,10 @@ export function MarkdownHeadingStyles() {
           "@media(hover: hover)": "0",
           "!@md": "1",
         },
-        radius: "$radius",
+        radius: "1r",
         userSelect: "none",
         textDecoration: "none",
-        transition: "color $transition, fill $transition, opacity $transition",
+        transition: "color, fill, opacity",
       },
       RevealedLink: {
         $: "> [data-element=Anchor]",
@@ -98,7 +98,7 @@ export function MarkdownHeadingStyles() {
         },
       },
       CopiedIcon: {
-        // Tasty 3.9.3 appends @own states after pseudo-elements, producing invalid CSS.
+        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
         // eslint-disable-next-line tasty/no-state-in-selector
         $: '> Anchor[data-copy-state="copied"]::after',
         content: '""',

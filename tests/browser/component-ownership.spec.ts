@@ -169,7 +169,7 @@ test("Hero color variants preserve the configured action border width and style"
   }
   await expect(
     page.locator("[data-element=Hero] [data-element=Action][data-minimal]"),
-  ).toHaveCSS("border-top-color", "oklch(1 0 0 / 0)");
+  ).toHaveCSS("border-top-color", "rgba(0, 0, 0, 0)");
 });
 
 test("button descendants inherit the shared theme and own their overrides", async ({

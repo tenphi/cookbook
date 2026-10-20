@@ -11,11 +11,11 @@ export function MermaidStyles() {
       display: "grid",
       placeItems: "center",
       inlineSize: "min 0",
-      padding: "($gap * 2)",
+      padding: "2x",
       overflowX: "auto",
       border: true,
       fill: "#surface-2",
-      radius: "$card-radius",
+      radius: "1cr",
       Diagram: {
         $: "> svg",
         $bg: "#surface-2",

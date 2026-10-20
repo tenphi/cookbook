@@ -9,11 +9,11 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
   styles: {
     display: "block",
     hide: { "": false, "!@lg": true },
-    blockPadding: "($gap * 4) start",
+    blockPadding: "4x start",
     inlinePadding: "$docs-sidebar-pad-x",
     Heading: {
       $: "h2",
-      margin: "0 0 $gap",
+      margin: "1x bottom",
       color: "#text",
       preset: "small / strong",
     },
@@ -39,7 +39,7 @@ export const TableOfContentsRoot = defineComponent("TableOfContents", {
       $: "a",
       display: "block",
       inlineSize: "0 auto 100%",
-      blockPadding: "($gap * 0.5)",
+      blockPadding: "0.5x",
       color: "#text-muted",
       preset: "small",
       textDecoration: "none",

@@ -6,7 +6,7 @@ export const Button = defineComponent("Button", {
   styles: {
     display: "flex",
     alignItems: "center",
-    gap: "$gap",
+    gap: "1x",
     blockSize: "min 0",
     color: "#text-soft",
     cursor: "pointer",

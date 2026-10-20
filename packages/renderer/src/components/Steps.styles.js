@@ -9,12 +9,12 @@ export const StepsRoot = defineComponent("Steps", {
   styles: {
     display: "grid",
     gap: "2x",
-    padding: "4x left",
-    border: "1bw left #border",
+    inlinePadding: "4x start",
+    inlineBorder: "1bw solid #border start",
 
     Item: {
       $: "> li",
-      padding: "1x left",
+      inlinePadding: "1x start",
     },
     Marker: {
       $: "> li::marker",

@@ -9,7 +9,7 @@ export const TableOfContentsLayoutRoot = defineComponent(
     as: "aside",
     "data-element": "TableOfContentsLayout",
     styles: {
-      display: { "": "", ":has(cookbook-mobile-toc)": "block" },
+      display: { "": null, ":has(cookbook-mobile-toc)": "block" },
       hide: {
         "": false,
         "!@lg": true,
@@ -18,7 +18,7 @@ export const TableOfContentsLayoutRoot = defineComponent(
       order: { "": "2", "!@lg": "0" },
       position: "relative",
       inlineSize: {
-        "": "max($sidebar-width, calc($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
+        "": "max($sidebar-width, ($sidebar-width + (100% - $content-width - $sidebar-width) / 2))",
         "!@lg": "100%",
       },
       Content: {

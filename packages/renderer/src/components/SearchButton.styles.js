@@ -17,13 +17,14 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     },
     inlineMargin: {
       "": "0 start",
-      "@media(w >= 80rem)": "min(5rem, max(0px, calc(100% - 22rem))) start",
+      "@media(w >= 80rem)": "min(5rem, max(0px, (100% - 22rem))) start",
     },
     blockSize: {
       "": "0 $control-height initial",
       "!@md": "0 $docs-menu-button-size initial",
     },
-    padding: { "": "0 $gap 0 ($gap * 1.5)", "!@md": "0" },
+    blockPadding: "0",
+    inlinePadding: { "": "1.5x 1x", "!@md": "0" },
     border: { "": true, "!@md": "0" },
     radius: "$header-control-radius",
     fill: {
@@ -34,7 +35,7 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     },
     preset: "small",
     shadow: "none",
-    transition: "color $transition, fill $transition",
+    transition: "color, fill",
     Label: { $: "> span", hide: { "": false, "!@md": true } },
     PendingShortcut: {
       $: "> kbd",
@@ -49,7 +50,7 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       inlinePadding: "0.375rem",
       fill: "#surface-3",
       preset: "small",
-      radius: "($radius * 0.75)",
+      radius: "0.75r",
     },
     NativeIcon: { $: "> svg", hide: true },
     Icon: {

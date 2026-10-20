@@ -13,7 +13,7 @@ export function MermaidSourceStyles() {
       color: "#syntax-text",
       border: true,
       fill: "#syntax-bg",
-      radius: "$card-radius",
+      radius: "1cr",
       tabSize: "2",
     }),
   );
