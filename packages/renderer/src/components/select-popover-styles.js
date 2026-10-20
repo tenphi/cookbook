@@ -21,11 +21,11 @@ export function selectPopoverStyles({
       $: "> button",
       color: {
         "": null,
-        "@own(:hover) | :has([popover]:is(:popover-open))": "#text",
+        "@own(:hover) | :has([popover]:popover-open)": "#text",
       },
       fill: {
         "": null,
-        "@own(:hover) | :has([popover]:is(:popover-open))": "#surface-2-hover",
+        "@own(:hover) | :has([popover]:popover-open)": "#surface-2-hover",
       },
     },
     TriggerLabel: {
@@ -67,9 +67,9 @@ export function selectPopoverStyles({
       $: '> [data-element="Panel"]',
       opacity: {
         "": null,
-        "@own(:is(:popover-open) & [data-open])": "1",
+        "@own(:popover-open & [data-open])": "1",
       },
-      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
+      scale: { "": null, "@own(:popover-open & [data-open])": "1" },
     },
     PanelTitle: {
       $: "PanelTitle",

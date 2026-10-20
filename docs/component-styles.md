@@ -99,10 +99,8 @@ PackageVersion. Use the default state key `""` for the value outside a condition
 Add your own aliases with `theme.states`; redefining a built-in alias also
 changes the renderer's responsive layout, so check the whole site when doing so.
 
-Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
-`@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
-needed because the pinned linter's simple pseudo-class list omits `:popover-open`
-([tenphi/eslint-plugin-tasty#77](https://github.com/tenphi/eslint-plugin-tasty/issues/77)).
+Native pseudo-classes need no alias. Use `:popover-open` on a root or
+`@own(:popover-open)` for a selected descendant.
 
 ### Appearance and motion states
 
@@ -165,10 +163,11 @@ Syntax category sub-elements such as `Keyword` target descendant spans; use
 `SyntaxHighlight.color["[data-syntax-keyword]"]` when customizing the containing
 code element itself.
 
-Cookbook temporarily retains selectors for pseudo-element states that Tasty
-cannot yet compile correctly
-([tenphi/tasty#406](https://github.com/tenphi/tasty/issues/406)) and four empty
-legacy customization hooks whose
+A sub-element whose selector ends in a pseudo-element, such as
+`Pagination.NextIcon` (`a[rel="next"]::before`), keeps the conditions on the
+element it belongs to in that selector. Its `@own(...)` states describe the
+pseudo-element itself, so Tasty ignores modifier, attribute, and tree-position
+states there. Cookbook also retains four empty legacy customization hooks whose
 conditional override scopes must remain compatible. Each has a narrow lint
 exception in its owning style module. Use state maps for new definitions.
 

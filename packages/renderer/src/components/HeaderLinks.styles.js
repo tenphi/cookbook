@@ -101,8 +101,8 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
     },
     OpenPanel: {
       $: "[data-element=Panel]",
-      opacity: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
-      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
+      opacity: { "": null, "@own(:popover-open & [data-open])": "1" },
+      scale: { "": null, "@own(:popover-open & [data-open])": "1" },
     },
     PanelNavigation: {
       $: "Panel nav",

@@ -98,8 +98,6 @@ export function MarkdownHeadingStyles() {
         },
       },
       CopiedIcon: {
-        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-        // eslint-disable-next-line tasty/no-state-in-selector
         $: '> Anchor[data-copy-state="copied"]::after',
         content: '""',
         position: "absolute",

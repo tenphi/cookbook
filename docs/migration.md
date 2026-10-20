@@ -277,10 +277,9 @@ Use these replacements for the removed shortcuts in custom style maps:
 | `@shell-mobile`  | `@media(w <= 48rem)` |
 | `@shell-desktop` | `@media(w > 48rem)`  |
 | `@medium-layout` | `@md & !@lg`         |
-| `@popover-open`  | `:is(:popover-open)` |
+| `@popover-open`  | `:popover-open`      |
 
-Inside a selected descendant's condition, use `@own(:is(:popover-open))`.
-The `:is()` wrapper accommodates the pinned linter's pseudo-class list.
+Inside a selected descendant's condition, use `@own(:popover-open)`.
 The shell and medium-layout aliases were unused by built-in components;
 PackageVersion's 23rem rule is now a direct media condition. Define a project
 alias in `theme.states` if you need a named threshold across your own components.

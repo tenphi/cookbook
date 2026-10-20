@@ -145,14 +145,10 @@ export default function MarkdownStyles() {
         },
       },
       SummaryMarker: {
-        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-        // eslint-disable-next-line tasty/no-state-in-selector
         $: "summary:not([data-not-content] *)::marker, summary:not([data-not-content] *)::-webkit-details-marker",
         hide: true,
       },
       SummaryIcon: {
-        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-        // eslint-disable-next-line tasty/no-state-in-selector
         $: "summary:not([data-not-content] *)::before",
         content: '""',
         display: "inline-block",
@@ -167,9 +163,7 @@ export default function MarkdownStyles() {
         transition: "rotate",
       },
       OpenSummaryIcon: {
-        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-        // eslint-disable-next-line tasty/no-state-in-selector
-        $: "details[open] > summary:not([data-not-content] *)::before",
+        $: "summary:is(details[open] > *):not([data-not-content] *)::before",
         rotate: "90deg",
       },
       Code: {
