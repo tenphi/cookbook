@@ -117,8 +117,6 @@ export function MarkdownCodeBlockStyles() {
         preset: { "": null, diff: "code" },
       },
       EmptyDiffLine: {
-        // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-        // eslint-disable-next-line tasty/no-state-in-selector
         $: "pre > code > Line:empty::before",
         content: { "": null, diff: '"\\200b"' },
       },

@@ -38,8 +38,6 @@ export const TopNavigationRoot = defineComponent("TopNavigation", {
       color: { "": null, '@own([aria-current="page"])': "#accent-text" },
     },
     ActiveIndicator: {
-      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-      // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[aria-current="page"]::after',
       "$indicator-height": "2px",
       content: '""',

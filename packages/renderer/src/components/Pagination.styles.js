@@ -60,8 +60,6 @@ export const PaginationRoot = defineComponent("Pagination", {
       },
     },
     NextIcon: {
-      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-      // eslint-disable-next-line tasty/no-state-in-selector
       $: 'a[rel="next"]::before',
       order: "1",
       // The imported SVG is encoded at build time and never evaluated in the browser.
@@ -108,17 +106,13 @@ export const PaginationRoot = defineComponent("Pagination", {
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
     PreviousIconRtl: {
-      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-      // eslint-disable-next-line tasty/no-state-in-selector
-      $: '&:is([dir="rtl"] *) a[rel="prev"]::before',
+      $: 'a[rel="prev"]:dir(rtl)::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
       // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextIconRtl: {
-      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-      // eslint-disable-next-line tasty/no-state-in-selector
-      $: '&:is([dir="rtl"] *) a[rel="next"]::before',
+      $: 'a[rel="next"]:dir(rtl)::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
       // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
