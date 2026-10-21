@@ -1,5 +1,19 @@
 # @tenphi/docs
 
+## 0.29.0
+
+### Minor Changes
+
+- [#169](https://github.com/tenphi/cookbook/pull/169) [`8a7dc97`](https://github.com/tenphi/cookbook/commit/8a7dc9762874de35ef99341d62fcd206b1334c79) Thanks [@tenphi](https://github.com/tenphi)! - Update Tasty to 3.11.1 and the Tasty ESLint plugin to 1.7.2. Built-in styles now follow Tasty's style guidelines. They use spacing, radius, and border units instead of token arithmetic and `hide` instead of `display: none`. Transitions use semantic names that honor per-property duration tokens, and every state map has a default state. The renderer no longer needs file-wide lint exemptions. Tasty now emits each configured `@property` once, so spacing tokens keep their `inherits: false` registration.
+
+  Code blocks, steps, the search button, the skip link, and the mobile header-link panel use logical spacing and positions, so they mirror correctly in right-to-left locales. Table header cells round their top corners without depending on direction. Card's `fill`, `shadow`, and `translate` overrides now also apply to linked cards, whose hover and pressed states live in Card's own state maps.
+
+  Remove the `clear` palette role: Tasty now compiles `#clear` to `transparent`, so a customized `theme.palette.clear` no longer has any effect. See the migration guide for overrides that now use logical properties or `hide`.
+
+### Patch Changes
+
+- [#171](https://github.com/tenphi/cookbook/pull/171) [`940f785`](https://github.com/tenphi/cookbook/commit/940f785b34b2631e850f3cbfcba713282bc53048) Thanks [@tenphi](https://github.com/tenphi)! - Update Tasty to 3.11.2 and the Tasty ESLint plugin to 1.8.0. On a sub-element whose selector ends in a pseudo-element, `@own(...)` now describes the pseudo-element itself. Tasty ignores modifier, attribute, class, and tree-position states there with a warning instead of emitting selectors that never match. The `@tenphi/cookbook/eslint-plugin` presets accept every standard pseudo-class, such as `:popover-open` and `:dir(rtl)`, and no longer report conditions on the element a pseudo-element belongs to. The new `tasty/no-ignored-pseudo-element-state` rule reports ignored states as errors. Built-in styles drop the lint exceptions these limitations required.
+
 ## 0.28.0
 
 ## 0.27.0
