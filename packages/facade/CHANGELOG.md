@@ -1,5 +1,27 @@
 # @tenphi/cookbook
 
+## 0.30.0
+
+### Minor Changes
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - GitHub alerts (`MarkdownAlert`) now use the status palette roles that `Callout` uses: `info` for notes, `success` for tips, `warning` for cautions, and `danger` for danger, instead of the `blue`, `green`, and `red` hues. Default colors are unchanged; a customized `theme.palette.info`, `success`, or `danger` now restyles alerts as well as Callouts.
+
+  `@tenphi/cookbook` re-exports `resolveDocsTheme` and the `ResolvedDocsTheme` type, so a site can inspect its theme's contrast checks without depending on `@tenphi/renderer` directly.
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - `components.overrides` now rejects names that are not Cookbook component slots with `DOCS_CONFIG_UNKNOWN_KEY`; its type and JSON schema list every slot. `cookbook doctor` resolves override paths from the Astro project directory, as the build does: `./` paths and package specifiers resolve from the app, and a value such as `src/Header.astro` is reported as `DOCS_COMPONENT_UNRESOLVED`. `DocsProject` exposes the `directory` searched for configuration.
+
+  Package pages no longer receive an edit link generated from `editLink.baseUrl`, which pointed into the site's repository at a file that exists only in the npm artifact. A package page's own `editUrl` still applies.
+
+### Patch Changes
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - Review and correct the packaged documentation. The configuration reference now follows the configuration's top-level keys and documents every page frontmatter field, the table of contents defaults, source-level navigation, and how package sources choose pages. The CLI reference lists the generated project scripts, the exact `validate` steps, creator defaults, Yarn setup, and every diagnostic code. The upgrade guide is ordered by release, including the 0.21–0.29 changes. Logo setup moves to the theme guide, and the custom components guide documents `createValidationConfig()`. Examples cover content layouts, languages, and previews; theme recipes cover branding, component styles, fonts, and shared themes.
+
+  Corrected facts include the APCA floors for accent text and filled controls, border saturation, the overlay's Glaze mode, GitHub alert sub-elements and colors, breadcrumb thresholds, badge palette role names, the state alias count, and component override path resolution. Package READMEs now link to the published documentation and list the complete styling and lint exports.
+
+- Updated dependencies [[`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af), [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af), [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af)]:
+  - @tenphi/renderer@0.30.0
+  - @tenphi/docs@0.30.0
+
 ## 0.29.0
 
 ### Minor Changes
