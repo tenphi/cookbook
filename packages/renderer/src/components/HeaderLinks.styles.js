@@ -8,7 +8,8 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
   "data-element": "HeaderLinks",
   styles: {
     display: "flex",
-    flexShrink: "0",
+    flexShrink: { "": "1", "!@md": "0" },
+    inlineSize: "min 0",
     order: { "": "0", "!@md": "2" },
     "$popover-transition": "120ms",
     Desktop: {
@@ -17,6 +18,7 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
       hide: { "": false, "!@md": true },
       alignItems: "center",
       gap: "0.5x",
+      inlineSize: "min 0",
     },
     Link: {
       $: "a",
@@ -34,6 +36,13 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
     },
     DesktopLink: {
       $: "Desktop a",
+      // A flex container can't truncate its text, so center a block instead.
+      display: "block",
+      alignContent: "center",
+      inlineSize: "min 0",
+      overflow: "hidden",
+      textAlign: "center",
+      textOverflow: "ellipsis",
       radius: "$header-control-radius",
       inlinePadding: "2x",
     },
@@ -101,8 +110,8 @@ export const HeaderLinksRoot = defineComponent("HeaderLinks", {
     },
     OpenPanel: {
       $: "[data-element=Panel]",
-      opacity: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
-      scale: { "": null, "@own(:is(:popover-open) & [data-open])": "1" },
+      opacity: { "": null, "@own(:popover-open & [data-open])": "1" },
+      scale: { "": null, "@own(:popover-open & [data-open])": "1" },
     },
     PanelNavigation: {
       $: "Panel nav",

@@ -12,7 +12,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
     visibility: {
       "": "visible",
       "!@md": "hidden",
-      ":is(:popover-open) & !@md": "visible",
+      ":popover-open & !@md": "visible",
     },
     position: "fixed",
     zIndex: { "": "8", "!@md": "12" },
@@ -38,7 +38,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
     translate: {
       "": "0",
       "!@md": "-100% 0",
-      ":is(:popover-open) & [data-open] & !@md": "0",
+      ":popover-open & [data-open] & !@md": "0",
     },
     transition: {
       "": "none",
@@ -57,7 +57,7 @@ export const SidebarRoot = defineComponent("Sidebar", {
     },
     OpenBackdrop: {
       $: "&::backdrop",
-      opacity: { "": null, ":is(:popover-open) & [data-open]": "1" },
+      opacity: { "": null, ":popover-open & [data-open]": "1" },
     },
     MobileHeading: {
       $: "MobileHeading",
@@ -267,9 +267,6 @@ export const SidebarRoot = defineComponent("Sidebar", {
       flexShrink: "0",
       inlineSize: "1rem",
       blockSize: "1rem",
-      // Tasty and browsers support :dir(); the lint rule's pseudo list omits it
-      // (tenphi/eslint-plugin-tasty#77).
-      // eslint-disable-next-line tasty/valid-state-key
       transform: { "": "none", ":dir(rtl)": "rotate(180deg)" },
     },
     ExpandedCaret: {

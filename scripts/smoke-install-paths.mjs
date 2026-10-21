@@ -249,7 +249,7 @@ try {
         // This fresh consumer deliberately has no lockfile yet. Keep the repo
         // install frozen; allow only this generated fixture to create its lock.
         // Match the repository's reviewed release-age exceptions for this upgrade.
-        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.11.1'\n  - '@tenphi/eslint-plugin-tasty@1.7.2'\n  - '@tenphi/glaze@2.0.1'\n",
+        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.11.2'\n  - '@tenphi/eslint-plugin-tasty@1.8.0'\n  - '@tenphi/glaze@2.0.1'\n",
       );
     } else
       packageJson.overrides = Object.fromEntries(

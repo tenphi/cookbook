@@ -72,8 +72,6 @@ export const SearchRoot = defineComponent("Search", {
       },
     },
     EnteredBackdrop: {
-      // Tasty appends @own states after pseudo-elements, producing invalid CSS (tenphi/tasty#406).
-      // eslint-disable-next-line tasty/no-state-in-selector
       $: "dialog[open][data-open]::backdrop",
       opacity: { "": "1", "!@md": "0" },
     },

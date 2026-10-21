@@ -36,7 +36,14 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
     preset: "small",
     shadow: "none",
     transition: "color, fill",
-    Label: { $: "> span", hide: { "": false, "!@md": true } },
+    Label: {
+      $: "> span",
+      hide: { "": false, "!@md": true },
+      inlineSize: "min 0",
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
+    },
     PendingShortcut: {
       $: "> kbd",
       visibility: { "": null, "@own([data-pending])": "hidden" },
