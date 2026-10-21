@@ -63,8 +63,6 @@ Cookbook incluye su renderizador Astro y detecta `docs.config.ts` automáticamen
 
 ## Configura el sitio
 
-Empieza con las [recetas completas de marca, logotipo y fuentes](../recipes.md). Para cambios de estilo más detallados o componentes nuevos, consulta las [reglas de personalización](../customization-rules.md). Estas reglas y las referencias originales también se incluyen en el paquete instalado de Cookbook.
-
 Crea `docs.config.ts` junto a `astro.config.ts`:
 
 ```ts
@@ -83,9 +81,11 @@ export default defineDocsConfig({
 });
 ```
 
-Cambia `theme.fonts` para usar [Google Fonts por nombre o tus propios archivos de fuentes](../fonts-and-typography.md). Usa `theme.presets` para los detalles tipográficos, `theme.styles` para los elementos integrados y `defineComponent()` con `theme.customStyles` para añadir elementos. La [guía del tema](../theme-and-components.md) es un punto de partida; la [referencia de estilos de componentes](../component-styles.md) enumera todas las partes personalizables.
+Cambia `theme.fonts` para usar [Google Fonts por nombre o tus propios archivos de fuentes](../fonts-and-typography.md#change-font-families). Usa `theme.presets` para los detalles tipográficos, `theme.styles` para los elementos integrados y `defineComponent()` con `theme.customStyles` para añadir elementos. La [guía del tema](../theme-and-components.md) es un punto de partida; la [referencia de estilos de componentes](../component-styles.md) enumera todas las partes personalizables.
 
-La integración y la CLI cargan la misma configuración. Se admiten `docs.config.ts`, `.mts`, `.js` y `.mjs`, en ese orden. Un objeto `config` explícito en la integración tiene prioridad; `configFile: false` desactiva la detección. Usa `cookbook({ configFile: "./config/manual.ts" })` y `cookbook doctor --config ./config/manual.ts` para una ubicación no estándar.
+Para partir de una configuración completa, consulta las [recetas de marca, logotipo y fuentes](../recipes.md). Para cambios de estilo más detallados o componentes nuevos, consulta las [reglas de personalización](../customization-rules.md). Estas reglas y las referencias originales también se incluyen en el paquete instalado de Cookbook.
+
+La integración y la CLI cargan la misma configuración. Se admiten `docs.config.ts`, `.mts`, `.js` y `.mjs`, en ese orden. Un objeto `config` explícito en la integración tiene prioridad; `configFile: false` desactiva la detección. Usa `cookbook({ configFile: "./config/manual.ts" })` y `cookbook doctor --config ./config/manual.ts` para una ubicación no estándar. Como `root` se resuelve desde el directorio del archivo de configuración, ese archivo necesita `root: ".."` para seguir leyendo `README.md` y `docs/` desde el directorio de la aplicación.
 
 ## Raíces de monorepositorios
 
@@ -106,4 +106,6 @@ npm run validate
 npm run preview
 ```
 
-El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [flujo para agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Puedes partir de las [recetas](../recipes.md) para adaptar una configuración completa. Si falla la validación, consulta [solución de problemas](../troubleshooting.md).
+`validate` comprueba los tipos del proyecto, ejecuta la verificación previa de Cookbook, compila el sitio y revisa el resultado. En un proyecto que configuraste tú mismo, añade los scripts de los [comandos de la CLI](../cli.md) o ejecuta `npx @tenphi/cookbook doctor`.
+
+El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [flujo para agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).

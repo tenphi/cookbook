@@ -296,28 +296,37 @@ test("generated Markdown controls preserve spacing and link colors", async ({
   await expect(link).toHaveCSS("color", textMuted);
 });
 
-test("Markdown warning alerts use registered warning colors in every appearance", async ({
+test("Markdown alerts use the status palette roles in every appearance", async ({
   page,
 }) => {
   await page.goto("/manual/guide/");
-  const caution = page.locator("[data-caution]");
-  await expect(caution).toBeVisible();
-  for (const scheme of ["light", "dark"]) {
-    for (const contrast of ["normal", "more"]) {
-      const colors = await page.evaluate(
-        ({ scheme, contrast }) => {
-          document.documentElement.dataset.theme = scheme;
-          document.documentElement.dataset.contrast = contrast;
-          const root = getComputedStyle(document.documentElement);
-          return ["warning", "warning-text", "warning-surface"].map((token) =>
-            root.getPropertyValue(`--${token}-color`).trim(),
-          );
-        },
-        { scheme, contrast },
-      );
-      await expect(caution).toHaveCSS("border-color", colors[0]);
-      await expect(caution).toHaveCSS("color", colors[1]);
-      await expect(caution).toHaveCSS("background-color", colors[2]);
+  const alert = page.locator('[data-element="MarkdownAlert"]');
+  await expect(alert).toHaveAttribute("data-caution", "");
+  for (const [kind, role] of [
+    ["note", "info"],
+    ["tip", "success"],
+    ["caution", "warning"],
+    ["danger", "danger"],
+  ]) {
+    for (const scheme of ["light", "dark"]) {
+      for (const contrast of ["normal", "more"]) {
+        const colors = await alert.evaluate(
+          (element, { kind, role, scheme, contrast }) => {
+            for (const name of ["note", "tip", "caution", "danger"])
+              element.toggleAttribute(`data-${name}`, name === kind);
+            document.documentElement.dataset.theme = scheme;
+            document.documentElement.dataset.contrast = contrast;
+            const root = getComputedStyle(document.documentElement);
+            return [role, `${role}-text`, `${role}-surface`].map((token) =>
+              root.getPropertyValue(`--${token}-color`).trim(),
+            );
+          },
+          { kind, role, scheme, contrast },
+        );
+        await expect(alert).toHaveCSS("border-color", colors[0]);
+        await expect(alert).toHaveCSS("color", colors[1]);
+        await expect(alert).toHaveCSS("background-color", colors[2]);
+      }
     }
   }
 });

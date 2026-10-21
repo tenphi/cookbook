@@ -1,6 +1,6 @@
 ---
 title: Authoring components
-description: Use accessible tabs, callouts, code groups, cards, steps, and isolated previews.
+description: Write pages, then use accessible tabs, callouts, code groups, cards, steps, and isolated previews.
 sidebar:
   order: 4
 ---
@@ -18,6 +18,18 @@ import {
 Write ordinary Markdown for most pages. Use MDX when a page needs components,
 and import them from `@tenphi/cookbook/components`. Local MDX is supported by
 default; npm MDX requires an explicit `trust: "mdx"` source declaration.
+
+## Page titles and descriptions
+
+A page's title comes from its frontmatter `title`, then the source
+declaration's `title`, then its first `#` heading, then its file name. When the
+page starts with an `#` heading equal to its title, Cookbook removes that heading
+from the body so the title is not shown twice. The description comes from
+frontmatter `description`, then the source declaration, then the first prose
+paragraph of at least 20 characters, cut to 240 characters.
+
+See [page frontmatter](./configuration.md#page-frontmatter) for every field,
+including `slug`, `draft`, `sidebar`, `prev`, and `next`.
 
 ## Tabs
 
@@ -44,7 +56,8 @@ import { Tab, Tabs } from "@tenphi/cookbook/components";
 Use `kind="note"`, `"tip"`, `"caution"`, or `"danger"`; `title` overrides the
 visible label. The default kind is `note`. Status colors come from
 `theme.palette.info`, `success`, `warning`, and `danger` and adapt to all schemes
-and contrast modes.
+and contrast modes. For callouts written in plain Markdown, use
+[GitHub alerts](./plugins.md#github-alerts).
 
 ```mdx
 <Callout kind="tip" title="Keep content close to code">
@@ -81,10 +94,13 @@ Each panel retains keyboard-accessible tabs and readable fallback content.
   ]}
 />
 
-## Cards, steps, and previews
+## Cards and steps
 
 Use a card to link to another page, or omit `href` to present a standalone
-summary. `Steps` renders an ordered list; put ordinary `li` elements inside it.
+summary. `href` is used as written: give a public URL, including any Astro
+`base`, or a `#fragment`. Unlike Markdown links, `.md` paths are not rewritten;
+`cookbook check-build` reports broken targets. `Steps` renders an ordered list;
+put ordinary `li` elements inside it.
 
 ```mdx
 import { Card, Steps } from "@tenphi/cookbook/components";
@@ -110,6 +126,8 @@ import { Card, Steps } from "@tenphi/cookbook/components";
   <li>Build and check the output.</li>
 </Steps>
 
+## Previews
+
 `Preview` runs HTML and optional JavaScript in a sandboxed iframe with a source
 disclosure. It cannot access the documentation page's origin. Its `css` prop is
 for the isolated preview document; style the documentation shell with Tasty.
@@ -129,6 +147,8 @@ import { Preview } from "@tenphi/cookbook/components";
   html={'<button type="button">Try it</button>'}
   css={"button { padding: 0.75rem; }"}
 />
+
+### Run your own library
 
 To demonstrate your own library, build it into the site's public directory
 (`public/` by default) and list the files in `scripts` by their public path,
@@ -153,6 +173,8 @@ Inlining keeps the preview isolated and needs no request, so the demo works in
 shows each inlined file as a `<script src>` tag. Every preview embeds its own
 copy, so keep demo bundles small. A missing file or a path outside the public
 directory fails the build.
+
+### Frame size
 
 A preview that runs scripts, with `javascript` or `scripts`, fits its frame to
 its content. The frame grows and shrinks as the content changes, the page
@@ -184,15 +206,16 @@ make it taller when it opens, so reserve room for it:
 
 - `buffer` adds room below the content for a picker's list, such as a select's
   or a combobox's. The room follows the content as the page width changes it.
-  It defaults to `0`. A preview without scripts can't measure its content, so
-  `buffer` has no effect there.
+  It defaults to no extra room. A preview without scripts can't measure its
+  content, so `buffer` has no effect there.
 - `height` sets the frame's minimum height in place of `10rem`, for an overlay
   that uses the whole frame, such as a modal dialog. It also applies to
   previews without scripts.
 
 The frame is as tall as the content plus `buffer`, up to the window's height,
-and never shorter than `height`. Both take a CSS length, such as `12rem` or `320px`; any other value, including
-a percentage or `calc()`, fails the build. To change every preview, style
+and never shorter than `height`. Both take a CSS length with a unit, such as
+`12rem`, `320px`, or `0px`; any other value, including a unitless `0`, a
+percentage, or `calc()`, fails the build. To change every preview, style
 `theme.styles.Preview.Frame` instead.
 
 ```mdx
@@ -214,6 +237,8 @@ a percentage or `calc()`, fails the build. To change every preview, style
 Don't size the content by the frame, for example with `100vh` or
 `height: 100%` on the root element: the frame can't fit such content, and it
 can grow to the window's height.
+
+### Forms
 
 Forms in a preview can be submitted. To show what a form sends, call
 `event.preventDefault()` in a `submit` listener and read its `FormData`;
@@ -248,62 +273,95 @@ origin.
 `Logo` renders the Cookbook mark. Use `label` when it carries meaning or
 `decorative` beside nearby text that already names the site. To display your
 own artwork in the header and drawer, configure
-[`site.logo`](./configuration.md#site-logo).
+[`site.logo`](./theme-and-components.md#logo-and-favicon).
 
-## Diff snippets
+## Code fences
 
-Use a `diff` code fence to highlight additions and deletions. The `+` and `-`
-markers remain visible independently of their theme-aware backgrounds:
+Fenced code blocks get Shiki highlighting and a copy control. Use a `diff` or
+`patch` fence to highlight additions and deletions. The `+` and `-` markers
+remain visible independently of their theme-aware backgrounds:
 
 ```diff
 -formatOkhsl(v.h, v.s * 100, l * 100);
 +formatOkhsl(v.h, v.s, l);
 ```
 
+A `mermaid` fence renders a static, theme-aware diagram; see
+[Mermaid diagrams](./configuration.md#markdown).
+
 ## Component props
 
-| Component | Props and behavior                                                                                                                                                                              |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Card`    | Optional `title` and `href`; renders an article or link with slot content                                                                                                                       |
-| `Steps`   | Ordered list container; supply `li` elements                                                                                                                                                    |
-| `Logo`    | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                                                                     |
-| `Preview` | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, minimum frame `height`, and overlay `buffer`; isolates examples in a sandboxed iframe that fits scripted content |
+| Component   | Props and behavior                                                                                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Tabs`      | Optional `label`, the tab list's accessible name (default "Examples"); contains `Tab` elements                                                                                                  |
+| `Tab`       | Required `label`, used as the tab button text and as the panel heading without JavaScript                                                                                                       |
+| `Callout`   | Optional `kind` (`note` by default, `tip`, `caution`, or `danger`) and `title`                                                                                                                  |
+| `CodeGroup` | Optional `label` (default "Code examples") and required `items`: `{ label, code, language? }[]`                                                                                                 |
+| `Card`      | Optional `title` and `href`; renders an article or link with slot content                                                                                                                       |
+| `Steps`     | Ordered list container; supply `li` elements                                                                                                                                                    |
+| `Logo`      | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                                                                     |
+| `Preview`   | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, minimum frame `height`, and overlay `buffer`; isolates examples in a sandboxed iframe that fits scripted content |
 
 The public package exports each component's props type, such as `TabProps`,
 `CalloutProps`, and `CodeGroupProps`. Styles and all named sub-elements are
-listed in [Component styles](./component-styles.md#style-customization).
+listed in [Component styles](./component-styles.md#complete-component-anatomy).
 
 ## On-page navigation
 
-Desktop pages show a table of contents. Opt into a compact disclosure below the
-header on smaller screens, globally in `docs.config.ts`:
-
-```ts
-tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
-```
-
-The same frontmatter field can change heading levels or set `mobile: false` on
-one page. `tableOfContents: false` disables both versions. Selecting a mobile
-contents link closes the disclosure and moves keyboard focus to the heading.
-The desktop contents list highlights the current section and scrolls its own
-list when the active link moves out of view.
-Customize `theme.styles.MobileTableOfContents` and `TableOfContentsLayout`.
-
-## Hero images
-
-Use a relative local image in frontmatter. Cookbook reads its intrinsic dimensions
-and reserves the correct aspect ratio as the layout responds to screen width:
+Desktop pages show a table of contents for heading levels 2 and 3. Set the
+site defaults with the top-level
+[`tableOfContents`](./configuration.md#table-of-contents) key; set the same
+field in a page's frontmatter to change one page:
 
 ```yaml
+tableOfContents:
+  mobile: true
+  maxHeadingLevel: 4
+```
+
+A page's `tableOfContents` object replaces the site's heading levels; omitted
+levels fall back to 2 and 3. Only `mobile` falls back to `docs.config.ts`.
+`tableOfContents: false` disables both versions. Selecting a mobile contents
+link closes the disclosure and moves keyboard focus to the heading. The desktop
+contents list highlights the current section and scrolls its own list when the
+active link moves out of view. Customize `theme.styles.TableOfContents` (desktop
+list), `MobileTableOfContents`, and `TableOfContentsLayout`.
+
+## Hero
+
+Add `hero` to a page's frontmatter to show a hero above the content. Home
+pages usually combine it with the wide `template: splash` layout:
+
+```yaml
+template: splash
 hero:
-  tagline: Build something useful.
+  title: Build something useful
+  tagline: Documentation that stays with the code.
   image:
     file: ./assets/hero.png
     alt: A preview of the documentation
+  actions:
+    - text: Get started
+      link: ./getting-started.md
+      variant: primary
+    - text: Compare tools
+      link: /comparison
+      variant: secondary
 ```
 
+`title` defaults to the page title. Each action needs `text` and `link`;
+`variant` is `primary`, `secondary`, or `minimal`. Action links go through the
+same link rewriting as Markdown, so a relative `.md` path works.
+
+### Hero images
+
+Use a relative local image. Cookbook reads its intrinsic dimensions and
+reserves the correct aspect ratio as the layout responds to screen width.
 Use `light` and `dark` instead of `file` for appearance variants; both must have
 the same aspect ratio. Remote or public-path images require explicit `width` and
-`height`. Hero images load eagerly with high fetch priority; use ordinary Markdown
-images for content farther down the page. `theme.styles.Hero.Visual` controls
-responsive sizing without changing the intrinsic dimensions.
+`height`; explicit dimensions on a local image must match its aspect ratio.
+`image.html` accepts inline HTML, such as an SVG, in local content and is
+removed from untrusted package Markdown. Hero images load eagerly with high fetch priority;
+use ordinary Markdown images for content farther down the page.
+`theme.styles.Hero.Visual` controls responsive sizing without changing the
+intrinsic dimensions.

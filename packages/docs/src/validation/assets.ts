@@ -68,18 +68,16 @@ export async function validateProjectAssets(
           await publicFile(src, `${entry.sourcePath}: hero.image`);
     }
   }
-  const require = createRequire(resolve(project.root, "package.json"));
+  // Match the build: relative paths and dependencies resolve from the Astro project.
+  const directory = project.directory ?? project.root;
+  const require = createRequire(resolve(directory, "package.json"));
   for (const [name, component] of Object.entries(
     project.config.components?.overrides ?? {},
   )) {
     if (typeof component !== "string") continue;
-    if (
-      isAbsolute(component) ||
-      component.startsWith(".") ||
-      component.startsWith("src/")
-    )
+    if (isAbsolute(component) || component.startsWith("."))
       await check(
-        resolve(project.root, component),
+        resolve(directory, component),
         `components.overrides.${name}`,
       );
     else {
@@ -90,7 +88,7 @@ export async function validateProjectAssets(
           code: "DOCS_COMPONENT_UNRESOLVED",
           severity: "error",
           message: `components.overrides.${name} cannot resolve ${component}.`,
-          hint: "Install the component package or use a path relative to the project root.",
+          hint: "Install the component package, or start a local path with ./ to resolve it from the Astro project directory.",
         });
       }
     }

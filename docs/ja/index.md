@@ -43,7 +43,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook はファイルを現在の場所から読み込みます。[新しいサイトを作る](./getting-started.md)、[npm に公開されたファイルをそのまま文書化する](./getting-started.md)、[既存の Astro プロジェクトに追加する](./getting-started.md)方法もあります。
+Cookbook はファイルを現在の場所から読み込みます。[新しいサイトを作る](./getting-started.md#最初のサイトを作る)、[npm に公開されたファイルをそのまま文書化する](./getting-started.md#公開済みの-npm-パッケージを文書化する)、[既存の Astro プロジェクトに追加する](./getting-started.md#既存の-astro-プロジェクトに追加する)方法もあります。
 
 ## このサイト自体が使用例
 

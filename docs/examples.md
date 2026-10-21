@@ -1,9 +1,14 @@
 ---
 title: Working examples
-description: Complete configuration patterns for repositories, monorepos, npm content, and shared themes.
+description: Complete configurations for repositories, monorepos, npm content, languages, and preview sites.
 sidebar:
   order: 3
 ---
+
+These are complete `docs.config.ts` files for common content layouts. For
+branding, component styles, fonts, and shared themes, see the
+[theme recipes](./recipes.md). Every example marked for verification is
+type-checked and built by Cookbook's test suite.
 
 Each example uses the same Astro integration:
 
@@ -40,16 +45,31 @@ export default defineDocsConfig({
   site: { title: "SDK documentation" },
   content: {
     sources: [
-      { id: "api", root: "packages/api", glob: "**/*.md", routeBase: "/api" },
-      { id: "ui", root: "packages/ui", glob: "**/*.md", routeBase: "/ui" },
+      {
+        id: "api",
+        root: "packages/api",
+        glob: "**/*.md",
+        exclude: ["node_modules/**", "dist/**", "CHANGELOG.md"],
+        routeBase: "/api",
+      },
+      {
+        id: "ui",
+        root: "packages/ui",
+        glob: "**/*.md",
+        exclude: ["node_modules/**", "dist/**", "CHANGELOG.md"],
+        routeBase: "/ui",
+      },
     ],
   },
 });
 ```
 
-Use `source:ui/README.md` for an explicit link to the UI package. Ordinary relative
-links stay in their own source mount when the same file appears in several
-versions. A relative frontmatter slug is appended to that source's `routeBase`.
+Glob sources skip only paths beginning with `_` and the declared `exclude`
+patterns, so exclude each package's dependencies, build output, and changelog.
+Use `source:ui/README.md` for an explicit link to the UI package. Ordinary
+relative links stay in their own source mount when the same file appears in
+several mounts. A frontmatter `slug`, even one starting with `/`, is appended
+to that source's `routeBase`.
 
 ## Locked npm documentation
 
@@ -71,34 +91,51 @@ with instructions instead of rendering the old version.
 A package source can specify `registry` for an alternative registry. The default
 is the npm public registry. Keep credentials out of committed configuration.
 
-## Share configuration and themes
+## English and French
 
-A preset is an ordinary exported `DocsConfig` object:
+Create `docs/index.md`, `docs/guide.md`, `docs/fr/index.md`, and
+`docs/fr/guide.md`. Routes are `/`, `/guide`, `/fr`, and `/fr/guide`.
 
-```ts cookbook-verify=shared-theme
-import { defineDocsConfig, mergeDocsConfig } from "@tenphi/cookbook/config";
+```ts cookbook-verify=locales
+import { defineDocsConfig } from "@tenphi/cookbook/config";
 
-const company = defineDocsConfig({
-  theme: {
-    brand: { from: "#315efb" },
-    tokens: { $radius: "8px" },
+export default defineDocsConfig({
+  site: { title: "Acme docs", url: "https://docs.example.com" },
+  content: { sources: [{ glob: "docs/**/*.md", base: "docs" }] },
+  locales: {
+    root: { label: "English", lang: "en" },
+    fr: { label: "Français" },
   },
-  markdown: { rawHtml: "sanitize" },
-});
-
-export default mergeDocsConfig(company, {
-  site: { title: "Product docs" },
-  theme: { tokens: { "$content-width": "52rem" } },
+  defaultLocale: "root",
+  navigation: ["/", "/guide"],
+  translations: { fr: { appearance: "Présentation" } },
 });
 ```
 
-Each `theme.brand` or `theme.palette` color replaces the corresponding color in
-the preset. Supply the complete Glaze declaration for a color you override.
+Navigation adapts to real translations. Missing translations use a real fallback
+in the language picker; they do not generate phantom routes or alternate links.
+See [languages](./configuration.md#languages) and
+[translations](./configuration.md#translations).
 
-Objects merge recursively, arrays replace, and inputs are not mutated. Tasty
-styles preserve their default values when adding conditional overrides. A preset
-can live in a shared workspace package. Component overrides remain partial Tasty
-objects and merge into Cookbook's complete base styles inside the renderer.
+## Preview publishing
 
-For complete branding, font, locale, and preview configurations, see
-[configuration recipes](./recipes.md).
+Set the preview's own URL and Astro `base` if hosted in a subdirectory. Serve
+private previews behind host authentication.
+
+```ts cookbook-verify=preview
+import { defineDocsConfig } from "@tenphi/cookbook/config";
+
+export default defineDocsConfig({
+  site: {
+    title: "Acme preview",
+    url: "https://preview.example.com",
+    seo: { index: false, copyPage: false },
+  },
+  tableOfContents: { mobile: true },
+});
+```
+
+Build, run `cookbook check-build`, deploy that output, then run
+`cookbook check-build --url https://preview.example.com/`. See
+[deployment](./deployment.md) for production metadata, host headers, and sitemap
+checks, and [troubleshooting](./troubleshooting.md) when a check fails.

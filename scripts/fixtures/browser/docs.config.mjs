@@ -21,6 +21,12 @@ export default {
   tableOfContents: { mobile: true },
   theme: {
     brand: { from: "#d97706" },
+    // Status roles differ from the matching extra hues, so tests can tell them apart.
+    palette: {
+      info: { from: "#0891b2" },
+      success: { from: "#65a30d" },
+      danger: { from: "#be185d" },
+    },
     styles: {
       Button: { gap: "7px" },
       SearchButton: { gap: "11px" },

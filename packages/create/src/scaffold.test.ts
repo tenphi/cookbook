@@ -101,12 +101,12 @@ describe("creator defaults", () => {
     expect(agentInstructions).toContain(
       ".agents/skills/upgrade-cookbook/SKILL.md",
     );
-    expect(
-      await readFile(
-        join(destination, ".agents", "skills", "upgrade-cookbook", "SKILL.md"),
-        "utf8",
-      ),
-    ).toContain("cookbook.lock.json");
+    const upgradeSkill = await readFile(
+      join(destination, ".agents", "skills", "upgrade-cookbook", "SKILL.md"),
+      "utf8",
+    );
+    expect(upgradeSkill).toContain("cookbook.lock.json");
+    expect(upgradeSkill).toContain("Run the site's `validate` script");
   });
   it("keeps existing repository content outside the generated app", async () => {
     const { root, destination, project, graph } = await localFixture(true);
@@ -189,5 +189,84 @@ describe("creator defaults", () => {
     expect(workflow).toContain(`- run: ${install}`);
     expect(workflow).toContain(`cache: ${manager}`);
     expect(workflow).toContain("actions/deploy-pages@v5");
+    expect(workflow).toContain("path: dist\n");
+    expect(workflow).not.toContain("working-directory");
+  });
+
+  it("writes the Pages workflow at the root of the enclosing repository", async () => {
+    const root = await mkdtemp(join(tmpdir(), "cookbook-repository-"));
+    roots.push(root);
+    await mkdir(join(root, ".git"));
+    await writeFile(join(root, "README.md"), "# Repository\n");
+    const destination = join(root, "docs-site");
+    const result = await scaffold({
+      destination,
+      source: root,
+      deploy: "github-pages",
+      packageManager: "pnpm",
+      install: false,
+    });
+
+    const path = join(root, ".github", "workflows", "deploy-docs.yml");
+    expect(result.workflow).toBe(path);
+    expect(await readdir(destination)).not.toContain(".github");
+    const workflow = await readFile(path, "utf8");
+    expect(workflow).toContain(
+      '    defaults:\n      run:\n        working-directory: "docs-site"\n',
+    );
+    expect(workflow).toContain('package_json_file: "docs-site/package.json"');
+    expect(workflow).toContain(
+      'cache-dependency-path: "docs-site/pnpm-lock.yaml"',
+    );
+    expect(workflow).toContain('path: "docs-site/dist"');
+
+    await expect(
+      scaffold({
+        destination: join(root, "guide-site"),
+        deploy: "github-pages",
+        install: false,
+      }),
+    ).rejects.toThrow(/GitHub workflow already exists/);
+    expect(await readdir(root)).not.toContain("guide-site");
+  });
+
+  it("keeps the Pages workflow in a site that is its own repository", async () => {
+    const destination = await mkdtemp(join(tmpdir(), "cookbook-own-"));
+    roots.push(destination);
+    await mkdir(join(destination, ".git"));
+    const result = await scaffold({
+      destination,
+      deploy: "github-pages",
+      packageManager: "npm",
+      install: false,
+      confirmNonEmpty: async () => true,
+    });
+
+    const path = join(destination, ".github", "workflows", "deploy.yml");
+    expect(result.workflow).toBe(path);
+    expect(await readFile(path, "utf8")).toBe(renderGithubWorkflow("npm"));
+  });
+
+  it("configures Yarn sites for node_modules as standalone projects", async () => {
+    const root = await mkdtemp(join(tmpdir(), "cookbook-yarn-"));
+    roots.push(root);
+    await scaffold({
+      destination: join(root, "yarn-site"),
+      packageManager: "yarn",
+      install: false,
+    });
+    await scaffold({
+      destination: join(root, "npm-site"),
+      packageManager: "npm",
+      install: false,
+    });
+
+    expect(await readFile(join(root, "yarn-site", ".yarnrc.yml"), "utf8")).toBe(
+      "nodeLinker: node-modules\n",
+    );
+    expect(await readFile(join(root, "yarn-site", "yarn.lock"), "utf8")).toBe(
+      "",
+    );
+    expect(await readdir(join(root, "npm-site"))).not.toContain(".yarnrc.yml");
   });
 });

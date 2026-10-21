@@ -881,9 +881,40 @@ export interface SearchConfig {
   enabled?: boolean;
 }
 
+/** Astro component slots that `components.overrides` can replace. */
+export const COOKBOOK_COMPONENT_OVERRIDE_NAMES = [
+  "Head",
+  "PageFrame",
+  "Header",
+  "Footer",
+  "Sidebar",
+  "Hero",
+  "SiteTitle",
+  "Search",
+  "LanguageSelect",
+  "ThemeSelect",
+  "SocialIcons",
+  "MobileMenuToggle",
+  "MobileMenuFooter",
+  "MobileTableOfContents",
+  "TableOfContents",
+  "Pagination",
+  "MarkdownContent",
+  "DraftContentNotice",
+  "EditLink",
+  "LastUpdated",
+] as const;
+
+export type CookbookComponentOverrideName =
+  (typeof COOKBOOK_COMPONENT_OVERRIDE_NAMES)[number];
+
 export interface ComponentsConfig {
-  /** Astro component paths keyed by Cookbook component name. `Footer` also accepts `false`. */
-  overrides?: Record<string, string | false>;
+  /** Astro component paths keyed by Cookbook slot name. `Footer` also accepts `false`. */
+  overrides?: {
+    [Name in CookbookComponentOverrideName]?: Name extends "Footer"
+      ? string | false
+      : string;
+  };
 }
 
 /**

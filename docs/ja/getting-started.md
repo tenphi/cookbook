@@ -63,8 +63,6 @@ Cookbook には Astro 用レンダラーが含まれ、`docs.config.ts` を自�
 
 ## サイトを設定する
 
-まずは[ブランド、ロゴ、フォントのレシピ](../recipes.md)をご覧ください。より細かなスタイル変更や新しいコンポーネントには、[カスタマイズのルール](../customization-rules.md)を参照してください。これらのルールと参照先は、インストールされる Cookbook パッケージにも含まれます。
-
 `astro.config.ts` と同じ場所に `docs.config.ts` を作成します。
 
 ```ts
@@ -83,9 +81,11 @@ export default defineDocsConfig({
 });
 ```
 
-`theme.fonts` を変更すると、[名前で指定する Google Fonts や独自のフォントファイル](../fonts-and-typography.md)を使えます。タイポグラフィの詳細には `theme.presets`、組み込み要素には `theme.styles`、新しい要素には `defineComponent()` と `theme.customStyles` を使用します。[テーマガイド](../theme-and-components.md)が出発点となり、[コンポーネントスタイルのリファレンス](../component-styles.md)にはカスタマイズ可能なすべてのパーツが載っています。
+`theme.fonts` を変更すると、[名前で指定する Google Fonts や独自のフォントファイル](../fonts-and-typography.md#change-font-families)を使えます。タイポグラフィの詳細には `theme.presets`、組み込み要素には `theme.styles`、新しい要素には `defineComponent()` と `theme.customStyles` を使用します。[テーマガイド](../theme-and-components.md)が出発点となり、[コンポーネントスタイルのリファレンス](../component-styles.md)にはカスタマイズ可能なすべてのパーツが載っています。
 
-統合と CLI は同じ設定を読み込みます。対応するファイル名は優先順に `docs.config.ts`、`.mts`、`.js`、`.mjs` です。統合に明示した `config` オブジェクトが優先され、`configFile: false` で自動検出を無効にできます。標準以外の場所では `cookbook({ configFile: "./config/manual.ts" })` と `cookbook doctor --config ./config/manual.ts` を使用してください。
+完全な出発点として[ブランド、ロゴ、フォントのレシピ](../recipes.md)を用意しています。より細かなスタイル変更や新しいコンポーネントには、[カスタマイズのルール](../customization-rules.md)を参照してください。これらのルールと参照先は、インストールされる Cookbook パッケージにも含まれます。
+
+統合と CLI は同じ設定を読み込みます。対応するファイル名は優先順に `docs.config.ts`、`.mts`、`.js`、`.mjs` です。統合に明示した `config` オブジェクトが優先され、`configFile: false` で自動検出を無効にできます。標準以外の場所では `cookbook({ configFile: "./config/manual.ts" })` と `cookbook doctor --config ./config/manual.ts` を使用してください。 `root` は設定ファイルのディレクトリを基準に解決されるため、このファイルでは `root: ".."` を指定して、アプリのディレクトリにある `README.md` と `docs/` を引き続き読み込むようにします。
 
 ## モノレポのルート
 
@@ -106,4 +106,6 @@ npm run validate
 npm run preview
 ```
 
-ほかのガイドは現在英語で公開されています。[使用例](../examples.md)、[執筆用コンポーネント](../authoring.mdx)、[AI エージェントの作業手順](../ai-agents.md)、[デプロイ](../deployment.md)、[バージョン別のアップグレードガイド](../migration.md)を参照してください。設定例には[レシピ](../recipes.md)、検証に失敗した場合には[トラブルシューティング](../troubleshooting.md)が役立ちます。
+`validate` はプロジェクトの型チェック、Cookbook の事前チェック、サイトのビルド、出力の検証を行います。自分で構成したプロジェクトでは、[CLI コマンド](../cli.md)に記載されたスクリプトを追加するか、`npx @tenphi/cookbook doctor` を実行してください。
+
+ほかのガイドは現在英語で公開されています。[使用例](../examples.md)、[執筆用コンポーネント](../authoring.mdx)、[AI エージェントの作業手順](../ai-agents.md)、[デプロイ](../deployment.md)、[バージョン別のアップグレードガイド](../migration.md)を参照してください。検証に失敗した場合は[トラブルシューティング](../troubleshooting.md)を参照してください。

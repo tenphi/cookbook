@@ -73,7 +73,7 @@ const result = await scaffold({
 });
 
 console.log(
-  `\nCreated ${result.destination}${result.lock ? `\nPackage  ${result.lock.resolved}\nPages    ${result.discovery?.pages.length ?? 0}` : ""}\n\nNext:\n  cd ${JSON.stringify(result.destination)}\n  ${values.install ? "" : `${result.packageManager} install\n  `}${result.packageManager} run dev`,
+  `\nCreated ${result.destination}${result.lock ? `\nPackage  ${result.lock.resolved}\nPages    ${result.discovery?.pages.length ?? 0}` : ""}${result.workflow ? `\nWorkflow ${result.workflow}` : ""}\n\nNext:\n  cd ${JSON.stringify(result.destination)}\n  ${values.install ? "" : `${result.packageManager} install\n  `}${result.packageManager} run dev`,
 );
 
 if (values.open) {

@@ -54,17 +54,24 @@ Use a glob for a documentation tree:
 directory `README.md` or `index.md` maps to the directory route; other pages
 use extensionless routes.
 
-| Source path          | `base` | `routeBase`  | Route                        |
-| -------------------- | ------ | ------------ | ---------------------------- |
-| `README.md`          | —      | —            | `/` when explicitly assigned |
-| `docs/setup.md`      | `docs` | —            | `/setup`                     |
-| `docs/api/index.md`  | `docs` | —            | `/api`                       |
-| `docs/api/client.md` | `docs` | `/reference` | `/reference/api/client`      |
+| Source path          | `base` | `routeBase`  | Route                   |
+| -------------------- | ------ | ------------ | ----------------------- |
+| `README.md`          | —      | —            | `/`                     |
+| `docs/setup.md`      | `docs` | —            | `/setup`                |
+| `docs/api/index.md`  | `docs` | —            | `/api`                  |
+| `docs/api/client.md` | `docs` | `/reference` | `/reference/api/client` |
 
-Source paths are resolved from the configured project root. Paths outside that
-root are rejected unless `content.allowOutsideRoot` is explicitly enabled.
-Prefer an explicit source `root` when documenting another package; file and
-glob paths, links, and assets are confined to that declared source root.
+Source paths resolve from the source's `root`, which defaults to the project
+root. A file or glob match outside that source root is rejected unless
+`content.allowOutsideRoot` is explicitly enabled. Prefer an explicit source
+`root` when documenting another package; file and glob paths, links, and assets
+are confined to that declared source root, which may itself lie outside the
+project root.
+
+File sources accept `navigation: false` or a `{ label, order, group, badge }`
+placement, used when the page's frontmatter has no `sidebar`. Glob sources
+accept `navigation: false` to keep every matched page out of generated
+sidebars.
 
 ## Source identities and repeated mounts
 
@@ -77,7 +84,7 @@ content: {
   sources: [
     { id: "v1", root: "versions/v1", glob: "**/*.md", routeBase: "/v1" },
     { id: "v2", root: "versions/v2", glob: "**/*.md", routeBase: "/v2" },
-  ];
+  ],
 }
 ```
 
@@ -90,7 +97,8 @@ fragments are preserved.
 A frontmatter `slug` is relative to `routeBase`, including when it begins with
 `/`. For example, `slug: intro` under `/v2` creates `/v2/intro`. File sources also
 accept `routeBase`, which prefixes their explicit `route`. Empty `sources: []`
-means no sources; omit the property to enable conventions.
+means no sources, so the build fails with no pages; omit the property to enable
+conventions.
 
 ## OpenAPI references
 
@@ -106,7 +114,7 @@ content: {
 }
 ```
 
-The overview appears at `/api`. An operation with `operationId: getWidget`
+`routeBase` defaults to `/api`, so the overview appears at `/api`. An operation with `operationId: getWidget`
 appears at `/api/get-widget`. Without an operation ID, Cookbook derives a route
 from its method and path. Operation IDs must create distinct routes. The pages
 include parameters, request bodies, responses, examples, and the document's
@@ -160,15 +168,22 @@ Package sources read documentation from the actual npm artifact:
 }
 ```
 
+Without `include`, Cookbook reads the package's `package.json` `cookbook.include`
+patterns (default `docs/**/*.{md,mdx}`) and `cookbook.exclude`. The home page is
+`index`, then the package's `cookbook.index`, then `README.md`, and it maps to
+`routeBase`. Other pages drop a leading `docs/`, so `docs/guide.md` becomes
+`/guide`.
+
 Run `cookbook update` to create or reconcile the lock after editing sources.
-A production build uses the exact requested specifier, version, and integrity stored in
-`cookbook.lock.json`. The package creator writes this lock automatically.
+Every build and development server uses the exact requested specifier, version,
+and integrity stored in `cookbook.lock.json`. The project creator writes this
+lock automatically when you start with `--package`.
 Artifacts are integrity-checked, extracted with file-count and size limits,
 and cached by integrity.
 
 Package Markdown is untrusted by default. Raw HTML is sanitized to safe
 elements, HTML-capable frontmatter is stripped, custom `head` entries are discarded,
-unsafe URL protocols are rejected, and MDX cannot execute. Set `trust: "mdx"`
+and MDX cannot execute. Set `trust: "mdx"`
 only after reviewing the exact locked artifact; doing so allows its build-time
 code to run. Trusted MDX is compiled by Astro, including relative component
 imports from the source file's directory. Package-provided indexes, include
@@ -177,7 +192,8 @@ extracted artifact root.
 
 ## Links and assets
 
-Write ordinary repository-relative Markdown:
+Write ordinary file-relative Markdown links. A root-relative link such as
+`/guide` is checked against collected routes:
 
 ```md
 [Install](./getting-started.md)
@@ -195,10 +211,12 @@ default. Set `content.localizeRepositoryLinks: true` to rewrite absolute links
 back into the collected documentation when they match `site.repository` or the
 current package's `repository` manifest field. GitHub/GitLab `blob`, `tree`, and
 `raw` URLs plus Bitbucket `src` URLs are recognized; query strings and fragments
-are preserved. Links without a matching collected page remain external.
+are preserved. Only pages from the same source root as the linking page are
+matched; links without a matching collected page remain external.
 
-Missing relative links are errors in strict mode; missing assets and paths
-escaping an allowed source root are always errors.
+Missing relative links are errors in strict mode; missing assets, paths
+escaping an allowed source root, and unsafe URL protocols such as `javascript:`
+are always errors.
 
 Run the [doctor command](./cli.md#validate-with-doctor) before committing a
 large content move.

@@ -670,11 +670,16 @@ async function resolvePageMetadata(
   source: CollectedSource,
   config: NormalizedDocsConfig,
 ): Promise<void> {
-  if (frontmatter.editUrl === undefined && config.editLink) {
+  // Package pages have no editPath: their files come from an npm artifact.
+  if (
+    frontmatter.editUrl === undefined &&
+    config.editLink &&
+    source.editPath !== undefined
+  ) {
     const baseUrl = config.editLink.baseUrl.endsWith("/")
       ? config.editLink.baseUrl
       : `${config.editLink.baseUrl}/`;
-    frontmatter.editUrl = `${baseUrl}${(source.editPath ?? source.sourcePath).replace(/^\/+/, "")}`;
+    frontmatter.editUrl = `${baseUrl}${source.editPath.replace(/^\/+/, "")}`;
   }
 
   if (frontmatter.lastUpdated === false) return;

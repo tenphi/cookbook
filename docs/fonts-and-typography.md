@@ -7,12 +7,10 @@ Start with the [theme overview](./theme-and-components.md) for brand colors and
 design tokens. Cookbook configures font loading at build time and applies
 named presets to the rendered site.
 
-## Typography presets
+## Default fonts
 
-The base [typography presets](https://tasty.style/docs/styles#preset) are
-`body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`. Onest
-Variable is self-hosted and used for body and heading text by default, with a
-continuous weight range from `100` to `900`. This supports intermediate preset
+Onest Variable is self-hosted and used for body and heading text by default,
+with a continuous weight range from `100` to `900`. This supports intermediate preset
 weights such as `450` for navigation and `610` for headings. JetBrains Mono
 Variable is self-hosted for code with weights from `100` to `800`.
 
@@ -20,19 +18,7 @@ Both default fonts bundle their Latin subset and require no Google Fonts
 requests at build time or in the browser. For other character sets, configure
 `theme.fonts` with a Google family or local files as described below.
 
-Specialized roles preserve the component sizes while sharing their base typography:
-
-| Preset         | Used for          | Base typography                                     |
-| -------------- | ----------------- | --------------------------------------------------- |
-| `hero-title`   | Hero heading      | `h1`, with a larger responsive size                 |
-| `hero-tagline` | Hero description  | `body`, with a responsive size and 1.55 line height |
-| `prose`        | Markdown content  | `body`, at 1.025rem                                 |
-| `inline-code`  | Code within prose | `code`, at 0.875em                                  |
-
-Customize these through `theme.presets` as well. Changes to the base font family,
-weight, tracking, and other shared fields continue to flow into the derived roles.
-
-### Change font families
+## Change font families
 
 Set `theme.fonts` to load fonts and apply them to the matching presets. A Google
 Fonts family needs only its name:
@@ -85,11 +71,14 @@ theme: {
 
 The `body` role also feeds navigation and small text. `heading` feeds `h1`
 through `h6`, while `code` covers code text. Each role has a system fallback.
+
+### Font loading and caching
+
 Cookbook emits font faces through Tasty with `font-display: swap`. Google CSS
 and font files are downloaded at build time and cached in
 `<Astro cacheDir>/cookbook-fonts`. Files are served from your own site's
 `_cookbook/fonts/` path by default, including the deployment base. Visitors make
-no Google Fonts requests. Existing local-file definitions keep working.
+no Google Fonts requests.
 
 ```ts
 theme: {
@@ -112,13 +101,24 @@ for other axes. Styles and weights that do not exist are rejected for explicit
 requests. For static fonts, browsers select their nearest real weight;
 intermediate weights require a variable font.
 
-Migration: name-only Google font configuration now downloads the required
-weights and italics and serves them locally. This increases the initial build's
-font downloads and removes visitors' external font dependency. Set
-`fontLoading.google: "remote"` to retain CDN delivery. Existing CSS-variable
-weights that cannot be resolved from presets require explicit `weights`.
+## Typography presets
 
-### Adjust presets
+The base [typography presets](https://tasty.style/docs/styles#preset) are
+`body`, `heading`, `h1` through `h6`, `navigation`, `small`, and `code`.
+
+Specialized roles preserve the component sizes while sharing their base typography:
+
+| Preset         | Used for          | Base typography                                     |
+| -------------- | ----------------- | --------------------------------------------------- |
+| `hero-title`   | Hero heading      | `h1`, with a larger responsive size                 |
+| `hero-tagline` | Hero description  | `body`, with a responsive size and 1.55 line height |
+| `prose`        | Markdown content  | `body`, at 1.025rem                                 |
+| `inline-code`  | Code within prose | `code`, at 0.875em                                  |
+
+Customize these through `theme.presets` as well. Changes to the base font family,
+weight, tracking, and other shared fields continue to flow into the derived roles.
+
+## Adjust presets
 
 Presets merge property-by-property, so changing size, weight, or line height
 does not require copying the rest of the preset. `theme.presets` takes precedence
@@ -145,7 +145,11 @@ theme: {
 
 For a system or already loaded font, set its CSS family directly with
 `theme.presets.<role>.fontFamily`. This does not load a font file. Additional
-named presets are available to custom MDX components.
+named presets are available to custom MDX components; a new preset starts from
+the `body` values.
+
+Each preset accepts `fontFamily`, `fontSize`, `lineHeight`, `letterSpacing`,
+`fontWeight`, `boldFontWeight`, `fontStyle`, `textTransform`, and `iconSize`.
 
 Heading presets reference the `heading` family and weights; body, navigation,
 and controls reference `body`. Semantic `strong` and `b` elements use Tasty's
@@ -172,5 +176,6 @@ Cookbook applies each semantic typography role through its complete Tasty
 `preset`, so configured fields such as `fontStyle` and `textTransform` are not
 silently omitted.
 
-The exported `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants
+The `DEFAULT_THEME_TOKENS` and `DEFAULT_TYPOGRAPHY_PRESETS` constants exported
+from `@tenphi/cookbook`
 are useful when building a theme editor or presenting a reset action.

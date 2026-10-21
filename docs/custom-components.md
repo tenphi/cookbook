@@ -3,11 +3,11 @@ title: Custom components
 description: Style your Astro and MDX components with Tasty and validate their tokens and parts.
 ---
 
-Use this guide after [theme configuration](./theme-and-components.md) when you
-need markup beyond Cookbook's built-in surfaces. For ordinary visual changes,
-consult the [component styles](./component-styles.md) reference first.
+Use this guide when you need markup beyond Cookbook's built-in surfaces. For
+ordinary visual changes, start with the [theme guide](./theme-and-components.md)
+and the [component styles](./component-styles.md) reference.
 
-## Authoring custom components
+## Styling exports
 
 Import styling tools from `@tenphi/cookbook/styling`. They use the same Tasty
 runtime as Cookbook, with its semantic colors, typography presets, units, and
@@ -32,13 +32,13 @@ is needed for static components. Set shared tokens, presets, and states in
 modules; configuration files should import `defineDocsConfig()` from
 `@tenphi/cookbook/config`.
 
-### A small named component
+## Define a named component
 
 For a component used by your pages, give its root a name and define its parts
 inside the same style object:
 
 ```ts
-// src/components/StatusBadge.ts
+// docs/components/StatusBadge.ts
 import { defineComponent } from "@tenphi/cookbook/styling";
 
 export const StatusBadge = defineComponent("StatusBadge", {
@@ -70,87 +70,106 @@ theme: {
 merges it with the base styles while rendering on the server. Document the
 root name and every named part when sharing a custom component.
 
-### A shared site logo
+`defineComponent(name, options)` accepts Tasty factory options and a name for
+`theme.customStyles[name]`. It merges the configured partial style object before
+creating the component, retaining the other base properties and responsive
+states. Tasty options such as `elements`, `variants`, `styleProps`, `modProps`,
+and `tokenProps` keep their behavior and inferred types, including generated
+subcomponents such as `Component.Label`.
+Configured styles become the component's defaults; variants and styles passed
+at render time follow Tasty's usual precedence.
 
-Set `site.logo` once to use your artwork in the header and mobile drawer:
+Use `defineComponent` when authoring a component that should support
+`theme.customStyles`. Use `tasty` directly for ordinary Tasty creation or composition
+that does not need a configuration name. To define a named component around
+an existing React component that forwards `className`, pass it as `as` in the options. Tasty attaches its generated classes for extracted CSS. Use `data-element` identities
+and named sub-elements for owned anatomy, and modifiers/state maps for variants.
+Root selectors may keep stable classes, such as `.project-note`, or use
+`data-component`; avoid classes for sub-elements and modifiers.
 
-```ts
-site: {
-  title: "Acme",
-  logo: "./assets/acme.svg"
-}
-```
+## Extend a component
 
-Paths are local files relative to the resolved project root, just like
-`site.favicon`. Cookbook reads the intrinsic dimensions and copies the image to
-a content-hashed URL under the deployment base. SVG, PNG, JPEG, WebP, AVIF, and
-GIF are supported. Missing or invalid files fail during setup.
-
-```ts
-site: {
-  title: "Acme",
-  logo: {
-    light: "./assets/acme-light.svg",
-    dark: "./assets/acme-dark.svg",
-    alt: "Acme documentation",
-    href: "/",
-    decorative: true
-  },
-  favicon: "./assets/acme-icon.svg"
-}
-```
-
-Use `src` for one image, or both `light` and `dark`. Variants follow the
-appearance control and the system preference in Auto mode. They must share an
-aspect ratio to prevent layout shifts. Optional `width` and `height` describe
-intrinsic dimensions; Tasty controls display size. Customize
-`theme.styles.SiteLogo` and its complete anatomy: `Image`, `Light`, and `Dark`.
-Wide wordmarks retain their proportions within the header.
-
-The logo is decorative by default because the neighboring title labels the
-site. Set `decorative: false` and `alt` when the image itself carries meaningful
-text. The header logo link still has a name when the image is decorative.
-`href` defaults to the localized documentation home; it accepts a root-relative
-documentation route or HTTP(S) destination. The header title and drawer use the
-same destination. `site.logo: false` removes the mark from both locations.
-
-A logo does not change the favicon or touch icons. Configure `site.favicon`
-separately for square artwork; the default Cookbook icon set remains in place
-until changed. `Logo` remains available as the standalone Cookbook book mark.
-
-The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
-The default homepage hero artwork also uses `logo-surface` for its brand fill.
-Both default to Glaze `mode: "fixed"`: the brand background and light book keep
-their polarity in dark mode while respecting Glaze's tone boundaries and
-high-contrast settings. The mark-to-background contrast floor is 3:1 normally
-and 4.5:1 in high contrast. These colors are separate from interactive accents.
-For example, to customize the logo background while retaining brand hue:
+Use `extendComponent(name, base, options)` to inherit an existing Tasty
+component's styles, props, variants, and compound parts:
 
 ```ts
-theme: {
-  brand: { from: "#315efb" },
-  palette: {
-    "logo-surface": {
-      base: "logo-mark",
-      tone: 40,
-      saturation: 0.8,
-      mode: "fixed",
-      contrast: { wcag: [3, 4.5] },
+import { Button, extendComponent } from "@tenphi/cookbook/styling";
+
+export const ProjectButton = extendComponent("ProjectButton", Button, {
+  type: "button",
+  styles: {
+    padding: "1x 2x",
+    radius: "1r",
+    fill: {
+      "": "#surface-2",
+      ":hover": "#surface-2-hover",
+      ":active": "#surface-2-pressed",
     },
-    "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
   },
-}
+});
+
+export const CompactButton = extendComponent("CompactButton", ProjectButton, {
+  styles: { padding: "0.5x 1x" },
+});
 ```
 
-Custom image assets keep their authored colors; use `light`/`dark` files when
-you want distinct artwork. Header and drawer home links center logos with the
-site title regardless of their aspect ratio. Use `theme.styles.SiteLogo` for
-image size and `theme.styles.Header.SiteTitle` / `Sidebar.HomeLink`
-for typography; they do not need baseline offsets for a different preset.
+`theme.styles.Button` customizes the shared foundation, including Cookbook's
+search and mobile-menu buttons. `theme.customStyles.ProjectButton` and
+`CompactButton` customize each derived component independently. This example
+adds a hover fill to both descendants.
 
-### Advanced site title markup
+The merge order is the base component's configured styles and selected variant,
+the extension's styles, its named theme override, and styles passed while
+rendering. Tasty merges named sub-elements and state maps using its usual
+[extending and replacing rules](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
+Changing a descendant never mutates its base or siblings. If a base exposes
+parts such as `Button.Label`, the descendant exposes those same components.
 
-To put your own logo and title in one home link, create
+Extension options accept styles and default values for existing props. Define
+new `elements`, `variants`, `styleProps`, `modProps`, `tokenProps`, or an `as`
+type on the original factory; Tasty's wrapping API does not install new factory
+settings. Existing required props remain required in the derived component's
+type. To compose reusable style fragments without a component base, use
+`mergeStyles(baseStyles, extensionStyles)`; a shallow spread replaces entire
+nested sub-elements and state maps.
+
+## Global style trees
+
+For markup you do not render through a Tasty component, call
+`useGlobalStyles()` during rendering. For example, this Astro component
+supports root styles and a `Label` sub-element through `theme.customStyles.ProjectNote`:
+
+```astro
+---
+import {
+  resolveComponentStyles,
+  useGlobalStyles,
+} from "@tenphi/cookbook/styling";
+
+useGlobalStyles(
+  ".project-note",
+  resolveComponentStyles("ProjectNote", {
+    padding: "2x",
+    fill: "#surface-2",
+    Label: { $: "> strong", color: "#text", preset: "strong" },
+  }),
+);
+---
+
+<aside class="project-note"><strong>Note</strong><slot /></aside>
+```
+
+`defineComponent`, `extendComponent`, and `resolveComponentStyles` read the same `theme.customStyles`
+configuration; user configuration contains only the properties to change. Each custom style name must match a call to one of these helpers.
+
+## Replace built-in markup
+
+When the built-in markup does not fit, replace an Astro component through
+`components.overrides`; see the [list of override names](./configuration.md#components).
+An override owns its markup and behavior. For ordinary branding, configure
+[`site.logo`](./theme-and-components.md#logo-and-favicon) instead.
+
+For example, to put your own logo and title in one home link, create
 `docs/components/site-title.ts`:
 
 ```ts
@@ -203,8 +222,8 @@ const { siteTitle, siteTitleHref } = Astro.locals.cookbookRoute;
 ```
 
 Register the replacement in `docs.config.ts` and disable the shared mark.
-A `SiteTitle` override affects the header; use `site.logo` above for ordinary
-branding shared with the drawer. For custom drawer markup, override `Sidebar`.
+A `SiteTitle` override affects the header; `site.logo` covers ordinary branding
+shared with the drawer. For custom drawer markup, override `Sidebar`.
 The custom component supports root styles plus its complete list of named
 sub-elements: `Logo` and `Label`.
 
@@ -221,94 +240,6 @@ theme: {
   }
 }
 ```
-
-`defineComponent(name, options)` accepts Tasty factory options and a name for
-`theme.customStyles[name]`. It merges the configured partial style object before
-creating the component, retaining the other base properties and responsive
-states. Tasty options such as `elements`, `variants`, `styleProps`, `modProps`,
-and `tokenProps` keep their behavior and inferred types, including generated
-subcomponents such as `Component.Label`.
-Configured styles become the component's defaults; variants and styles passed
-at render time follow Tasty's usual precedence.
-
-Use `defineComponent` when authoring a component that should support
-`theme.customStyles`. Use `tasty` directly for ordinary Tasty creation or composition
-that does not need a configuration name. To define a named component around
-an existing React component that forwards `className`, pass it as `as` in the options. Tasty attaches its generated classes for extracted CSS. Use `data-element` identities
-and named sub-elements for owned anatomy, and modifiers/state maps for variants.
-Root selectors may keep stable classes, such as `.project-note`, or use
-`data-component`; avoid classes for sub-elements and modifiers.
-
-### Extending a component
-
-Use `extendComponent(name, base, options)` to inherit an existing Tasty
-component's styles, props, variants, and compound parts:
-
-```ts
-import { Button, extendComponent } from "@tenphi/cookbook/styling";
-
-export const ProjectButton = extendComponent("ProjectButton", Button, {
-  type: "button",
-  styles: {
-    padding: "1x 2x",
-    radius: "1r",
-    fill: { "": "#surface", ":hover": "#surface-2-hover" },
-  },
-});
-
-export const CompactButton = extendComponent("CompactButton", ProjectButton, {
-  styles: { padding: "0.5x 1x" },
-});
-```
-
-`theme.styles.Button` customizes the shared foundation, including Cookbook's
-search and mobile-menu buttons. `theme.customStyles.ProjectButton` and
-`CompactButton` customize each derived component independently. This example
-adds a hover fill to both descendants.
-
-The merge order is the base component's configured styles and selected variant,
-the extension's styles, its named theme override, and styles passed while
-rendering. Tasty merges named sub-elements and state maps using its usual
-[extending and replacing rules](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
-Changing a descendant never mutates its base or siblings. If a base exposes
-parts such as `Button.Label`, the descendant exposes those same components.
-
-Extension options accept styles and default values for existing props. Define
-new `elements`, `variants`, `styleProps`, `modProps`, `tokenProps`, or an `as`
-type on the original factory; Tasty's wrapping API does not install new factory
-settings. Existing required props remain required in the derived component's
-type. To compose reusable style fragments without a component base, use
-`mergeStyles(baseStyles, extensionStyles)`; a shallow spread replaces entire
-nested sub-elements and state maps.
-
-### Global style trees
-
-For markup you do not render through a Tasty component, call
-`useGlobalStyles()` during rendering. For example, this Astro component
-supports root styles and a `Label` sub-element through `theme.customStyles.ProjectNote`:
-
-```astro
----
-import {
-  resolveComponentStyles,
-  useGlobalStyles,
-} from "@tenphi/cookbook/styling";
-
-useGlobalStyles(
-  ".project-note",
-  resolveComponentStyles("ProjectNote", {
-    padding: "2x",
-    fill: "#surface-2",
-    Label: { $: "> strong", color: "#text", preset: "strong" },
-  }),
-);
----
-
-<aside class="project-note"><strong>Note</strong><slot /></aside>
-```
-
-`defineComponent`, `extendComponent`, and `resolveComponentStyles` read the same `theme.customStyles`
-configuration; user configuration contains only the properties to change. Each custom style name must match a call to one of these helpers.
 
 ## Linting custom styles
 
@@ -406,6 +337,22 @@ export default {
 `extends` merges and deduplicates these arrays with the inherited configuration,
 so list only your additions. It also inherits the styling helper signatures;
 entries you add to `styleFunctions` override inherited signatures by function name.
+
+To keep the list in sync with the theme automatically, build the validation
+configuration from `docs.config.ts` instead:
+
+```ts
+// tasty.config.ts
+import { createValidationConfig } from "@tenphi/cookbook/eslint-plugin";
+import docs from "./docs.config";
+
+export default createValidationConfig(docs.theme);
+```
+
+`createValidationConfig(theme)` adds the theme's tokens, palette colors (as
+`#name` tokens), units, states, presets, and recipes to Cookbook's built-in
+vocabulary.
+
 The exported `validationConfig` object remains available for programmatic use.
 The entry point also exports the upstream `StyleFunctionConfig` and
 `ResolvedConfig` types for shared lint configurations. Additional imported

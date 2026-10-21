@@ -37,10 +37,12 @@ Set `site.url` in `docs.config.ts` to the public HTTPS origin. If the site is
 hosted under a path, set Astro's `base` in `astro.config.ts`. A production build
 then gives every page a canonical URL and creates a sitemap. Cookbook also writes:
 
-- `llms.txt`, a short index of published pages with titles, descriptions, and
-  links to their readable HTML pages. Drafts are omitted. This is an optional
+- `llms.txt`, a short index of published pages with titles, descriptions, links
+  to their HTML pages and, unless `site.seo.copyPage` is `false`, their Markdown
+  copies. Drafts, noindex pages, and non-canonical duplicates are omitted. This is an optional
   discovery aid for agents that choose to read it.
-- `robots.txt` at origin-root deployments with a pointer to the sitemap. A
+- `robots.txt` at origin-root deployments with `site.url` set, with a pointer to
+  the sitemap. A
   `robots.txt` below a path such as `/project/` would not control the origin's
   crawlers, so Cookbook does not generate one there.
 
