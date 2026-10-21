@@ -1,9 +1,14 @@
+import type {
+  ComponentsConfig,
+  CookbookComponentOverrideName,
+} from "@tenphi/docs";
+
 export function resolveComponentOverrides(
-  defaults: Record<string, string>,
-  overrides: Record<string, string | false> | undefined,
+  defaults: Record<CookbookComponentOverrideName, string>,
+  overrides: ComponentsConfig["overrides"],
   disabledFooterPath: string,
 ): Record<string, string> {
-  const resolved = { ...defaults };
+  const resolved: Record<string, string> = { ...defaults };
 
   for (const [name, override] of Object.entries(overrides ?? {})) {
     if (name === "Footer" && override === false) {

@@ -75,11 +75,6 @@ With no documentation configuration, it uses README/docs conventions.
 
 ## Configure the site
 
-Start with the complete [brand, logo, and font recipes](./recipes.md).
-For deeper style changes or new components, read the
-[customization rules](./customization-rules.md). These rules and upstream
-references are also included in the installed Cookbook package.
-
 Create `docs.config.ts` next to `astro.config.ts`:
 
 ```ts
@@ -105,11 +100,19 @@ and `defineComponent()` with `theme.customStyles` to add a new element. The
 [component styles reference](./component-styles.md) lists every customizable
 sub-element.
 
+For complete starting points, see the [brand, logo, and font recipes](./recipes.md).
+Before deeper style changes or new components, read the
+[customization rules](./customization-rules.md). These rules and upstream
+references are also included in the installed Cookbook package.
+
 The integration and CLI load the same configuration. Supported filenames are
 `docs.config.ts`, `.mts`, `.js`, and `.mjs`, in that order. An explicit integration
 `config` object takes precedence; `configFile: false` disables discovery.
 Use `cookbook({ configFile: "./config/manual.ts" })` and
 `cookbook doctor --config ./config/manual.ts` for a nonstandard location.
+Because `root` resolves from the configuration file's directory, that file
+needs `root: ".."` to keep reading `README.md` and `docs/` from the app
+directory.
 
 ## Monorepo roots
 
@@ -133,9 +136,13 @@ npm run validate
 npm run preview
 ```
 
-See [working examples](./examples.md), [authoring components](./authoring.mdx),
-the [AI agent workflow](./ai-agents.md), and [deployment](./deployment.md). Existing users should read the
-[version-specific upgrade guide](./migration.md).
+`validate` type-checks the project, runs Cookbook's preflight, builds the site,
+and checks the output. In a project you set up yourself, add the scripts listed
+in [CLI commands](./cli.md) or run `npx @tenphi/cookbook doctor`. Then
+[deploy](./deployment.md) the `dist/` directory. If validation fails, see
+[troubleshooting](./troubleshooting.md).
 
-For a complete configuration to adapt, start with the [recipes](./recipes.md).
-If validation fails, see [troubleshooting](./troubleshooting.md).
+Continue with [working examples](./examples.md),
+[authoring components](./authoring.mdx), and the
+[AI agent workflow](./ai-agents.md). Existing users should read the
+[version-specific upgrade guide](./migration.md).

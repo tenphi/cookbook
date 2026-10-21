@@ -59,5 +59,6 @@ export type {
 export {
   DEFAULT_THEME_TOKENS,
   DEFAULT_TYPOGRAPHY_PRESETS,
+  resolveDocsTheme,
 } from "@tenphi/renderer";
-export type { CookbookOptions } from "@tenphi/renderer";
+export type { CookbookOptions, ResolvedDocsTheme } from "@tenphi/renderer";

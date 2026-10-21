@@ -8,17 +8,17 @@ sidebar:
 Cookbook resolves Glaze colors and Tasty styles during the build, then ships
 static CSS. Start with a brand color; add semantic palette roles, typography,
 and component overrides only where the default needs to change. The
-[configuration recipes](./recipes.md) show complete, build-checked starting
+[theme recipes](./recipes.md) show complete, build-checked starting
 points. Read the [customization rules](./customization-rules.md) before writing
 new styles.
 
-| To change                             | Start here                                        |
-| ------------------------------------- | ------------------------------------------------- |
-| Brand, color roles, and design tokens | This page                                         |
-| Font files, families, and typography  | [Fonts and typography](./fonts-and-typography.md) |
-| Built-in UI surfaces and named parts  | [Component styles](./component-styles.md)         |
-| Your own Astro or MDX components      | [Custom components](./custom-components.md)       |
-| Complete configuration fields         | [Configuration reference](./configuration.md)     |
+| To change                                    | Start here                                        |
+| -------------------------------------------- | ------------------------------------------------- |
+| Brand, color roles, design tokens, and logo  | This page                                         |
+| Font files, families, and typography         | [Fonts and typography](./fonts-and-typography.md) |
+| Built-in UI surfaces and named parts         | [Component styles](./component-styles.md)         |
+| Your own Astro or MDX components and linting | [Custom components](./custom-components.md)       |
+| Complete configuration fields                | [Configuration reference](./configuration.md)     |
 
 Glaze derives light, dark, and high-contrast values from the brand and palette
 inputs. Tasty applies those values through semantic tokens. See the
@@ -39,22 +39,24 @@ export default defineDocsConfig({
 });
 ```
 
-Add a contrast target when the brand appears as text:
+Add a higher contrast target when brand-colored text needs more contrast:
 
 ```ts
 theme: {
   brand: {
     from: "#2f5bff",
-    contrast: { apca: [45, 60] }
+    contrast: { apca: [80, 95] }
   }
 }
 ```
 
+The default brand target is APCA 45 (60 in high contrast).
+
 The brand supplies the hue and saturation seed. Cookbook derives separate text,
-filled-control, and focus roles from it. Small accent text and filled controls
-use stronger default APCA floors (75 normally, 90 in high contrast), and diagnostics
-also enforce WCAG 4.5:1 / 7:1 on their actual backgrounds. Higher authored brand
-targets are retained. Glaze adjusts tones only as far as these floors require;
+filled-control, and focus roles from it. Small accent text keeps APCA floors of
+75 (90 in high contrast), and filled-control labels keep 80 (95 in high
+contrast); diagnostics also enforce WCAG 4.5:1 / 7:1 on their actual
+backgrounds. Only authored brand targets above these floors raise them. Glaze adjusts tones only as far as these floors require;
 dark and high-contrast schemes resolve independently.
 
 Cookbook rejects a normal APCA target below 45 unless
@@ -115,7 +117,9 @@ an absolute tone or a tone relative to `base`. Use `from` on a palette role
 when it needs its own color seed; otherwise relative declarations keep its
 relationship to the brand and surrounding surface as the scheme or contrast
 changes. `info`, `success`, `warning`, and `danger` also accept Glaze
-declarations and expose border, `-text`, and `-surface` semantic tokens.
+declarations and expose border, `-text`, and `-surface` semantic tokens. For
+`orange`, `green`, `blue`, `purple`, and `red`, an override changes that role
+and its `-surface` tint only; set the matching `-text` role as well.
 Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
@@ -125,7 +129,7 @@ Components consume semantic colors consistently: `surface`, `header`, `surface-2
 Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
 same resolved values. Glaze also generates hover and pressed states, subtle
 accent fills, overlays, shadows, and the orange, green, blue, purple, and red
-roles used by Cookbook content components. No browser color mixes or
+roles available to content components. No browser color mixes or
 upstream fallback palette values participate in the rendered theme. Surface
 elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
 steps and `surface-3` advances four from the base surface, with proportionally
@@ -134,7 +138,7 @@ wider steps in high-contrast mode. Their saturation also steps down to 75% and
 move farther from the base tone.
 
 Borders stay intentionally quiet: Glaze derives their hue from `brand` but
-uses only one quarter of the brand saturation. Normal and high-contrast modes
+uses only about one fifth (a `0.205` factor) of the brand saturation. Normal and high-contrast modes
 change border tone, not that restrained saturation relationship.
 
 ### Add palette colors and reference other roles
@@ -184,7 +188,8 @@ a shadow to be a mix target. Override the surface separately when needed.
 
 `theme.glaze` accepts `lightTone`, `darkTone`, `darkDesaturation`, `autoFlip`,
 `pastel`, `inferRole`, and `shadowTuning`. Tone windows accept `[lo, hi]`, `false`
-for the full range, or the advanced `{ lo, hi, eps }` form. Continue to use
+for the full range, or the advanced `{ lo, hi, eps }` form. The example below
+uses Glaze's default windows. Continue to use
 `theme.contrastLevel` for manual contrast interpolation. Cookbook always emits
 all four appearance variants.
 
@@ -214,7 +219,7 @@ and `bgHueBlend`; a role's own `tuning` takes precedence.
 
 Every generated role below can be overridden in `theme.palette`. Names map
 directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
-`@tenphi/docs`, lists the same roles for tooling.
+`@tenphi/cookbook`, lists the same roles for tooling.
 
 | Area                | Roles                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -228,15 +233,17 @@ directly to Tasty `#name` tokens. `COOKBOOK_PALETTE_NAMES`, exported from
 
 ### Contrast checks and troubleshooting
 
-Cookbook checks text, headings, muted reading text, brand links, filled-control
-labels, status text on its tinted surface, focus rings on each elevated
-surface, and every palette declaration with a contrast floor. The same Glaze
+Cookbook checks text, headings, secondary `text-soft` text, brand links,
+filled-control labels, the logo mark on its surface, status text on its tinted
+surface, focus rings on each elevated surface, and every palette declaration
+with a contrast floor. The same Glaze
 resolution powers rendering and `cookbook doctor`, in light, dark, and both
 high-contrast modes. Manual `theme.contrastLevel` targets interpolate with
 Glaze's contrast level.
 
-`resolveDocsTheme(theme).contrastChecks` lists each foreground/background pair,
-mode, metric, target, measured value, and pass result. APCA uses display-channel
+`resolveDocsTheme(theme).contrastChecks`, exported from `@tenphi/cookbook`,
+lists each foreground/background pair with its mode, metric, target,
+`measured` value, and `passed` result. APCA uses display-channel
 luminance; WCAG ratios use the sRGB transfer function. Transparent foregrounds
 are composited onto their background before measuring. These checks cover
 Cookbook's semantic pairs; test actual pages after changing component styles,
@@ -260,12 +267,14 @@ check does not replace keyboard, screen-reader, and rendered-page testing.
 Token names follow Tasty's
 [token and unit syntax](https://tasty.style/docs/dsl#built-in-units): `$name`
 becomes the CSS custom property `--name`. Configure tokens with `$name` keys.
+These are the defaults:
 
 ```ts
 theme: {
   tokens: {
     "$gap": "0.5rem",
     "$radius": "8px",
+    "$header-control-radius": "999px",
     "$card-radius": "16px",
     "$border-width": "1px",
     "$outline-width": "2px",
@@ -284,7 +293,8 @@ as the viewport narrows: horizontal padding shrinks to 1.5rem before the column
 itself shrinks. Mobile layouts use 1rem padding. `radius` is the control
 and navigation radius; `card-radius` is the larger surface radius. Keeping
 those roles separate makes a sharp control theme or a soft card theme possible
-without one-off component overrides.
+without one-off component overrides. `header-control-radius` shapes the header
+buttons; see [header control shape](./component-styles.md#header-control-shape).
 
 ### Register units and recipes
 
@@ -335,53 +345,110 @@ compose recipes with `recipe: "base elevated"` rather than referencing a recipe
 inside another recipe. `none` is a reserved recipe name. Cookbook's built-in
 units are `x`, `r`, `cr`, and `bw`; overriding one changes its meaning globally.
 
-Keep editor and linter validation synchronized with your configuration:
+To keep editor and linter validation synchronized with these names, build the
+lint configuration from your theme; see
+[custom theme names](./custom-components.md#custom-theme-names).
+
+## Logo and favicon
+
+Set `site.logo` once to use your artwork in the header and mobile drawer:
 
 ```ts
-// tasty.config.ts
-import { createValidationConfig } from "@tenphi/cookbook/eslint-plugin";
-import docs from "./docs.config";
-export default createValidationConfig(docs.theme);
+site: {
+  title: "Acme",
+  logo: "./assets/acme.svg"
+}
 ```
 
-## Typography presets
+Paths are local files relative to the resolved project root, just like
+`site.favicon`. Cookbook reads the intrinsic dimensions and copies the image to
+a content-hashed URL under the deployment base. SVG, PNG, JPEG, WebP, AVIF, and
+GIF are supported. Missing or invalid files fail during setup.
+
+```ts
+site: {
+  title: "Acme",
+  logo: {
+    light: "./assets/acme-light.svg",
+    dark: "./assets/acme-dark.svg",
+    href: "/",
+    decorative: true
+  },
+  favicon: "./assets/acme-icon.svg"
+}
+```
+
+Use `src` for one image, or both `light` and `dark`. Variants follow the
+appearance control and the system preference in Auto mode. They must share an
+aspect ratio to prevent layout shifts. Optional `width` and `height` describe
+intrinsic dimensions; Tasty controls display size. Customize
+`theme.styles.SiteLogo` and its complete anatomy: `Image`, `Light`, and `Dark`.
+Wide wordmarks retain their proportions within the header.
+
+The logo is decorative by default because the neighboring title labels the
+site. Set `decorative: false` and `alt` when the image itself carries meaningful
+text. The header logo link still has a name when the image is decorative.
+`href` defaults to the localized documentation home; it accepts a root-relative
+documentation route or HTTP(S) destination. The header title and drawer use the
+same destination. `site.logo: false` removes the mark from both locations.
+
+A logo does not change the favicon or touch icons. Configure
+[`site.favicon`](./configuration.md#site-icons) separately for square artwork;
+the default Cookbook icon set remains in place until changed. The
+[`Logo` component](./authoring.mdx#cookbook-logo) remains available as the
+standalone Cookbook book mark.
+
+The built-in mark uses `theme.palette["logo-surface"]` and `theme.palette["logo-mark"]`.
+The default homepage hero artwork also uses `logo-surface` for its brand fill.
+Both default to Glaze `mode: "fixed"`: the brand background and light book keep
+their polarity in dark mode while respecting Glaze's tone boundaries and
+high-contrast settings. The mark-to-background contrast floor is 3:1 normally
+and 4.5:1 in high contrast. These colors are separate from interactive accents.
+For example, to customize the logo background while retaining brand hue:
+
+```ts
+theme: {
+  brand: { from: "#315efb" },
+  palette: {
+    "logo-surface": {
+      base: "logo-mark",
+      tone: 40,
+      saturation: 0.8,
+      mode: "fixed",
+      contrast: { wcag: [3, 4.5] },
+    },
+    "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
+  },
+}
+```
+
+Custom image assets keep their authored colors; use `light`/`dark` files when
+you want distinct artwork. Header and drawer home links center logos with the
+site title regardless of their aspect ratio. Use `theme.styles.SiteLogo` for
+image size and `theme.styles.Header.SiteTitle` / `Sidebar.HomeLink`
+for typography; they do not need baseline offsets for a different preset.
+To combine your own logo and title in one custom link, see
+[Replace built-in markup](./custom-components.md#replace-built-in-markup).
+
+## Typography
 
 Cookbook supplies semantic `body`, `heading`, `h1`–`h6`, `navigation`, `small`,
-and `code` presets. Change their families, sizes, and weights through
-`theme.fonts` and `theme.presets`. See [Fonts and typography](./fonts-and-typography.md)
-for local and Google font examples, cache behavior, and preset details.
+and `code` presets. Use `theme.fonts` to load Google families by name or local
+font files, and `theme.presets` to change sizes, weights, and other typography
+fields. See [Fonts and typography](./fonts-and-typography.md) for both paths,
+cache behavior, and preset details.
 
-### Change font families
-
-Use `theme.fonts` to load Google families by name or local font files. The
-[font guide](./fonts-and-typography.md#change-font-families) explains both
-paths and how to select weights and styles.
-
-## Style customization
+## Component styles and custom components
 
 Use a partial Tasty style object at `theme.styles.<ComponentName>` to change a
 built-in surface. Cookbook merges it with the complete base style object before
 CSS extraction. The [component styles reference](./component-styles.md) gives
 examples and the complete list of named sub-elements for every surface.
 
-## Authoring custom components
-
-Use `defineComponent()` for a configurable component root and
-`resolveComponentStyles()` for an owned global style tree. Keep styling on the
-server so the browser receives extracted CSS. The
-[custom component guide](./custom-components.md) covers both patterns.
-
-### A shared site logo
-
-For ordinary branding, set `site.logo` once for the header and mobile drawer.
-Use the [logo guide](./custom-components.md#a-shared-site-logo) for image
-variants, accessibility, and advanced title markup.
-
-## Linting custom styles
-
-Adopt Cookbook's Tasty validation preset and register your additional names.
-See [Linting custom styles](./custom-components.md#linting-custom-styles) for
-ESLint and oxlint examples.
+For your own components, use `defineComponent()` for a configurable component
+root and `resolveComponentStyles()` for an owned global style tree, then adopt
+Cookbook's Tasty lint preset. The [custom component guide](./custom-components.md)
+covers both patterns and [linting](./custom-components.md#linting-custom-styles).
 
 ## Reader appearance
 

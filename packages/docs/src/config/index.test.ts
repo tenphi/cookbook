@@ -6,6 +6,7 @@ import {
   normalizeDocsConfig,
   COOKBOOK_COMPONENT_NAMES,
 } from "./index.js";
+import { COOKBOOK_COMPONENT_OVERRIDE_NAMES } from "../types.js";
 
 const schema = JSON.parse(
   readFileSync(new URL("./schema.json", import.meta.url), "utf8"),
@@ -24,7 +25,12 @@ const schema = JSON.parse(
     head: { items: { required?: string[] } };
     components: {
       properties: {
-        overrides: { properties: { Footer: { oneOf?: unknown[] } } };
+        overrides: {
+          properties: Record<string, unknown> & {
+            Footer: { oneOf?: unknown[] };
+          };
+          additionalProperties?: boolean;
+        };
       };
     };
     locales: { additionalProperties?: { $ref?: string } };
@@ -602,7 +608,7 @@ describe("docs configuration", () => {
     expect(() =>
       normalizeDocsConfig({
         components: { overrides: { Header: false } },
-      }),
+      } as never),
     ).toThrow(/components\.overrides\.Header/);
     expect(() =>
       normalizeDocsConfig({
@@ -615,6 +621,22 @@ describe("docs configuration", () => {
     expect(
       schema.properties.components.properties.overrides.properties.Footer.oneOf,
     ).toHaveLength(2);
+  });
+
+  it("rejects unknown component override names", () => {
+    expect(() =>
+      normalizeDocsConfig({
+        components: { overrides: { Foter: "./src/Footer.astro" } },
+      } as never),
+    ).toThrow(/Unknown configuration key "components\.overrides\.Foter"/);
+  });
+
+  it("lists every component override slot in the public schema", () => {
+    const overrides = schema.properties.components.properties.overrides;
+    expect(Object.keys(overrides.properties).sort()).toEqual(
+      [...COOKBOOK_COMPONENT_OVERRIDE_NAMES].sort(),
+    );
+    expect(overrides.additionalProperties).toBe(false);
   });
 
   it("rejects the removed component style mode wrapper", () => {

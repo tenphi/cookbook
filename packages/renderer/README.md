@@ -9,13 +9,15 @@ mobile sidebar. Application-owned Astro content
 collections remain independent.
 
 `@tenphi/renderer/styling` exports `tasty`, `useGlobalStyles`, `mergeStyles`,
-the `Styles` type, and the `defineComponent` and `resolveComponentStyles`
-helpers for merging `theme.customStyles` into custom components. The facade exposes
+the `Styles` type, the shared `Button` foundation, and the `defineComponent`,
+`extendComponent`, and `resolveComponentStyles` helpers for merging
+`theme.customStyles` into custom components. The facade exposes
 the same API through `@tenphi/cookbook/styling`.
 
 `@tenphi/renderer/eslint-plugin` exports the default Tasty ESLint plugin,
-`recommended` and `strict` rule maps, its configuration types, and a
-`validationConfig` preset covering Cookbook's theme names and styling helpers.
+`recommended` and `strict` rule maps, its configuration types, a
+`validationConfig` preset covering Cookbook's theme names and styling helpers,
+and `createValidationConfig(theme)` for deriving names from a theme.
 Use `extends: "@tenphi/renderer"` in `tasty.config.ts` to inherit this preset
 and list only your additional tokens, states, or presets.
 It matches `@tenphi/cookbook/eslint-plugin`; see

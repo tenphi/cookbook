@@ -15,7 +15,10 @@ export interface DocsProjectOptions {
 }
 
 export interface DocsProject {
+  /** Content root: the configuration's directory joined with `config.root`. */
   root: string;
+  /** Directory searched for configuration, normally the Astro project directory. */
+  directory?: string;
   config: DocsConfig;
   configFile?: string;
 }
@@ -68,6 +71,7 @@ export async function resolveDocsProject(
       configFile ? dirname(configFile) : directory,
       config.root ?? ".",
     ),
+    directory,
     config,
     ...(configFile ? { configFile } : {}),
   };

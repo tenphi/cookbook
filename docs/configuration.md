@@ -5,8 +5,8 @@ sidebar:
   order: 4
 ---
 
-Use `defineDocsConfig()` for type inference and immediate validation of unknown
-keys:
+Use `defineDocsConfig()` in `docs.config.ts` for type inference and immediate
+validation:
 
 ```ts
 import { defineDocsConfig } from "@tenphi/cookbook/config";
@@ -18,46 +18,51 @@ export default defineDocsConfig({
 ```
 
 Cookbook validates the configuration when it loads. Unknown top-level and
-section keys are errors.
+section keys are errors. Start with a complete [theme recipe](./recipes.md)
+or [working example](./examples.md); this page documents every option.
 
-Start with a complete [configuration recipe](./recipes.md) for common tasks.
-This page documents the available options; [working examples](./examples.md)
-covers repository layouts and shared presets.
+| Key                        | Purpose                                                       |
+| -------------------------- | ------------------------------------------------------------- |
+| `root`                     | [Project root](#project-resolution-and-presets) for content   |
+| `site`                     | [Title, URL, versions, logo, icons, header links](#site), SEO |
+| `head`                     | [Extra `<head>` elements](#head) on every page                |
+| `editLink`, `lastUpdated`  | [Edit links and timestamps](#edit-links-and-timestamps)       |
+| `tableOfContents`          | [On-page contents](#table-of-contents) defaults               |
+| `locales`, `defaultLocale` | [Languages](#languages)                                       |
+| `translations`             | [Interface messages](#translations)                           |
+| `redirects`                | [Old routes](#redirects)                                      |
+| `content`                  | [Content sources](#content) and link handling                 |
+| `navigation`               | [Tabs, sidebars, and groups](#navigation)                     |
+| `theme`                    | [Colors, fonts, tokens, presets, and styles](#theme)          |
+| `markdown`                 | [Raw HTML and badge handling](#markdown)                      |
+| `search`                   | [Pagefind search](#search)                                    |
+| `components`               | [Astro component overrides](#components)                      |
+| `build`                    | [Validation strictness and limits](#build)                    |
 
-For a focused explanation, use [content sources](./content-sources.md),
-[theme basics](./theme-and-components.md),
-[fonts and typography](./fonts-and-typography.md),
-[component styles](./component-styles.md), or
-[publishing metadata](./publishing.md). The sections below are the complete
-configuration reference.
+Page-level settings live in each page's frontmatter; see
+[page frontmatter](#page-frontmatter).
 
 ## Project resolution and presets
 
-`cookbook()` and CLI commands discover the same `docs.config.ts`. Set `root`
-to a directory relative to this file to change where content, local assets,
-and the lock live. `--root` chooses the CLI's configuration search directory;
-`--config` chooses a config file. An inline integration `config` object skips
-discovery and resolves its `root` relative to the integration root.
+`cookbook()` and CLI commands discover the same configuration file:
+`docs.config.ts`, `.mts`, `.js`, or `.mjs`, in that order. Set `root` to a
+directory relative to this file to change where content, local assets, and
+`cookbook.lock.json` live. For a nonstandard location, use
+`cookbook({ configFile: "./config/manual.ts" })` and
+`cookbook doctor --config ./config/manual.ts`. Because `root` resolves from the
+configuration file's directory, that file needs `root: ".."` to keep reading
+`README.md` and `docs/` from the app directory. `--root` chooses the CLI's
+project directory. An inline integration `config` object skips discovery and
+resolves its `root` relative to the integration root; `configFile: false`
+disables discovery.
 
 Use `mergeDocsConfig(preset, overrides)` to compose shared configuration. Objects
-merge recursively and arrays replace. Each `theme.fonts` role replaces its
-previous definition, so switching a role from Google to local files takes one
+merge recursively and arrays replace. Each `theme.brand`, `theme.palette` role,
+`theme.fonts` role, `site.logo`, and `site.seo.image` replaces its previous
+definition, so switching a font role from Google to local files takes one
 override. Tasty styles preserve default values when adding conditional
 overrides. Neither input is mutated. See
-[working examples](./examples.md#share-configuration-and-themes).
-
-## Redirects
-
-Map old routes to collected document routes:
-
-```ts
-redirects: { "/old-guide": "/getting-started" }
-```
-
-Pages can also declare `aliases: ["/old-guide"]` in frontmatter. Page aliases are
-relative to the source mount. Cookbook rejects collisions, cycles, and missing
-targets, collapses chains, and lets Astro emit static redirects. Internal links
-using an alias are rewritten to the canonical route.
+[shared themes](./recipes.md#share-configuration-and-themes).
 
 ## Site
 
@@ -103,8 +108,15 @@ content: {
 },
 ```
 
-Each `routeBase` must have a home page (a localized home also qualifies), and version roots must be distinct. A
-single-version site can continue using `site.version` for a simple label.
+`site.versions` needs at least two entries. Each `routeBase` must have a
+non-draft home page (a localized home also qualifies), and version roots must
+be distinct. A single-version site can continue using `site.version` for a
+simple label. Set `index: false` on a version to keep it out of search engines;
+see [publishing metadata](./publishing.md#versions-locales-and-canonical-urls).
+
+`site.seo` controls title templates, social preview images, indexing,
+breadcrumbs, and page Markdown downloads. See
+[publishing metadata](./publishing.md) for every field.
 
 ### Site logo
 
@@ -112,10 +124,37 @@ single-version site can continue using `site.version` for a simple label.
 with `src` (one image) or `light` and `dark` (appearance variants). Optional
 `alt`, `decorative`, `href`, `width`, and `height` control accessible text,
 destination, and intrinsic sizing. It applies to the header and mobile drawer.
-See the [shared logo guide](./custom-components.md#a-shared-site-logo).
+See the [logo guide](./theme-and-components.md#logo-and-favicon).
 The logo and favicon are independent.
 
-## Site icons
+### Header links
+
+Configure the top bar with `site.headerLinks`. Links appear beside search on
+larger screens and in a More popover below 50rem. The desktop header supports
+primary buttons; More uses a compact, left-aligned list of uniform navigation
+links. Omit the array (or use `[]`) to hide More.
+
+```ts
+site: {
+  headerLinks: [
+    {
+      label: "Changelog",
+      link: "https://example.com/changelog",
+      newTab: true,
+    },
+    { label: "Get started", link: "/getting-started", variant: "primary" },
+  ],
+},
+```
+
+Each entry requires a non-empty `label` and a `link` (an HTTP(S) URL,
+root-relative route, or fragment). Cookbook prefixes root-relative links with
+the Astro base. `variant` is `default` or `primary` and applies on desktop;
+`newTab` defaults to false
+and adds safe new-window attributes when enabled. Customize the complete
+button and popover style tree through `theme.styles.HeaderLinks`.
+
+### Site icons
 
 Cookbook ships its book mark as the default favicon. Set `site.favicon` to a
 local SVG, PNG, JPEG, WebP, AVIF, or GIF when the documentation should use the
@@ -174,9 +213,9 @@ string `content`. Cookbook renders these entries directly as HTML elements;
 they do not pass through Astro's script or style processing. Use a `Head`
 component override when a local asset needs Astro processing.
 
-## Page metadata
+## Edit links and timestamps
 
-Enable source-aware edit links and Git timestamps for the page footer:
+Enable edit links and Git timestamps for the page footer:
 
 ```ts
 editLink: {
@@ -185,23 +224,45 @@ editLink: {
 lastUpdated: true,
 ```
 
-Cookbook joins `editLink.baseUrl` with each original repository-relative source
-path, not a generated content-collection path. Set `editUrl: false` or
-`lastUpdated: false` in a page's frontmatter to opt that page out; a string
-`editUrl` or date-valued `lastUpdated` overrides the generated value. Package
-sources show a timestamp only when their materialized file has Git history or
+Cookbook joins `editLink.baseUrl` with each page's source path relative to the
+Cookbook `root`, or to the source's own `root` when it lies outside. If `root`
+is not the repository root, include the subdirectory in `baseUrl`. Set
+`editUrl: false` or `lastUpdated: false` in a page's frontmatter to opt that
+page out; a string `editUrl` or date-valued `lastUpdated` overrides the
+generated value. Package pages come from an npm artifact rather than your
+repository, so they show an edit link only when their own frontmatter sets
+`editUrl`, and a timestamp only when their materialized file has Git history or
 the page supplies one explicitly.
 
-These settings use Cookbook's original source paths when constructing links and
-timestamps.
+## Page frontmatter
 
-Cookbook also accepts page presentation frontmatter:
+Pages accept these frontmatter fields:
+
+| Field             | Purpose                                                                                       |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `title`           | Page title; defaults to the source declaration's title, then the first heading, then the file |
+| `description`     | Meta description and `llms.txt` summary                                                       |
+| `slug`            | Route relative to the source's `routeBase`; see [content sources](./content-sources.md)       |
+| `aliases`         | Old routes that redirect to this page; see [redirects](#redirects)                            |
+| `draft`           | Publish at its URL but omit from discovery; see [draft pages](#draft-pages)                   |
+| `sidebar`         | `false`, or `label`, `order`, `group`, and `badge` for generated sidebars                     |
+| `tableOfContents` | `false`, or `mobile`, `minHeadingLevel`, and `maxHeadingLevel`                                |
+| `template`        | `doc` (default) or `splash` for a wide layout without sidebars                                |
+| `hero`            | `title`, `tagline`, `image`, and `actions` for a page hero                                    |
+| `banner`          | `content` for a notice above the page                                                         |
+| `prev`, `next`    | `false` to hide, a route, or `{ link, label }` to replace the pagination link                 |
+| `editUrl`         | `false` or an explicit edit URL                                                               |
+| `lastUpdated`     | `false` or an explicit date                                                                   |
+| `pagefind`        | `false` to omit the page from search                                                          |
+| `head`            | Extra `<head>` entries for this page, in the same shape as [`head`](#head)                    |
+| `seo`             | Page title, image, canonical, indexing, and breadcrumbs; see [publishing](./publishing.md)    |
+
+For example:
 
 ```yaml
 tableOfContents:
   minHeadingLevel: 2
   maxHeadingLevel: 4
-pagefind: true
 banner:
   content: This API is experimental.
 hero:
@@ -220,15 +281,18 @@ sidebar:
 Set `sidebar: false` to omit a page from generated sidebars. `label`, `order`,
 `group`, and `badge` affect both the default sidebar and autogenerated navigation
 directories. A badge is plain text and also appears when a navigation item links
-to the page, unless that item overrides it. Relative hero images are validated, content-hashed, and copied
-with the page's other local assets. Unrecognized frontmatter is preserved as graph entry `metadata`, outside the
-renderer frontmatter. Use `content.frontmatter: "reject"` to reject unrelated
-fields. Other supported fields include `aliases`, `template`, `hero`, `editUrl`,
-`lastUpdated`, `prev`, `next`, `head`, `draft`, and `slug`.
+to the page, unless that item overrides it. Relative hero images are validated,
+content-hashed, and copied with the page's other local assets; see
+[hero images](./authoring.mdx#hero-images).
 
 Set `pagefind: false` to omit an individual published page from search while
 keeping its normal route and navigation. A draft is excluded from search
 regardless of `pagefind`.
+
+Unrecognized frontmatter is preserved as graph entry `metadata`, outside the
+renderer frontmatter. Use `content.frontmatter: "reject"` to reject unrelated
+fields, or validate custom fields with a
+[frontmatter schema](./plugins.md#custom-frontmatter).
 
 ### Draft pages
 
@@ -237,6 +301,20 @@ available in development and production, and authored links to them are valid.
 They are excluded from automatic navigation, pagination, search, sitemaps, and
 `llms.txt`, and receive `noindex` metadata. Removing `draft` makes the page
 discoverable on the next build. A draft URL is public; this is not access control.
+
+## Table of contents
+
+Desktop pages show an on-page table of contents for heading levels 2 and 3.
+Set site-wide defaults with the top-level `tableOfContents` key:
+
+```ts
+tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
+```
+
+`mobile: true` adds a compact contents disclosure below the header on smaller
+screens; it defaults to `false`. Heading levels accept 1 through 6. A page's
+`tableOfContents` frontmatter overrides these values, and `false` hides both
+lists. See [on-page navigation](./authoring.mdx#on-page-navigation).
 
 ## Languages
 
@@ -264,6 +342,67 @@ links use the same policy, so a missing `/fr/` never creates a broken home link.
 Alternate-language metadata lists only existing published translations. Drafts
 remain directly accessible but are excluded from locale discovery.
 
+## Translations
+
+Cookbook includes English and French interface messages. Other languages use
+English for missing messages. Override messages by language code; regional codes fall back to the
+base language and then English:
+
+```ts
+translations: {
+  de: {
+    appearance: "Darstellung",
+    closeNavigation: "Navigation schließen",
+    "navigation.Guide": "Anleitung",
+  },
+},
+```
+
+`navigation.<configured label>` translates tab, group, and labeled-link
+labels, `site.headerLinks` labels, and explicitly configured sidebar badges.
+Automatically generated links use the title from the translated page.
+The supported keys below keep independent overrides, including similar labels:
+`auto` controls contrast, while `themeSelect.auto` controls color scheme;
+`search.label` labels the search control, while `pagefind.search` supplies the
+search input prompt. No migration or key renaming is needed.
+
+| Keys                                                                                                                | Controls or feedback                                                            |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `copyPage`, `viewMarkdown`, `pageCopied`, `pageCopyError`                                                           | Page Markdown actions and copy status.                                          |
+| `draftTitle`, `draftNotice`                                                                                         | Draft-page notice.                                                              |
+| `searchError`                                                                                                       | Search loading failure.                                                         |
+| `appearance`, `colorScheme`, `contrast`, `normalContrast`, `highContrast`, `auto`                                   | Appearance and contrast controls.                                               |
+| `closeNavigation`, `primary`, `sections`, `chooseSection`                                                           | Primary and mobile navigation.                                                  |
+| `headerLinks`, `more`, `closeMore`, `moreLinks`                                                                     | Header links and overflow menu.                                                 |
+| `versions`, `documentationVersion`, `documentationVersions`, `version`                                              | Version selection and package labels.                                           |
+| `home`, `generatedWith`, `viewSource`                                                                               | Home, footer credit and preview source.                                         |
+| `copyCode`, `codeCopied`, `codeCopyError`                                                                           | Code copy action and status.                                                    |
+| `copyHeading`, `linkCopied`, `linkCopyError`                                                                        | Heading link action and status. Preserve `{heading}` in `copyHeading`.          |
+| `notFound`, `notFoundDescription`, `fallback`                                                                       | Missing-page and language fallback messages.                                    |
+| `sidebarNav.accessibleLabel`, `menuButton.accessibleLabel`                                                          | Sidebar navigation and menu accessible names.                                   |
+| `tableOfContents.onThisPage`, `languageSelect.accessibleLabel`                                                      | Contents heading and language selector.                                         |
+| `themeSelect.light`, `themeSelect.dark`, `themeSelect.auto`                                                         | Color-scheme options.                                                           |
+| `search.label`, `search.ctrlKey`, `search.cancelLabel`, `search.devWarning`                                         | Search control, shortcut, close action and development notice.                  |
+| `page.nextLink`, `page.previousLink`, `page.editLink`, `page.lastUpdated`, `page.skipToContent`                     | Pagination, edit/update labels and skip link.                                   |
+| `pagefind.search`, `pagefind.clear_search`, `pagefind.zero_results`, `pagefind.many_results`, `pagefind.one_result` | Search input, clearing and result counts. Preserve `[COUNT]` in count messages. |
+
+Custom component message keys are also preserved. Missing custom keys passed to
+`Astro.locals.t(key)` return the key itself. Changing an override does not alter
+other message keys, even when their default text is the same.
+
+## Redirects
+
+Map old routes to collected document routes:
+
+```ts
+redirects: { "/old-guide": "/getting-started" }
+```
+
+Pages can also declare `aliases: ["/old-guide"]` in frontmatter. Page aliases are
+relative to the source mount. Cookbook rejects collisions, cycles, and missing
+targets, collapses chains, and lets Astro emit static redirects. Internal links
+using an alias are rewritten to the canonical route.
+
 ## Content
 
 ```ts
@@ -287,7 +426,8 @@ and each package manifest's `repository` metadata for package sources.
 ## Navigation
 
 Navigation can mix direct routes, nested groups, autogenerated directories,
-and external links. Groups are recursive and can be nested to any practical
+and external links. `navigation` may be an array, as shorthand for
+`navigation.items`. Groups are recursive and can be nested to any practical
 depth. Use the object form to add an optional primary tab row above the
 documentation shell:
 
@@ -363,7 +503,7 @@ also appears in the manual list or autogenerated directory. It remains in
 previous/next page navigation. A group with no remaining children becomes a
 regular page link.
 
-Every navigation object, including manual and autogenerated groups, accepts a
+Every navigation item, including manual and autogenerated groups, accepts a
 plain-text `badge`, such as `{ label: "Offline support", link: "/offline-support",
 badge: "NEW" }`. Links inherit `sidebar.badge` from their page's frontmatter;
 an explicit `badge` overrides it, and `badge: ""` hides it. Badges use brand-derived
@@ -392,7 +532,7 @@ fallback. Every internal route named anywhere in navigation must exist.
 theme: {
   brand: {
     from: "#2f5bff",
-    contrast: { apca: [45, 60] }
+    contrast: { apca: [80, 95] }
   },
   palette: {
     surface: { tone: 98, saturation: 0.05 },
@@ -476,13 +616,31 @@ surface's complete base object internally. Unknown built-in names and sub-elemen
 component names and their overrides in `theme.customStyles`. Structural Astro overrides under
 `components.overrides` remain available when styling alone is insufficient.
 `theme.states` registers additional Tasty state shorthands or replaces a
-built-in alias; see the [responsive state reference](./component-styles.md#responsive-states)
-for all nine defaults. `contrastLevel` is forwarded to Glaze's palette
-resolution.
+built-in alias; see the [state reference](./component-styles.md#states-in-style-maps)
+for the built-in responsive, appearance, motion, and prose aliases.
+`contrastLevel` accepts `"auto"` or a number from 0 to 100 and is forwarded to
+Glaze's palette resolution.
 The built-in documentation navigation surfaces are available as `Sidebar`,
-`TableOfContents`, `MobileMenuToggle`, and `MobileNavigationTabs`; see
-[Component styles](./component-styles.md#style-customization) for their
+`TopNavigation`, `TableOfContents`, `MobileMenuToggle`, and
+`MobileNavigationTabs`; see
+[Component styles](./component-styles.md#complete-component-anatomy) for their
 complete sub-element lists.
+
+The theme also accepts these fields, documented in their guides:
+
+| Field              | Guide                                                                          |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `glaze`            | [Glaze adaptation](./theme-and-components.md#configure-glaze-adaptation)       |
+| `units`, `recipes` | [Units and recipes](./theme-and-components.md#register-units-and-recipes)      |
+| `fontLoading`      | [Font loading and caching](./fonts-and-typography.md#font-loading-and-caching) |
+| `customStyles`     | [Custom components](./custom-components.md)                                    |
+
+`theme.palette.header` sets the translucent header's color declaration. It defaults
+to `theme.palette.surface`; Glaze resolves it for light, dark, and both high
+contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFrame`.
+`theme.palette.overlay` controls the drawer underlay color, defaulting to black
+at 50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
+a 120ms slide transition; customize these through `theme.styles.Sidebar`.
 
 ## Markdown
 
@@ -569,8 +727,12 @@ components: {
 Component replacement is the advanced escape hatch. Prefer theme tokens and
 named styles for visual changes that do not need new structure.
 
-Cookbook uses these Astro component slots. A relative override path resolves
-from the project root; a package specifier resolves from the app's dependencies:
+Cookbook uses these Astro component slots and rejects other names. A path
+starting with `.` resolves from the Astro project directory, where
+`astro.config` lives, and an absolute path is used as is. Any other value is
+resolved as a package specifier from the app's dependencies, so write
+`./src/Header.astro` rather than `src/Header.astro`. `cookbook doctor` checks
+each path the same way:
 
 | Area                    | Override names                                                                                                                                             |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -618,91 +780,8 @@ missing heading fragments errors and defaults to `true` when `CI=true`.
 Cookbook derives its public base path from Astro's top-level `base` setting so
 routes and assets cannot drift between two configurations. Page URLs likewise
 follow Astro's `trailingSlash` and `build.format`; see
-[Deployment](./deployment.md#github-pages). An empty `cacheDir`
+[Deployment](./deployment.md#public-url-and-base-path). An empty `cacheDir`
 uses `~/.cache/cookbook`; set an explicit path to relocate downloaded package
-artifacts. Package limits protect builds from unexpected registry artifacts;
-raise them deliberately for a reviewed package.
-
-## Header buttons
-
-Configure the top bar with `site.headerLinks`. Links appear beside search on
-larger screens and in a More popover below 50rem. The desktop header supports
-primary buttons; More uses a compact, left-aligned list of uniform navigation
-links. Omit the array (or use `[]`) to hide More.
-
-```ts
-export default defineDocsConfig({
-  site: {
-    headerLinks: [
-      {
-        label: "Changelog",
-        link: "https://example.com/changelog",
-        newTab: true,
-      },
-      { label: "Get started", link: "/getting-started", variant: "primary" },
-    ],
-  },
-});
-```
-
-Each entry requires a non-empty `label` and a `link` (an HTTP(S) URL,
-root-relative route, or fragment). Cookbook prefixes root-relative links with
-the Astro base. `variant` is `default` or `primary` and applies on desktop;
-`newTab` defaults to false
-and adds safe new-window attributes when enabled. Customize the complete
-button and popover style tree through `theme.styles.HeaderLinks`.
-
-`theme.palette.header` sets the translucent header's color declaration. It defaults
-to `theme.palette.surface`; Glaze resolves it for light, dark, and both high
-contrast modes. Adjust blur and other header styling via `theme.styles.HeaderFrame`.
-`theme.palette.overlay` controls the fixed underlay color, defaulting to black at
-50% opacity in every scheme. The mobile drawer uses the Glaze shadow token and
-a 120ms slide transition; customize these through `theme.styles.Sidebar`.
-
-### Translate Cookbook controls
-
-Cookbook includes English and French interface messages. Other languages use
-English for missing messages. Override messages by language code; regional codes fall back to the
-base language and then English:
-
-```ts
-translations: {
-  de: {
-    appearance: "Darstellung",
-    closeNavigation: "Navigation schließen",
-    "navigation.Guide": "Anleitung",
-  },
-},
-```
-
-`navigation.<configured label>` translates named tabs, navigation groups, and
-explicitly configured sidebar badges.
-Automatically generated links use the title from the translated page.
-The supported keys below keep independent overrides, including similar labels:
-`auto` controls contrast, while `themeSelect.auto` controls color scheme;
-`search.label` labels the search control, while `pagefind.search` supplies the
-search input prompt. No migration or key renaming is needed.
-
-| Keys                                                                                                                | Controls or feedback                                                            |
-| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `copyPage`, `viewMarkdown`, `pageCopied`, `pageCopyError`                                                           | Page Markdown actions and copy status.                                          |
-| `draftTitle`, `draftNotice`                                                                                         | Draft-page notice.                                                              |
-| `searchError`                                                                                                       | Search loading failure.                                                         |
-| `appearance`, `colorScheme`, `contrast`, `normalContrast`, `highContrast`, `auto`                                   | Appearance and contrast controls.                                               |
-| `closeNavigation`, `primary`, `sections`, `chooseSection`                                                           | Primary and mobile navigation.                                                  |
-| `headerLinks`, `more`, `closeMore`, `moreLinks`                                                                     | Header links and overflow menu.                                                 |
-| `versions`, `documentationVersion`, `documentationVersions`, `version`                                              | Version selection and package labels.                                           |
-| `home`, `generatedWith`, `viewSource`                                                                               | Home, footer credit and preview source.                                         |
-| `copyCode`, `codeCopied`, `codeCopyError`                                                                           | Code copy action and status.                                                    |
-| `copyHeading`, `linkCopied`, `linkCopyError`                                                                        | Heading link action and status. Preserve `{heading}` in `copyHeading`.          |
-| `notFound`, `notFoundDescription`, `fallback`                                                                       | Missing-page and language fallback messages.                                    |
-| `sidebarNav.accessibleLabel`, `menuButton.accessibleLabel`                                                          | Sidebar navigation and menu accessible names.                                   |
-| `tableOfContents.onThisPage`, `languageSelect.accessibleLabel`                                                      | Contents heading and language selector.                                         |
-| `themeSelect.light`, `themeSelect.dark`, `themeSelect.auto`                                                         | Color-scheme options.                                                           |
-| `search.label`, `search.ctrlKey`, `search.cancelLabel`, `search.devWarning`                                         | Search control, shortcut, close action and development notice.                  |
-| `page.nextLink`, `page.previousLink`, `page.editLink`, `page.lastUpdated`, `page.skipToContent`                     | Pagination, edit/update labels and skip link.                                   |
-| `pagefind.search`, `pagefind.clear_search`, `pagefind.zero_results`, `pagefind.many_results`, `pagefind.one_result` | Search input, clearing and result counts. Preserve `[COUNT]` in count messages. |
-
-Custom component message keys are also preserved. Missing custom keys passed to
-`Astro.locals.t(key)` return the key itself. Changing an override does not alter
-other message keys, even when their default text is the same.
+artifacts. The artifact, unpacked-size, file-count, and path-depth limits protect builds
+from unexpected registry artifacts; raise them deliberately for a reviewed
+package. `maxAssetBytes` also caps each local asset and OpenAPI document.

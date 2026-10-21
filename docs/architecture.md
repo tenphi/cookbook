@@ -14,12 +14,12 @@ maintained in this repository.
 
 ## Packages
 
-| Package                   | Responsibility                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `@tenphi/create-cookbook` | Inspect an npm artifact and scaffold a reproducible documentation project                               |
-| `@tenphi/cookbook`        | Provide the memorable Astro integration, public config exports, and CLI                                 |
-| `@tenphi/docs`            | Discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics |
-| `@tenphi/renderer`        | Render the graph with Astro and provide the Tasty/Glaze theme, components, search, and static assets    |
+| Package                   | Responsibility                                                                                                                                             |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@tenphi/create-cookbook` | Scaffold a documentation project for a new site, an existing repository, or a locked npm package                                                           |
+| `@tenphi/cookbook`        | Provide the memorable Astro integration, public config exports, and CLI                                                                                    |
+| `@tenphi/docs`            | Validate configuration, resolve the Glaze palette, discover sources, resolve packages, build the content graph, transform Markdown, and report diagnostics |
+| `@tenphi/renderer`        | Render the graph with Astro and provide the Tasty/Glaze theme, components, search, and static assets                                                       |
 
 The `@tenphi/cookbook` default export represents the complete product. Consumers do
 not compose renderer internals themselves.
@@ -27,7 +27,7 @@ not compose renderer internals themselves.
 ## Build pipeline
 
 1. Validate and normalize the configuration.
-2. Collect local and locked package sources.
+2. Collect local files, local OpenAPI documents, and locked package sources.
 3. Assign canonical routes to every document.
 4. Parse Markdown and collect headings, links, and assets.
 5. Rewrite internal references through the completed route graph.
@@ -135,6 +135,9 @@ The monorepo's `apps/reference` project is both the deployed documentation site
 and an end-to-end fixture. Its integration discovers `docs.config.ts`, whose
 `root: "../.."` loads this `docs/` tree through the same route pipeline used by
 convention-mode sites. CI builds the same app before GitHub Pages publishes it.
+The site is deployed only after a package release: the release workflow creates
+a version tag and starts the Pages workflow from that tag, so the public
+reference matches the published code.
 
 Return to [Cookbook](./index.md) or inspect the
 [repository](https://github.com/tenphi/cookbook).

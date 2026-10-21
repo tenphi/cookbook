@@ -12,24 +12,28 @@ registries or internal helpers.
 
 ## Read the configuration first
 
-Inspect `docs.config.ts`, `tasty.config.ts`, and the components you are changing.
+Inspect `docs.config.ts`, `tasty.config.ts` (when the project has adopted style
+linting), and the components you are changing.
 Reuse the site's existing semantic colors, tokens, presets, responsive states,
 and named sub-elements. Do not invent configuration names. Consult the complete
-[component anatomy reference](./component-styles.md#style-customization)
+[component anatomy reference](./component-styles.md#complete-component-anatomy)
 before overriding a built-in component.
 
 ## Choose the customization surface
 
-| Change                        | Supported surface                                      |
-| ----------------------------- | ------------------------------------------------------ |
-| Brand and semantic colors     | `theme.brand` and the supported `theme.palette` inputs |
-| Shared dimensions and spacing | `theme.tokens`                                         |
-| Font loading and family roles | `theme.fonts`                                          |
-| Typography                    | `theme.presets`                                        |
-| Responsive conditions         | `theme.states`                                         |
-| Existing component appearance | Partial Tasty objects in `theme.styles.<Name>`         |
-| Custom component appearance   | `defineComponent()` and `theme.customStyles.<Name>`    |
-| Markup or behavior            | `components.overrides` with an owned Astro component   |
+| Change                                  | Supported surface                                      |
+| --------------------------------------- | ------------------------------------------------------ |
+| Brand and semantic colors               | `theme.brand` and the supported `theme.palette` inputs |
+| Shared dimensions and spacing           | `theme.tokens`                                         |
+| Font loading and family roles           | `theme.fonts`                                          |
+| Font delivery and caching               | `theme.fontLoading`                                    |
+| Typography                              | `theme.presets`                                        |
+| Responsive conditions                   | `theme.states`                                         |
+| Glaze adaptation                        | `theme.glaze` and `theme.contrastLevel`                |
+| Custom units and reusable style bundles | `theme.units` and `theme.recipes`                      |
+| Existing component appearance           | Partial Tasty objects in `theme.styles.<Name>`         |
+| Custom component appearance             | `defineComponent()` and `theme.customStyles.<Name>`    |
+| Markup or behavior                      | `components.overrides` with an owned Astro component   |
 
 Prefer configuration changes when the markup and behavior already fit. Supply
 only the properties you want to change: Cookbook merges partial overrides into
@@ -90,7 +94,7 @@ belong in `docs.config.ts`.
 - When replacing a component, own its markup and behavior. Keep keyboard
   access, focus, semantics, responsive behavior, and appearance modes intact.
 
-The [custom component examples](./custom-components.md#authoring-custom-components)
+The [custom component examples](./custom-components.md)
 show both a component root and a global style tree using these APIs.
 
 ## Read the underlying references
@@ -145,7 +149,8 @@ the app that depends on Cookbook:
 ```md
 Before customizing this Cookbook site, read
 node_modules/@tenphi/cookbook/docs/customization-rules.md and follow its linked
-Tasty and Glaze references. Inspect docs.config.ts and tasty.config.ts first.
+Tasty and Glaze references. Inspect docs.config.ts (and tasty.config.ts, if
+present) first.
 Use Cookbook's public styling APIs, semantic palette tokens, typography
 presets, and partial component overrides. Run the project's style lint,
 cookbook doctor, and build commands after changes.
@@ -159,6 +164,10 @@ and extend its built-in vocabulary in `tasty.config.ts`:
 ```ts
 export default { extends: "@tenphi/cookbook" };
 ```
+
+To derive your theme's names automatically, use
+[`createValidationConfig(docs.theme)`](./custom-components.md#custom-theme-names)
+instead.
 
 Run the configured style linter, `cookbook doctor`, and the site build. The
 linter checks supported Tasty rules; it does not enforce every architectural

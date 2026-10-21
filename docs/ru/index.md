@@ -43,7 +43,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook читает файлы на их текущем месте. Вы также можете [создать новый сайт](./getting-started.md), [описать именно те файлы, которые опубликованы в npm](./getting-started.md), или [добавить Cookbook в проект Astro](./getting-started.md).
+Cookbook читает файлы на их текущем месте. Вы также можете [создать новый сайт](./getting-started.md#создайте-первый-сайт), [описать именно те файлы, которые опубликованы в npm](./getting-started.md#опишите-опубликованный-npm-пакет), или [добавить Cookbook в проект Astro](./getting-started.md#добавьте-cookbook-в-существующий-проект-astro).
 
 ## Этот сайт служит примером
 

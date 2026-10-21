@@ -63,8 +63,6 @@ Cookbook 自带 Astro 渲染器，并会自动查找 `docs.config.ts`。如果�
 
 ## 配置站点
 
-可以先查看完整的[品牌、标志和字体示例](../recipes.md)。若要深入调整样式或添加组件，请阅读[自定义规则](../customization-rules.md)。这些规则和上游参考资料也包含在安装后的 Cookbook 包中。
-
 在 `astro.config.ts` 旁创建 `docs.config.ts`：
 
 ```ts
@@ -83,9 +81,11 @@ export default defineDocsConfig({
 });
 ```
 
-修改 `theme.fonts` 可使用[按名称指定的 Google Fonts 或你自己的字体文件](../fonts-and-typography.md)。使用 `theme.presets` 调整排版细节，使用 `theme.styles` 调整内置元素，并结合 `defineComponent()` 与 `theme.customStyles` 添加新元素。[主题指南](../theme-and-components.md)介绍了起点；[组件样式参考](../component-styles.md)列出了全部可自定义部分。
+修改 `theme.fonts` 可使用[按名称指定的 Google Fonts 或你自己的字体文件](../fonts-and-typography.md#change-font-families)。使用 `theme.presets` 调整排版细节，使用 `theme.styles` 调整内置元素，并结合 `defineComponent()` 与 `theme.customStyles` 添加新元素。[主题指南](../theme-and-components.md)介绍了起点；[组件样式参考](../component-styles.md)列出了全部可自定义部分。
 
-集成和 CLI 读取同一份配置。支持的文件名依优先顺序为 `docs.config.ts`、`.mts`、`.js` 和 `.mjs`。在集成中显式传入的 `config` 对象优先；`configFile: false` 会关闭自动查找。若配置文件位于其他位置，可使用 `cookbook({ configFile: "./config/manual.ts" })` 和 `cookbook doctor --config ./config/manual.ts`。
+完整的起点可参考[品牌、标志和字体示例](../recipes.md)。若要深入调整样式或添加组件，请阅读[自定义规则](../customization-rules.md)。这些规则和上游参考资料也包含在安装后的 Cookbook 包中。
+
+集成和 CLI 读取同一份配置。支持的文件名依优先顺序为 `docs.config.ts`、`.mts`、`.js` 和 `.mjs`。在集成中显式传入的 `config` 对象优先；`configFile: false` 会关闭自动查找。若配置文件位于其他位置，可使用 `cookbook({ configFile: "./config/manual.ts" })` 和 `cookbook doctor --config ./config/manual.ts`。由于 `root` 相对于配置文件所在目录解析，该文件需要设置 `root: ".."`，才能继续从应用目录读取 `README.md` 和 `docs/`。
 
 ## 单体仓库的根目录
 
@@ -106,4 +106,6 @@ npm run validate
 npm run preview
 ```
 
-其他指南目前仍以英文提供，包括[示例](../examples.md)、[内容编写组件](../authoring.mdx)、[AI 智能体工作流程](../ai-agents.md)、[部署](../deployment.md)和[按版本升级指南](../migration.md)。如需可修改的完整配置，可从[示例配置](../recipes.md)开始。如果验证失败，请查看[故障排查](../troubleshooting.md)。
+`validate` 会对项目进行类型检查、运行 Cookbook 预检、构建站点并检查输出。对于自行配置的项目，请添加 [CLI 命令](../cli.md)中列出的脚本，或运行 `npx @tenphi/cookbook doctor`。
+
+其他指南目前仍以英文提供，包括[示例](../examples.md)、[内容编写组件](../authoring.mdx)、[AI 智能体工作流程](../ai-agents.md)、[部署](../deployment.md)和[按版本升级指南](../migration.md)。如果验证失败，请查看[故障排查](../troubleshooting.md)。

@@ -1,6 +1,13 @@
 import { spawn } from "node:child_process";
-import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { basename, join, relative, resolve } from "node:path";
+import {
+  cp,
+  mkdir,
+  readFile,
+  readdir,
+  stat,
+  writeFile,
+} from "node:fs/promises";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import creatorPackage from "../package.json" with { type: "json" };
 import {
   defaultLock,
@@ -39,6 +46,8 @@ export interface ScaffoldResult {
   lock?: PackageLockSource;
   discovery?: PackageDiscovery;
   packageManager: PackageManager;
+  /** Generated GitHub Pages workflow, which may lie outside the destination. */
+  workflow?: string;
 }
 
 export async function scaffold(
@@ -76,6 +85,10 @@ export async function scaffold(
   }
   if (existing.length > 0 && !(await options.confirmNonEmpty?.(destination)))
     throw new Error(`Destination is not empty: ${destination}.`);
+  const workflow =
+    options.deploy === "github-pages"
+      ? await githubWorkflowTarget(destination)
+      : undefined;
   if (options.source) await readdir(resolve(options.source));
   const lock = options.package
     ? await resolvePackageLock(options.package)
@@ -144,10 +157,27 @@ export async function scaffold(
         ]
       : []),
   ]);
-  await writeAgentInstructions(destination, options, packageManager);
+  if (packageManager === "yarn") {
+    // Cookbook needs node_modules; an own lockfile keeps the site separate
+    // from an enclosing Yarn project.
+    await writeNewFile(
+      join(destination, ".yarnrc.yml"),
+      "nodeLinker: node-modules\n",
+    );
+    await writeNewFile(join(destination, "yarn.lock"), "");
+  }
+  await writeNewFile(
+    join(destination, "AGENTS.md"),
+    renderAgentInstructions(options, packageManager),
+  );
   await writeUpgradeSkill(destination);
-  if (options.deploy === "github-pages")
-    await writeGithubWorkflow(destination, packageManager);
+  if (workflow) {
+    await mkdir(dirname(workflow.path), { recursive: true });
+    await writeFile(
+      workflow.path,
+      renderGithubWorkflow(packageManager, workflow.app),
+    );
+  }
   if (options.deploy === "netlify") {
     await writeFile(
       join(destination, "netlify.toml"),
@@ -171,6 +201,7 @@ export async function scaffold(
     ...(projectLock ? { lock: projectLock } : {}),
     ...(discovery ? { discovery } : {}),
     packageManager,
+    ...(workflow ? { workflow: workflow.path } : {}),
   };
 }
 
@@ -217,31 +248,13 @@ async function writeUpgradeSkill(destination: string): Promise<void> {
     new URL("./skills/upgrade-cookbook/SKILL.md", import.meta.url),
     "utf8",
   );
-  try {
-    await writeFile(join(directory, "SKILL.md"), content, { flag: "wx" });
-  } catch (error) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "code" in error &&
-      error.code === "EEXIST"
-    )
-      return;
-    throw error;
-  }
+  await writeNewFile(join(directory, "SKILL.md"), content);
 }
 
-async function writeAgentInstructions(
-  destination: string,
-  options: ScaffoldOptions,
-  packageManager: PackageManager,
-): Promise<void> {
+/** Write a file the site owner may have customized only when it is absent. */
+async function writeNewFile(path: string, content: string): Promise<void> {
   try {
-    await writeFile(
-      join(destination, "AGENTS.md"),
-      renderAgentInstructions(options, packageManager),
-      { flag: "wx" },
-    );
+    await writeFile(path, content, { flag: "wx" });
   } catch (error) {
     if (
       error &&
@@ -341,22 +354,56 @@ function tsconfig(): string {
   )}\n`;
 }
 
-async function writeGithubWorkflow(
+/**
+ * GitHub runs workflows only from the repository root. A site created inside
+ * a Git repository gets its workflow there and builds in its own directory.
+ */
+async function githubWorkflowTarget(
   destination: string,
-  packageManager: PackageManager,
-): Promise<void> {
-  const directory = join(destination, ".github", "workflows");
-  await mkdir(directory, { recursive: true });
-  await writeFile(
-    join(directory, "deploy.yml"),
-    renderGithubWorkflow(packageManager),
-  );
+): Promise<{ path: string; app?: string }> {
+  const repository = await repositoryRoot(destination);
+  if (!repository || repository === destination)
+    return { path: join(destination, ".github", "workflows", "deploy.yml") };
+  const path = join(repository, ".github", "workflows", "deploy-docs.yml");
+  if (await exists(path))
+    throw new Error(
+      `GitHub workflow already exists: ${path}. Remove it or choose another --deploy preset.`,
+    );
+  return {
+    path,
+    app: relative(repository, destination).replaceAll("\\", "/"),
+  };
 }
 
-export function renderGithubWorkflow(packageManager: PackageManager): string {
+async function repositoryRoot(directory: string): Promise<string | undefined> {
+  if (await exists(join(directory, ".git"))) return directory;
+  const parent = dirname(directory);
+  return parent === directory ? undefined : repositoryRoot(parent);
+}
+
+async function exists(path: string): Promise<boolean> {
+  try {
+    await stat(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** `app` is the site's directory relative to the repository root, if any. */
+export function renderGithubWorkflow(
+  packageManager: PackageManager,
+  app?: string,
+): string {
+  const inApp = (path: string) => JSON.stringify(`${app}/${path}`);
+  const lockfile = {
+    npm: "package-lock.json",
+    pnpm: "pnpm-lock.yaml",
+    yarn: "yarn.lock",
+  }[packageManager];
   const setup =
     packageManager === "pnpm"
-      ? "      - uses: pnpm/action-setup@v6\n"
+      ? `      - uses: pnpm/action-setup@v6\n${app ? `        with:\n          package_json_file: ${inApp("package.json")}\n` : ""}`
       : packageManager === "yarn"
         ? "      - run: corepack enable\n"
         : "";
@@ -365,8 +412,16 @@ export function renderGithubWorkflow(packageManager: PackageManager): string {
     pnpm: "pnpm install --frozen-lockfile",
     yarn: "yarn install --immutable",
   }[packageManager];
+  // `working-directory` applies only to `run` steps; actions take full paths.
+  const defaults = app
+    ? `    defaults:\n      run:\n        working-directory: ${JSON.stringify(app)}\n`
+    : "";
+  const cachePath = app
+    ? `          cache-dependency-path: ${inApp(lockfile)}\n`
+    : "";
+  const output = app ? inApp("dist") : "dist";
 
-  return `name: Deploy documentation\n\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\npermissions:\n  actions: read\n  contents: read\n  pages: write\n  id-token: write\n\nconcurrency:\n  group: github-pages\n  cancel-in-progress: false\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n${setup}      - uses: actions/setup-node@v7\n        with:\n          node-version: 22\n          cache: ${packageManager}\n      - run: ${install}\n      - run: ${packageManager} run validate\n      - uses: actions/configure-pages@v6\n      - uses: actions/upload-pages-artifact@v5\n        with:\n          path: dist\n\n  deploy:\n    environment:\n      name: github-pages\n      url: \${{ steps.deployment.outputs.page_url }}\n    runs-on: ubuntu-latest\n    needs: build\n    steps:\n      - name: Deploy to GitHub Pages\n        id: deployment\n        uses: actions/deploy-pages@v5\n`;
+  return `name: Deploy documentation\n\non:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\npermissions:\n  actions: read\n  contents: read\n  pages: write\n  id-token: write\n\nconcurrency:\n  group: github-pages\n  cancel-in-progress: false\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n${defaults}    steps:\n      - uses: actions/checkout@v7\n${setup}      - uses: actions/setup-node@v7\n        with:\n          node-version: 22\n          cache: ${packageManager}\n${cachePath}      - run: ${install}\n      - run: ${packageManager} run validate\n      - uses: actions/configure-pages@v6\n      - uses: actions/upload-pages-artifact@v5\n        with:\n          path: ${output}\n\n  deploy:\n    environment:\n      name: github-pages\n      url: \${{ steps.deployment.outputs.page_url }}\n    runs-on: ubuntu-latest\n    needs: build\n    steps:\n      - name: Deploy to GitHub Pages\n        id: deployment\n        uses: actions/deploy-pages@v5\n`;
 }
 
 async function installDependencies(

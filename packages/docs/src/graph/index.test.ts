@@ -296,6 +296,58 @@ head:
     );
   });
 
+  it("generates edit links only for repository pages", async () => {
+    const integrity = "sha512-edit-integrity";
+    const root = await createDocsFixture({
+      "docs/local.md": "# Local\n",
+      ".cookbook/vendor/package/.cookbook-integrity": `${integrity}\n`,
+      ".cookbook/vendor/package/package.json": JSON.stringify({
+        name: "fixture-package",
+        version: "1.2.3",
+      }),
+      ".cookbook/vendor/package/README.md": "# Package\n",
+      ".cookbook/vendor/package/docs/guide.md":
+        "---\neditUrl: https://example.com/edit/guide.md\n---\n\n# Guide\n",
+    });
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        editLink: { baseUrl: "https://github.com/example/project/edit/main" },
+        content: {
+          sources: [
+            { glob: "docs/local.md", base: "docs", routeBase: "/local" },
+            {
+              package: "fixture-package",
+              include: ["README.md", "docs/guide.md"],
+            },
+          ],
+        },
+      },
+      lock: {
+        schemaVersion: 1,
+        sources: [
+          {
+            requested: "fixture-package",
+            resolved: "fixture-package@1.2.3",
+            registry: "https://registry.npmjs.org/",
+            integrity,
+            vendored: ".cookbook/vendor/package",
+          },
+        ],
+      },
+    });
+
+    expect(graph.entryByRoute("/local/local")?.frontmatter.editUrl).toBe(
+      "https://github.com/example/project/edit/main/docs/local.md",
+    );
+    const packageHome = graph.entryByRoute("/");
+    expect(packageHome?.title).toBe("Package");
+    expect(packageHome?.frontmatter.editUrl).toBeUndefined();
+    expect(graph.entryByRoute("/guide")?.frontmatter.editUrl).toBe(
+      "https://example.com/edit/guide.md",
+    );
+  });
+
   it("applies the configured raw HTML policy to trusted Markdown", async () => {
     const root = await createDocsFixture({
       "README.md": "# Fixture\n\n<mark>Trusted HTML</mark>\n",

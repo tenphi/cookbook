@@ -37,9 +37,10 @@ contrast. Browser checks complement the numeric diagnostics.
 - **Google request fails:** check the exact family name and supported weights and
   styles. Explicit requests reject missing styles; shorthand warns if italics
   are unavailable. See [font configuration](./fonts-and-typography.md#change-font-families).
-- **Offline cache miss:** warm the cache with `cache: "reuse"` while online, and
-  retain `<Astro cacheDir>/cookbook-fonts`. The key includes the requested family,
-  weights, and styles. `cache: "refresh"` intentionally needs the network.
+- **Offline cache miss:** warm the cache with `theme.fontLoading.cache: "reuse"`
+  while online, and retain `<Astro cacheDir>/cookbook-fonts`. The key includes
+  the requested family, weights, and styles. `cache: "refresh"` intentionally
+  needs the network.
 - **Wrong weight:** a static file cannot supply every intermediate weight. Use
   matching files or a variable range. Check `theme.presets`: an explicit
   `fontFamily` there takes precedence over the semantic font role.

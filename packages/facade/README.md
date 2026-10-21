@@ -1,12 +1,12 @@
 # @tenphi/cookbook
 
 Before changing a site's appearance, read the
-[customization rules](./docs/customization-rules.md)
-([online](https://cookbook.tenphi.me/customization-rules/)). The package ships
-the complete [Cookbook documentation](./docs/index.md) and local Tasty and Glaze
-references under `docs/upstream/`, including Tasty's
-[style rules for AI agents](./docs/upstream/tasty/docs/ai-agents.md).
-The guide includes a project instruction snippet and the lint setup.
+[customization rules](https://cookbook.tenphi.me/customization-rules/). The
+package ships the complete [Cookbook documentation](https://cookbook.tenphi.me/)
+in `node_modules/@tenphi/cookbook/docs/`, with local Tasty and Glaze references
+under `docs/upstream/`, including Tasty's style rules for AI agents at
+`docs/upstream/tasty/docs/ai-agents.md`. The customization rules include a
+project instruction snippet and the lint setup.
 
 Install the complete integration with `npx astro add @tenphi/cookbook`:
 
@@ -39,9 +39,9 @@ export default defineDocsConfig({
 
 For local fonts, place files in `public/fonts/` and use
 `fonts: { body: { family: "My Font", files: [{ src: "/fonts/my-font.woff2" }] } }`.
-See [Component styles](./docs/component-styles.md) for all named
-sub-elements and [Custom components](./docs/custom-components.md) for the
-custom component flow.
+See [Component styles](https://cookbook.tenphi.me/component-styles/) for all
+named sub-elements and [Custom components](https://cookbook.tenphi.me/custom-components/)
+for the custom component flow.
 
 Without configuration, a root `README.md` becomes `/` and
 `docs/**/*.{md,mdx}` supplies the remaining pages. Cookbook includes its Astro renderer,
@@ -60,7 +60,8 @@ export const ProjectBadge = defineComponent("ProjectBadge", {
 ```
 
 Customize this component's root through `theme.customStyles.ProjectBadge`; it has no
-named sub-elements. The `/styling` entry point also exports `tasty`, `useGlobalStyles`,
+named sub-elements. The `/styling` entry point also exports `extendComponent`,
+the shared `Button` foundation, `tasty`, `useGlobalStyles`,
 `resolveComponentStyles`, `mergeStyles`, and the `Styles` type. Cookbook extracts
 the CSS automatically. See [Custom components](https://cookbook.tenphi.me/custom-components/)
 for a complete custom logo and site title example.
@@ -77,7 +78,8 @@ export default {
 ```
 
 The entry point exports the default Tasty ESLint plugin, `recommended` and `strict`
-rule maps, and the upstream configuration types. The preset recognizes Cookbook's
+rule maps, the `validationConfig` preset, `createValidationConfig(theme)` for
+deriving names from a theme, and the upstream configuration types. The preset recognizes Cookbook's
 theme names and custom styling helpers, including `defineComponent`. `extends`
 merges your additional tokens, states, and presets with these built-ins.
 See [Linting custom styles](https://cookbook.tenphi.me/custom-components/#linting-custom-styles)

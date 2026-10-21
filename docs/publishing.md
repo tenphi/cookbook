@@ -116,8 +116,9 @@ them as duplicates. See Google's
 
 ## Breadcrumb structured data
 
-`site.seo.breadcrumbs: true` emits a `BreadcrumbList` when at least two actual
-ancestor pages exist. Intermediate folders without pages are skipped. To describe
+`site.seo.breadcrumbs: true` emits a `BreadcrumbList` when the page has at least
+one actual ancestor page in its locale (the home page counts); the trail ends
+with the page itself. Intermediate folders without pages are skipped. To describe
 a different navigation journey, supply at least two `{name, url}` items in a page's
 `seo.breadcrumbs`. URLs must be absolute HTTP(S); the final URL must match that
 page's canonical. Set `seo.breadcrumbs: false` on a page to disable it.

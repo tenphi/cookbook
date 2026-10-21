@@ -3,58 +3,22 @@ title: Component styles
 description: Customize built-in UI surfaces through partial Tasty style objects and named sub-elements.
 ---
 
-For color roles and design tokens, start with the
+Change Cookbook's built-in interface through `theme.styles`. Each surface has a
+public name, such as `Sidebar` or `SearchResults`, and named parts, such as
+`Sidebar.LinkLabel`. This page explains how overrides merge, lists every name
+and part, and describes the shared states you can use in style maps. For color
+roles and design tokens, start with the
 [theme overview](./theme-and-components.md). For your own components, see
 [Custom components](./custom-components.md).
 
-Owned markup uses Tasty's built-in `data-element` identities for its named parts.
-For example, Header's `Logo` styles target `data-element="Logo"` directly;
-no anatomy class or separate marker is required. A configured image logo owns
-its dimensions under `SiteLogo`.
-
-Heading levels are states of the same element. Customize them through a root
-property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
-Markdown heading wrappers use `level=h1` through `level=h6` as root states.
-
-Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
-owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
-changes only the start token. For example, `Callout: { "$margin-block-end": "3x" }`
-changes the end spacing while retaining Markdown's spacing before the callout.
-Document foundations reset these tokens on every element to prevent inheritance
-into nested content. For content-panel padding, use `MainContent.Panel`'s
-`$padding-block-start` and `$padding-block-end` tokens in the same way.
-
 ## Style customization
 
-Cookbook-owned interface elements use `defineComponent()` to create Tasty components
-and merge their named theme overrides. Shared bases use `extendComponent()`.
-Cookbook components and generated Markdown surfaces use Tasty style trees.
-Customize them by name under `theme.styles`; the configuration is resolved
-before CSS generation, so this is not a selector-based CSS override.
-
-Cookbook merges your partial style object with the component's base styles
-before Tasty extracts CSS. The generated stylesheet contains the resolved
-style, so you can change an element without copying its full defaults.
-
-Each surface is registered by its owning component or generated-content bridge.
-Fonts and document defaults belong to the page shell, so replacing Header
-preserves the rest of the site's styling. Component-specific CSS is collected
-when its owner renders. See [Component ownership](./architecture.md#component-ownership)
-for the renderer authoring convention.
-
-Start with the area you want to change, then use the complete sub-element
-inventory below to find its exact anatomy:
-
-| Page area                     | Style names to inspect                                                               |
-| ----------------------------- | ------------------------------------------------------------------------------------ |
-| Header, title, and navigation | `HeaderFrame`, `Header`, `SiteLogo`, `HeaderLinks`, `TopNavigation`                  |
-| Sidebar and mobile menu       | `Sidebar`, `MobileMenuToggle`, `MobileNavigationTabs`, `MobileMenuFooter`            |
-| Article text and headings     | `Markdown`, `MarkdownHeading`, `Heading`, `MainContent`                              |
-| Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid` |
-| Search                        | `SearchButton`, `Search`, `SearchResults`                                            |
-| Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                  |
-| Cards, notes, and tabs        | `Card`, `Callout`, `MarkdownAlert`, `Tabs`                                           |
-| Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                 |
+Supply a partial Tasty style object under `theme.styles.<ComponentName>`.
+Cookbook merges it into that component's complete base style object before
+Tasty extracts CSS, so the generated stylesheet contains the resolved style.
+This is not a selector-based CSS override: you change an element without
+copying its full defaults, adding a second stylesheet, or using `!important`.
+No merge helper or base style object is required in user configuration.
 
 For example, this changes a typography role and one named element without
 copying a component's full style tree:
@@ -78,140 +42,52 @@ tokens and presets keep the component aligned with the rest of the site, while
 Glaze resolves semantic colors across the configured schemes and contrast
 modes.
 
-### Responsive states
+Root properties customize each surface's container. Overriding
+`Sidebar.LinkLabel.whiteSpace` keeps the other base `LinkLabel` properties
+because the configured object is merged. See
+[state maps](#state-maps-and-validation) for how conditional values merge.
 
-Cookbook registers these Tasty state aliases for `theme.styles`, custom
-components, and recipes. Widths use CSS `rem` units; their pixel values depend
-on the browser's font-size settings.
+Built-in names belong in `theme.styles`, which rejects unknown names and
+misspelled sub-elements. Register your own components in `theme.customStyles`;
+the name must match the string passed to `defineComponent()`,
+`extendComponent()`, or `resolveComponentStyles()`. A production build warns
+when a configured custom name has no matching component style resolver.
+`components.overrides` remains the structural escape hatch for replacing an
+Astro component; prefer `theme.styles` when the markup and behavior stay the
+same. Fonts and document defaults belong to the page shell, so replacing
+`Header` keeps the rest of the site's styling.
 
-| State | Condition     | Typical use                                    |
-| ----- | ------------- | ---------------------------------------------- |
-| `@sm` | width > 40rem | Pagination links share one row                 |
-| `@md` | width ≥ 50rem | Desktop navigation and component layouts       |
-| `@lg` | width ≥ 72rem | Desktop table of contents fits beside the page |
+### Find the right name
 
-The conditions select wider viewports. Use `!@sm` for stacked
-pagination, `!@md` for mobile, and `!@lg` when the contents panel does not fit
-beside the page. Combine states when needed, for example `@md & !@lg` for the
-intermediate layout. Component-specific
-thresholds use direct media conditions, such as `@media(w <= 23rem)` for
-PackageVersion. Use the default state key `""` for the value outside a condition.
-Add your own aliases with `theme.states`; redefining a built-in alias also
-changes the renderer's responsive layout, so check the whole site when doing so.
+Start with the area you want to change, then use the
+[complete component anatomy](#complete-component-anatomy) to find its exact
+parts:
 
-Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
-`@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
-needed because the pinned linter's simple pseudo-class list omits `:popover-open`
-([tenphi/eslint-plugin-tasty#77](https://github.com/tenphi/eslint-plugin-tasty/issues/77)).
+| Page area                     | Style names to inspect                                                                                                  |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Header, title, and navigation | `HeaderFrame`, `Header`, `SiteLogo`, `HeaderLinks`, `TopNavigation`, `LanguageSelect`, `VersionSwitcher`, `SocialIcons` |
+| Sidebar and mobile menu       | `Sidebar`, `MobileMenuToggle`, `MobileNavigationTabs`, `MobileMenuFooter`                                               |
+| Article text and headings     | `Markdown`, `MarkdownHeading`, `MarkdownTable`, `Heading`, `MainContent`, `Banner`                                      |
+| Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid`                                    |
+| Search                        | `SearchButton`, `Search`, `SearchResults`                                                                               |
+| Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                                                     |
+| Cards, notes, and tabs        | `Card`, `Callout`, `MarkdownAlert`, `Tabs`, `Tab`, `Steps`, `Preview`                                                   |
+| Home page hero                | `Hero`                                                                                                                  |
+| Page layout                   | `PageFrame`, `Layout`, `MainPane`                                                                                       |
+| Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                                                    |
 
-### Appearance and motion states
+Owned markup uses Tasty's built-in `data-element` identities for its named
+parts. For example, Header's `Logo` styles target `data-element="Logo"`
+directly; no anatomy class or separate marker is required. A configured image
+logo owns its dimensions under `SiteLogo`. `SocialIcons` styles the shared
+icon-button links in the header and mobile menu, and `ThemeSelect` styles the
+combined Appearance panel.
 
-Use these shared aliases to match the site's appearance or respect motion preferences.
-
-| State             | Condition                                                  | Typical use                                 |
-| ----------------- | ---------------------------------------------------------- | ------------------------------------------- |
-| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Suppress optional motion                    |
-| `@light`          | Explicit light theme, or system light when no theme is set | Match the site's effective light appearance |
-| `@dark`           | Explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance  |
-| `@system-light`   | `prefers-color-scheme: light`                              | Read the system preference directly         |
-| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the system preference directly         |
-
-Use `@light` and `@dark` in component styles and in document rules that style
-the root itself. They check the page root's `data-theme` attribute and use the
-system preference only when that attribute is absent. Keep scheme media queries
-in the shared state definitions instead of repeating them in style objects.
-
-### State maps and validation
-
-In a generated site, run `npm run validate` (or the matching package manager's
-command) after editing `docs.config.ts`. It checks TypeScript theme properties,
-then runs Cookbook's preflight and production output checks. A misspelled
-preset or built-in sub-element property fails type checking.
-
-Provide only the root and named
-[sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
-override. Cookbook deep-merges that partial style object into the complete
-base style object inside the renderer, following Tasty's
-[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
-
-Keep `$` selectors structural and put attribute or pseudo-class conditions in
-property state maps. Use `@own(...)` for a descendant's state and ordinary
-state keys for the component root. A sub-element cannot target its containing
-element: use root state maps for callout kinds, hover/active buttons, compact
-selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
-instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
-For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
-Use `@own(:first-child)` when a structurally selected link needs its own condition,
-instead of repeating its `Panel a` selector. `@prose` uses
-`@own(!:is([data-not-content] *))` to exclude selected elements inside isolated
-sections while preserving surrounding prose in the same Markdown root.
-
-Markdown also shares `@prose-block` for a block following block content
-(including linked Cards marked `data-block`), and `@prose-heading` for a heading
-following non-heading content. Both preserve the same isolated-content condition
-as `@prose`.
-
-A scalar override replaces the property's
-whole state map; use the matching state key without a default entry to change
-only that branch. `"": null` omits a declaration outside a condition. For
-conditional `display`, `"": null` is also supported, including styles with
-`flow` or `gap`.
-
-For a compact language selector, customize the root with
-`LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
-The former `Compact` hook is now a root state. Likewise, customize code wrapping
-with `SyntaxHighlight: { whiteSpace: { "[data-syntax-wrap]": "pre-wrap" } }`.
-Syntax category sub-elements such as `Keyword` target descendant spans; use
-`SyntaxHighlight.color["[data-syntax-keyword]"]` when customizing the containing
-code element itself.
-
-Cookbook temporarily retains selectors for pseudo-element states that Tasty
-cannot yet compile correctly
-([tenphi/tasty#406](https://github.com/tenphi/tasty/issues/406)) and four empty
-legacy customization hooks whose
-conditional override scopes must remain compatible. Each has a narrow lint
-exception in its owning style module. Use state maps for new definitions.
-
-For example:
-
-```ts
-theme: {
-  styles: {
-    ThemeSelect: {
-      Trigger: {
-        border: "#border-strong"
-      },
-      Panel: {
-        padding: "1x",
-        shadow: "0 1rem 3rem #shadow"
-      }
-    },
-    TopNavigation: {
-      Link: { preset: "body" },
-      CurrentLink: { color: { '@own([aria-current="page"])': "#accent-text" } }
-    },
-    Sidebar: {
-      LinkLabel: { whiteSpace: "normal" }
-    },
-    TableOfContents: {
-      LinkLabel: { whiteSpace: "normal" }
-    },
-    MobileMenuToggle: {
-      Page: { color: "#accent-text" }
-    }
-  }
-}
-```
-
-No merge helper or base style object is required in user configuration. Style
-customization has one behavior: every supplied object is a partial override and
-is merged into the base inside Cookbook.
+### Complete component anatomy
 
 Every configurable surface accepts styles at the root plus the named Tasty
 sub-elements below. The list is generated from the public component registry so
 it stays complete when a surface changes.
-
-### Complete component anatomy
 
 <!-- component-anatomy:start -->
 
@@ -282,61 +158,272 @@ it stays complete when a surface changes.
 
 <!-- component-anatomy:end -->
 
-`COOKBOOK_COMPONENT_NAMES` publishes the configuration names, and
-`COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the complete sub-element lists for
-theme editors and other tooling. The corresponding TypeScript types are
+For theme editors and other tooling, `@tenphi/cookbook` exports
+`COOKBOOK_COMPONENT_NAMES`, which publishes the
+configuration names and `COOKBOOK_COMPONENT_SUB_ELEMENTS` publishes the
+complete sub-element lists. The corresponding TypeScript types are
 `CookbookComponentName`, `CookbookComponentSubElementName`,
 `CookbookComponentStyles`, `ComponentStyleConfig`, and `ComponentStylesConfig`.
 Known configuration names provide editor suggestions for their named
-sub-elements. `ThemeSelect` styles the combined Appearance panel; replace old
-`Select` and `Picker` overrides with `Trigger` and `Panel`. The separate
-`ContrastSelect` surface is replaced by the same `ThemeSelect` panel and option
-sub-elements. `SocialIcons` styles the shared icon-button links in the header
-and mobile menu. On wider layouts, heading permalinks sit to the left of the
-heading and are revealed on heading hover or keyboard focus. On mobile they
-stay visible and inline so the target is not clipped by the narrower content
-gutter. Customize the behavior with `MarkdownHeading.Link`,
-`MarkdownHeading.RevealedLink`, and `MarkdownHeading.LinkIcon`. The `#` icon
-scales with its heading and stays centered in the link target across heading
-levels and screen widths. Activating a heading link copies the full page URL
-with that section’s fragment without scrolling or changing the current URL. A
-checkmark and screen-reader status confirm the copy; clipboard failures are
-announced. Modified clicks and links
-without JavaScript retain native anchor behavior. Customize the confirmation
-with `MarkdownHeading.CopiedLink`, `MarkdownHeading.CopiedLinkIcon` (the hidden
-original icon), and `MarkdownHeading.CopiedIcon` (the checkmark).
+sub-elements.
 
-Root properties customize each navigation container. For example, overriding
-`Sidebar.LinkLabel.whiteSpace` keeps the other base `LinkLabel` properties
-because the configured object is merged by default.
-By default, the footer credit uses the primary body text color, while its
-Cookbook link uses the semantic brand link color.
+## States in style maps
 
-`components.overrides` remains the structural escape hatch for replacing an
-Astro component. Prefer `theme.styles` when the markup and behavior remain the
-same.
+Cookbook registers shared Tasty state aliases for `theme.styles`, custom
+components, and recipes. Use the default state key `""` for the value outside a
+condition.
 
-Register custom names and their partial Tasty objects in `theme.customStyles`.
-Built-in names belong in `theme.styles` and reject misspelled sub-elements.
-The name must match the string passed to `defineComponent()`, `extendComponent()`, or
-`resolveComponentStyles()`. A production
-build warns when a configured custom name has no matching component style
-resolver.
+### Responsive states
 
-The default renderer runs Tasty in Astro extract mode. Direct components and
-the remaining document/vendor bridge styles are collected into shared static
-CSS during the build, while appearance controls add only the small client
-behavior needed to persist selected theme and contrast modes. The compact
-Cookbook logo is shown beside the project title in the default top bar, links
-to the localized home page, and is also the default generated favicon. Use
-[`site.favicon`](./configuration.md#site-icons) to generate the complete icon
-set from project artwork.
+Widths use CSS `rem` units; their pixel values depend on the browser's
+font-size settings.
+
+| State | Condition     | Typical use                                    |
+| ----- | ------------- | ---------------------------------------------- |
+| `@sm` | width > 40rem | Pagination links share one row                 |
+| `@md` | width ≥ 50rem | Desktop navigation and component layouts       |
+| `@lg` | width ≥ 72rem | Desktop table of contents fits beside the page |
+
+The conditions select wider viewports. Use `!@sm` for stacked
+pagination, `!@md` for mobile, and `!@lg` when the contents panel does not fit
+beside the page. Combine states when needed, for example `@md & !@lg` for the
+intermediate layout. Component-specific
+thresholds use direct media conditions, such as `@media(w <= 23rem)` for
+PackageVersion. Add your own aliases with `theme.states`; redefining a built-in alias also
+changes the renderer's responsive layout, so check the whole site when doing so.
+
+Native pseudo-classes need no alias. Use `:is(:popover-open)` on a root or
+`@own(:is(:popover-open))` for a selected descendant; the `:is()` wrapper is
+needed because the pinned linter's simple pseudo-class list omits `:popover-open`
+([tenphi/eslint-plugin-tasty#77](https://github.com/tenphi/eslint-plugin-tasty/issues/77)).
+
+### Appearance and motion states
+
+Use these shared aliases to match the site's appearance or respect motion preferences.
+
+| State             | Condition                                                  | Typical use                                 |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `@reduced-motion` | `prefers-reduced-motion: reduce`                           | Suppress optional motion                    |
+| `@light`          | Explicit light theme, or system light when no theme is set | Match the site's effective light appearance |
+| `@dark`           | Explicit dark theme, or system dark when no theme is set   | Match the site's effective dark appearance  |
+| `@system-light`   | `prefers-color-scheme: light`                              | Read the system preference directly         |
+| `@system-dark`    | `prefers-color-scheme: dark`                               | Read the system preference directly         |
+
+Use `@light` and `@dark` in component styles and in document rules that style
+the root itself. They check the page root's `data-theme` attribute and use the
+system preference only when that attribute is absent. Keep scheme media queries
+in the shared state definitions instead of repeating them in style objects.
+
+### Prose states
+
+Markdown styles share three conditions that skip elements inside isolated
+sections marked `data-not-content`, while preserving surrounding prose in the
+same Markdown root:
+
+| State            | Selects                                                                   |
+| ---------------- | ------------------------------------------------------------------------- |
+| `@prose`         | Any selected element outside isolated sections                            |
+| `@prose-block`   | A block that follows block content, including linked Cards (`data-block`) |
+| `@prose-heading` | A heading that follows non-heading content                                |
+
+### State maps and validation
+
+In a generated site, run `npm run validate` (or the matching package manager's
+command) after editing `docs.config.ts`. It checks TypeScript theme properties,
+then runs Cookbook's preflight and production output checks. A misspelled
+preset or built-in sub-element property fails type checking.
+
+Provide only the root and named
+[sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
+override. Cookbook deep-merges that partial style object into the complete
+base style object inside the renderer, following Tasty's
+[state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
+
+Keep `$` selectors structural and put attribute or pseudo-class conditions in
+property state maps. Use `@own(...)` for a descendant's state and ordinary
+state keys for the component root. A sub-element cannot target its containing
+element: use root state maps for callout kinds, hover/active buttons, compact
+selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
+instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
+For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
+Use `@own(:first-child)` when a structurally selected link needs its own condition,
+instead of repeating its `Panel a` selector.
+
+A scalar override replaces the property's
+whole state map; use the matching state key without a default entry to change
+only that branch. `"": null` omits a declaration outside a condition. For
+conditional `display`, `"": null` is also supported, including styles with
+`flow` or `gap`.
+
+For a compact language selector, customize the root with
+`LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
+Likewise, customize code wrapping
+with `SyntaxHighlight: { whiteSpace: { "[data-syntax-wrap]": "pre-wrap" } }`.
+Syntax category sub-elements such as `Keyword` target descendant spans; use
+`SyntaxHighlight.color["[data-syntax-keyword]"]` when customizing the containing
+code element itself.
+
+Heading levels are states of the same element. Customize them through a root
+property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
+Markdown heading wrappers use `level=h1` through `level=h6` as root states.
+
+For example, these overrides combine plain values with a descendant state:
+
+```ts
+theme: {
+  styles: {
+    ThemeSelect: {
+      Trigger: {
+        border: "#border-strong"
+      },
+      Panel: {
+        padding: "1x",
+        shadow: "0 1rem 3rem #shadow"
+      }
+    },
+    TopNavigation: {
+      Link: { preset: "body" },
+      CurrentLink: { color: { '@own([aria-current="page"])': "#accent-text" } }
+    },
+    Sidebar: {
+      LinkLabel: { whiteSpace: "normal" }
+    },
+    TableOfContents: {
+      LinkLabel: { whiteSpace: "normal" }
+    },
+    MobileMenuToggle: {
+      Page: { color: "#accent-text" }
+    }
+  }
+}
+```
+
+## Common customizations
+
+### Header control shape
+
+Header buttons and the mobile drawer close button use the independent
+`$header-control-radius` token, which defaults to `999px` for pill and circular
+shapes. Set it to `8px` for the same corners as the default content controls:
+
+```ts
+theme: {
+  tokens: { "$header-control-radius": "8px" }
+}
+```
+
+`$radius` continues to control code-copy buttons, navigation items, and other
+content controls. Individual `theme.styles` overrides still take precedence.
+The mobile header divider spans the viewport while its content keeps the
+configured horizontal padding.
+
+### Shared page surfaces
+
+Each bridge has a complete base style tree; supply only the properties you
+want to change. Sub-elements keep their selectors and all other defaults.
+For example, a compact search dialog and quieter pagination need no CSS:
+
+```ts
+theme: {
+  styles: {
+    Search: { Dialog: { inlineSize: { "": "0 90% 32rem", "!@md": "100%" } } },
+    SearchResults: { ResultLink: { color: "#accent-text" } },
+    Pagination: { Link: { padding: "1.5x", fill: "#surface" } },
+    Banner: { padding: "1x 2x" },
+    Markdown: {
+      Quote: {
+        color: { "@prose": "#text" },
+        inlinePadding: { "@prose": "3x start" },
+      },
+    },
+  },
+}
+```
+
+`Document` owns resets, base typography, generic controls, responsive media,
+and accessibility utilities. `MainPane` and `MainContent` own the content
+layout. `Markdown` owns prose, lists, links, quotations, and disclosure
+anatomy. `Search` owns the dialog; `SearchResults` owns the search field and
+Pagefind results UI.
+`MarkdownAlert` styles rendered alert blockquotes; `Card`, `Callout`, and
+`Steps` style Cookbook components. `Callout` reads its colors from the root
+`#callout-border`, `#callout-text`, and `#callout-surface` tokens, which change
+per kind through `[data-kind="tip"]`, `"caution"`, and `"danger"` states.
+
+### Block spacing
+
+Block spacing uses `$margin-block-start` and `$margin-block-end` tokens. The
+owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
+changes only the start token. For example, `Callout: { "$margin-block-end": "3x" }`
+changes the end spacing while retaining Markdown's spacing before the callout.
+Document foundations reset these tokens on every element to prevent inheritance
+into nested content. For content-panel padding, use `MainContent.Panel`'s
+`$padding-block-start` and `$padding-block-end` tokens in the same way.
+
+### Code blocks and syntax highlighting
+
+Code fences and `CodeGroup` use the same `MarkdownCodeBlock` style tree. Its
+root `$copy-button-size` defaults to `2rem`; the copy control and vertical
+padding share it, keeping equal top, right, and bottom insets on one-line
+snippets. The padding follows the `code` preset's line height. Override it with
+`theme.styles.MarkdownCodeBlock` when changing the control size or code layout.
+
+Shiki classifies code; Tasty renders every token using Glaze's semantic syntax
+colors. Customize token rules with `theme.styles.SyntaxHighlight`, or their
+colors with `theme.palette` (for example `syntax-keyword`). The default
+`syntax-bg` stays white in light mode and takes a slight brand-hued tint, close
+to the page background's saturation, in dark mode. Set
+`theme.palette["syntax-bg"]` to give code its own color seed;
+syntax text and token contrast resolve against that surface. Code fences, including
+MDX and diff blocks, use the `.tasty-code` root class, `data-syntax-*` modifiers, and
+`data-diff` on the owning code-block wrapper. Diff lines carry
+`data-inserted`/`data-deleted` with `data-element="Line"`. Custom Shiki
+transformers may add root classes; token anatomy and state use identities or
+modifiers. Unsupported token classes or inline declarations fail with a
+configuration hint.
+
+### Heading links
+
+On wider layouts, heading permalinks sit to the left of the heading and are
+revealed on heading hover or keyboard focus. On mobile they stay visible and
+inline so the target is not clipped by the narrower content gutter. Customize
+the behavior with `MarkdownHeading.Link`, `MarkdownHeading.RevealedLink`, and
+`MarkdownHeading.LinkIcon`. The `#` icon scales with its heading and stays
+centered in the link target across heading levels and screen widths.
+
+Activating a heading link copies the full page URL with that section's fragment
+without scrolling or changing the current URL. A checkmark and screen-reader
+status confirm the copy; clipboard failures are announced. Modified clicks and
+links without JavaScript retain native anchor behavior. Customize the
+confirmation with `MarkdownHeading.CopiedLink`, `MarkdownHeading.CopiedLinkIcon`
+(the hidden original icon), and `MarkdownHeading.CopiedIcon` (the checkmark).
+
+### Previews and the style boundary
+
+The production build rejects style attributes, style blocks (including inside
+shadow-root templates), and non-Tasty stylesheets throughout documentation HTML.
+It parses actual markup, so escaped examples and strings in scripts are allowed.
+The explicit exception is the separate document in a sandboxed `Preview` iframe;
+it cannot access its parent's origin. Configure its size with
+`theme.styles.Preview.Frame`, or one preview's minimum height with its `height`
+prop. For a preview that runs scripts, a client script sets the frame's
+`height` to its content plus its `buffer` prop, within the frame's `min-height`
+and `max-height` (by default `10rem` and the window's height). The
+documentation shell works under the CSP directive `style-src-attr 'none'`: it
+blocks style attributes in markup, not the script's style changes. A host's CSP
+may also restrict the preview document; when using that directive, authored
+previews must use style blocks rather than style attributes.
 
 ## Static behavior
 
 Documentation content, navigation, headings, code, and images remain readable
 without client JavaScript. Search, mobile navigation, copy controls, appearance
-persistence, and executable previews enhance the static output.
+persistence, and executable previews enhance the static output. Cookbook runs
+Tasty in Astro extract mode and ships no Tasty or Glaze browser runtime, theme
+configuration, or style hydration setup. Browser scripts and `client:*` islands
+must not import Cookbook styling, Tasty, or Glaze; the build rejects these
+imports. Attach small interaction scripts to server-rendered markup or pass
+already-styled static markup into a client island.
 
 ### Appearance and navigation
 
@@ -370,20 +457,22 @@ at the end.
 ### Responsive header and navigation
 
 The header uses `#header`, generated from `theme.palette.header` (or the page
-surface) at 70% opacity in all four appearance modes, with a 16px backdrop blur.
+surface) at 70% opacity in all four appearance modes, with a backdrop blur set
+by the root `$backdrop-blur` token (default `16px`).
 Customize the outer bar with `theme.styles.HeaderFrame`, its contents with
 `Header`, and header buttons with `HeaderLinks` and `SearchButton`.
 
 Below 50rem, page navigation moves into a header row and opens a left drawer.
 `MobileMenuToggle.Section` and `Page` style its breadcrumb labels. The drawer
 contains the complete active section, a collapsible `MobileNavigationTabs`
-selector, and a close button. The drawer slides in and out over 120ms and
+selector, and a close button. The drawer slides in and out over the root
+`$sidebar-transition` duration (default `120ms`) and
 disables motion when the reader prefers reduced motion. Its mobile shadow uses
 the Glaze `shadow`-typed `#shadow` token. Customize the movement and shadow through
 `theme.styles.Sidebar`, and the underlay through `Sidebar.Backdrop` and
 `OpenBackdrop`. `theme.palette.overlay` supplies the underlay declaration, which defaults
-to black at 50% opacity. Glaze resolves it in fixed mode with tone remapping
-disabled, so it stays black in dark and high-contrast schemes.
+to black at 50% opacity. Glaze resolves it in `static` mode, which skips scheme
+adaptation, so it stays black in dark and high-contrast schemes.
 Icon buttons retain their plain desktop appearance on mobile. More uses
 left-aligned navigation links with a `1bw` gap, without primary button variants.
 `HeaderLinks.PanelLink` styles the menu rows; `FirstPanelLink` reserves space
@@ -399,92 +488,7 @@ controls placement. `Layout` controls shared
 navigation dimensions and the drawer's scroll lock; `PageFrame` styles the
 page container and content columns.
 
-### Header control shape
-
-Header buttons and the mobile drawer close button use the independent
-`$header-control-radius` token, which defaults to `999px` for pill and circular
-shapes. Set it to `8px` for the same corners as the default content controls:
-
-```ts
-theme: {
-  tokens: { "$header-control-radius": "8px" }
-}
-```
-
-`$radius` continues to control code-copy buttons, navigation items, and other
-content controls. Individual `theme.styles` overrides still take precedence.
-The mobile header divider spans the viewport while its content keeps the
-configured horizontal padding.
-
-## Customize shared page surfaces
-
-Each bridge has a complete base style tree; supply only the properties you
-want to change. Sub-elements keep their selectors and all other defaults.
-For example, a compact search dialog and quieter pagination need no CSS:
-
-```ts
-theme: {
-  styles: {
-    Search: { Dialog: { inlineSize: "max 32rem" } },
-    SearchResults: { ResultLink: { color: "#accent-text" } },
-    Pagination: { Link: { padding: "1.5x", fill: "#surface" } },
-    Banner: { padding: "1x 2x" },
-    Markdown: { Quote: { color: "#text", inlinePadding: "3x start" } },
-  },
-}
-```
-
-`Document` owns resets, base typography, generic controls, responsive media,
-and accessibility utilities. `MainPane` and `MainContent` own the content
-layout. `Markdown` owns prose, lists, links, quotations, and disclosure
-anatomy. `Search` owns the dialog; `SearchResults` owns the search field and
-Pagefind results UI.
-`MarkdownAlert` styles rendered alert blockquotes; `Card`, `Callout`, and
-`Steps` style Cookbook components.
-
-Custom components created with `defineComponent()` receive `theme.customStyles`
-overrides during server rendering. Units, recipes, states, and presets are
-resolved there and emitted as static CSS. Cookbook ships no Tasty/Glaze browser
-runtime, theme configuration, or style hydration setup. Browser scripts and
-`client:*` islands must not import Cookbook styling, Tasty, or Glaze; the build
-rejects these imports. Attach small interaction scripts to server-rendered markup
-or pass already-styled static markup into a client island.
-
-Code fences and `CodeGroup` use the same `MarkdownCodeBlock` style tree. Its
-root `$copy-button-size` defaults to `2rem`; the copy control and vertical
-padding share it, keeping equal top, right, and bottom insets on one-line
-snippets. The padding follows the `code` preset's line height. Override it with
-`theme.styles.MarkdownCodeBlock` when changing the control size or code layout.
-
-### Syntax highlighting and isolated previews
-
-Shiki classifies code; Tasty renders every token using Glaze's semantic syntax
-colors. Customize token rules with `theme.styles.SyntaxHighlight`, or their
-colors with `theme.palette` (for example `syntax-keyword`). The default
-`syntax-bg` stays white in light mode and takes a slight brand-hued tint, close
-to the page background's saturation, in dark mode. Set
-`theme.palette["syntax-bg"]` to give code its own color seed;
-syntax text and token contrast resolve against that surface. Code fences, including
-MDX and diff blocks, use the `.tasty-code` root class, `data-syntax-*` modifiers, and
-`data-diff` on the owning code-block wrapper. Diff lines carry
-`data-inserted`/`data-deleted` with `data-element="Line"`. Custom Shiki
-transformers may add root classes; token anatomy and state use identities or
-modifiers. Unsupported token classes or inline declarations fail with a
-configuration hint.
-
-The production build rejects style attributes, style blocks (including inside
-shadow-root templates), and non-Tasty stylesheets throughout documentation HTML.
-It parses actual markup, so escaped examples and strings in scripts are allowed.
-The explicit exception is the separate document in a sandboxed `Preview` iframe;
-it cannot access its parent's origin. Configure its size with
-`theme.styles.Preview.Frame`, or one preview's minimum height with its `height`
-prop. For a preview that runs scripts, a client script sets the frame's
-`height` to its content plus its `buffer` prop, within the frame's `min-height`
-and `max-height` (by default `10rem` and the window's height). The
-documentation shell supports the CSP directive `style-src-attr 'none'`, which
-allows that script's style changes. A host's CSP may also restrict the preview
-document; when using that directive, authored previews must use style blocks
-rather than style attributes.
+### Search dialog
 
 Search uses an owned, keyboard-accessible dialog and server-rendered input so
 the first opening can focus the field immediately on mobile. Pagefind's indexing
@@ -493,11 +497,3 @@ and results UI load lazily. Customize the field with `SearchResults.Field`,
 Closing waits for the dialog's fade transition, with reduced motion respected.
 The fullscreen mobile dialog has no dimmed or blurred backdrop; the backdrop
 transition applies only to wider layouts.
-The Pagefind sizing adapter prevents inline layout declarations and is checked
-against the pinned UI version during builds.
-
-Root selectors may use stable classes (for example `.cookbook-markdown-content`,
-`.td-code-block`, and `.tasty-code`) or `data-component`. `data-element` identifies
-structural anatomy and must not serve as a variant or modifier. Use data modifiers
-for states; authored sub-element classes remain only in the Pagefind bridge because
-the library owns and updates its UI markup.

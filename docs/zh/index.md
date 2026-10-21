@@ -43,7 +43,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook 会直接读取原位置的文件。你也可以[创建新站点](./getting-started.md)、[为实际发布到 npm 的文件编写文档](./getting-started.md)，或[将 Cookbook 加入现有 Astro 项目](./getting-started.md)。
+Cookbook 会直接读取原位置的文件。你也可以[创建新站点](./getting-started.md#创建第一个站点)、[为实际发布到 npm 的文件编写文档](./getting-started.md#为已发布的-npm-包编写文档)，或[将 Cookbook 加入现有 Astro 项目](./getting-started.md#加入现有-astro-项目)。
 
 ## 本站就是一个示例
 

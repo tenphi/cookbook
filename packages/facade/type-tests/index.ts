@@ -1,5 +1,6 @@
 import { defineDocsConfig } from "../dist/config.js";
 import type { ThemeFont } from "../dist/config.js";
+import { resolveDocsTheme, type ResolvedDocsTheme } from "../dist/index.js";
 import type { ComponentProps } from "astro/types";
 import { Tab, Preview, Logo } from "../dist/components.js";
 
@@ -21,6 +22,13 @@ const localFont: ThemeFont = {
   files: [{ src: "/fonts/project-mono.woff2", weight: "100 900" }],
 };
 void localFont;
+const resolvedTheme: ResolvedDocsTheme = resolveDocsTheme({
+  palette: { info: { from: "#0891b2" } },
+});
+const passing: boolean[] = resolvedTheme.contrastChecks.map(
+  (check) => check.passed,
+);
+void passing;
 defineDocsConfig({
   theme: {
     brand: {
@@ -57,6 +65,17 @@ defineDocsConfig({
 defineDocsConfig({ theme: { styles: { Sidebaar: {} } } });
 // @ts-expect-error Unknown sub-element.
 defineDocsConfig({ theme: { styles: { Sidebar: { LinkLable: {} } } } });
+defineDocsConfig({
+  components: {
+    overrides: { Header: "./src/Header.astro", Footer: false },
+  },
+});
+defineDocsConfig({
+  // @ts-expect-error Unknown component override slot.
+  components: { overrides: { Foter: "./src/Footer.astro" } },
+});
+// @ts-expect-error Only the footer can be disabled.
+defineDocsConfig({ components: { overrides: { Header: false } } });
 defineDocsConfig({
   theme: {
     styles: {

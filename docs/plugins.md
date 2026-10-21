@@ -22,13 +22,15 @@ export default defineConfig({
 });
 ```
 
+Install `@astrojs/markdown-remark` first; it is an optional Astro dependency
+that generated projects do not include. Astro's default Sätteri processor does
+not run remark or rehype plugins. Cookbook adds its transforms to whichever
+processor is configured, and `.mdx` pages use the same processor.
+
 ## GitHub alerts
 
 Cookbook renders GitHub alert blockquotes in Markdown and MDX without an extra
-plugin. `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, and `CAUTION` map to the semantic
-note, tip, caution, and danger surfaces. For example:
-
-The default Astro integration is sufficient for alert rendering:
+plugin; the default Astro integration is enough:
 
 ```js cookbook-verify=github-alerts
 import cookbook from "@tenphi/cookbook";
@@ -43,22 +45,29 @@ Write the alert in a Markdown or MDX page:
 > Keep source documentation next to the code it describes.
 ```
 
+`NOTE` renders as a note, `TIP` and `IMPORTANT` as a tip, `WARNING` as a
+caution, and `CAUTION` as danger. Titles are English. Alerts use the same
+status palette roles as `Callout`: `info` for notes, `success` for tips,
+`warning` for cautions, and `danger` for danger.
+
 Customize the result through `theme.styles.MarkdownAlert`. Its named
-sub-elements are `Note`, `Tip`, `Caution`, `Danger`, `Title`, and
-`FirstContent`.
+sub-elements are `Title` and `FirstContent`. Style each kind with root states
+such as `[data-note]`, `[data-tip]`, `[data-caution]`, and `[data-danger]` in
+property state maps.
 
 ## Custom frontmatter
 
-Unknown frontmatter fields can be preserved as JSON metadata. Set
-`content.frontmatter: "preserve"`, then validate or add custom fields with
-`frontmatterSchema`:
+Cookbook keeps unknown frontmatter fields as JSON metadata by default
+(`content.frontmatter: "preserve"`); `"reject"` turns them into errors.
+Validate or add custom fields with `frontmatterSchema`:
 
 ```ts
 export default defineConfig({
   integrations: [
     cookbook({
       frontmatterSchema: {
-        parse(metadata) {
+        parse(value) {
+          const metadata = value as Record<string, unknown>;
           return { ...metadata, owner: metadata.owner ?? "maintainers" };
         },
       },
@@ -67,9 +76,11 @@ export default defineConfig({
 });
 ```
 
-The schema receives only custom metadata. It cannot change route, title, draft,
-or other reserved page fields. Returned values must be JSON-safe because the
-renderer passes them through a build-time virtual module.
+The schema receives only custom metadata and may provide `parse` or
+`parseAsync`, so a Zod schema works directly. The returned object is merged
+over the original metadata, so fields the schema omits are kept. It cannot set
+route, title, draft, or other reserved page fields. Returned values must be
+JSON-safe because the renderer passes them through a build-time virtual module.
 
 ## Read the content graph
 
@@ -85,9 +96,10 @@ const visiblePages = getCookbookCollection();
 const guide = getCookbookEntry("/guide");
 ```
 
-Queries return snapshots. Drafts are omitted from the collection by default;
-`getCookbookEntry()` can retrieve one by its exact route. The same API is
-available at `@tenphi/renderer/content` for renderer-only projects.
+Queries return snapshots. Drafts are omitted from the collection unless you
+call `getCookbookCollection({ includeDrafts: true })`; `getCookbookEntry()` can
+retrieve one by its exact route. The same API is available at
+`@tenphi/renderer/content` for renderer-only projects.
 
 Component overrides receive page data from `Astro.locals.cookbookRoute`,
 including the current entry, locale, navigation, table of contents, and head

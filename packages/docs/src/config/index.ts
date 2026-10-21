@@ -9,6 +9,7 @@ import {
 } from "@tenphi/tasty/core";
 import {
   COOKBOOK_COMPONENT_NAMES,
+  COOKBOOK_COMPONENT_OVERRIDE_NAMES,
   COOKBOOK_COMPONENT_SUB_ELEMENTS,
 } from "../types.js";
 import type {
@@ -1115,6 +1116,12 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
     invalid(diagnostics, "components.overrides must be an object.");
   } else {
     for (const [name, override] of Object.entries(componentOverrides ?? {})) {
+      if (
+        !(COOKBOOK_COMPONENT_OVERRIDE_NAMES as readonly string[]).includes(name)
+      ) {
+        unknown(diagnostics, `components.overrides.${name}`);
+        continue;
+      }
       if (typeof override === "string") continue;
       if (name === "Footer" && override === false) continue;
       invalid(

@@ -5,6 +5,9 @@ sidebar:
   order: 9
 ---
 
+Upgrade the Cookbook runtime with your package manager, then apply the notes
+for every version range you cross, starting with the oldest.
+
 ## Upgrade the site runtime
 
 Check your current `@tenphi/cookbook`, Astro, and Node versions first. Read the
@@ -38,33 +41,14 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
-## Upcoming theme API cleanup
+## 0.28.x to 0.29
 
-Use canonical Glaze palette names throughout configuration and color
-references. Replace `theme.palette.textSoft` with `theme.palette["text-soft"]`
-and update any `base`, `target`, `bg`, or `fg` references to `"text-soft"`.
-Camel-case palette names now fail validation.
+Cookbook 0.29 updates Tasty to 3.11, aligns the built-in styles with Tasty's
+style guidelines, and checks component overrides the way the build uses them.
 
-The `colors` returned by `resolveColorTheme()` and `resolveDocsTheme()` also
-use canonical names: `surface-2`, `surface-3`, `text-soft`, `accent-text`,
-`accent-surface`, and `accent-surface-text`. Update property access to bracket
-notation, for example `theme.colors["accent-text"]`.
+### Style overrides
 
-Configure `theme.tokens` with `$name` keys, such as `$radius`. The old `--name`
-configuration keys now fail validation; the emitted CSS custom properties
-still use `--name`.
-
-Built-in markup now uses Tasty’s `data-element` identities instead of
-`data-tasty-anatomy`. Custom styles resolve through each owning definition.
-Heading levels move from `Heading.Level1`–`Level6` to root property state maps
-(`:is(h1)`–`:is(h6)`); Markdown wrappers use `[data-level=h1]`–`[data-level=h6]`.
-Panel first/second-child padding moves into `MainContent.Panel` token state maps.
-Header’s shared title/search defaults live on `Title` and `Search`; Footer’s
-only-child and hover states live on `MetaLink`, `MetaUpdated`, and `CreditLink`.
-For a custom component, use `defineComponent(name, options)`. For custom global
-rules, pass `resolveComponentStyles(name, baseStyles)` to `useGlobalStyles()`.
-Both merge `theme.customStyles[name]` into the complete base styles during
-server rendering. See [custom components](./custom-components.md).
+Review overrides of the properties below.
 
 Direction-dependent styles now follow the page's writing direction. Override
 `Steps` with `inlinePadding` and `inlineBorder`, `Steps.Item`,
@@ -91,6 +75,152 @@ The `clear` palette role is removed. Tasty 3.11 compiles `#clear` to
 `transparent` without reading a theme token, so a customized
 `theme.palette.clear` no longer has any effect. A leftover entry now defines an
 unused custom color; delete it.
+
+GitHub alerts (`MarkdownAlert`) now use the status palette roles that `Callout`
+uses: `info`, `success`, `warning`, and `danger`, instead of `blue`, `green`,
+and `red`. The default colors are unchanged. If you set `theme.palette.blue`,
+`green`, or `red` to restyle alerts, set `info`, `success`, or `danger`
+instead; those also restyle Callouts.
+
+### Component overrides and edit links
+
+`components.overrides` accepts only the
+[documented slot names](./configuration.md#components). An unknown name, such
+as a misspelled `Foter`, used to be ignored and now fails validation with
+`DOCS_CONFIG_UNKNOWN_KEY`.
+
+`cookbook doctor` resolves override paths from the Astro project directory,
+as the build does. Start local paths with `./`: a value such as
+`src/Header.astro` is a package specifier, which the build cannot resolve
+either, and doctor now reports it as `DOCS_COMPONENT_UNRESOLVED`.
+
+Package pages no longer get an edit link from `editLink.baseUrl`. That link
+pointed into your repository at a file that exists only in the npm artifact.
+A package page still shows an edit link when its own frontmatter sets
+`editUrl`.
+
+## 0.23.x to 0.28
+
+These releases need no configuration changes, but they can affect custom
+scripts, hard-coded links, and apps that share the reader's appearance:
+
+- **Client navigation (0.24):** internal links swap pages without a full
+  reload. Bundled scripts are not rerun after a client navigation, so attach
+  custom browser behavior through custom-element lifecycle callbacks or
+  initialize it on `astro:page-load`. See
+  [client navigation](./site-navigation.md#client-navigation).
+- **Prefetching (0.25):** Astro's hover and focus prefetching is enabled by
+  default. Set `prefetch: false` in the Astro configuration to turn it off;
+  explicit Astro `prefetch` settings are preserved.
+- **Page URLs (0.25.1):** page URLs follow Astro's `trailingSlash` and
+  `build.format`. With the default directory output, internal links, canonicals,
+  and `llms.txt` use a trailing slash, such as `/guide/`. See
+  [deployment](./deployment.md#public-url-and-base-path).
+- **Appearance storage (0.25.4):** the reader's color scheme and contrast are
+  stored together in one `cookbook-appearance` entry. A scheme saved under the
+  previous `cookbook-theme` key is still read and moves to the new entry on the
+  next change. See [reader appearance](./theme-and-components.md#reader-appearance).
+
+## 0.22.x to 0.23
+
+Cookbook 0.23 extends Tasty `data-element` identities to all owned anatomy,
+expresses state with data modifiers, and uses one responsive width scale.
+
+### Root hooks, anatomy, and button variants
+
+Existing component root classes and Logo’s root `class` prop remain supported.
+Stable generated-content root classes remain available for global ownership, including
+`.cookbook-markdown-content`, `.cookbook-heading-wrapper`, `.td-code-block`,
+`.tasty-code`, `.cookbook-alert`, and `.td-mermaid`. Custom roots may also use classes
+or `data-component`.
+
+Owned sub-elements use `data-element` identities, and state uses data modifiers.
+Keep identity matching in structural `$` selectors. For example, hero actions use
+`data-element="Action"` with `data-primary`, `data-secondary`, or `data-minimal`.
+When customizing `Hero.PrimaryAction`, keep its variant condition in a property
+map, such as `color: { "@own(primary)": "#accent-text" }`.
+
+The code-block wrapper owns `data-diff` and `data-copy-state`; code and line rules
+use plain `diff` or `copy-state=copied` state keys. Line insertion/deletion flags
+belong to the line itself and use `@own(inserted)` / `@own(deleted)`.
+
+Heading wrappers carry `data-heading` and `level=h1` through `level=h6` states.
+Linked Cards carry `data-block` for prose spacing. Shared `@prose`, `@prose-block`,
+and `@prose-heading` conditions keep repeated Markdown declarations readable while
+preserving isolated `data-not-content` descendants and conditional omissions.
+
+Syntax transformers may emit root classes. Token/category hooks use modifiers,
+for example `SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
+Tasty-generated style hashes and library-owned Pagefind sub-element classes remain.
+
+Hero buttons stay stationary on hover. Minimal actions share secondary outline
+padding, background, and border width, with a transparent border (`border: "#clear"`).
+Pagination links keep their border at rest; hover changes only colors,
+preserving `theme.styles.Pagination.Link` border width and style.
+
+### Responsive states
+
+Responsive aliases now use one width scale: `@sm` (>40rem), `@md` (≥50rem), and
+`@lg` (≥72rem). The conditions select wider viewports;
+the exclusive 40rem boundary preserves the former `@small` behavior. The renderer
+keeps its existing responsive thresholds.
+Use these replacements for the removed shortcuts in custom style maps:
+
+| Removed alias    | Replacement          |
+| ---------------- | -------------------- |
+| `@small`         | `!@sm`               |
+| `@mobile`        | `!@md`               |
+| `@narrow-layout` | `!@lg`               |
+| `@desktop`       | `@md`                |
+| `@compact`       | `@media(w <= 23rem)` |
+| `@shell-mobile`  | `@media(w <= 48rem)` |
+| `@shell-desktop` | `@media(w > 48rem)`  |
+| `@medium-layout` | `@md & !@lg`         |
+| `@popover-open`  | `:is(:popover-open)` |
+
+Inside a selected descendant's condition, use `@own(:is(:popover-open))`.
+The `:is()` wrapper accommodates the pinned linter's pseudo-class list.
+The shell and medium-layout aliases were unused by built-in components;
+PackageVersion's 23rem rule is now a direct media condition. Define a project
+alias in `theme.states` if you need a named threshold across your own components.
+
+If you customized `theme.states`, rename your breakpoint definitions and invert
+the old upper-bound conditions. For example, `"@mobile": "@media(w < 43rem)"`
+becomes `"@md": "@media(w >= 43rem)"`.
+
+## 0.20.x to 0.21
+
+Cookbook 0.21 removes the legacy theme naming and styling compatibility paths.
+0.21.2 moved Header, Footer, and logo anatomy to `data-element` identities and
+heading levels to state maps.
+
+Use canonical Glaze palette names throughout configuration and color
+references. Replace `theme.palette.textSoft` with `theme.palette["text-soft"]`
+and update any `base`, `target`, `bg`, or `fg` references to `"text-soft"`.
+Camel-case palette names now fail validation.
+
+The `colors` returned by `resolveColorTheme()` and `resolveDocsTheme()` also
+use canonical names: `surface-2`, `surface-3`, `text-soft`, `accent-text`,
+`accent-surface`, and `accent-surface-text`. Update property access to bracket
+notation, for example `theme.colors["accent-text"]`.
+
+Configure `theme.tokens` with `$name` keys, such as `$radius`. The old `--name`
+configuration keys now fail validation; the emitted CSS custom properties
+still use `--name`.
+
+Built-in markup now uses Tasty’s `data-element` identities instead of
+`data-tasty-anatomy`. Custom styles resolve through each owning definition.
+Heading levels move from `Heading.Level1`–`Level6` to root property state maps
+(`:is(h1)`–`:is(h6)`); Markdown wrappers use `[data-level=h1]`–`[data-level=h6]`.
+Panel first/second-child padding moves into `MainContent.Panel` token state maps.
+Header’s shared title/search defaults live on `Title` and `Search`; Footer’s
+only-child and hover states live on `MetaLink`, `MetaUpdated`, and `CreditLink`.
+For a custom component, use `defineComponent(name, options)`. For custom global
+rules, pass `resolveComponentStyles(name, baseStyles)` to `useGlobalStyles()`.
+Both merge `theme.customStyles[name]` into the complete base styles during
+server rendering. See [custom components](./custom-components.md).
+The compact language selector's former `Compact` hook is now a root state:
+customize it with `LanguageSelect: { border: { "[data-compact]": "4px solid #border" } }`.
 
 ## 0.19.x to 0.20
 
@@ -144,8 +274,9 @@ These changes were introduced in 0.18:
 - **Google fonts:** family-name shorthand loads preset weights and italics and
   self-hosts the files. The initial build requires network access. Preserve the
   Astro font cache for offline rebuilds, use local files for checked-in assets,
-  or select `theme.fontLoading.google: "remote"` for CDN delivery. See
-  [fonts](./fonts-and-typography.md#change-font-families).
+  or select `theme.fontLoading.google: "remote"` for CDN delivery. Weights set
+  through CSS variables that cannot be resolved from presets require explicit
+  `weights`. See [fonts](./fonts-and-typography.md#change-font-families).
 - **Colors:** body tone 0 and heading tone 4 remain the reading defaults.
   The default logo uses fixed Glaze colors (`logo-surface` and `logo-mark`), so
   its book stays light in dark mode. Customize these independently of accents.
@@ -194,6 +325,13 @@ Version 0.17.1 restored strong body/heading colors with absolute Glaze tones.
 If you added temporary contrast workarounds in 0.17.0, compare them with those
 defaults before carrying them forward.
 
+## 0.14 to 0.15
+
+The Appearance panel combines the color scheme and contrast controls in
+`ThemeSelect`. Replace `ThemeSelect` `Select` and `Picker` overrides with
+`Trigger` and `Panel`, and move `ContrastSelect` overrides to the same
+`ThemeSelect` panel and option sub-elements.
+
 ## Upgrading from before 0.14
 
 The shared-configuration and source-identity changes shipped in **0.14.0**.
@@ -226,65 +364,3 @@ Apply these steps if your project still uses the earlier contracts:
 
 See [authoring](./authoring.mdx) for component usage and
 [working examples](./examples.md) for repository configuration patterns.
-
-## Root hooks, anatomy, and button variants
-
-Existing component root classes and Logo’s root `class` prop remain supported.
-Stable generated-content root classes remain available for global ownership, including
-`.cookbook-markdown-content`, `.cookbook-heading-wrapper`, `.td-code-block`,
-`.tasty-code`, `.cookbook-alert`, and `.td-mermaid`. Custom roots may also use classes
-or `data-component`.
-
-Owned sub-elements use `data-element` identities, and state uses data modifiers.
-Keep identity matching in structural `$` selectors. For example, hero actions use
-`data-element="Action"` with `data-primary`, `data-secondary`, or `data-minimal`.
-When customizing `Hero.PrimaryAction`, keep its variant condition in a property
-map, such as `color: { "@own(primary)": "#accent-text" }`.
-
-The code-block wrapper owns `data-diff` and `data-copy-state`; code and line rules
-use plain `diff` or `copy-state=copied` state keys. Line insertion/deletion flags
-belong to the line itself and use `@own(inserted)` / `@own(deleted)`.
-
-Heading wrappers carry `data-heading` and `level=h1` through `level=h6` states.
-Linked Cards carry `data-block` for prose spacing. Shared `@prose`, `@prose-block`,
-and `@prose-heading` conditions keep repeated Markdown declarations readable while
-preserving isolated `data-not-content` descendants and conditional omissions.
-
-Syntax transformers may emit root classes. Token/category hooks use modifiers,
-for example `SyntaxHighlight: { Keyword: { color: { "@own(syntax-keyword)": "#accent-text" } } }`.
-Tasty-generated style hashes and library-owned Pagefind sub-element classes remain.
-
-Hero buttons stay stationary on hover. Minimal actions share secondary outline
-padding, background, and border width, with a transparent border (`border: "#clear"`).
-Pagination links keep their border at rest; hover changes only colors,
-preserving `theme.styles.Pagination.Link` border width and style.
-
-## Smaller shared state set
-
-Responsive aliases now use one width scale: `@sm` (>40rem), `@md` (≥50rem), and
-`@lg` (≥72rem). The conditions select wider viewports;
-the exclusive 40rem boundary preserves the former `@small` behavior. The renderer
-keeps its existing responsive thresholds.
-Use these replacements for the removed shortcuts in custom style maps:
-
-| Removed alias    | Replacement          |
-| ---------------- | -------------------- |
-| `@small`         | `!@sm`               |
-| `@mobile`        | `!@md`               |
-| `@narrow-layout` | `!@lg`               |
-| `@desktop`       | `@md`                |
-| `@compact`       | `@media(w <= 23rem)` |
-| `@shell-mobile`  | `@media(w <= 48rem)` |
-| `@shell-desktop` | `@media(w > 48rem)`  |
-| `@medium-layout` | `@md & !@lg`         |
-| `@popover-open`  | `:is(:popover-open)` |
-
-Inside a selected descendant's condition, use `@own(:is(:popover-open))`.
-The `:is()` wrapper accommodates the pinned linter's pseudo-class list.
-The shell and medium-layout aliases were unused by built-in components;
-PackageVersion's 23rem rule is now a direct media condition. Define a project
-alias in `theme.states` if you need a named threshold across your own components.
-
-If you customized `theme.states`, rename your breakpoint definitions and invert
-the old upper-bound conditions. For example, `"@mobile": "@media(w < 43rem)"`
-becomes `"@md": "@media(w >= 43rem)"`.

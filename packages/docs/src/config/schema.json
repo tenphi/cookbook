@@ -1098,6 +1098,15 @@
         "overrides": {
           "type": "object",
           "properties": {
+            "Head": {
+              "type": "string"
+            },
+            "PageFrame": {
+              "type": "string"
+            },
+            "Header": {
+              "type": "string"
+            },
             "Footer": {
               "oneOf": [
                 {
@@ -1107,11 +1116,57 @@
                   "const": false
                 }
               ]
+            },
+            "Sidebar": {
+              "type": "string"
+            },
+            "Hero": {
+              "type": "string"
+            },
+            "SiteTitle": {
+              "type": "string"
+            },
+            "Search": {
+              "type": "string"
+            },
+            "LanguageSelect": {
+              "type": "string"
+            },
+            "ThemeSelect": {
+              "type": "string"
+            },
+            "SocialIcons": {
+              "type": "string"
+            },
+            "MobileMenuToggle": {
+              "type": "string"
+            },
+            "MobileMenuFooter": {
+              "type": "string"
+            },
+            "MobileTableOfContents": {
+              "type": "string"
+            },
+            "TableOfContents": {
+              "type": "string"
+            },
+            "Pagination": {
+              "type": "string"
+            },
+            "MarkdownContent": {
+              "type": "string"
+            },
+            "DraftContentNotice": {
+              "type": "string"
+            },
+            "EditLink": {
+              "type": "string"
+            },
+            "LastUpdated": {
+              "type": "string"
             }
           },
-          "additionalProperties": {
-            "type": "string"
-          }
+          "additionalProperties": false
         }
       }
     },
