@@ -44,7 +44,8 @@ export default function DocumentStyles() {
       "$docs-nav-gap": { "": "0.75rem", "!@md": "0.5rem" },
       "$docs-sidebar-pad-x": "1.5rem",
       "$docs-content-pad-x": {
-        "": "clamp(1.5rem, ((100% - $content-width) / 2), 4rem)",
+        // Desktop heading links extend 2rem into this gutter; leave room for focus rings.
+        "": "clamp(2.5rem, ((100% - $content-width) / 2), 4rem)",
         "!@md": "1rem",
       },
       "$docs-menu-button-size": { "": "2.5rem", "!@md": "2.25rem" },
