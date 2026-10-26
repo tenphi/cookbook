@@ -260,10 +260,12 @@ export default {
 Renderer-only consumers can use `extends: "@tenphi/renderer"` instead.
 The preset registers both Cookbook styling import paths, its built-in tokens,
 units, responsive states, and typography presets. It also describes
-`defineComponent`, `extendComponent`, `resolveComponentStyles`, and `mergeStyles`, so their inline
+`defineComponent`, `extendComponent`, and `resolveComponentStyles`, so their inline
 style objects, variants, and named sub-elements receive the same checks as
-`tasty()` calls. Partial overrides passed to `mergeStyles` may omit default state
-values and retain the plugin's safeguards against fixes that replace base styles.
+`tasty()` calls. The upstream plugin recognizes `mergeStyles` directly: its first
+argument is a base style object, and later arguments are partial overrides that
+may omit default state values and retain the safeguards against fixes that replace
+base styles.
 
 ### ESLint
 

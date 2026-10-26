@@ -20,7 +20,6 @@ export async function checkStyleLinting({ site, root, run }) {
     assert.equal(validationConfig, rendererConfig);
     assert.equal(recommended, plugin.configs.recommended.rules);
     assert.equal(strict, plugin.configs.strict.rules);
-    assert.equal(validationConfig.styleFunctions.mergeStyles.partial, true);
     assert.deepEqual(validationConfig.styleFunctions.extendComponent, { argument: 2, kind: 'options', partial: true });
   `,
     ],
@@ -144,6 +143,11 @@ export default {
           invalid.filter((rule) => rule === "known-property").length,
           5,
           `${label}: every styling helper must be recognized`,
+        );
+        assert.equal(
+          invalid.filter((rule) => rule === "require-default-state").length,
+          1,
+          `${label}: only the mergeStyles base needs a default state`,
         );
         await writeFile(fixablePath, fixable);
         await lint("fixable", true);

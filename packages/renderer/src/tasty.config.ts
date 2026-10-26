@@ -11,7 +11,6 @@ export default {
     defineComponent: { argument: 1, kind: "options" },
     extendComponent: { argument: 2, kind: "options", partial: true },
     resolveComponentStyles: { argument: 1, kind: "styles" },
-    mergeStyles: { argument: "all", kind: "styles", partial: true },
   },
   tokens: [
     "$gap",

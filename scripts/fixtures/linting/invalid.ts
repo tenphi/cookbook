@@ -23,5 +23,9 @@ defineComponent("Broken", {
 });
 resolveComponentStyles("Broken", { paddding: "1x" });
 mergeStyles({}, { paddding: "1x" });
+mergeStyles(
+  { color: { ":hover": "#text" } },
+  { color: { ":hover": "#text-soft" } },
+);
 tasty({ styles: { paddding: "1x" } });
 rendererComponent("Broken", { styles: { paddding: "1x" } });
