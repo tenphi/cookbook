@@ -41,6 +41,28 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## Upcoming Tasty upgrade
+
+Cookbook now uses Tasty 3.14 and the Tasty ESLint plugin 1.12. Built-in themes
+need no configuration migration. Review custom styles for these changes from
+Tasty 3.12:
+
+- Color opacity suffixes such as `#accent-text.5` now emit `color-mix()`. If the
+  palette color is already translucent, the suffix multiplies its alpha rather
+  than replacing it. For `#accent-text.$fade`, set `$fade` to a number such as
+  `".5"`, rather than a percentage such as `"50%"`.
+- `false` now omits spacing, size, and `outlineOffset` declarations. Use an
+  explicit value such as `"0"` or `"auto"` if a custom style relied on the old
+  implicit default. `transition: "none"` now correctly disables transitions,
+  including the built-in reduced-motion states.
+
+The linter now checks `mergeStyles` arguments directly: the first argument is a
+base style object and later arguments are partial overrides. Remove a custom
+`styleFunctions.mergeStyles` registration if you copied the old configuration;
+it is superseded by the built-in signature. Module-scope constants no longer
+need `tasty/no-runtime-styles-mutation` suppressions; values computed during
+rendering still do.
+
 ## 0.28.x to 0.29
 
 Cookbook 0.29 updates Tasty to 3.11, aligns the built-in styles with Tasty's
