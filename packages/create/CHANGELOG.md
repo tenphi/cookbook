@@ -1,5 +1,20 @@
 # @tenphi/create-cookbook
 
+## 0.30.0
+
+### Patch Changes
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - `--deploy github-pages` now writes the workflow where GitHub runs it. For a site created inside an existing Git repository, such as `docs-site/` after `--source .`, the creator writes `.github/workflows/deploy-docs.yml` at the repository root, runs the build in the site directory, prints the workflow path, and stops without writing files if that workflow already exists.
+
+  Yarn sites get `.yarnrc.yml` with `nodeLinker: node-modules`, because Cookbook does not support Plug'n'Play, and an empty `yarn.lock` so they install as their own project inside an existing Yarn repository. The generated upgrade skill runs the site's `validate` script, which includes the built-output checks.
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - Review and correct the packaged documentation. The configuration reference now follows the configuration's top-level keys and documents every page frontmatter field, the table of contents defaults, source-level navigation, and how package sources choose pages. The CLI reference lists the generated project scripts, the exact `validate` steps, creator defaults, Yarn setup, and every diagnostic code. The upgrade guide is ordered by release, including the 0.21–0.29 changes. Logo setup moves to the theme guide, and the custom components guide documents `createValidationConfig()`. Examples cover content layouts, languages, and previews; theme recipes cover branding, component styles, fonts, and shared themes.
+
+  Corrected facts include the APCA floors for accent text and filled controls, border saturation, the overlay's Glaze mode, GitHub alert sub-elements and colors, breadcrumb thresholds, badge palette role names, the state alias count, and component override path resolution. Package READMEs now link to the published documentation and list the complete styling and lint exports.
+
+- Updated dependencies [[`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af), [`2ab65d3`](https://github.com/tenphi/cookbook/commit/2ab65d397de9402f5d258ff83109d555c39b56c2)]:
+  - @tenphi/docs@0.30.0
+
 ## 0.29.0
 
 ### Patch Changes
