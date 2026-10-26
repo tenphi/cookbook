@@ -40,7 +40,7 @@ for (const [site, contentWidth] of [
     for (const width of [
       contentWidth + 128,
       contentWidth + 96,
-      contentWidth + 48,
+      contentWidth + 80,
     ]) {
       const size = await measure(width);
       expect(size.width).toBe(contentWidth);
@@ -49,15 +49,15 @@ for (const [site, contentWidth] of [
       expect(size.scrollWidth).toBe(width);
       previousPadding = size.padding;
     }
-    expect(previousPadding).toBe(24);
+    expect(previousPadding).toBe(40);
 
     // Once padding is minimal, only the content width follows the viewport.
-    for (const width of [contentWidth + 47, 900, 800]) {
+    for (const width of [contentWidth + 79, 900, 800]) {
       const size = await measure(width);
-      expect(size.padding).toBe(24);
-      expect(size.left).toBe(24);
-      expect(size.right).toBe(24);
-      expect(size.width).toBe(width - 48);
+      expect(size.padding).toBe(40);
+      expect(size.left).toBe(40);
+      expect(size.right).toBe(40);
+      expect(size.width).toBe(width - 80);
       expect(size.scrollWidth).toBe(width);
     }
     for (const width of [799, 390]) {
@@ -524,6 +524,56 @@ const headingCases = [
   { site: "wide-logo", width: 320 },
   { site: "wide-logo", width: 1440 },
 ];
+
+for (const width of [800, 1024, 1152, 1440]) {
+  test(`heading copy links stay fully exposed at ${width}px`, async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ["heading-links", "landing"]) {
+      await page.goto(`/manual/${route}/`);
+      const link = page
+        .locator("[data-element=MarkdownHeading] > [data-element=Anchor]")
+        .first();
+      await link.focus();
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Shift+Tab");
+      await expect(link).toBeFocused();
+      await expect(link).toHaveCSS("opacity", "1");
+      const exposed = await link.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        const ring =
+          parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+        const sidebar = document.querySelector("[data-element=Sidebar]");
+        return {
+          outlineStyle: style.outlineStyle,
+          outlineLeft: rect.left - ring,
+          boundary: sidebar?.getBoundingClientRect().right ?? 0,
+          edgesClickable: [rect.left + 1, rect.right - 1].every((x) =>
+            element.contains(
+              document.elementFromPoint(x, rect.top + rect.height / 2),
+            ),
+          ),
+        };
+      });
+      expect(exposed.edgesClickable, route).toBe(true);
+      expect(exposed.outlineStyle).not.toBe("none");
+      expect(exposed.outlineLeft).toBeGreaterThanOrEqual(exposed.boundary);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBe(width);
+      await link.click({ position: { x: 1, y: 14 } });
+      await expect(link).toHaveAttribute("data-copy-state", "copied");
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+        new URL((await link.getAttribute("href"))!, page.url()).href,
+      );
+    }
+  });
+}
+
 for (const { site, width } of headingCases) {
   test(`heading copy links align with text in ${site} at ${width}px`, async ({
     page,
