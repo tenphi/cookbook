@@ -1,5 +1,19 @@
 # @tenphi/docs
 
+## 0.30.0
+
+### Minor Changes
+
+- [#172](https://github.com/tenphi/cookbook/pull/172) [`010c02a`](https://github.com/tenphi/cookbook/commit/010c02a45430d7717bbeef52eb02162e442722af) Thanks [@tenphi](https://github.com/tenphi)! - `components.overrides` now rejects names that are not Cookbook component slots with `DOCS_CONFIG_UNKNOWN_KEY`; its type and JSON schema list every slot. `cookbook doctor` resolves override paths from the Astro project directory, as the build does: `./` paths and package specifiers resolve from the app, and a value such as `src/Header.astro` is reported as `DOCS_COMPONENT_UNRESOLVED`. `DocsProject` exposes the `directory` searched for configuration.
+
+  Package pages no longer receive an edit link generated from `editLink.baseUrl`, which pointed into the site's repository at a file that exists only in the npm artifact. A package page's own `editUrl` still applies.
+
+### Patch Changes
+
+- [#175](https://github.com/tenphi/cookbook/pull/175) [`2ab65d3`](https://github.com/tenphi/cookbook/commit/2ab65d397de9402f5d258ff83109d555c39b56c2) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade Tasty from 3.11.2 to 3.14.0 and the Tasty ESLint plugin from 1.8.0 to 1.12.0. Tasty now emits working `transition: none` declarations for reduced motion, composes color opacity suffixes with `color-mix()`, and omits disabled spacing and size declarations. See the migration guide for custom translucent colors, numeric alpha tokens, and styles that relied on `false` emitting defaults.
+
+  Use the plugin's built-in `mergeStyles` argument validation instead of a custom registration, so base styles require defaults while later arguments remain partial overrides. Remove an obsolete lint suppression for a value fixed during module evaluation.
+
 ## 0.29.0
 
 ### Minor Changes
