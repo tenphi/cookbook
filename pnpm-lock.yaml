@@ -13,11 +13,11 @@ catalogs:
       specifier: 3.14.0
       version: 3.14.0
     '@uniaria/core':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.3.0
+      version: 0.3.0
     '@uniaria/elements':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.3.0
+      version: 0.3.0
     astro:
       specifier: ^7.3.2
       version: 7.3.2
@@ -282,10 +282,10 @@ importers:
         version: 3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       '@uniaria/core':
         specifier: 'catalog:'
-        version: 0.2.0
+        version: 0.3.0
       '@uniaria/elements':
         specifier: 'catalog:'
-        version: 0.2.0
+        version: 0.3.0
       beautiful-mermaid:
         specifier: ^1.1.3
         version: 1.1.3
@@ -1933,12 +1933,12 @@ packages:
   '@ungap/structured-clone@1.4.0':
     resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
 
-  '@uniaria/core@0.2.0':
-    resolution: {integrity: sha512-23E8MpCc9Qbq3zkYrtWVFmOr93f8EOb76hBCpnvo+LEtOyAV079jl/XAG2kNN7Eus/9iuo0sScF32xwM7AECQQ==}
+  '@uniaria/core@0.3.0':
+    resolution: {integrity: sha512-YKsvySqMNINaj3zQFu8IVO7dzjVO1r6DYlPp9n6biXYAmGrOTzpUTc4Z+q0KRQi1jIRUL4bsom8CrukfmqsYTw==}
     engines: {node: '>=22'}
 
-  '@uniaria/elements@0.2.0':
-    resolution: {integrity: sha512-HVCIbnD+O+OCydj4SCjWFu236NOv6llJ862rvP5eE/xQqDrcXTj/nsuHxz2comPdxatK6D2sOoct3BtCMmdAOg==}
+  '@uniaria/elements@0.3.0':
+    resolution: {integrity: sha512-QxJroeV17qYBiODLIf90mG/Fj9NsgNUsxX1Gke4BmkE4osDyobmikmh/Ehf4ICoJu4ZArIymO45y23rwha/jAw==}
     engines: {node: '>=22'}
 
   '@vitejs/plugin-react@5.2.0':
@@ -6097,13 +6097,13 @@ snapshots:
 
   '@ungap/structured-clone@1.4.0': {}
 
-  '@uniaria/core@0.2.0':
+  '@uniaria/core@0.3.0':
     dependencies:
       '@internationalized/number': 3.6.9
 
-  '@uniaria/elements@0.2.0':
+  '@uniaria/elements@0.3.0':
     dependencies:
-      '@uniaria/core': 0.2.0
+      '@uniaria/core': 0.3.0
 
   '@vitejs/plugin-react@5.2.0(supports-color@10.2.2)(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.12)(yaml@2.9.1))':
     dependencies:
