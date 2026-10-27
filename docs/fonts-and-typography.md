@@ -108,12 +108,13 @@ The base [typography presets](https://tasty.style/docs/styles#preset) are
 
 Specialized roles preserve the component sizes while sharing their base typography:
 
-| Preset         | Used for          | Base typography                                     |
-| -------------- | ----------------- | --------------------------------------------------- |
-| `hero-title`   | Hero heading      | `h1`, with a larger responsive size                 |
-| `hero-tagline` | Hero description  | `body`, with a responsive size and 1.55 line height |
-| `prose`        | Markdown content  | `body`, at 1.025rem                                 |
-| `inline-code`  | Code within prose | `code`, at 0.875em                                  |
+| Preset          | Used for                  | Base typography                                            |
+| --------------- | ------------------------- | ---------------------------------------------------------- |
+| `hero-title`    | Hero heading              | `h1`, with a larger responsive size                        |
+| `hero-tagline`  | Hero description          | `body`, with a responsive size and 1.55 line height        |
+| `prose`         | Markdown content          | `body`, at 1.025rem                                        |
+| `inline-code`   | Code within prose         | `code`, at 0.875em                                         |
+| `control-label` | Selector section headings | `small`, at 0.75rem with uppercase text and wider tracking |
 
 Customize these through `theme.presets` as well. Changes to the base font family,
 weight, tracking, and other shared fields continue to flow into the derived roles.

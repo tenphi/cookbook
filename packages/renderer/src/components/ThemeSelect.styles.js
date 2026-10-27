@@ -104,7 +104,7 @@ export const ThemeSelectRoot = defineComponent("ThemeSelect", {
       inlineSize: "100%",
       padding: "0.75x 1x",
       color: "#text-muted",
-      preset: "small / strong",
+      preset: "control-label / strong",
     },
     Option: {
       $: "label",

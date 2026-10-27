@@ -269,6 +269,7 @@ export interface TypographyPresets {
   "hero-tagline"?: TypographyPreset;
   prose?: TypographyPreset;
   "inline-code"?: TypographyPreset;
+  "control-label"?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;
 }
 

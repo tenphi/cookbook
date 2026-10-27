@@ -130,5 +130,6 @@ export default {
     "hero-tagline",
     "prose",
     "inline-code",
+    "control-label",
   ],
 } satisfies TastyValidationConfig;

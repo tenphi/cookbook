@@ -21,7 +21,7 @@ export const MobileMenuFooterRoot = defineComponent("MobileMenuFooter", {
       alignItems: "center",
       gap: "2x",
       inlineMargin: "auto end",
-      blockPadding: "2x",
+      blockPadding: "1x",
     },
   },
 });

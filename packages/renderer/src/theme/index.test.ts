@@ -41,6 +41,14 @@ describe("Glaze theme adapter", () => {
       fontFamily: "var(--code-font-family)",
       boldFontWeight: "var(--code-bold-font-weight)",
     });
+    expect(theme.presets["control-label"]).toMatchObject({
+      fontSize: "0.75rem",
+      lineHeight: 1.4,
+      letterSpacing: "0.06em",
+      textTransform: "uppercase",
+      fontFamily: "var(--small-font-family)",
+      boldFontWeight: "var(--small-bold-font-weight)",
+    });
   });
 
   it("keeps reading text near the tone boundary with only slightly softer headings", () => {

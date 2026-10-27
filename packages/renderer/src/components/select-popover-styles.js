@@ -75,7 +75,7 @@ export function selectPopoverStyles({
       $: "PanelTitle",
       padding: "0.75x 1x",
       color: "#text-muted",
-      preset: "small / strong",
+      preset: "control-label / strong",
     },
     Options: { $: "nav", display: "grid", gap: "0.25x" },
     [option]: {
