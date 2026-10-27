@@ -46,35 +46,37 @@ const sidebar =
 const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
 ---
 
-<div data-element="MobileHeading">
-  <a
-    data-element="HomeLink"
-    href={localeHref(
-      (content.logo && content.logo.href) || "/",
-      currentPath,
-      content.routes,
-      content,
-      content.base,
-    )}
-  >
-    <Logo />
-    <span data-element="HomeLabel" data-site-title
-      >{Astro.locals.cookbookRoute.siteTitle}</span
+<div data-element="MobileHeader">
+  <div data-element="MobileHeading">
+    <a
+      data-element="HomeLink"
+      href={localeHref(
+        (content.logo && content.logo.href) || "/",
+        currentPath,
+        content.routes,
+        content,
+        content.base,
+      )}
     >
-  </a>
-  <button
-    type="button"
-    popovertarget="cookbook__sidebar"
-    popovertargetaction="hide"
-    aria-label={ui.closeNavigation}
-    autofocus><Icon name="close" /></button
-  >
-</div>
+      <Logo />
+      <span data-element="HomeLabel" data-site-title
+        >{Astro.locals.cookbookRoute.siteTitle}</span
+      >
+    </a>
+    <button
+      type="button"
+      popovertarget="cookbook__sidebar"
+      popovertargetaction="hide"
+      aria-label={ui.closeNavigation}
+      autofocus><Icon name="close" /></button
+    >
+  </div>
 
-<MobileNavigationTabs
-  base={import.meta.env.BASE_URL}
-  currentPath={Astro.url.pathname}
-/>
+  <MobileNavigationTabs
+    base={import.meta.env.BASE_URL}
+    currentPath={Astro.url.pathname}
+  />
+</div>
 
 <cookbook-sidebar
   data-storage-key={`cookbook-sidebar:${import.meta.env.BASE_URL}:${groupIndex ?? "all"}`}
@@ -82,7 +84,7 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
   <SidebarList entries={sidebar} />
 </cookbook-sidebar>
 
-<div data-mobile="">
+<div data-element="MobileFooter" data-mobile="">
   <MobileMenuFooter />
 </div>
 

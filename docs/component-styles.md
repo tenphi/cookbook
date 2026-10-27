@@ -109,9 +109,9 @@ it stays complete when a surface changes.
 - `HeaderLinks`: `Desktop`, `DesktopLink`, `Link`, `HoverLink`, `PrimaryLink`, `HoverPrimaryLink`, `Trigger`, `HoverTrigger`, `Panel`, `OpenPanel`, `PanelNavigation`, `PanelLink`, `FirstPanelLink`, `Close`, `HoverClose`
 - `SearchButton`: `PendingShortcut`, `Label`, `Shortcut`, `NativeIcon`, `Icon`
 - `Button`: None
-- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `Content`, `Tree`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
+- `Sidebar`: `Backdrop`, `OpenBackdrop`, `MobileHeader`, `MobileHeading`, `HomeLink`, `HomeLogo`, `HomeLabel`, `Close`, `HoverClose`, `CloseIcon`, `CurrentLink`, `Content`, `Tree`, `MobileFooter`, `List`, `Item`, `TopLevelSpacing`, `GroupSpacing`, `NestedItem`, `SectionHeading`, `Control`, `Summary`, `GroupLabel`, `GroupLabelText`, `Link`, `LinkLabel`, `InteractiveControl`, `SummaryMarker`, `Caret`, `ExpandedCaret`, `LinkedSummary`, `GroupLink`, `LinkedSectionHeading`, `SectionLink`, `Badge`, `TopLevelLink`
 - `MobileMenuToggle`: `Icon`, `Section`, `Page`
-- `MobileNavigationTabs`: `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`
+- `MobileNavigationTabs`: `HoverTrigger`, `TriggerLabel`, `Panel`, `OpenPanel`, `PanelTitle`, `Options`, `Checkmark`, `SelectedCheckmark`, `Trigger`, `Marker`, `Caret`, `ExpandedCaret`, `Label`, `List`, `Item`, `Link`, `HoverLink`, `CurrentLink`
 - `MobileMenuFooter`: `Social`
 - `TopNavigation`: `Scrollbar`, `Link`, `HoverLink`, `CurrentLink`, `ActiveIndicator`
 - `TableOfContentsLayout`: `Content`
@@ -470,8 +470,14 @@ Customize the outer bar with `theme.styles.HeaderFrame`, its contents with
 
 Below 50rem, page navigation moves into a header row and opens a left drawer.
 `MobileMenuToggle.Section` and `Page` style its breadcrumb labels. The drawer
-contains the complete active section, a collapsible `MobileNavigationTabs`
-selector, and a close button. The drawer slides in and out over the root
+keeps the logo, title, close button, and `MobileNavigationTabs` Select in a static
+`Sidebar.MobileHeader`, with social links and language selection in a static
+`Sidebar.MobileFooter`. Borders separate both sections from the independently
+scrolling active navigation tree (`Sidebar.Tree`). The section Select uses the
+same popover control as language and version selection. Its `Label`, `List`,
+`Item`, `Link`, `HoverLink`, and `CurrentLink` customization names remain available
+on the Select anatomy; `Marker` is retained as a compatibility hook.
+The drawer slides in and out over the root
 `$sidebar-transition` duration (default `120ms`) and
 disables motion when the reader prefers reduced motion. Its mobile shadow uses
 the Glaze `shadow`-typed `#shadow` token. Customize the movement and shadow through

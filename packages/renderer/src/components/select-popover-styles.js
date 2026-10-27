@@ -1,4 +1,4 @@
-/** Shared server-side styles for the language and version selectors. */
+/** Shared server-side styles for the language, version, and section selectors. */
 export function selectPopoverStyles({
   option = "Option",
   hoverOption = "HoverOption",

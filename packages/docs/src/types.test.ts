@@ -17,6 +17,7 @@ describe("component style metadata", () => {
     expect(COOKBOOK_COMPONENT_SUB_ELEMENTS.Sidebar).toEqual([
       "Backdrop",
       "OpenBackdrop",
+      "MobileHeader",
       "MobileHeading",
       "HomeLink",
       "HomeLogo",
@@ -27,6 +28,7 @@ describe("component style metadata", () => {
       "CurrentLink",
       "Content",
       "Tree",
+      "MobileFooter",
       "List",
       "Item",
       "TopLevelSpacing",

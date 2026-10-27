@@ -9,6 +9,7 @@ import { content } from "virtual:cookbook/config";
 import { layout as configuredLayout } from "virtual:cookbook/layout";
 import { activeNavigationTab, navigationPath } from "../navigation.js";
 import { MobileNavigationTabsRoot } from "./MobileNavigationTabs.styles.js";
+import SelectPopover from "./SelectPopover.astro";
 
 interface Props {
   base?: string;
@@ -45,35 +46,36 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
     <MobileNavigationTabsRoot
       className="td-mobile-tabs"
       data-print-hidden=""
-      aria-label={ui.sections}
+      non-modal=""
+      focus-on-open="false"
     >
-      <details>
-        <summary aria-label={ui.chooseSection}>
-          <span data-element="Label">
-            {layout.tabs[activeTab]?.label ?? ui.sections}
-          </span>
-          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-            <path
-              d="m4 6 4 4 4-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            />
-          </svg>
-        </summary>
-        <ul>
-          {layout.tabs.map((tab, index) => (
-            <li>
-              <a
-                href={tabHref(tab.link)}
-                aria-current={index === activeTab ? "page" : undefined}
-              >
-                {tab.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </details>
+      <SelectPopover
+        managed
+        triggerLabel={ui.chooseSection}
+        selectedLabel={layout.tabs[activeTab]?.label ?? ui.sections}
+        title={ui.sections}
+        options={layout.tabs.map((tab, index) => ({
+          href: tabHref(tab.link),
+          label: tab.label,
+          current: index === activeTab,
+        }))}
+      />
     </MobileNavigationTabsRoot>
   )
 }
+
+<script>
+  // The section selector is mobile-only. Keep the behavior runtime out of
+  // desktop page loads, including when a reader later narrows the viewport.
+  const mobile = matchMedia("(width < 50rem)");
+  const initialize = () => {
+    if (
+      mobile.matches &&
+      document.querySelector("cb-popover[data-element=MobileNavigationTabs]")
+    )
+      void import("../client/elements.js");
+  };
+  mobile.addEventListener("change", initialize);
+  document.addEventListener("astro:page-load", initialize);
+  initialize();
+</script>

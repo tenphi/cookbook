@@ -15,15 +15,25 @@ interface Props {
   title: string;
   options: Option[];
   icon?: string;
+  /** UniAria owns behavior when rendered inside a cb-popover host. */
+  managed?: boolean;
 }
 
-const { triggerLabel, selectedLabel, title, options, icon } = Astro.props;
+const {
+  triggerLabel,
+  selectedLabel,
+  title,
+  options,
+  icon,
+  managed = false,
+} = Astro.props;
 const id = `select-${crypto.randomUUID()}`;
 ---
 
 <button
   type="button"
-  popovertarget={id}
+  popovertarget={managed ? undefined : id}
+  data-uni-part={managed ? "popover-trigger" : undefined}
   aria-label={triggerLabel}
   title={title}
 >
@@ -34,10 +44,11 @@ const id = `select-${crypto.randomUUID()}`;
 <div
   id={id}
   data-element="Panel"
-  popover="auto"
+  popover={managed ? "manual" : "auto"}
+  data-uni={managed ? "popover" : undefined}
   role="group"
   aria-label={title}
-  data-select-popover-panel
+  data-select-popover-panel={managed ? undefined : ""}
 >
   <div data-element="PanelTitle">{title}</div>
   <nav aria-label={title}>

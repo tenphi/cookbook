@@ -1,86 +1,63 @@
+import { selectPopoverStyles } from "./select-popover-styles.js";
 import { configureCookbookStates } from "./tasty-states.js";
 import { defineComponent } from "../define-component.js";
 
 configureCookbookStates();
 
+const sectionSelectStyles = selectPopoverStyles({
+  option: "Link",
+  hoverOption: "HoverLink",
+  currentOption: "CurrentLink",
+});
+
 export const MobileNavigationTabsRoot = defineComponent(
   "MobileNavigationTabs",
   {
-    as: "nav",
+    as: "cb-popover",
     "data-element": "MobileNavigationTabs",
     styles: {
+      // Reuse the shared, server-only popover anatomy.
+      // eslint-disable-next-line tasty/no-style-spread
+      ...sectionSelectStyles,
       display: "grid",
       hide: { "": false, "@md": true },
-      gap: "1x",
+      inlineSize: "min 0",
       blockMargin: "0",
-      Label: {
-        $: "Label",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-      },
       Trigger: {
-        $: "summary",
-        display: "flex",
-        alignItems: "center",
+        // Reuse the shared, server-only popover anatomy.
+        // eslint-disable-next-line tasty/no-style-spread
+        ...sectionSelectStyles.Trigger,
         justifyContent: "space-between",
-        gap: "1x",
+        inlineSize: "100%",
         blockSize: "min 2.75rem",
         padding: "1x 1.25x",
         border: true,
         radius: "1r",
-        color: "#text-soft",
         fill: "#surface",
         preset: "navigation",
-        listStyle: "none",
+        anchorName: "--section-trigger",
       },
-      Marker: {
-        $: "summary::marker, summary::-webkit-details-marker",
-        hide: true,
+      Panel: {
+        // Reuse the shared, server-only popover anatomy.
+        // eslint-disable-next-line tasty/no-style-spread
+        ...sectionSelectStyles.Panel,
+        positionAnchor: "--section-trigger",
+        blockInset: "(anchor(bottom) + 1x) start, auto end",
+        inlineInset: "anchor(start) start, auto end",
+        inlineSize: "anchor-size(width)",
+        blockSize: "max (100dvh - anchor(bottom) - 2x)",
       },
-      Caret: { $: "summary > svg", flexShrink: "0" },
+      // Keep the original disclosure's customization names on the Select anatomy.
+      Label: {
+        // eslint-disable-next-line tasty/no-style-spread -- shared label anatomy, retained under its original customization name.
+        ...sectionSelectStyles.TriggerLabel,
+      },
+      List: { $: "> Panel > nav" },
+      Item: { $: "> Panel > nav > a" },
+      Marker: { $: "> button::marker" },
       ExpandedCaret: {
-        $: "details > summary > svg",
-        rotate: {
-          "": null,
-          "@own(:is([open] > summary >))": "180deg",
-        },
-      },
-      List: {
-        $: "ul",
-        display: "grid",
-        gap: "1bw",
-        padding: "1x",
-        margin: "1x top",
-        listStyle: "none",
-        border: true,
-        radius: "1r",
-        fill: "#surface",
-      },
-      Item: { $: "li", margin: "0" },
-      Link: {
-        $: "a",
-        display: "flex",
-        alignItems: "center",
-        blockSize: "min 2.25rem",
-        padding: "0.75x 1.25x",
-        color: "#text-soft",
-        preset: "navigation",
-        textDecoration: "none",
-        radius: "1r",
-      },
-      HoverLink: {
-        $: "a",
-        color: { "": null, "@own(:hover)": "#text" },
-        fill: { "": null, "@own(:hover)": "#surface-2-hover" },
-      },
-      CurrentLink: {
-        $: "a",
-        color: { "": null, '@own([aria-current="page"])': "#accent-text" },
-        fill: {
-          "": null,
-          '@own([aria-current="page"])': "#accent-surface-subtle",
-        },
+        $: "> button > Caret",
+        rotate: { "": null, ":has([popover]:popover-open)": "180deg" },
       },
     },
   },

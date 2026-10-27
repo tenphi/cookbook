@@ -437,7 +437,9 @@ async function checkAssetBudgets() {
     [
       "all JavaScript including lazy Pagefind assets",
       total([".js", ".mjs"]),
-      800 * 1024,
+      // Include UniAria's lazy mobile section-popover runtime. The measured
+      // total is ~819 KiB; keep initial page JS under its existing 24 KiB cap.
+      840 * 1024,
     ],
     ["font files", total([".woff2", ".woff", ".ttf"]), 100 * 1024],
     [

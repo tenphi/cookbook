@@ -66,15 +66,6 @@ class CookbookSidebarPane extends HTMLElement {
       "keydown",
       (event) => {
         if (desktop.matches || !this.matches(":popover-open")) return;
-        const sections = this.querySelector<HTMLDetailsElement>(
-          "[data-element=MobileNavigationTabs] details[open]",
-        );
-        if (event.key === "Escape" && sections) {
-          event.preventDefault();
-          sections.open = false;
-          sections.querySelector("summary")?.focus();
-          return;
-        }
         if (event.key !== "Tab") return;
         const focusable = Array.from(
           this.querySelectorAll<HTMLElement>(
