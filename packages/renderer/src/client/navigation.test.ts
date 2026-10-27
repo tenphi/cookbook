@@ -77,6 +77,14 @@ describe("responsive navigation", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
+  it("keeps focus that moved inside the drawer before its toggle event", () => {
+    const { pane, toggle } = mount();
+    const next = pane.querySelector<HTMLAnchorElement>('a[href="/next"]')!;
+    next.focus();
+    toggle(true);
+    expect(document.activeElement).toBe(next);
+  });
+
   it("wraps keyboard focus inside the open drawer", () => {
     const { pane, toggle } = mount();
     toggle(true);

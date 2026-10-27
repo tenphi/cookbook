@@ -46,9 +46,12 @@ class CookbookSidebarPane extends HTMLElement {
             this.#inert.set(element, element.inert);
             element.inert = true;
           }
-          this.querySelector<HTMLElement>("[autofocus]")?.focus({
-            preventScroll: true,
-          });
+          // The browser focuses [autofocus] as the popover opens, but this
+          // event arrives later; never pull back focus that moved on since.
+          if (!this.contains(document.activeElement))
+            this.querySelector<HTMLElement>("[autofocus]")?.focus({
+              preventScroll: true,
+            });
         } else {
           const restoreFocus =
             this.contains(document.activeElement) ||
