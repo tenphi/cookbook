@@ -1,5 +1,15 @@
 # @tenphi/cookbook
 
+## 0.30.1
+
+### Patch Changes
+
+- [#179](https://github.com/tenphi/cookbook/pull/179) [`b82025b`](https://github.com/tenphi/cookbook/commit/b82025b364fcdf2bbd4e893bb6728c222fb05b09) Thanks [@tenphi](https://github.com/tenphi)! - The mobile navigation drawer no longer moves focus back to its close button when focus has already moved elsewhere in the drawer. The browser focuses the close button as the drawer opens and fires the drawer's `toggle` event later; refocusing it then could take focus from a control the user had just reached, so the next Enter closed the drawer.
+
+- Updated dependencies [[`b82025b`](https://github.com/tenphi/cookbook/commit/b82025b364fcdf2bbd4e893bb6728c222fb05b09), [`2a9b382`](https://github.com/tenphi/cookbook/commit/2a9b382095c7706b7bb1770f3b2219d2ab08715f)]:
+  - @tenphi/renderer@0.30.1
+  - @tenphi/docs@0.30.1
+
 ## 0.30.0
 
 ### Minor Changes
