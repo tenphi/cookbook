@@ -97,7 +97,11 @@ continue to compose. CodeGroup collects its code and syntax bridges itself,
 including when rendered outside MarkdownContent.
 
 Optional browser behavior remains in `src/client/` and imports no styling
-modules. Custom elements attach behavior to the server-rendered markup.
+modules. Every Cookbook-owned custom element, including passive wrappers, uses
+the `cookbook-*` prefix. UniAria behaviors follow the same convention through
+`defineElement(definition, { prefix: "cookbook" })` in `client/elements.ts`;
+importing the vendor’s automatically registered `uni-*` entries is unsupported.
+Custom elements attach behavior to the server-rendered markup.
 The ownership checks verify every public style name and sub-element, while
 consumer and browser tests exercise theme overrides and component replacements.
 

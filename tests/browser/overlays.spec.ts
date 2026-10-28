@@ -215,7 +215,7 @@ test("an open popover or search dialog does not survive history navigation", asy
 
   const search = page.getByRole("button", { name: "Search", exact: true });
   await search.click();
-  await expect(page.locator("site-search dialog")).toBeVisible();
+  await expect(page.locator("cookbook-search dialog")).toBeVisible();
   await page.goForward();
   await expect(
     page.getByRole("heading", { name: "Contents tracking", exact: true }),

@@ -71,7 +71,9 @@ const ui = messages(Astro.locals.cookbookRoute?.lang ?? "en", content);
   const initialize = () => {
     if (
       mobile.matches &&
-      document.querySelector("cb-popover[data-element=MobileNavigationTabs]")
+      document.querySelector(
+        "cookbook-popover[data-element=MobileNavigationTabs]",
+      )
     )
       void import("../client/elements.js");
   };

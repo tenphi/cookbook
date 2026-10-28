@@ -99,7 +99,7 @@ test("navigation keeps the document and sidebar scroll while resetting article s
     window.scrollTo(0, 500);
     Object.assign(window, {
       originalDocument: document,
-      originalSearch: document.querySelector("site-search"),
+      originalSearch: document.querySelector("cookbook-search"),
     });
     return { sidebar: sidebar.scrollTop, content: scrollY };
   });
@@ -115,7 +115,8 @@ test("navigation keeps the document and sidebar scroll while resetting article s
     content: scrollY,
     document: (window as any).originalDocument === document,
     search:
-      (window as any).originalSearch === document.querySelector("site-search"),
+      (window as any).originalSearch ===
+      document.querySelector("cookbook-search"),
   }));
   expect(after).toEqual({
     sidebar: before.sidebar,
@@ -188,12 +189,12 @@ test("search preserves its query and engine, closes on results, and refreshes on
   await expect(result).toBeVisible();
   await result.click();
   await expect(page).toHaveURL(/\/manual\/(#.*)?$/);
-  await expect(page.locator("site-search dialog")).not.toBeVisible();
+  await expect(page.locator("cookbook-search dialog")).not.toBeVisible();
   await page.keyboard.press("Control+k");
   await expect(input).toHaveValue("maintenance");
   await expect(result).toBeVisible();
   await page.keyboard.press("Escape");
-  await expect(page.locator("site-search dialog")).not.toBeVisible();
+  await expect(page.locator("cookbook-search dialog")).not.toBeVisible();
   await page
     .getByRole("navigation", { name: "Header links" })
     .getByRole("link", { name: "Guide", exact: true })
@@ -208,9 +209,9 @@ test("search preserves its query and engine, closes on results, and refreshes on
     .click();
   await expect(page).toHaveURL(/\/manual\/fr\/guide\/?$/);
   await page.keyboard.press("Control+k");
-  await expect(page.locator("site-search dialog")).toBeVisible();
+  await expect(page.locator("cookbook-search dialog")).toBeVisible();
   await expect(input).toHaveValue("");
-  await expect(page.locator("site-search dialog")).toHaveCount(1);
+  await expect(page.locator("cookbook-search dialog")).toHaveCount(1);
 });
 
 test("native document navigation remains available with reload links and without JavaScript", async ({

@@ -184,7 +184,7 @@ export function initializeSearch(
       document.body.removeAttribute("data-search-modal-open");
       const next = (event as TransitionBeforeSwapEvent).newDocument;
       const nextRoot = persistenceKey
-        ? [...next.querySelectorAll<HTMLElement>("site-search")].find(
+        ? [...next.querySelectorAll<HTMLElement>("cookbook-search")].find(
             (root) => root.dataset.searchKey === persistenceKey,
           )
         : undefined;

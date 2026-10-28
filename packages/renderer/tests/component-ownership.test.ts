@@ -111,6 +111,17 @@ function inventory(source: string) {
                         )
                       ) {
                         const options = node.arguments.at(-1);
+                        const tag = options.properties.find(
+                          (p: any) => p.key?.name === "as",
+                        )?.value.value;
+                        if (
+                          typeof tag === "string" &&
+                          tag.includes("-") &&
+                          !tag.startsWith("cookbook-")
+                        )
+                          failures.push(
+                            "Cookbook-owned custom elements must use the cookbook- prefix",
+                          );
                         const styles = options.properties.find(
                           (p: any) => p.key?.name === "styles",
                         ).value;
