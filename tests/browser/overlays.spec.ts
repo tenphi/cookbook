@@ -132,14 +132,15 @@ test.describe("narrow screens", () => {
       drawer.getByRole("button", { name: "Close navigation", exact: true }),
     ).toBeFocused();
     const sections = drawer.locator("[data-element=MobileNavigationTabs]");
-    const summary = sections.locator("summary");
-    await summary.click();
-    await expect(sections.locator("details")).toHaveAttribute("open", "");
+    const trigger = sections.getByRole("button", { name: "Choose section" });
+    const panel = sections.locator("[popover]");
+    await trigger.click();
+    await expect(panel).toBeVisible();
 
     await page.keyboard.press("Escape");
-    await expect(sections.locator("details")).not.toHaveAttribute("open");
+    await expect(panel).toBeHidden();
     expect(await isOpen(drawer)).toBe(true);
-    await expect(summary).toBeFocused();
+    await expect(trigger).toBeFocused();
 
     await page.keyboard.press("Escape");
     await expect.poll(() => isOpen(drawer)).toBe(false);

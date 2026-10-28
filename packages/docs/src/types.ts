@@ -269,6 +269,7 @@ export interface TypographyPresets {
   "hero-tagline"?: TypographyPreset;
   prose?: TypographyPreset;
   "inline-code"?: TypographyPreset;
+  "control-label"?: TypographyPreset;
   [name: string]: TypographyPreset | undefined;
 }
 
@@ -698,6 +699,14 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   MobileMenuFooter: ["Social"],
   MobileMenuToggle: ["Icon", "Section", "Page"],
   MobileNavigationTabs: [
+    "HoverTrigger",
+    "TriggerLabel",
+    "Panel",
+    "OpenPanel",
+    "PanelTitle",
+    "Options",
+    "Checkmark",
+    "SelectedCheckmark",
     "Trigger",
     "Marker",
     "Caret",
@@ -738,6 +747,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   Sidebar: [
     "Backdrop",
     "OpenBackdrop",
+    "MobileHeader",
     "MobileHeading",
     "HomeLink",
     "HomeLogo",
@@ -748,6 +758,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
     "CurrentLink",
     "Content",
     "Tree",
+    "MobileFooter",
     "List",
     "Item",
     "TopLevelSpacing",

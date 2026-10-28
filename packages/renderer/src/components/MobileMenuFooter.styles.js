@@ -12,7 +12,7 @@ export const MobileMenuFooterRoot = defineComponent("MobileMenuFooter", {
     justifyContent: "space-between",
     flow: "row wrap",
     gap: "2x",
-    blockPadding: "1x",
+    padding: "1x $docs-sidebar-pad-x",
     blockBorder: "1bw solid #border start",
     Social: {
       $: "Social",
@@ -21,7 +21,7 @@ export const MobileMenuFooterRoot = defineComponent("MobileMenuFooter", {
       alignItems: "center",
       gap: "2x",
       inlineMargin: "auto end",
-      blockPadding: "2x",
+      blockPadding: "1x",
     },
   },
 });

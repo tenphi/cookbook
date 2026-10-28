@@ -54,7 +54,12 @@ function inventory(source: string) {
                     const names = new Set<string>();
                     for (const property of styles.properties) {
                       if (property.type === "SpreadElement") {
-                        if (property.argument.name !== "versionSelectStyles") {
+                        if (
+                          ![
+                            "versionSelectStyles",
+                            "sectionSelectStyles",
+                          ].includes(property.argument.name)
+                        ) {
                           failures.push(
                             "Unknown style composition; extend the anatomy inventory",
                           );

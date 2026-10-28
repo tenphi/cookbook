@@ -44,7 +44,7 @@ function mount() {
   const pane = document.createElement("cookbook-sidebar-pane");
   pane.id = "cookbook__sidebar";
   pane.innerHTML =
-    '<a href="/">Home</a><button autofocus>Close</button><nav data-element="MobileNavigationTabs"><details><summary>Sections</summary><a href="/guide">Guide</a></details></nav><a href="/next">Next</a>';
+    '<a href="/">Home</a><button autofocus>Close</button><div data-element="MobileNavigationTabs"><button>Sections</button><div popover="auto"><a href="/guide">Guide</a></div></div><a href="/next">Next</a>';
   const state = popover(pane);
   document.body.append(pane);
   return {
@@ -108,23 +108,6 @@ describe("responsive navigation", () => {
       }),
     );
     expect(document.activeElement).toBe(first);
-  });
-
-  it("closes the section selector first on Escape", () => {
-    const { pane, toggle, isOpen } = mount();
-    toggle(true);
-    const details = pane.querySelector("details")!;
-    details.open = true;
-    const escape = new KeyboardEvent("keydown", {
-      key: "Escape",
-      bubbles: true,
-      cancelable: true,
-    });
-    details.dispatchEvent(escape);
-    expect(details.open).toBe(false);
-    expect(escape.defaultPrevented).toBe(true);
-    expect(document.activeElement).toBe(details.querySelector("summary"));
-    expect(isOpen()).toBe(true);
   });
 
   it("dismisses page links while preserving prevented disclosure clicks", () => {

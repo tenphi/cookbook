@@ -79,6 +79,12 @@ export const DEFAULT_TYPOGRAPHY_PRESETS: Record<string, TypographyPreset> = {
   }),
   prose: derivedPreset("body", { fontSize: "1.025rem" }),
   "inline-code": derivedPreset("code", { fontSize: "0.875em" }),
+  "control-label": derivedPreset("small", {
+    fontSize: "0.75rem",
+    lineHeight: 1.4,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+  }),
 };
 
 /** Keep specialized typography linked to user-configured base presets. */

@@ -29,6 +29,7 @@ try {
     "sidebar-badges",
     "branded-badges",
     "client-navigation",
+    "mobile-sidebar",
   ]) {
     const site = join(fixture, name);
     await cp(source, site, { recursive: true });
@@ -42,7 +43,7 @@ try {
       join(site, "astro.config.mjs"),
       `import cookbook from "@tenphi/cookbook";export default {base:"/${name}/",${name === "wide-logo" ? "prefetch:false," : name === "tall-logo" ? "prefetch:{prefetchAll:false}," : ""}integrations:[cookbook()]};`,
     );
-    if (name === "client-navigation") {
+    if (name === "client-navigation" || name === "mobile-sidebar") {
       const config = globalThis.structuredClone(originalConfig);
       config.navigation = {
         tabs: [
@@ -62,6 +63,16 @@ try {
           { label: "Versions", link: "/v1", items: ["/v1", "/v1/guide"] },
         ],
       };
+      if (name === "mobile-sidebar") {
+        config.site.repository = "https://github.com/tenphi/cookbook";
+        for (let index = 1; index <= 24; index++) {
+          await writeFile(
+            join(site, `docs/topic-${index}.md`),
+            `# Topic ${index}\n\nDocumentation for topic ${index}.\n`,
+          );
+          config.navigation.tabs[0].items.push(`/topic-${index}`);
+        }
+      }
       await writeFile(
         join(site, "docs.config.mjs"),
         `export default ${JSON.stringify(config)};`,
