@@ -65,11 +65,16 @@ export function selectPopoverStyles({
     },
     OpenPanel: {
       $: '> [data-element="Panel"]',
+      // UniAria clears data-entering after two frames in the top layer,
+      // giving the closed opacity and scale a painted starting point.
       opacity: {
         "": null,
-        "@own(:popover-open & [data-open])": "1",
+        "@own(:popover-open & [data-open] & ![data-entering])": "1",
       },
-      scale: { "": null, "@own(:popover-open & [data-open])": "1" },
+      scale: {
+        "": null,
+        "@own(:popover-open & [data-open] & ![data-entering])": "1",
+      },
     },
     PanelTitle: {
       $: "PanelTitle",

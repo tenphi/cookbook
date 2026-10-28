@@ -179,16 +179,18 @@ for (const transition of [
   }
 }
 if (
-  (
-    sharedCss.match(
-      /\[data-element="Panel"\]:where\(\[data-open\]:popover-open\)\s*\{\s*opacity:\s*1;\s*scale:\s*1;/g,
-    ) ?? []
-  ).length < 2 ||
+  // Native panels use data-open; UniAria also holds the entering frame.
+  !/\[data-element="Panel"\]:where\(\[data-open\]:popover-open\)\s*\{\s*opacity:\s*1;\s*scale:\s*1;/.test(
+    sharedCss,
+  ) ||
+  !/\[data-element="Panel"\]:where\(\[data-open\]:not\(\[data-entering\]\):popover-open\)\s*\{\s*opacity:\s*1;\s*scale:\s*1;/.test(
+    sharedCss,
+  ) ||
   !sharedCss.includes("scale: 1 0.96") ||
   !sharedCss.includes("display var(--popover-transition) allow-discrete")
 ) {
   throw new Error(
-    "The appearance and language popovers must preserve their fade and scale transitions.",
+    "Native and UniAria popovers must preserve their fade and scale transitions.",
   );
 }
 const notFound = await readFile(join(output, "404.html"), "utf8");

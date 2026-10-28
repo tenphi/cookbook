@@ -161,3 +161,61 @@ test("section Select supports dark contrast, RTL, locale fallback, and viewport 
   await panel.getByRole("link", { name: "Versions", exact: true }).click();
   await expect(page).toHaveURL(/\/mobile-sidebar\/v1\/?$/);
 });
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  test(`section Select entry and exit motion with ${reducedMotion}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.setViewportSize({ width: 390, height: 700 });
+    await page.goto("/mobile-sidebar/guide/");
+    await page.getByRole("button", { name: /Menu/ }).click();
+    await page.evaluate(() => customElements.whenDefined("cb-popover"));
+    const sections = page.locator("[data-element=MobileNavigationTabs]");
+    const trigger = sections.getByRole("button", { name: "Choose section" });
+    const panel = sections.locator("[popover]");
+    // Lengthen the theme token so both directions can be inspected in flight.
+    await page.addStyleTag({
+      content:
+        "[data-element=MobileNavigationTabs] > [data-element=Panel] { --popover-transition: 600ms; }",
+    });
+    const hasFade = (from: number, to: number) =>
+      panel.evaluate(
+        (element, { from, to }) =>
+          element.getAnimations().some((animation) => {
+            if (
+              !(animation instanceof CSSTransition) ||
+              animation.transitionProperty !== "opacity" ||
+              animation.playState !== "running"
+            )
+              return false;
+            const frames = animation.effect!.getKeyframes();
+            return (
+              animation.effect!.getTiming().duration === 600 &&
+              Number(frames[0].opacity) === from &&
+              Number(frames.at(-1)!.opacity) === to
+            );
+          }),
+        { from, to },
+      );
+
+    for (let cycle = 0; cycle < 2; cycle++) {
+      await trigger.click();
+      if (reducedMotion === "no-preference") {
+        await expect.poll(() => hasFade(0, 1)).toBe(true);
+      } else {
+        await expect(panel).toHaveCSS("transition-property", "none");
+        expect(await hasFade(0, 1)).toBe(false);
+      }
+      await expect(panel).toHaveCSS("opacity", "1");
+      await page.keyboard.press("Escape");
+      if (reducedMotion === "no-preference") {
+        await expect.poll(() => hasFade(1, 0)).toBe(true);
+      } else {
+        expect(await hasFade(1, 0)).toBe(false);
+      }
+      await expect(panel).toHaveCSS("display", "none");
+      await expect(trigger).toBeFocused();
+    }
+  });
+}
