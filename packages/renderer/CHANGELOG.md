@@ -1,5 +1,18 @@
 # @tenphi/renderer
 
+## 0.31.0
+
+### Minor Changes
+
+- [#182](https://github.com/tenphi/cookbook/pull/182) [`80f1821`](https://github.com/tenphi/cookbook/commit/80f18210bfd6c40caccaeb58d09461adf05c1316) Thanks [@tenphi](https://github.com/tenphi)! - Use the `cookbook-*` prefix for all Cookbook-owned custom elements. Rename `cb-popover` to `cookbook-popover`, `cb-dialog` to `cookbook-dialog`, and the `site-search` wrapper to `cookbook-search`, updating registrations, typed tag maps, markup, styling, initialization, and client navigation together.
+
+  Custom components or scripts that use the previous tags must update their selectors and element references. Component customization names, part markers, CSS classes, DOM IDs, and stored preferences retain their existing names. See the custom-element naming migration guide.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tenphi/docs@0.31.0
+
 ## 0.30.2
 
 ### Patch Changes
