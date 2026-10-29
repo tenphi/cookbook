@@ -2,6 +2,12 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.31.1
+
+### Patch Changes
+
+- [#184](https://github.com/tenphi/cookbook/pull/184) [`ff84d1f`](https://github.com/tenphi/cookbook/commit/ff84d1f165288684cbbeb7ad247bdd8b0535e3d8) Thanks [@tenphi](https://github.com/tenphi)! - Update Tasty to 3.16.0 and the renderer’s Tasty lint tooling to 1.14.0.
+
 ## 0.31.0
 
 ### Minor Changes
