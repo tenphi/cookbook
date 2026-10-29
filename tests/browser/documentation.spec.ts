@@ -165,7 +165,7 @@ test.describe("mobile search", () => {
     }
     await expect(page.locator(".pagefind-ui__search-input")).toHaveCount(1);
     await expect(trigger).toBeFocused();
-    await expect(page.locator("site-search dialog")).not.toBeVisible();
+    await expect(page.locator("cookbook-search dialog")).not.toBeVisible();
   });
 });
 
@@ -175,10 +175,10 @@ for (const width of [390, 1440]) {
   }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/manual/guide/");
-    const dialog = page.locator("site-search dialog");
+    const dialog = page.locator("cookbook-search dialog");
     // Slow the configured transition so the test can inspect it mid-flight.
     await page.addStyleTag({
-      content: "site-search { --dialog-transition: 600ms; }",
+      content: "cookbook-search { --dialog-transition: 600ms; }",
     });
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect
@@ -281,7 +281,9 @@ for (const width of [390, 1440]) {
       const box = (await close.boundingBox())!;
       expect(box.y).toBeCloseTo(closeTop, 0);
       expect(box.width).toBe(box.height);
-      const dialog = (await page.locator("site-search dialog").boundingBox())!;
+      const dialog = (await page
+        .locator("cookbook-search dialog")
+        .boundingBox())!;
       const pane = (await results.boundingBox())!;
       const field = (await input.boundingBox())!;
       const sideInset = field.x - dialog.x;
@@ -312,7 +314,7 @@ for (const width of [390, 1440]) {
         ).toBeLessThan(2);
       }
       await close.click();
-      await expect(page.locator("site-search dialog")).not.toBeVisible();
+      await expect(page.locator("cookbook-search dialog")).not.toBeVisible();
     }
   });
 }
@@ -333,7 +335,7 @@ test("header popovers fade on open and close", async ({ page }) => {
     },
     {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
-      panel: page.locator("site-search dialog"),
+      panel: page.locator("cookbook-search dialog"),
       close: page.getByRole("button", { name: "Cancel", exact: true }),
     },
     {
@@ -395,7 +397,7 @@ test("header popovers respect reduced motion", async ({ page }) => {
     },
     {
       trigger: page.getByRole("button", { name: "Search", exact: true }),
-      panel: page.locator("site-search dialog"),
+      panel: page.locator("cookbook-search dialog"),
       close: page.getByRole("button", { name: "Cancel", exact: true }),
     },
     {

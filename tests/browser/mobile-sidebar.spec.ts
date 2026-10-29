@@ -170,7 +170,7 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     await page.setViewportSize({ width: 390, height: 700 });
     await page.goto("/mobile-sidebar/guide/");
     await page.getByRole("button", { name: /Menu/ }).click();
-    await page.evaluate(() => customElements.whenDefined("cb-popover"));
+    await page.evaluate(() => customElements.whenDefined("cookbook-popover"));
     const sections = page.locator("[data-element=MobileNavigationTabs]");
     const trigger = sections.getByRole("button", { name: "Choose section" });
     const panel = sections.locator("[popover]");

@@ -367,6 +367,33 @@ for (const systemScheme of ["light", "dark"] as const) {
   });
 }
 
+test("all rendered Cookbook elements use the cookbook- prefix", async ({
+  page,
+}) => {
+  const tags = new Set<string>();
+  for (const path of [
+    "/manual/",
+    "/client-navigation/guide/",
+    "/custom-header/guide/",
+  ]) {
+    await page.goto(path);
+    const names = await page
+      .locator("*")
+      .evaluateAll((elements) =>
+        [...new Set(elements.map((element) => element.localName))].filter(
+          (name) => name.includes("-"),
+        ),
+      );
+    expect(
+      names.filter((name) => !name.startsWith("cookbook-")),
+      path,
+    ).toEqual([]);
+    names.forEach((name) => tags.add(name));
+  }
+  expect(tags).toContain("cookbook-search");
+  expect(tags).toContain("cookbook-popover");
+});
+
 test("owned data-element identities replace legacy anatomy markers", async ({
   page,
 }) => {
@@ -379,7 +406,7 @@ test("owned data-element identities replace legacy anatomy markers", async ({
     /td-header__logo/,
   );
   await expect(
-    header.locator('[data-element="Search"] > site-search'),
+    header.locator('[data-element="Search"] > cookbook-search'),
   ).toHaveCSS("display", "contents");
   const mark = header.locator('[data-element="Logo"] [data-element="Mark"]');
   await expect(mark).toHaveCount(2);

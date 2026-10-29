@@ -13,7 +13,7 @@ const sectionSelectStyles = selectPopoverStyles({
 export const MobileNavigationTabsRoot = defineComponent(
   "MobileNavigationTabs",
   {
-    as: "cb-popover",
+    as: "cookbook-popover",
     "data-element": "MobileNavigationTabs",
     styles: {
       // Reuse the shared, server-only popover anatomy.

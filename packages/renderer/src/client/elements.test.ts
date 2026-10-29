@@ -6,19 +6,20 @@ afterEach(() => {
   vi.resetModules();
 });
 
-it("registers cb-popover and cb-dialog once", async () => {
+it("registers cookbook-popover and cookbook-dialog once", async () => {
   await import("./elements.js");
-  const popover = customElements.get("cb-popover");
-  const dialog = customElements.get("cb-dialog");
+  const popover = customElements.get("cookbook-popover");
+  const dialog = customElements.get("cookbook-dialog");
   expect(popover).toBeDefined();
   expect(dialog).toBeDefined();
-  expect(customElements.get("uni-popover")).toBeUndefined();
+  for (const name of ["cb-popover", "cb-dialog", "uni-popover", "uni-dialog"])
+    expect(customElements.get(name)).toBeUndefined();
 
   // A second copy of the module skips names that are already defined.
   vi.resetModules();
   await import("./elements.js");
-  expect(customElements.get("cb-popover")).toBe(popover);
-  expect(customElements.get("cb-dialog")).toBe(dialog);
+  expect(customElements.get("cookbook-popover")).toBe(popover);
+  expect(customElements.get("cookbook-dialog")).toBe(dialog);
 });
 
 it("imports without customElements, as during server rendering", async () => {

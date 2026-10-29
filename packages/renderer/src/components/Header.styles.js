@@ -60,7 +60,7 @@ export const HeaderRoot = defineComponent("Header", {
       inlineMargin: { "": "auto", "!@md": "0" },
     },
     SearchElement: {
-      $: "Search site-search",
+      $: "Search cookbook-search",
       inlineSize: "0 100% 28rem",
       inlineMargin: "auto",
     },

@@ -6,7 +6,7 @@ import { defineComponent } from "../define-component.js";
 configureCookbookStates();
 
 export const SearchRoot = defineComponent("Search", {
-  as: "site-search",
+  as: "cookbook-search",
   "data-element": "Search",
   styles: {
     display: "contents",

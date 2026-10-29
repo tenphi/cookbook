@@ -1,6 +1,6 @@
 /**
- * Register UniAria's behaviors as `cb-*` light-DOM elements on server-rendered
- * markup. Cookbook's own elements keep the `cookbook-*` prefix.
+ * Register UniAria's behaviors as `cookbook-*` light-DOM elements, using the
+ * same prefix as every other Cookbook-owned custom element.
  */
 import { dialog } from "@uniaria/core/dialog";
 import { configure } from "@uniaria/core/dom";
@@ -12,12 +12,12 @@ import { defineElement } from "@uniaria/elements";
 // each one to its anchor and reads the side back.
 configure({ positioning: "css" });
 // Each returns undefined without `customElements` and skips a defined name.
-defineElement(popover, { prefix: "cb" });
-defineElement(dialog, { prefix: "cb" });
+defineElement(popover, { prefix: "cookbook" });
+defineElement(dialog, { prefix: "cookbook" });
 
 declare global {
   interface HTMLElementTagNameMap {
-    "cb-popover": UniElement<typeof popover>;
-    "cb-dialog": UniElement<typeof dialog>;
+    "cookbook-popover": UniElement<typeof popover>;
+    "cookbook-dialog": UniElement<typeof dialog>;
   }
 }

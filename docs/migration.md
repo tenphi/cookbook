@@ -41,6 +41,25 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## Upcoming custom-element naming
+
+All Cookbook-owned custom elements now use the `cookbook-*` prefix, including
+UniAria behaviors and the search wrapper. Built-in components update their markup
+and behavior together. If your own components or browser scripts refer to these
+tags, update them:
+
+| Previous tag  | New tag            |
+| ------------- | ------------------ |
+| `cb-popover`  | `cookbook-popover` |
+| `cb-dialog`   | `cookbook-dialog`  |
+| `site-search` | `cookbook-search`  |
+
+Update tag selectors, `customElements.get()` and `whenDefined()` calls, and
+`HTMLElementTagNameMap` references as applicable. Component override names,
+`theme.styles` names and sub-elements, `data-uni` part markers, CSS classes,
+DOM IDs, and stored reader preferences keep their existing names. Custom
+elements authored by your site can continue using your own prefix.
+
 ## Upcoming Tasty upgrade
 
 Cookbook now uses Tasty 3.14 and the Tasty ESLint plugin 1.12. Built-in themes

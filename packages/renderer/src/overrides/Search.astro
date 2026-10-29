@@ -84,15 +84,17 @@ const translations = {
 <script>
   import { initializeSearch } from "../client/search.js";
   function initialize(): void {
-    document.querySelectorAll<HTMLElement>("site-search").forEach((element) => {
-      if (element.dataset.searchBase !== import.meta.env.BASE_URL) return;
-      initializeSearch(
-        element,
-        {},
-        import.meta.env.DEV,
-        import.meta.env.BASE_URL,
-      );
-    });
+    document
+      .querySelectorAll<HTMLElement>("cookbook-search")
+      .forEach((element) => {
+        if (element.dataset.searchBase !== import.meta.env.BASE_URL) return;
+        initializeSearch(
+          element,
+          {},
+          import.meta.env.DEV,
+          import.meta.env.BASE_URL,
+        );
+      });
   }
   initialize();
   document.addEventListener("astro:page-load", initialize);
