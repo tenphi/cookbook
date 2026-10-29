@@ -36,7 +36,7 @@ minimumReleaseAgeExclude:
 
 catalog:
   astro: ^7.3.2
-  "@tenphi/tasty": 3.15.0
+  "@tenphi/tasty": 3.16.0
   "@tenphi/glaze": 2.0.1
   "@uniaria/core": 0.3.0
   "@uniaria/elements": 0.3.0

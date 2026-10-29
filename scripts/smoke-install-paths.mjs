@@ -240,7 +240,10 @@ try {
     if (manager === "pnpm")
       await writeFile(
         join(site, "pnpm-workspace.yaml"),
-        JSON.stringify({ overrides: local }),
+        JSON.stringify({
+          overrides: local,
+          minimumReleaseAgeExclude: ["@tenphi/*", "@uniaria/*"],
+        }),
       );
     else if (manager === "yarn") {
       packageJson.resolutions = local;
@@ -248,9 +251,9 @@ try {
         join(site, ".yarnrc.yml"),
         // This fresh consumer deliberately has no lockfile yet. Keep the repo
         // install frozen; allow only this generated fixture to create its lock.
-        // Match the repository's reviewed release-age exceptions for this upgrade.
-        // UniAria is exempt as a namespace, as in pnpm-workspace.yaml.
-        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/tasty@3.14.0'\n  - '@tenphi/eslint-plugin-tasty@1.12.0'\n  - '@tenphi/glaze@2.0.1'\n  - '@uniaria/*'\n",
+        // Use the owner-approved first-party namespaces from pnpm-workspace.yaml
+        // so fresh first-party releases also resolve in this isolated consumer.
+        "nodeLinker: node-modules\nenableScripts: false\nenableImmutableInstalls: false\nnpmPreapprovedPackages:\n  - '@tenphi/*'\n  - '@uniaria/*'\n",
       );
     } else
       packageJson.overrides = Object.fromEntries(
