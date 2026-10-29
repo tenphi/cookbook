@@ -10,8 +10,8 @@ catalogs:
       specifier: 2.0.1
       version: 2.0.1
     '@tenphi/tasty':
-      specifier: 3.14.0
-      version: 3.14.0
+      specifier: 3.15.0
+      version: 3.15.0
     '@uniaria/core':
       specifier: 0.3.0
       version: 0.3.0
@@ -54,8 +54,8 @@ importers:
         specifier: 1.63.0
         version: 1.63.0
       '@tenphi/eslint-plugin-tasty':
-        specifier: 1.12.0
-        version: 1.12.0(@tenphi/tasty@3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
+        specifier: 1.14.0
+        version: 1.14.0(@tenphi/tasty@3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
       '@types/node':
         specifier: ^22.15.2
         version: 22.20.1
@@ -142,7 +142,7 @@ importers:
         version: 2.0.1
       '@tenphi/tasty':
         specifier: 'catalog:'
-        version: 3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+        version: 3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
@@ -272,14 +272,14 @@ importers:
         specifier: workspace:*
         version: link:../docs
       '@tenphi/eslint-plugin-tasty':
-        specifier: 1.12.0
-        version: 1.12.0(@tenphi/tasty@3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
+        specifier: 1.14.0
+        version: 1.14.0(@tenphi/tasty@3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
       '@tenphi/glaze':
         specifier: 'catalog:'
         version: 2.0.1
       '@tenphi/tasty':
         specifier: 'catalog:'
-        version: 3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+        version: 3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       '@uniaria/core':
         specifier: 'catalog:'
         version: 0.3.0
@@ -1623,8 +1623,8 @@ packages:
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
-  '@tenphi/eslint-plugin-tasty@1.12.0':
-    resolution: {integrity: sha512-NF/G1K/qyfR9a0gzRmjHhBozfRPUcIJY5JMTtsPGRF5LK5faDhhBF/7IhMs+cbqVFy2ig8cPfnWs+A+wkyu+jQ==}
+  '@tenphi/eslint-plugin-tasty@1.14.0':
+    resolution: {integrity: sha512-82pHF1TlHl0+yjkdFkKoo8SEo3Vt9wbsJ4vulDa1g4O+eWDCN63OQRrxNwQOyu7ZxmFKFCZ2ItHrz9B6Y7HVNw==}
     engines: {node: '>=20'}
     peerDependencies:
       '@tenphi/tasty': '>=3.8.0'
@@ -1640,8 +1640,8 @@ packages:
     resolution: {integrity: sha512-XXb21YOEvHYfCyR1y+mRSYTjEi9wveI3BrcDdN8d6UUGSHc5+6HItbdWML9TlSBD1FuX5x1s1riB2Cp1EXnhPw==}
     engines: {node: '>=20'}
 
-  '@tenphi/tasty@3.14.0':
-    resolution: {integrity: sha512-5mi1s+4YvS6KTu3Lz75ayiXiil7wJOLsqjK530x5+h8qhCnnPxwZ6uhN69riwA/HkRZ0W+zt8DvyOiDR2NZ6aw==}
+  '@tenphi/tasty@3.15.0':
+    resolution: {integrity: sha512-mqMU5LDLWlL2QIt6rrUvyii2KuY+Ej0CtQPdQ+EaXfIIsuYZJ+xI3La4ujaCyYxOgCSqLFkj7TjjegQzR/z2NQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@babel/core': ^7.24.0 || ^8.0.0
@@ -5828,21 +5828,22 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@tenphi/eslint-plugin-tasty@1.12.0(@tenphi/tasty@3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)':
+  '@tenphi/eslint-plugin-tasty@1.14.0(@tenphi/tasty@3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)':
     dependencies:
       '@typescript-eslint/utils': 8.68.0(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
       eslint: 10.9.1(jiti@2.7.0)(supports-color@10.2.2)
       jiti: 2.7.0
       postcss-selector-parser: 7.1.6
+      semver: 7.8.5
     optionalDependencies:
-      '@tenphi/tasty': 3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+      '@tenphi/tasty': 3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
   '@tenphi/glaze@2.0.1': {}
 
-  '@tenphi/tasty@3.14.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)':
+  '@tenphi/tasty@3.15.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)':
     dependencies:
       csstype: 3.2.3
     optionalDependencies:
