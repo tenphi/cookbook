@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.31.3
+
+### Patch Changes
+
+- [#189](https://github.com/tenphi/cookbook/pull/189) [`895936a`](https://github.com/tenphi/cookbook/commit/895936a2776355bfe433a59d747a6b3077c31084) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade Tasty to 3.17.0 and the Tasty ESLint plugin to 1.15.0, including the two-color fill migration diagnostics and fixes.
+
+- Updated dependencies [[`895936a`](https://github.com/tenphi/cookbook/commit/895936a2776355bfe433a59d747a6b3077c31084)]:
+  - @tenphi/docs@0.31.3
+
 ## 0.31.2
 
 ### Patch Changes
