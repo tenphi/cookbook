@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.31.2
+
+### Patch Changes
+
+- [#187](https://github.com/tenphi/cookbook/pull/187) [`e8e391f`](https://github.com/tenphi/cookbook/commit/e8e391fc37ae45b640c863770ce963d602356b83) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade Glaze to 2.0.2 for theme generation and packaged upstream documentation.
+
+- Updated dependencies [[`e8e391f`](https://github.com/tenphi/cookbook/commit/e8e391fc37ae45b640c863770ce963d602356b83)]:
+  - @tenphi/docs@0.31.2
+
 ## 0.31.1
 
 ### Patch Changes
