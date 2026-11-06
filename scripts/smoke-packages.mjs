@@ -61,7 +61,7 @@ try {
         "docs/theme-and-components.md",
         "docs/upstream/manifest.json",
         "docs/upstream/tasty/docs/ai-agents.md",
-        "docs/upstream/glaze/docs/api.md",
+        "docs/upstream/glaze/docs/reference/index.md",
         "docs/upstream/tasty/LICENSE",
         "docs/upstream/glaze/LICENSE",
       ]) {

@@ -586,7 +586,7 @@
               "type": "boolean"
             },
             "shadowTuning": {
-              "type": "object"
+              "$ref": "#/$defs/lightingTuning"
             }
           }
         },
@@ -1382,6 +1382,9 @@
         },
         {
           "$ref": "#/$defs/glazeShadow"
+        },
+        {
+          "$ref": "#/$defs/glazeGlow"
         }
       ]
     },
@@ -1472,13 +1475,83 @@
           ]
         },
         "tuning": {
-          "type": "object"
+          "$ref": "#/$defs/lightingTuning"
         },
         "pastel": {
           "type": "boolean"
         },
         "inherit": {
           "type": "boolean"
+        }
+      }
+    },
+    "glazeGlow": {
+      "type": "object",
+      "required": ["type", "bg", "intensity"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "glow"
+        },
+        "bg": {
+          "type": "string"
+        },
+        "fg": {
+          "type": "string"
+        },
+        "intensity": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "tuning": {
+          "$ref": "#/$defs/lightingTuning"
+        },
+        "pastel": {
+          "type": "boolean"
+        },
+        "inherit": {
+          "type": "boolean"
+        }
+      }
+    },
+    "lightingTuning": {
+      "description": "Glaze shadow and glow tuning: how much the object (fg) scales the step, and the pigment's tint, reach, and hue bleed.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "objectInfluence": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tint": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reach": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hueBleed": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       }
     },

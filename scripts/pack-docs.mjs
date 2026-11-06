@@ -16,7 +16,10 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
     join(repositoryRoot, "packages/renderer/package.json"),
   );
   const upstream = [];
-  for (const name of ["tasty", "glaze"]) {
+  for (const [name, site] of [
+    ["tasty", "https://tasty.style"],
+    ["glaze", "https://glaze.tenphi.me"],
+  ]) {
     const packageName = `@tenphi/${name}`;
     const root = await packageRoot(
       rendererRequire.resolve(packageName),
@@ -31,6 +34,7 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
       version: manifest.version,
       license: manifest.license,
       repository: `https://github.com/tenphi/${name}`,
+      site,
       ref: manifest.gitHead || `v${manifest.version}`,
       directory: `upstream/${name}`,
     });
@@ -76,8 +80,14 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
     const rewritten = rewriteDocumentation(
       markdown,
       (url, image) => {
-        const local = localReference(url, files);
+        // Upstream guides link to pages of their own site root-relatively.
+        const absolute =
+          source && /^\/(?!\/)/.test(url)
+            ? new URL(url, source.site).href
+            : url;
+        const local = localReference(absolute, files);
         if (local) return relativeUrl(file, local);
+        if (absolute !== url) return absolute;
         if (!source || !isLocalUrl(url)) return url;
         const { pathname, suffix } = splitUrl(url);
         const target = normalizePath(
@@ -212,9 +222,12 @@ function localReference(url, files) {
         ? "upstream/tasty/docs/README.md"
         : `upstream/tasty${path}.md`;
   } else if (parsed.origin === "https://glaze.tenphi.me") {
+    // Glaze ships guides as .mdx and the API reference as a folder index.
     target = !path
       ? "upstream/glaze/README.md"
-      : `upstream/glaze/docs${path}.md`;
+      : [".md", ".mdx", "/index.md"]
+          .map((extension) => `upstream/glaze/docs${path}${extension}`)
+          .find((candidate) => files.has(candidate));
   } else if (parsed.origin === "https://cookbook.tenphi.me") {
     target = !path ? "index.md" : `${path.slice(1)}.md`;
     if (!files.has(target)) target += "x";

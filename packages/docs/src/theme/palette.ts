@@ -8,6 +8,7 @@ import {
   variantToOkhsl,
   type ColorMap,
   type ColorDef,
+  type GlowColorDef,
   type MixColorDef,
   type ShadowColorDef,
   type GlazeColorValue,
@@ -93,7 +94,6 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
       darkHue: darkThemeSeed.h,
       darkSaturation: darkThemeSaturation,
     },
-    undefined,
     glazeOptions,
   );
   const surfaceSaturation = declaredSurface
@@ -253,13 +253,10 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     "logo-mark": { tone: 100, saturation: 0, mode: "fixed" },
     "accent-surface-subtle": mix("surface", "accent-surface", [12, 18]),
     "accent-surface-2-subtle": mix("surface-2", "accent-surface", [12, 18]),
-    shadow: {
-      type: "shadow",
-      bg: "surface",
-      fg: "text",
-      intensity: [12, 20],
-      tuning: { alphaMax: theme.glaze?.shadowTuning?.alphaMax ?? 0.28 },
-    },
+    // An exact 8-tone step below the page in light and dark. High contrast
+    // drops the decorative shadow: its borders carry the edges, and a dark
+    // high-contrast page is black, where no shadow can show.
+    shadow: { type: "shadow", bg: "surface", intensity: [8, 0] },
     ...statusColors("info", theme.palette?.info, "#2563eb"),
     ...statusColors("success", theme.palette?.success, "#16a34a"),
     ...statusColors("warning", theme.palette?.warning, "#d97706"),
@@ -430,7 +427,7 @@ function statusColors(
           ...declaration,
         },
     [`${name}-text`]: {
-      // A mix/shadow owns its dependency fields. Reusing it as text would
+      // A mix/shadow/glow owns its dependency fields. Reusing it as text would
       // replace its base or silently ignore the text contrast floor. Give
       // derived text a neutral absolute tone; consumers can override it.
       ...(isSpecialDefinition(declaration)
@@ -442,7 +439,8 @@ function statusColors(
       mode: "auto",
     },
     [`${name}-surface`]:
-      "type" in declaration && declaration.type === "shadow"
+      "type" in declaration &&
+      (declaration.type === "shadow" || declaration.type === "glow")
         ? { base: "surface", tone: "-2", saturation: 0, mode: "auto" }
         : mix("surface", name, [12, 18], "srgb"),
   };
@@ -450,7 +448,7 @@ function statusColors(
 
 function isSpecialDefinition(
   value: ThemePaletteColor | undefined,
-): value is MixColorDef | ShadowColorDef {
+): value is MixColorDef | ShadowColorDef | GlowColorDef {
   return typeof value === "object" && value !== null && "type" in value;
 }
 

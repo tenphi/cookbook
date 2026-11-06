@@ -866,8 +866,11 @@ export type ComponentStylesConfig = {
 export interface ThemeConfig {
   brand?: BrandConfig;
   palette?: ThemePaletteConfig;
-  /** Glaze tone windows and adaptation settings; contrastLevel remains a top-level theme option. */
-  glaze?: Omit<GlazeConfigOverride, "contrastLevel">;
+  /**
+   * Glaze tone windows and adaptation settings; contrastLevel remains a
+   * top-level theme option. Glows take their tuning per role.
+   */
+  glaze?: Omit<GlazeConfigOverride, "contrastLevel" | "glowTuning">;
   /** Named CSS length expressions used as custom Tasty units. */
   units?: Record<string, string>;
   /** Flat reusable Tasty style bundles. Recipes cannot reference other recipes. */
