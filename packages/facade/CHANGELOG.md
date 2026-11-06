@@ -1,5 +1,17 @@
 # @tenphi/cookbook
 
+## 0.32.0
+
+### Minor Changes
+
+- [#194](https://github.com/tenphi/cookbook/pull/194) [`50cbc33`](https://github.com/tenphi/cookbook/commit/50cbc331aac6186eca3c94d2c85bb3072e6ddde4) Thanks [@tenphi](https://github.com/tenphi)! - Add `CardGrid`, which lays out `Card` elements in one column on narrow screens and two equal-height columns from 40rem, separated only by the grid gap instead of Markdown block spacing. Customize it with `theme.styles.CardGrid`, including its `Card` sub-element.
+
+### Patch Changes
+
+- Updated dependencies [[`50cbc33`](https://github.com/tenphi/cookbook/commit/50cbc331aac6186eca3c94d2c85bb3072e6ddde4), [`50cbc33`](https://github.com/tenphi/cookbook/commit/50cbc331aac6186eca3c94d2c85bb3072e6ddde4)]:
+  - @tenphi/docs@0.32.0
+  - @tenphi/renderer@0.32.0
+
 ## 0.31.4
 
 ### Patch Changes

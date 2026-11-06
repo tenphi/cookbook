@@ -2,6 +2,16 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.32.0
+
+### Minor Changes
+
+- [#194](https://github.com/tenphi/cookbook/pull/194) [`50cbc33`](https://github.com/tenphi/cookbook/commit/50cbc331aac6186eca3c94d2c85bb3072e6ddde4) Thanks [@tenphi](https://github.com/tenphi)! - Add `CardGrid`, which lays out `Card` elements in one column on narrow screens and two equal-height columns from 40rem, separated only by the grid gap instead of Markdown block spacing. Customize it with `theme.styles.CardGrid`, including its `Card` sub-element.
+
+### Patch Changes
+
+- [#194](https://github.com/tenphi/cookbook/pull/194) [`50cbc33`](https://github.com/tenphi/cookbook/commit/50cbc331aac6186eca3c94d2c85bb3072e6ddde4) Thanks [@tenphi](https://github.com/tenphi)! - Keep prose block spacing out of tab, code group, code block, and card anatomy. Tab panels now sit directly under the tab list, panel content starts at the panel padding, code group captions keep their own gap to the code, copy buttons stay in the top-right corner regardless of stylesheet order, and card descriptions follow the title by the card gap, staying at the top when a grid stretches the card. New customizable sub-elements: `Tabs.Tab`, `Tab.Body`, `CodeGroup.MarkdownCodeBlock`, and `Card.Body`.
+
 ## 0.31.4
 
 ### Patch Changes
