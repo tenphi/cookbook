@@ -1,6 +1,7 @@
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import type {
   CardProps,
+  CardGridProps,
   LogoProps,
   PreviewProps,
   StepsProps,
@@ -12,6 +13,7 @@ import type {
 export type * from "./components/props.js";
 type Component<Props> = (props: Props) => ReturnType<AstroComponentFactory>;
 export const Card: Component<CardProps>;
+export const CardGrid: Component<CardGridProps>;
 export const Logo: Component<LogoProps>;
 export const Preview: Component<PreviewProps>;
 export const Steps: Component<StepsProps>;

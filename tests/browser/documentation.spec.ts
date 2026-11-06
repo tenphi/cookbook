@@ -521,6 +521,29 @@ test("code group keyboard navigation and copying share the fence controls", asyn
   await expect(page.getByText("Page copied", { exact: true })).toBeVisible();
 });
 
+test("code group panels start at their padding and keep the copy button in the corner", async ({
+  page,
+}) => {
+  await page.goto("/manual/");
+  const group = page.locator("[data-element=CodeGroup]").first();
+  const list = (await group.locator("[data-tabs-list]").boundingBox())!;
+  const panel = group.getByRole("tabpanel", { name: "npm", exact: true });
+  const box = (await panel.boundingBox())!;
+  const caption = (await panel
+    .locator("[data-element=Caption]")
+    .boundingBox())!;
+  const block = panel.locator("[data-element=MarkdownCodeBlock]");
+  const pre = (await block.locator("pre").boundingBox())!;
+  const copy = (await block.locator("[data-copy-code]").boundingBox())!;
+  expect(box.y).toBeCloseTo(list.y + list.height, 1);
+  expect(caption.y - box.y).toBeCloseTo(16, 1);
+  expect(pre.y - caption.y - caption.height).toBeCloseTo(8, 1);
+  expect(copy.y - pre.y).toBeCloseTo(
+    pre.x + pre.width - copy.x - copy.width,
+    1,
+  );
+});
+
 const headingCases = [
   ...[320, 390, 768, 1024, 1440].map((width) => ({ site: "manual", width })),
   { site: "wide-logo", width: 320 },

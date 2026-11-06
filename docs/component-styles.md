@@ -71,7 +71,7 @@ parts:
 | Code and diagrams             | `MarkdownCodeBlock`, `MarkdownInlineCode`, `SyntaxHighlight`, `CodeGroup`, `Mermaid`                                    |
 | Search                        | `SearchButton`, `Search`, `SearchResults`                                                                               |
 | Table of contents             | `TableOfContents`, `MobileTableOfContents`, `TableOfContentsLayout`                                                     |
-| Cards, notes, and tabs        | `Card`, `Callout`, `MarkdownAlert`, `Tabs`, `Tab`, `Steps`, `Preview`                                                   |
+| Cards, notes, and tabs        | `Card`, `CardGrid`, `Callout`, `MarkdownAlert`, `Tabs`, `Tab`, `Steps`, `Preview`                                       |
 | Home page hero                | `Hero`                                                                                                                  |
 | Page layout                   | `PageFrame`, `Layout`, `MainPane`                                                                                       |
 | Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                                                    |
@@ -137,11 +137,12 @@ it stays complete when a surface changes.
 
 #### Authoring components
 
-- `Card`: `Heading2`, `Heading3`, `Paragraph`
+- `Card`: `Heading2`, `Heading3`, `Paragraph`, `Body`
+- `CardGrid`: `Card`
 - `Callout`: `Title`, `Body`
-- `CodeGroup`: `Caption`, `Pre`, `Code`
-- `Tab`: `Heading`, `HiddenHeading`
-- `Tabs`: `List`, `Button`, `SelectedButton`, `FocusedButton`
+- `CodeGroup`: `Caption`, `MarkdownCodeBlock`, `Pre`, `Code`
+- `Tab`: `Heading`, `HiddenHeading`, `Body`
+- `Tabs`: `List`, `Tab`, `Button`, `SelectedButton`, `FocusedButton`
 - `Steps`: `Item`, `Marker`
 - `Hero`: `Visual`, `DarkVisual`, `LightVisual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`
 - `Preview`: `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `HoverSummary`, `ActiveSummary`, `Pre`
@@ -351,8 +352,8 @@ and accessibility utilities. `MainPane` and `MainContent` own the content
 layout. `Markdown` owns prose, lists, links, quotations, and disclosure
 anatomy. `Search` owns the dialog; `SearchResults` owns the search field and
 Pagefind results UI.
-`MarkdownAlert` styles rendered alert blockquotes; `Card`, `Callout`, and
-`Steps` style Cookbook components. `Callout` reads its colors from the root
+`MarkdownAlert` styles rendered alert blockquotes; `Card`, `CardGrid`,
+`Callout`, and `Steps` style Cookbook components. `Callout` reads its colors from the root
 `#callout-border`, `#callout-text`, and `#callout-surface` tokens, which change
 per kind through `[data-kind="tip"]`, `"caution"`, and `"danger"` states.
 
@@ -363,7 +364,11 @@ owning `blockMargin` consumes both tokens, and a surrounding prose/layout rule
 changes only the start token. For example, `Callout: { "$margin-block-end": "3x" }`
 changes the end spacing while retaining Markdown's spacing before the callout.
 Document foundations reset these tokens on every element to prevent inheritance
-into nested content. For content-panel padding, use `MainContent.Panel`'s
+into nested content. Markdown's spacing stops at component anatomy:
+`Tabs.Tab`, `Tab.Body`, `CodeGroup.MarkdownCodeBlock`, `Card.Body`, and
+`CardGrid.Card` reset both tokens, so tab panels, code under a caption, card
+bodies, and cards in a grid keep their component gaps. Set the start token on
+those sub-elements to add space back. For content-panel padding, use `MainContent.Panel`'s
 `$padding-block-start` and `$padding-block-end` tokens in the same way.
 
 ### Code blocks and syntax highlighting

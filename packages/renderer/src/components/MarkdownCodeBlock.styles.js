@@ -32,7 +32,9 @@ export function MarkdownCodeBlockStyles() {
         tabSize: "2",
       },
       CopyButton: {
-        $: "> CopyButton",
+        // Following the pre outranks prose block spacing, which would otherwise
+        // offset the button from the corner in some stylesheet orders.
+        $: "> pre + CopyButton",
         position: "absolute",
         zIndex: "1",
         blockInset: "1x start",
@@ -55,7 +57,8 @@ export function MarkdownCodeBlockStyles() {
         transition: "color, fill",
       },
       HoverCopyButton: {
-        $: '> [data-element="CopyButton"]',
+        // Match CopyButton's selector weight so this overlay still applies.
+        $: '> pre + [data-element="CopyButton"]',
         color: { "": null, "@own(:hover)": "#text" },
         fill: {
           "": null,
@@ -63,7 +66,7 @@ export function MarkdownCodeBlockStyles() {
         },
       },
       CopiedButton: {
-        $: '> [data-element="CopyButton"]',
+        $: '> pre + [data-element="CopyButton"]',
         color: {
           "": null,
           "copy-state=copied": "#green-text",

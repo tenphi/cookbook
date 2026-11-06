@@ -64,6 +64,7 @@ const groups = [
     title: "Authoring components",
     names: [
       "Card",
+      "CardGrid",
       "Callout",
       "CodeGroup",
       "Tab",

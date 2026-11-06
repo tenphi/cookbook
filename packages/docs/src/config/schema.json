@@ -749,6 +749,14 @@
                 }
               }
             },
+            "CardGrid": {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "const": "mode"
+                }
+              }
+            },
             "Callout": {
               "type": "object",
               "propertyNames": {

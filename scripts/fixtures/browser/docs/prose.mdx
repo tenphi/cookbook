@@ -2,7 +2,7 @@
 title: Prose states
 ---
 
-import { Card, CodeGroup } from "@tenphi/cookbook/components";
+import { Card, CardGrid, CodeGroup } from "@tenphi/cookbook/components";
 
 ## Blocks
 
@@ -54,3 +54,16 @@ A paragraph after a linked card.
     },
   ]}
 />
+
+## Card grid
+
+<CardGrid>
+  <Card title="Short card" href="/guide">
+    Short.
+  </Card>
+  <Card title="Long card" href="/guide">
+    A longer description that wraps onto several lines in a grid column, so the
+    two cards in this row would otherwise differ in height.
+  </Card>
+  <Card title="Third card">Third.</Card>
+</CardGrid>

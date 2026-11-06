@@ -8,5 +8,5 @@ const { title, href } = Astro.props;
 
 <CardRoot as={href ? "a" : undefined} className="td-card" href={href}>
   {title && <h3>{title}</h3>}
-  <div><slot /></div>
+  <CardRoot.Body><slot /></CardRoot.Body>
 </CardRoot>

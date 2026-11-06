@@ -15,6 +15,14 @@ export const CodeGroupRoot = defineComponent("CodeGroup", {
       blockMargin: "$margin-block-start $margin-block-end",
       inlineMargin: "0",
     },
+    MarkdownCodeBlock: {
+      // The sibling selector outranks prose block spacing, so the caption's
+      // own end margin separates it from the code, including when hidden.
+      $: "Caption + MarkdownCodeBlock",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+    },
     Pre: { $: "pre", preset: "code" },
     Code: {
       $: "pre code",

@@ -152,7 +152,7 @@ test("prose owns block spacing while tab controls retain their own margins", asy
   await expect(page.locator('[role="tab"]').nth(1)).toHaveCSS("margin", "0px");
   await expect(page.locator('[role="tabpanel"]').first()).toHaveCSS(
     "margin-block-start",
-    "24px",
+    "0px",
   );
 });
 
@@ -753,10 +753,17 @@ test("prose states preserve linked block spacing and nested isolation", async ({
   page,
 }) => {
   await page.goto("/manual/prose/");
-  const card = page.locator('[data-element="Card"]');
+  const card = page.locator(
+    '[data-element="Markdown"] > [data-element="Card"]',
+  );
   await expect(card).toHaveCSS("margin-block-start", "24px");
   await expect(card.locator("p")).toHaveCSS("margin-block-start", "0px");
   await expect(card.locator("p")).toHaveCSS("margin-block-end", "0px");
+  await expect(card.locator('> [data-element="Body"]')).toHaveCSS(
+    "margin-block-start",
+    "0px",
+  );
+  await expect(card).toHaveCSS("align-content", "start");
   await expect(page.locator('[data-element="Card"] + p')).toHaveCSS(
     "margin-block-start",
     "24px",
@@ -782,6 +789,31 @@ test("prose states preserve linked block spacing and nested isolation", async ({
     "margin-block-end",
     "16px",
   );
+});
+
+test("card grids align cards without prose spacing", async ({ page }) => {
+  await page.goto("/manual/prose/");
+  const grid = page.locator('[data-element="CardGrid"]');
+  await expect(grid).toHaveCSS("margin-block-start", "24px");
+  const cards = grid.locator('> [data-element="Card"]');
+  const [first, second, third] = await Promise.all(
+    [0, 1, 2].map(async (index) => (await cards.nth(index).boundingBox())!),
+  );
+  expect(second.y).toBeCloseTo(first.y, 1);
+  expect(second.height).toBeCloseTo(first.height, 1);
+  expect(second.x - first.x - first.width).toBeCloseTo(16, 1);
+  expect(third.y - first.y - first.height).toBeCloseTo(16, 1);
+  const title = (await cards.first().locator("h3").boundingBox())!;
+  const body = (await cards
+    .first()
+    .locator('> [data-element="Body"]')
+    .boundingBox())!;
+  expect(body.y - title.y - title.height).toBeCloseTo(12, 1);
+  await page.setViewportSize({ width: 390, height: 900 });
+  const narrow = (await cards.nth(1).boundingBox())!;
+  const top = (await cards.first().boundingBox())!;
+  expect(narrow.x).toBeCloseTo(top.x, 1);
+  expect(narrow.y - top.y - top.height).toBeCloseTo(16, 1);
 });
 
 test("diff and copy state belong to code-block roots in fences and CodeGroup", async ({
