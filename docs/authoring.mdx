@@ -8,6 +8,7 @@ sidebar:
 import {
   Callout,
   Card,
+  CardGrid,
   CodeGroup,
   Preview,
   Steps,
@@ -99,15 +100,25 @@ Each panel retains keyboard-accessible tabs and readable fallback content.
 Use a card to link to another page, or omit `href` to present a standalone
 summary. `href` is used as written: give a public URL, including any Astro
 `base`, or a `#fragment`. Unlike Markdown links, `.md` paths are not rewritten;
-`cookbook check-build` reports broken targets. `Steps` renders an ordered list;
-put ordinary `li` elements inside it.
+`cookbook check-build` reports broken targets. Wrap cards in `CardGrid` to show
+them in two equal-height columns on wider screens and a single column on narrow
+ones. `Steps` renders an ordered list; put ordinary `li` elements inside it.
 
 ```mdx
-import { Card, Steps } from "@tenphi/cookbook/components";
+import { Card, CardGrid, Steps } from "@tenphi/cookbook/components";
 
 <Card title="On-page navigation" href="#on-page-navigation">
   Offer a compact contents list on smaller screens.
 </Card>
+
+<CardGrid>
+  <Card title="Tabs" href="#tabs">
+    Switch between equivalent examples.
+  </Card>
+  <Card title="Code groups" href="#code-groups">
+    Show the same command for several package managers.
+  </Card>
+</CardGrid>
 
 <Steps>
   <li>Choose a content source.</li>
@@ -119,6 +130,15 @@ import { Card, Steps } from "@tenphi/cookbook/components";
 <Card title="On-page navigation" href="#on-page-navigation">
   Offer a compact contents list on smaller screens.
 </Card>
+
+<CardGrid>
+  <Card title="Tabs" href="#tabs">
+    Switch between equivalent examples.
+  </Card>
+  <Card title="Code groups" href="#code-groups">
+    Show the same command for several package managers.
+  </Card>
+</CardGrid>
 
 <Steps>
   <li>Choose a content source.</li>
@@ -298,6 +318,7 @@ A `mermaid` fence renders a static, theme-aware diagram; see
 | `Callout`   | Optional `kind` (`note` by default, `tip`, `caution`, or `danger`) and `title`                                                                                                                  |
 | `CodeGroup` | Optional `label` (default "Code examples") and required `items`: `{ label, code, language? }[]`                                                                                                 |
 | `Card`      | Optional `title` and `href`; renders an article or link with slot content                                                                                                                       |
+| `CardGrid`  | Grid container for `Card` elements: one column on narrow screens, two equal-height columns from 40rem                                                                                           |
 | `Steps`     | Ordered list container; supply `li` elements                                                                                                                                                    |
 | `Logo`      | Optional `label`, `decorative`, and root `class`; renders the Cookbook mark                                                                                                                     |
 | `Preview`   | Required `title`; optional `html`, `css`, `javascript`, public-file `scripts`, minimum frame `height`, and overlay `buffer`; isolates examples in a sandboxed iframe that fits scripted content |

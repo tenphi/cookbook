@@ -1,5 +1,6 @@
 export {
   Card,
+  CardGrid,
   Logo,
   Preview,
   Steps,

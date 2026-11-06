@@ -407,6 +407,7 @@ export interface ThemePaletteConfig extends Partial<
 export const COOKBOOK_COMPONENT_NAMES = [
   "Button",
   "Card",
+  "CardGrid",
   "Callout",
   "CodeGroup",
   "Tab",
@@ -608,6 +609,7 @@ export const COOKBOOK_COMPONENT_SUB_ELEMENTS = {
   SearchButton: ["PendingShortcut", "Label", "Shortcut", "NativeIcon", "Icon"],
   TableOfContentsLayout: ["Content"],
   Card: ["Heading2", "Heading3", "Paragraph", "Body"],
+  CardGrid: ["Card"],
   Callout: ["Title", "Body"],
   CodeGroup: ["Caption", "MarkdownCodeBlock", "Pre", "Code"],
   Tab: ["Heading", "HiddenHeading", "Body"],
