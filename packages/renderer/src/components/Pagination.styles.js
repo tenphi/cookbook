@@ -63,7 +63,6 @@ export const PaginationRoot = defineComponent("Pagination", {
       $: 'a[rel="next"]::before',
       order: "1",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextLabel: {
@@ -102,19 +101,16 @@ export const PaginationRoot = defineComponent("Pagination", {
       blockSize: "1.25rem",
       fill: "#current",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
     PreviousIconRtl: {
       $: 'a[rel="prev"]:dir(rtl)::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowRightIcon)}") center / contain no-repeat`,
     },
     NextIconRtl: {
       $: 'a[rel="next"]:dir(rtl)::before',
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(arrowLeftIcon)}") center / contain no-repeat`,
     },
   },

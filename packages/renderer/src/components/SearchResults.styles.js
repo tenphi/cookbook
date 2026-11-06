@@ -167,7 +167,6 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "1rem",
       fill: "#text-soft",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
       pointerEvents: "none",
     },
@@ -179,7 +178,6 @@ export const SearchResultsRoot = defineComponent("SearchResults", {
       blockSize: "1rem",
       fill: "#current",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(closeIcon)}") center / 1rem no-repeat`,
     },
     SuppressedClear: {
