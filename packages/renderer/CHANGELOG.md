@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.31.4
+
+### Patch Changes
+
+- [#192](https://github.com/tenphi/cookbook/pull/192) [`a698508`](https://github.com/tenphi/cookbook/commit/a698508e38c4209c823dc3cba1e01d6b018a76f5) Thanks [@tenphi](https://github.com/tenphi)! - Use the official Tasty ESLint plugin 1.16.0 for code validation and published lint configurations. It adds the opt-in replaceable pixel mode and stops suggesting spacing units for type sizes.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.31.4
+
 ## 0.31.3
 
 ### Patch Changes
