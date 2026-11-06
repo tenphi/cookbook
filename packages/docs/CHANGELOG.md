@@ -1,5 +1,13 @@
 # @tenphi/docs
 
+## 0.33.1
+
+### Patch Changes
+
+- [#200](https://github.com/tenphi/cookbook/pull/200) [`5dc7a6f`](https://github.com/tenphi/cookbook/commit/5dc7a6f9cd43918556ef0723dc03470742c1ab6f) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade Glaze to 3.0.1 so theme shadows and glows do not report an unreachable
+  step merely because high contrast or a numeric contrast level moved their
+  surface. Resolved colors and generated exports are unchanged.
+
 ## 0.33.0
 
 ### Minor Changes

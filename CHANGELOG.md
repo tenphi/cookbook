@@ -2,6 +2,15 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.33.1
+
+### Patch Changes
+
+- [#200](https://github.com/tenphi/cookbook/pull/200) [`5dc7a6f`](https://github.com/tenphi/cookbook/commit/5dc7a6f9cd43918556ef0723dc03470742c1ab6f) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade Glaze to 3.0.1 so theme shadows and glows do not report an unreachable
+  step merely because high contrast or a numeric contrast level moved their
+  surface. Resolved colors and generated exports are unchanged.
+- [#202](https://github.com/tenphi/cookbook/pull/202) [`206bc11`](https://github.com/tenphi/cookbook/commit/206bc1125130eb58310bb0ef41f480158222f122) Thanks [@tenphi](https://github.com/tenphi)! - Use the official Tasty ESLint plugin 1.17.1 for code validation and published lint configurations. It avoids false runtime-mutation warnings for style objects constructed once at module load, while retaining checks inside functions and instance fields.
+
 ## 0.33.0
 
 ### Minor Changes
