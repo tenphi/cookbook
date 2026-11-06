@@ -152,7 +152,7 @@ test("prose owns block spacing while tab controls retain their own margins", asy
   await expect(page.locator('[role="tab"]').nth(1)).toHaveCSS("margin", "0px");
   await expect(page.locator('[role="tabpanel"]').first()).toHaveCSS(
     "margin-block-start",
-    "24px",
+    "0px",
   );
 });
 
@@ -757,6 +757,11 @@ test("prose states preserve linked block spacing and nested isolation", async ({
   await expect(card).toHaveCSS("margin-block-start", "24px");
   await expect(card.locator("p")).toHaveCSS("margin-block-start", "0px");
   await expect(card.locator("p")).toHaveCSS("margin-block-end", "0px");
+  await expect(card.locator('> [data-element="Body"]')).toHaveCSS(
+    "margin-block-start",
+    "0px",
+  );
+  await expect(card).toHaveCSS("align-content", "start");
   await expect(page.locator('[data-element="Card"] + p')).toHaveCSS(
     "margin-block-start",
     "24px",

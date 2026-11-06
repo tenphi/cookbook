@@ -25,6 +25,14 @@ export const TabRoot = defineComponent("Tab", {
       $: "> *",
       hide: { "": null, "@own([data-tab-heading] & [hidden])": true },
     },
+    Body: {
+      // The sibling selector outranks prose block spacing, so content starts at
+      // the panel padding while the fallback heading is hidden.
+      $: "> Heading + Body",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+    },
   },
-  elements: { Heading: "h3" },
+  elements: { Heading: "h3", Body: "div" },
 });

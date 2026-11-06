@@ -137,11 +137,11 @@ it stays complete when a surface changes.
 
 #### Authoring components
 
-- `Card`: `Heading2`, `Heading3`, `Paragraph`
+- `Card`: `Heading2`, `Heading3`, `Paragraph`, `Body`
 - `Callout`: `Title`, `Body`
-- `CodeGroup`: `Caption`, `Pre`, `Code`
-- `Tab`: `Heading`, `HiddenHeading`
-- `Tabs`: `List`, `Button`, `SelectedButton`, `FocusedButton`
+- `CodeGroup`: `Caption`, `MarkdownCodeBlock`, `Pre`, `Code`
+- `Tab`: `Heading`, `HiddenHeading`, `Body`
+- `Tabs`: `List`, `Tab`, `Button`, `SelectedButton`, `FocusedButton`
 - `Steps`: `Item`, `Marker`
 - `Hero`: `Visual`, `DarkVisual`, `LightVisual`, `Stack`, `Copy`, `Title`, `Tagline`, `Actions`, `Action`, `HoverAction`, `PrimaryAction`, `SecondaryAction`, `MinimalAction`, `ActionIcon`
 - `Preview`: `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `HoverSummary`, `ActiveSummary`, `Pre`

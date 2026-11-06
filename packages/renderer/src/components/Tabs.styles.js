@@ -22,6 +22,14 @@ export const TabsRoot = defineComponent("Tabs", {
       overflow: "auto",
       fill: "#surface-2",
     },
+    Tab: {
+      // The sibling selector outranks prose block spacing, which would
+      // otherwise separate every panel from the tab list.
+      $: "> List ~ Tab",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+    },
     Button: {
       $: "> List > button",
       "$margin-block-start": "0",

@@ -9,6 +9,8 @@ export const CardRoot = defineComponent("Card", {
   "data-block": "",
   styles: {
     display: "grid",
+    // Keep rows at the top when a surrounding grid stretches the card.
+    alignContent: "start",
     gap: "1.5x",
     padding: "2.5x",
     color: "#text",
@@ -55,5 +57,14 @@ export const CardRoot = defineComponent("Card", {
       blockMargin: "$margin-block-start $margin-block-end",
       inlineMargin: "0",
     },
+    Body: {
+      // The sibling selector outranks prose block spacing, so the grid gap
+      // alone separates the body from the title.
+      $: "> h3 + Body",
+      "$margin-block-start": "0",
+      "$margin-block-end": "0",
+      blockMargin: "$margin-block-start $margin-block-end",
+    },
   },
+  elements: { Body: "div" },
 });

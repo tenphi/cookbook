@@ -6,5 +6,5 @@ const { label } = Astro.props;
 
 <TabRoot data-tab-panel data-label={label}>
   <TabRoot.Heading data-tab-heading>{label}</TabRoot.Heading>
-  <slot />
+  <TabRoot.Body><slot /></TabRoot.Body>
 </TabRoot>
