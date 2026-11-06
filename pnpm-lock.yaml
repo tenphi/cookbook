@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@tenphi/glaze':
-      specifier: 3.0.0
-      version: 3.0.0
+      specifier: 3.0.1
+      version: 3.0.1
     '@tenphi/tasty':
       specifier: 3.17.1
       version: 3.17.1
@@ -139,7 +139,7 @@ importers:
     dependencies:
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.0.0
+        version: 3.0.1
       '@tenphi/tasty':
         specifier: 'catalog:'
         version: 3.17.1(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
@@ -276,7 +276,7 @@ importers:
         version: 1.17.0(@tenphi/tasty@3.17.1(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.0.2)
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.0.0
+        version: 3.0.1
       '@tenphi/tasty':
         specifier: 'catalog:'
         version: 3.17.1(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
@@ -1636,8 +1636,8 @@ packages:
       typescript:
         optional: true
 
-  '@tenphi/glaze@3.0.0':
-    resolution: {integrity: sha512-gvW+1Xq72k6CYKQURXvCq21LQKK9Cx0g8FzahJhZZS43y5eE67+oMG2ns6er+87QPRkP/3shm/Mnqb9h3PNGYA==}
+  '@tenphi/glaze@3.0.1':
+    resolution: {integrity: sha512-Td7s5MNNxmAUUc3V6Gsl56+Rx1KHAzU4qx8kgXhJgB1Nv9qUGkkl1OS2oYd+fxxxZwXCQGxD702ZTb0tLLi4eA==}
     engines: {node: '>=20'}
 
   '@tenphi/tasty@3.17.1':
@@ -5841,7 +5841,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tenphi/glaze@3.0.0': {}
+  '@tenphi/glaze@3.0.1': {}
 
   '@tenphi/tasty@3.17.1(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)':
     dependencies:
