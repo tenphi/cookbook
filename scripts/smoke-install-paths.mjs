@@ -347,7 +347,7 @@ const guide = new URL(import.meta.resolve('@tenphi/cookbook/docs/customization-r
 const contents = await readFile(guide, 'utf8');
 if (!contents.includes('./upstream/tasty/docs/ai-agents.md'))
   throw new Error('Installed customization guide lacks local upstream references.');
-for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/api.md']) {
+for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/reference/index.md']) {
   if (!(await readFile(new URL(path, guide), 'utf8')).length)
     throw new Error('Installed documentation is empty: ' + path);
 }

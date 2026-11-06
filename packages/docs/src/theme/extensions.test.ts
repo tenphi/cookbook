@@ -11,7 +11,7 @@ describe("theme extensions", () => {
         .sort(),
     ).toEqual([...COOKBOOK_PALETTE_NAMES].sort());
   });
-  it("accepts native Glaze mix/shadow definitions with custom references", () => {
+  it("accepts native Glaze mix/shadow/glow definitions with custom references", () => {
     const config = normalizeDocsConfig({
       theme: {
         palette: {
@@ -27,14 +27,16 @@ describe("theme extensions", () => {
             type: "shadow",
             bg: "review-fill",
             fg: "text-soft",
-            intensity: [20, 40],
-            tuning: { alphaMax: 0.5 },
+            intensity: [6, 0],
+            tuning: { objectInfluence: 1 },
           },
+          "review-glow": { type: "glow", bg: "surface-3", intensity: [3, 0] },
         },
       },
     });
     const theme = resolveColorTheme(config.theme);
     expect(Object.values(theme.colorTokens["#review-fill"]!)).toHaveLength(4);
+    expect(Object.values(theme.colorTokens["#review-glow"]!)).toHaveLength(4);
     expect(theme.colorTokens["#shadow"]).not.toEqual(
       resolveColorTheme().colorTokens["#shadow"],
     );
@@ -49,7 +51,8 @@ describe("theme extensions", () => {
         value: 30,
         space: "srgb",
       },
-      { type: "shadow", bg: "surface", fg: "text", intensity: 20 },
+      { type: "shadow", bg: "surface", fg: "text", intensity: [6, 0] },
+      { type: "glow", bg: "surface-3", intensity: [3, 0] },
     ] as const) {
       const resolved = resolveColorTheme({
         palette: { info: declaration, "custom-status": declaration },
@@ -108,18 +111,60 @@ describe("theme extensions", () => {
           lightTone: [5, 100],
           darkTone: [10, 98],
           darkDesaturation: 0.5,
-          shadowTuning: { alphaMax: 0.5 },
         },
       },
     });
     expect(resolveColorTheme(custom.theme).colors.text.light).not.toBe(
       baseline.colors.text.light,
     );
-    expect(resolveColorTheme(custom.theme).colorTokens["#shadow"]).not.toEqual(
+    const tuned = normalizeDocsConfig({
+      theme: { glaze: { shadowTuning: { tint: 0.3, reach: 0.95 } } },
+    });
+    expect(resolveColorTheme(tuned.theme).colorTokens["#shadow"]).not.toEqual(
       baseline.colorTokens["#shadow"],
     );
     expect(() =>
       normalizeDocsConfig({ theme: { glaze: { lightTone: [100, 0] } } }),
     ).toThrow(/ascending/);
+    // Glaze 3 replaced the 2.x shadow tuning fields.
+    expect(() =>
+      normalizeDocsConfig({
+        theme: { glaze: { shadowTuning: { alphaMax: 0.3 } } },
+      } as never),
+    ).toThrow(/shadowTuning\.alphaMax/);
+    expect(() =>
+      normalizeDocsConfig({
+        theme: { glaze: { shadowTuning: { reach: 2 } } },
+      }),
+    ).toThrow(/reach must be a number from 0 to 1/);
+    // A role's own tuning follows the same rules; Cookbook emits no HDR tier.
+    expect(() =>
+      normalizeDocsConfig({
+        theme: {
+          palette: {
+            shadow: {
+              type: "shadow",
+              bg: "surface",
+              intensity: [6, 0],
+              tuning: { alphaMax: 0.3 },
+            },
+          },
+        },
+      } as never),
+    ).toThrow(/palette\.shadow\.tuning\.alphaMax/);
+    expect(() =>
+      normalizeDocsConfig({
+        theme: {
+          palette: {
+            "review-glow": {
+              type: "glow",
+              bg: "surface-3",
+              intensity: [3, 0],
+              tuning: { headroom: 1 },
+            },
+          },
+        },
+      }),
+    ).toThrow(/review-glow\.tuning\.headroom/);
   });
 });

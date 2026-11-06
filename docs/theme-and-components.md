@@ -178,11 +178,12 @@ The names `current`, `constructor`, and `prototype` are reserved.
 Declaring a built-in name intentionally overrides that role; use a project
 prefix for additional roles to avoid future naming collisions.
 
-When a status role such as `info` uses a mix or shadow definition, its derived
-`info-text` defaults to neutral, contrast-corrected text. Override `info-text`
-explicitly for a colored label; the mix/shadow dependency graph stays intact.
-A shadow status also uses a neutral derived surface, because Glaze does not allow
-a shadow to be a mix target. Override the surface separately when needed.
+When a status role such as `info` uses a mix, shadow, or glow definition, its
+derived `info-text` defaults to neutral, contrast-corrected text. Override
+`info-text` explicitly for a colored label; the dependency graph stays intact.
+A shadow or glow status also uses a neutral derived surface, because Glaze does
+not allow a shadow or glow to be a mix target. Override the surface separately
+when needed.
 
 ### Configure Glaze adaptation
 
@@ -200,20 +201,36 @@ theme: {
     "accent-surface-subtle": {
       type: "mix", base: "surface", target: "accent-surface", value: [12, 20],
     },
-    shadow: {
-      type: "shadow", bg: "surface", fg: "text", intensity: [12, 24],
-      tuning: { alphaMax: 0.3 },
-    },
+    shadow: { type: "shadow", bg: "surface", intensity: [6, 0] },
   },
 },
 ```
 
-Palette roles accept Glaze's regular, mix, and shadow declarations. Mix and
-shadow references use the same graph as other roles. Native Glaze restrictions
-still apply, including the requirement for shadow backgrounds and foregrounds
-to reference non-shadow colors. `shadowTuning` exposes `saturationFactor`,
-`maxSaturation`, `lightnessFactor`, `lightnessBounds`, `minGapTarget`, `alphaMax`,
-and `bgHueBlend`; a role's own `tuning` takes precedence.
+Palette roles accept Glaze's regular, mix, shadow, and glow declarations. Mix,
+shadow, and glow references use the same graph as other roles. Native Glaze
+restrictions still apply, including the requirement for shadow and glow
+backgrounds and foregrounds to reference colors that are neither shadows nor
+glows.
+
+Without `fg`, a shadow's `intensity` is the exact number of tones the page
+darkens under it (a glow's, how many it lightens), with an optional
+high-contrast value. `fg` names the element that casts the shadow, not a
+contrast reference, and scales the step by that element's tone;
+`tuning: { objectInfluence: 0 }` turns this off. A step can't pass black: the
+default dark page sits about 9 tones above it, and the default dark
+high-contrast page is black, so give a shadow on the page `0` as its
+high-contrast value. A step that doesn't fit paints at full strength, and Glaze
+logs a "cannot reach" warning.
+
+The built-in `shadow` role steps 8 tones in light and dark, and is transparent
+in high contrast, where borders carry the edges. On the default surface, a
+`darkTone` whose dark end is below about 14 (including `false`), or a numeric
+`theme.contrastLevel` from about 25 to 99, leaves the dark page too close to
+black for the step, so the built-in shadow reaches full strength and Glaze
+warns. `shadowTuning` exposes Glaze's `objectInfluence`, `tint`, `reach`, and
+`hueBleed` for every shadow; a role's own `tuning` takes precedence, and a glow
+takes only its own `tuning`. See
+[Glaze shadows and glows](https://glaze.tenphi.me/shadows-and-glows/).
 
 ### Built-in palette inventory
 

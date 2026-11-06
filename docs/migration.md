@@ -41,6 +41,34 @@ upgrade the site's Cookbook runtime or package-manager dependencies. Commit the
 documentation lock separately when intentionally updating imported content.
 Local Markdown needs no lock update.
 
+## 0.32.x to 0.33
+
+Cookbook now generates themes with Glaze 3. Generated colors can move slightly;
+check custom palettes in every appearance. See the
+[Glaze 3 upgrade notes](https://glaze.tenphi.me/migration/#upgrading-glaze).
+
+- **Shadows.** A shadow's `intensity` is now an exact tone step, and `fg` is
+  the element casting the shadow rather than a contrast reference. The built-in
+  `shadow` role steps 8 tones in light and dark and is transparent in high
+  contrast. In the default contrast mode, light shadows look as before and dark
+  ones are noticeably stronger, since 2.x stepped only about 3 tones on a dark
+  page. A numeric `theme.contrastLevel` now fades the light shadow toward its
+  high-contrast value instead of strengthening it. Re-tune custom `shadow`
+  roles: drop `fg: "text"` and set `intensity` to the number of tones you want,
+  with `0` in high contrast for a shadow on the page.
+- **Unreachable steps.** A step can't pass black, and the default dark page
+  sits about 9 tones above it. Glaze paints a step that doesn't fit at full
+  strength and logs a "cannot reach" warning. On the default surface, the
+  built-in shadow does this with a `darkTone` dark end below about 14
+  (including `false`) or a numeric `theme.contrastLevel` from about 25 to 99.
+- **Shadow tuning.** `saturationFactor`, `maxSaturation`, `lightnessFactor`,
+  `lightnessBounds`, `minGapTarget`, `alphaMax`, and `bgHueBlend` are gone and
+  fail validation, in `theme.glaze.shadowTuning` and in a role's own `tuning`.
+  The new fields are `objectInfluence`, `tint`, `reach`, and `hueBleed`. There
+  is no opacity cap: lower `intensity` for a lighter shadow.
+- **Glows.** Palette roles accept Glaze `glow` declarations, which lighten
+  `bg` by an exact tone step. Tune each glow with its own `tuning`.
+
 ## Upcoming custom-element naming
 
 All Cookbook-owned custom elements now use the `cookbook-*` prefix, including

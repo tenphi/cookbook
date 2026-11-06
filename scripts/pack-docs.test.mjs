@@ -110,7 +110,14 @@ description: https://example.com/guide
       expect(files).toContain(file);
     const guide = await readFile(join(root, "customization-rules.md"), "utf8");
     expect(guide).toContain("./upstream/tasty/docs/ai-agents.md");
-    expect(guide).toContain("./upstream/glaze/docs/methodology.md");
+    expect(guide).toContain("./upstream/glaze/docs/methodology.mdx");
+    expect(guide).toContain("./upstream/glaze/docs/reference/index.md");
+    const gettingStarted = await readFile(
+      join(root, "upstream/glaze/docs/getting-started.mdx"),
+      "utf8",
+    );
+    expect(gettingStarted).toContain('href="./methodology.mdx"');
+    expect(gettingStarted).toContain('href="./reference/index.md"');
     const metadata = await readFile(
       join(root, "upstream/manifest.json"),
       "utf8",

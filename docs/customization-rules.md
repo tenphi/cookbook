@@ -112,7 +112,7 @@ imports, configuration, and rendering setup when adapting them.
   [configuration](https://tasty.style/docs/configuration): component design and shared settings.
 - [Glaze methodology](https://glaze.tenphi.me/methodology/): semantic palettes
   and contrast relationships.
-- [Glaze API](https://glaze.tenphi.me/api/): color inputs, schemes, and contrast solving.
+- [Glaze API reference](https://glaze.tenphi.me/reference/): color inputs, schemes, and contrast solving.
 
 ## Documentation in the installed package
 
@@ -124,9 +124,11 @@ references. These match the dependencies used to build that Cookbook release;
 consumer dependency overrides can change the installed runtime independently.
 
 In the packaged copies, links to available upstream reference pages point to
-these local snapshots. The Markdown references work offline. Links to source
-code and artwork absent from the npm packages point to their upstream release
-and still need internet access. The published website keeps its online links.
+these local snapshots. The Markdown references work offline. Glaze's guides
+are MDX: their prose, code, and tables read offline, but their live examples
+render only on the Glaze website. Links to source code and artwork absent from
+the npm packages point to their upstream release and still need internet
+access. The published website keeps its online links.
 
 Start at `node_modules/@tenphi/cookbook/docs/customization-rules.md`. When the
 package manager uses a different layout, resolve the exported documentation

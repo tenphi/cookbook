@@ -835,44 +835,12 @@ export function validateConfig(config: DocsConfig): DocsDiagnostic[] {
           `theme.glaze.${key} must be false, [lo, hi], or {lo, hi, eps} with an ascending 0–100 range.`,
         );
     }
-    const tuning = settings.shadowTuning;
-    if (tuning !== undefined) {
-      if (!isRecord(tuning))
-        invalid(diagnostics, "theme.glaze.shadowTuning must be an object.");
-      else
-        for (const [key, value] of Object.entries(tuning)) {
-          if (
-            ![
-              "saturationFactor",
-              "maxSaturation",
-              "lightnessFactor",
-              "lightnessBounds",
-              "minGapTarget",
-              "alphaMax",
-              "bgHueBlend",
-            ].includes(key)
-          )
-            unknown(diagnostics, `theme.glaze.shadowTuning.${key}`);
-          const values = Array.isArray(value) ? value : [value];
-          if (
-            values.some(
-              (item) =>
-                typeof item !== "number" ||
-                !Number.isFinite(item) ||
-                item < 0 ||
-                item > 1,
-            ) ||
-            (key === "lightnessBounds" &&
-              (!Array.isArray(value) ||
-                value.length !== 2 ||
-                value[0] > value[1]))
-          )
-            invalid(
-              diagnostics,
-              `theme.glaze.shadowTuning.${key} must use values from 0 to 1.`,
-            );
-        }
-    }
+    if (settings.shadowTuning !== undefined)
+      validateLightingTuning(
+        "theme.glaze.shadowTuning",
+        settings.shadowTuning,
+        diagnostics,
+      );
   }
   if (isRecord(config.theme?.fontLoading)) {
     const choices = {
@@ -1159,7 +1127,7 @@ function validatePaletteColor(
                   "role",
                   "inherit",
                 ]
-              : value.type === "shadow"
+              : value.type === "shadow" || value.type === "glow"
                 ? [
                     "type",
                     "bg",
@@ -1175,11 +1143,53 @@ function validatePaletteColor(
     for (const key of Object.keys(value)) {
       if (!keys.has(key)) unknown(diagnostics, `theme.palette.${name}.${key}`);
     }
+    if (
+      "type" in value &&
+      (value.type === "shadow" || value.type === "glow") &&
+      value.tuning !== undefined
+    )
+      validateLightingTuning(
+        `theme.palette.${name}.tuning`,
+        value.tuning,
+        diagnostics,
+      );
   } catch (error) {
     invalid(
       diagnostics,
       `theme.palette.${name}: ${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+}
+
+/**
+ * Glaze 3 shadow and glow tuning. Cookbook never emits Glaze's HDR tier, so a
+ * glow's `headroom` is rejected with the removed 2.x fields.
+ */
+function validateLightingTuning(
+  path: string,
+  tuning: unknown,
+  diagnostics: DocsDiagnostic[],
+): void {
+  if (!isRecord(tuning)) {
+    invalid(diagnostics, `${path} must be an object.`);
+    return;
+  }
+  for (const [key, value] of Object.entries(tuning)) {
+    if (!["objectInfluence", "tint", "reach", "hueBleed"].includes(key))
+      unknown(diagnostics, `${path}.${key}`);
+    else if (
+      value !== undefined &&
+      (typeof value !== "number" ||
+        !Number.isFinite(value) ||
+        value < 0 ||
+        (key !== "objectInfluence" && value > 1))
+    )
+      invalid(
+        diagnostics,
+        key === "objectInfluence"
+          ? `${path}.objectInfluence must be a number of 0 or more.`
+          : `${path}.${key} must be a number from 0 to 1.`,
+      );
   }
 }
 
