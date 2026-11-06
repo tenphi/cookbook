@@ -51,7 +51,6 @@ export const SearchRoot = defineComponent("Search", {
       blockSize: "1rem",
       fill: "#current",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(closeIcon)}") center / contain no-repeat`,
     },
     OpenDialog: { $: "dialog", display: { "": null, "@own([open])": "flex" } },

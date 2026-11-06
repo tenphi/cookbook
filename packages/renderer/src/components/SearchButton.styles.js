@@ -69,7 +69,6 @@ export const SearchButtonRoot = extendComponent("SearchButton", Button, {
       blockSize: { "": "1rem", "!@md": "1.25rem" },
       fill: "#current",
       // The imported SVG is encoded at build time and never evaluated in the browser.
-      // eslint-disable-next-line tasty/no-runtime-styles-mutation
       mask: `url("${svgIconUrl(searchIcon)}") center / contain no-repeat`,
     },
   },
