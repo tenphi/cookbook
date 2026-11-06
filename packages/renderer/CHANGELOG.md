@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.32.1
+
+### Patch Changes
+
+- [#196](https://github.com/tenphi/cookbook/pull/196) [`d3710c5`](https://github.com/tenphi/cookbook/commit/d3710c5bfeab2a68a3973e795fc81f38cdae51af) Thanks [@tenphi](https://github.com/tenphi)! - Use the official Tasty ESLint plugin 1.17.0 for code validation and published lint configurations. It adds static-only style-prop checking and diagnoses invalid Tasty syntax in native style values.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.32.1
+
 ## 0.32.0
 
 ### Minor Changes
