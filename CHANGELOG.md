@@ -2,6 +2,13 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.33.2
+
+### Patch Changes
+
+- [#205](https://github.com/tenphi/cookbook/pull/205) [`8221028`](https://github.com/tenphi/cookbook/commit/8221028de8300b1174f48fedcb917f0f7ee87034) Thanks [@tenphi](https://github.com/tenphi)! - Use Tasty 3.18.0 for documentation styling, including state aliases that reference other aliases.
+- [#203](https://github.com/tenphi/cookbook/pull/203) [`68305bf`](https://github.com/tenphi/cookbook/commit/68305bf153e57250e97edb30eadd0271842d6085) Thanks [@tenphi](https://github.com/tenphi)! - Use the official Tasty ESLint plugin 1.18.0 in published lint configurations. It adds an opt-in wrappers-only mode for protected-restyle checks while preserving the default checks.
+
 ## 0.33.1
 
 ### Patch Changes

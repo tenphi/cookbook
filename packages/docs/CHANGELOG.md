@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.33.2
+
+### Patch Changes
+
+- [#205](https://github.com/tenphi/cookbook/pull/205) [`8221028`](https://github.com/tenphi/cookbook/commit/8221028de8300b1174f48fedcb917f0f7ee87034) Thanks [@tenphi](https://github.com/tenphi)! - Use Tasty 3.18.0 for documentation styling, including state aliases that reference other aliases.
+
 ## 0.33.1
 
 ### Patch Changes
