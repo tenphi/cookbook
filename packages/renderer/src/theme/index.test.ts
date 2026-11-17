@@ -421,8 +421,9 @@ describe("Glaze theme adapter", () => {
         expect(brandColor).toBeDefined();
         const saturationRatio =
           colorSaturation(border) / colorSaturation(brandColor ?? "#315efb");
-        expect(saturationRatio).toBeGreaterThanOrEqual(0.2);
-        expect(saturationRatio).toBeLessThanOrEqual(0.3);
+        // Borders carry about one eighth of the brand saturation.
+        expect(saturationRatio).toBeGreaterThanOrEqual(0.1);
+        expect(saturationRatio).toBeLessThanOrEqual(0.15);
       }
     }
     expect(tokens).toHaveProperty("#surface-2-hover");

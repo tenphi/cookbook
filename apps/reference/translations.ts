@@ -13,7 +13,7 @@ export const translations: Record<string, Record<string, string>> = {
     "navigation.Examples": "Ejemplos (en inglés)",
     "navigation.Changelog": "Cambios (en inglés)",
     "navigation.Get started": "Empezar",
-    copyPage: "Copiar página",
+    copyPage: "Copiar como Markdown",
     viewMarkdown: "Descargar Markdown",
     pageCopied: "Página copiada",
     pageCopyError:
@@ -88,7 +88,7 @@ export const translations: Record<string, Record<string, string>> = {
     "navigation.Examples": "Примеры (на английском)",
     "navigation.Changelog": "История изменений (на английском)",
     "navigation.Get started": "Начать работу",
-    copyPage: "Скопировать страницу",
+    copyPage: "Скопировать как Markdown",
     viewMarkdown: "Скачать Markdown",
     pageCopied: "Страница скопирована",
     pageCopyError:
@@ -162,7 +162,7 @@ export const translations: Record<string, Record<string, string>> = {
     "navigation.Examples": "使用例（英語）",
     "navigation.Changelog": "変更履歴（英語）",
     "navigation.Get started": "使い始める",
-    copyPage: "ページをコピー",
+    copyPage: "Markdown としてコピー",
     viewMarkdown: "Markdown をダウンロード",
     pageCopied: "ページをコピーしました",
     pageCopyError:
@@ -236,7 +236,7 @@ export const translations: Record<string, Record<string, string>> = {
     "navigation.Examples": "示例（英文）",
     "navigation.Changelog": "更新日志（英文）",
     "navigation.Get started": "开始使用",
-    copyPage: "复制页面",
+    copyPage: "复制为 Markdown",
     viewMarkdown: "下载 Markdown",
     pageCopied: "页面已复制",
     pageCopyError: "无法复制。请下载 Markdown 以阅读或复制文本。",
