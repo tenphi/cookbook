@@ -7,7 +7,7 @@ type MessageOptions = {
 };
 
 export const ENGLISH_MESSAGES = {
-  copyPage: "Copy page",
+  copyPage: "Copy as Markdown",
   viewMarkdown: "Download Markdown",
   pageCopied: "Page copied",
   pageCopyError: "Could not copy. Download Markdown to read or copy the text.",
@@ -48,7 +48,7 @@ export const ENGLISH_MESSAGES = {
 } as const;
 export type MessageKey = keyof typeof ENGLISH_MESSAGES;
 const FRENCH_MESSAGES: Record<MessageKey, string> = {
-  copyPage: "Copier la page",
+  copyPage: "Copier en Markdown",
   viewMarkdown: "Télécharger le Markdown",
   pageCopied: "Page copiée",
   pageCopyError:

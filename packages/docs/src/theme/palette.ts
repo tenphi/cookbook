@@ -273,16 +273,19 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     mode: "static",
     opacity: 0.5,
   });
+  // Borders carry only a hint of the brand hue. With a vivid brand this keeps
+  // them near the saturation of `text-soft`, so they do not read as tinted
+  // lines against the neutral surfaces.
   definitions.border = {
     base: "surface",
     tone: ["-9", "-22"],
-    saturation: 0.205,
+    saturation: 0.12,
     mode: "auto",
   };
   definitions["border-strong"] = {
     base: "surface",
     tone: ["-20", "-38"],
-    saturation: 0.205,
+    saturation: 0.12,
     mode: "auto",
   };
   // Keep light code on white while carrying the brand hue into dark code surfaces.

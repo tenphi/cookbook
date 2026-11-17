@@ -148,8 +148,8 @@ it stays complete when a surface changes.
 - `Preview`: `Caption`, `Stage`, `Frame`, `Code`, `Summary`, `HoverSummary`, `ActiveSummary`, `Pre`
 - `SiteLogo`: `Image`, `Light`, `Dark`
 - `Logo`: `Svg`, `Mark`
-- `PageActions`: `Control`, `Hover`, `Focus`, `Pending`, `Status`
-- `Footer`: `Meta`, `MetaLink`, `MetaUpdated`, `Credit`, `CreditLink`
+- `PageActions`: `Control`, `Hover`, `Active`, `Focus`, `Pending`, `Status`, `Icon`, `CopyIcon`, `DownloadIcon`
+- `Footer`: `Meta`, `MetaLink`, `MetaLinkIcon`, `MetaUpdated`, `Credit`, `CreditLink`
 - `PackageVersion`: None
 
 #### Search

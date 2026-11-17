@@ -7,8 +7,9 @@ afterEach(() => {
 });
 function actions() {
   document.body.innerHTML =
-    '<cookbook-page-actions><button data-copy-page="/page.md">Copy page</button><span role="status"></span></cookbook-page-actions>';
+    '<cookbook-page-actions><button data-copy-page="/page.md">Copy as Markdown</button><span role="status"></span></cookbook-page-actions>';
   return {
+    actions: document.querySelector<HTMLElement>("cookbook-page-actions")!,
     button: document.querySelector("button")!,
     status: document.querySelector("[role=status]")!,
   };
@@ -38,8 +39,28 @@ describe("copy page", () => {
     expect(button.hasAttribute("aria-disabled")).toBe(false);
     expect(document.activeElement).toBe(button);
   });
+  it("briefly marks a successful copy so the control can confirm it", async () => {
+    const { actions: root, button, status } = actions();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response('---\ntitle: "Guide"\n---')),
+    );
+    vi.stubGlobal("navigator", {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+    });
+    vi.useFakeTimers();
+    try {
+      button.click();
+      await vi.waitFor(() => expect(status.textContent).toBe("Page copied"));
+      expect(root.dataset.copyState).toBe("copied");
+      vi.advanceTimersByTime(2_000);
+      expect(root.dataset.copyState).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it("reports blocked clipboard or invalid page responses and allows retry", async () => {
-    const { button, status } = actions();
+    const { actions: root, button, status } = actions();
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(new Response("<html>404</html>")),
@@ -58,6 +79,7 @@ describe("copy page", () => {
     button.click();
     await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
     expect(status.textContent).toContain("Download Markdown");
+    expect(root.dataset.copyState).toBeUndefined();
     expect(button.hasAttribute("aria-disabled")).toBe(false);
   });
 });

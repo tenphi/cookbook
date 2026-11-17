@@ -138,7 +138,8 @@ wider steps in high-contrast mode. Their saturation also steps down to 75% and
 move farther from the base tone.
 
 Borders stay intentionally quiet: Glaze derives their hue from `brand` but
-uses only about one fifth (a `0.205` factor) of the brand saturation. Normal and high-contrast modes
+uses only about one eighth (a `0.12` factor) of the brand saturation, which keeps
+them close to the soft text color. Normal and high-contrast modes
 change border tone, not that restrained saturation relationship.
 
 ### Add palette colors and reference other roles

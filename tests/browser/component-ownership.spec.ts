@@ -651,13 +651,23 @@ test("pagination hover preserves geometry and configured border widths", async (
               themeBorder: getComputedStyle(document.documentElement)
                 .getPropertyValue("--border-color")
                 .trim(),
+              strongBorder: getComputedStyle(document.documentElement)
+                .getPropertyValue("--border-strong-color")
+                .trim(),
             };
           });
         const before = await geometry();
         // Links are bordered at rest, not only on hover.
         expect(before.borderColor).toBe(before.themeBorder);
         await link.hover();
-        expect(await geometry()).toEqual(before);
+        // Hover strengthens the border color without moving or resizing the link.
+        await expect
+          .poll(async () => (await geometry()).borderColor)
+          .toBe(before.strongBorder);
+        expect({
+          ...(await geometry()),
+          borderColor: before.borderColor,
+        }).toEqual(before);
         if (site === "custom-header") {
           expect(before.borderWidth).toBe("3px");
           expect(before.borderStyle).toBe("dashed");

@@ -517,8 +517,14 @@ test("code group keyboard navigation and copying share the fence controls", asyn
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "pnpm add cookbook",
   );
-  await page.getByRole("button", { name: "Copy page", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Copy as Markdown", exact: true })
+    .click();
   await expect(page.getByText("Page copied", { exact: true })).toBeVisible();
+  await expect(page.locator("cookbook-page-actions")).toHaveAttribute(
+    "data-copy-state",
+    "copied",
+  );
 });
 
 test("code group panels start at their padding and keep the copy button in the corner", async ({

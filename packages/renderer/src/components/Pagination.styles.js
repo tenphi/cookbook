@@ -27,7 +27,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       color: "#text-soft",
       fill: "#surface-2",
       shadow: "none",
-      transition: "color, fill",
+      transition: "color, fill, border",
       textDecoration: "none",
       overflowWrap: "anywhere",
     },
@@ -77,7 +77,7 @@ export const PaginationRoot = defineComponent("Pagination", {
       $: "a",
       // Recolor only; Link owns the border width and style, including theme overrides.
       // eslint-disable-next-line tasty/prefer-shorthand-property
-      borderColor: { "": null, "@own(:hover)": "#border" },
+      borderColor: { "": null, "@own(:hover)": "#border-strong" },
       fill: { "": null, "@own(:hover)": "#surface-2-hover" },
     },
     ActiveLink: {

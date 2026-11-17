@@ -129,7 +129,7 @@ any search appearance; validate the deployed output using Google's
 
 ## Page text for readers and agents
 
-Published pages include **Copy page** and **Download Markdown** controls. The head also
+Published pages include **Copy as Markdown** and **Download Markdown** controls. The head also
 advertises a `rel="alternate" type="text/markdown"` URL. Downloads contain clean
 Markdown with canonical URL, source path, language, and version metadata. Code
 fences and rewritten links are preserved. Executable MDX, expressions, raw HTML,
@@ -140,7 +140,8 @@ The version comes from the matching documentation version, then `site.version`.
 Copying requires browser clipboard access; the Markdown link remains available if
 permission is unavailable or JavaScript is disabled. Set `site.seo.copyPage: false`
 to disable page text and both controls. Customize the controls with
-`theme.styles.PageActions`: `Control`, `Hover`, `Focus`, `Pending`, and `Status`.
+`theme.styles.PageActions`: `Control`, `Hover`, `Active`, `Focus`, `Pending`, `Status`,
+`Icon`, `CopyIcon`, and `DownloadIcon`.
 
 `llms.txt` links to discoverable canonical pages and their Markdown representations.
 `_cookbook/publishing.json` records non-draft page URLs and publishing policy for
