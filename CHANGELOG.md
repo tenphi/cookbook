@@ -2,6 +2,16 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.33.2
+
+### Patch Changes
+
+- [#207](https://github.com/tenphi/cookbook/pull/207) [`cefaf4c`](https://github.com/tenphi/cookbook/commit/cefaf4c4602d4ed20f3eeef828dea9e2f005dc32) Thanks [@tenphi](https://github.com/tenphi)! - Make borders quieter and refresh the page footer controls. The `border` and `border-strong` roles now take about one eighth (a `0.12` factor) of the brand saturation instead of one fifth, so with a vivid brand they stay close to the soft text color instead of reading as tinted lines. The page actions share the pagination cards' fill, gain copy and download icons, and give clearer hover and pressed feedback. The copy control is now labeled **Copy as Markdown** and briefly shows a check after a successful copy. Pagination hover strengthens the card border, and the **Edit page** link gains a pencil icon, a rounded focus ring, and a stronger resting color than the surrounding metadata. New customizable sub-elements: `PageActions.Active`, `PageActions.Icon`, `PageActions.CopyIcon`, `PageActions.DownloadIcon`, and `Footer.MetaLinkIcon`.
+- [#205](https://github.com/tenphi/cookbook/pull/205) [`8221028`](https://github.com/tenphi/cookbook/commit/8221028de8300b1174f48fedcb917f0f7ee87034) Thanks [@tenphi](https://github.com/tenphi)! - Use Tasty 3.18.0 for documentation styling, including state aliases that reference other aliases.
+- [#208](https://github.com/tenphi/cookbook/pull/208) [`444666e`](https://github.com/tenphi/cookbook/commit/444666ede6794e99aecefd1ff7604686e5109557) Thanks [@tenphi](https://github.com/tenphi)! - Update the bundled Tasty ESLint plugin to 1.20.0 for configurable protected inner-style allowances and correct line-height shorthand checks in extension layers.
+- [#203](https://github.com/tenphi/cookbook/pull/203) [`68305bf`](https://github.com/tenphi/cookbook/commit/68305bf153e57250e97edb30eadd0271842d6085) Thanks [@tenphi](https://github.com/tenphi)! - Use the official Tasty ESLint plugin 1.18.0 in published lint configurations. It adds an opt-in wrappers-only mode for protected-restyle checks while preserving the default checks.
+- [#209](https://github.com/tenphi/cookbook/pull/209) [`c2bb170`](https://github.com/tenphi/cookbook/commit/c2bb170fbc081733e8d18ef911d21c298dc1be91) Thanks [@tenphi](https://github.com/tenphi)! - Upgrade the bundled Tasty lint plugin to check raw colors in native SVG color attributes and explain theme-aware alternatives.
+
 ## 0.33.1
 
 ### Patch Changes

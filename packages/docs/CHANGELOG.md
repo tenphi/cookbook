@@ -1,5 +1,13 @@
 # @tenphi/docs
 
+## 0.33.2
+
+### Patch Changes
+
+- [#207](https://github.com/tenphi/cookbook/pull/207) [`cefaf4c`](https://github.com/tenphi/cookbook/commit/cefaf4c4602d4ed20f3eeef828dea9e2f005dc32) Thanks [@tenphi](https://github.com/tenphi)! - Make borders quieter and refresh the page footer controls. The `border` and `border-strong` roles now take about one eighth (a `0.12` factor) of the brand saturation instead of one fifth, so with a vivid brand they stay close to the soft text color instead of reading as tinted lines. The page actions share the pagination cards' fill, gain copy and download icons, and give clearer hover and pressed feedback. The copy control is now labeled **Copy as Markdown** and briefly shows a check after a successful copy. Pagination hover strengthens the card border, and the **Edit page** link gains a pencil icon, a rounded focus ring, and a stronger resting color than the surrounding metadata. New customizable sub-elements: `PageActions.Active`, `PageActions.Icon`, `PageActions.CopyIcon`, `PageActions.DownloadIcon`, and `Footer.MetaLinkIcon`.
+
+- [#205](https://github.com/tenphi/cookbook/pull/205) [`8221028`](https://github.com/tenphi/cookbook/commit/8221028de8300b1174f48fedcb917f0f7ee87034) Thanks [@tenphi](https://github.com/tenphi)! - Use Tasty 3.18.0 for documentation styling, including state aliases that reference other aliases.
+
 ## 0.33.1
 
 ### Patch Changes
