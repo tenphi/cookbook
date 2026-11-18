@@ -107,7 +107,6 @@ export function MarkdownCodeBlockStyles() {
           diff: "100% max-content initial",
         },
         // Zero line height removes gaps between block diff lines; the tight modifier would not.
-        // eslint-disable-next-line tasty/prefer-shorthand-property
         lineHeight: { "": null, diff: "0" },
       },
       DiffLine: {
