@@ -37,8 +37,8 @@ your agent:
 - Tasty's and Glaze's rules and tools, which show the CSS a style produces and
   every color of your theme in light, dark, and high contrast, from your site's
   own theme;
-- the Tasty lint plugin's rule, a lint tool, and a hook that lints each style
-  file your agent edits.
+- the Tasty lint plugin's rule, a lint tool, and, in Claude Code, a hook that
+  lints each style file your agent edits.
 
 Your site builds the same without it. [Agent harness](./agent-harness.md) has
 the details for your agent.

@@ -144,10 +144,14 @@ to disable page text and both controls. Customize the controls with
 `Icon`, `CopyIcon`, and `DownloadIcon`.
 
 `llms.txt` links to discoverable canonical pages and their Markdown representations.
-It follows the default language's sidebar: one section per navigation tab, or a
-single **Documentation** section, with pages in sidebar order. Discoverable pages
-that the sidebar does not list, such as translations, follow under **Other pages**. Drafts,
-noindex pages, and non-canonical duplicates are omitted.
+It follows the default language's sidebar, with pages in sidebar order: a
+**Documentation** section for the top-level `items`, and one section for each
+navigation tab with items. Each page is listed under the tab that pages show for
+it. Discoverable pages that the sidebar does not list, such as translations,
+follow under **Other pages**. Drafts, noindex pages, and non-canonical duplicates
+are omitted. `_cookbook/publishing.json` records non-draft page URLs and
+publishing policy for validation tools. Existing `public/llms.txt` and root
+`public/robots.txt` take precedence; maintain their policy yourself.
 
 `llms.txt` is an optional discovery aid for agents that use the
 [llms.txt proposal](https://llmstxt.org/). Google's
@@ -156,9 +160,6 @@ says Google Search does not use it and prioritizes ordinary crawlability and
 useful content. The HTML pages stay the primary source: their text, headings,
 links, and metadata are in the static response, so an agent can read them without
 running client JavaScript. Write descriptive headings and link text.
-`_cookbook/publishing.json` records non-draft page URLs and publishing policy for
-validation tools. Existing `public/llms.txt` and root `public/robots.txt` take
-precedence; maintain their policy yourself.
 
 For static hosts, apply `X-Robots-Tag: noindex` to `/_cookbook/pages/*` (with your
 base prefix) to keep alternate Markdown copies out of web search. For example,

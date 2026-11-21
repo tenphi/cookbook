@@ -1,8 +1,19 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { renderAgentMarkdown, routeUrl, type DocsGraph } from "@tenphi/docs";
-import { localizedNavigation, localizedRoute } from "./localization.js";
 import {
+  renderAgentMarkdown,
+  routeUrl,
+  type DocsGraph,
+  type NavigationItem,
+} from "@tenphi/docs";
+import {
+  defaultLocaleKey,
+  localePath,
+  localizedNavigation,
+  localizedRoute,
+} from "./localization.js";
+import {
+  activeNavigationTab,
   pageSidebar,
   resolveNavigationLayout,
   type PageSidebarItem,
@@ -57,10 +68,11 @@ export function renderLlmsTxt(graph: DocsGraph): string {
 type DocsEntry = DocsGraph["entries"][number];
 
 /**
- * Group pages as the default language's sidebar does: one section per
- * navigation tab (or one for an unsectioned sidebar), pages in sidebar order.
- * Pages that the sidebar does not list, such as translations, follow in their
- * own section.
+ * Group pages as the default language's sidebar does: one section per sidebar
+ * group (the top-level items, then each tab with items), pages in sidebar
+ * order. A page goes in the section of the tab that pages select for it, as
+ * readers see it. Pages that the sidebar does not list, such as translations,
+ * follow in their own section.
  */
 function llmsSections(
   graph: DocsGraph,
@@ -68,38 +80,79 @@ function llmsSections(
 ): Array<[string, DocsEntry[]]> {
   const { locales, defaultLocale, translations } = graph.config;
   const options = { locales, defaultLocale, translations };
-  const locale = locales
-    ? (defaultLocale ?? (locales.root ? "root" : Object.keys(locales)[0]!))
-    : "root";
+  const locale = defaultLocaleKey(options);
   // Pages narrow the sidebar to their language first; do the same here.
-  const localized = localizedNavigation(
+  const { layout, routes } = localizedNavigation(
     resolveNavigationLayout(graph.config.navigation),
     graph.routes,
     localizedRoute("/", locale, options),
     options,
   );
-  const layout = localized.layout;
-  const sidebar = pageSidebar(layout, localized.routes);
   const byRoute = new Map(entries.map((entry) => [entry.route, entry]));
-  const listed = new Set<string>();
+  const entryFor = (link: string) =>
+    /^(?:[a-z][a-z\d+.-]*:|\/\/|[?#])/i.test(link)
+      ? undefined
+      : byRoute.get(localizedRoute(link, locale, options));
   const pages = (items: PageSidebarItem[]): DocsEntry[] =>
     items.flatMap((item) => {
       if (!("link" in item)) return pages(item.items);
-      if (/^(?:[a-z][a-z\d+.-]*:|\/\/|[?#])/i.test(item.link)) return [];
-      const entry = byRoute.get(localizedRoute(item.link, locale, options));
-      if (!entry || listed.has(entry.route)) return [];
-      listed.add(entry.route);
-      return [entry];
+      const entry = entryFor(item.link);
+      return entry ? [entry] : [];
     });
-  const sections: Array<[string, DocsEntry[]]> = layout.sectioned
-    ? sidebar.map((item) => [
-        item.label,
-        "link" in item ? pages([item]) : pages(item.items),
-      ])
-    : [["Documentation", pages(sidebar)]];
-  const rest = entries.filter((entry) => !listed.has(entry.route));
-  if (rest.length > 0) sections.push(["Other pages", rest]);
-  return sections.filter(([, section]) => section.length > 0);
+  // The sidebar that pages build from these items.
+  const sidebar = (items?: NavigationItem[]) =>
+    pages(
+      pageSidebar(
+        { ...(items ? { items } : {}), tabs: [], sectioned: false },
+        routes,
+      ),
+    );
+  const sections: Array<{ label: string; tab: number; pages: DocsEntry[] }> =
+    [];
+  if (!layout.sectioned || layout.fallbackSidebarGroup !== undefined)
+    sections.push({
+      label: "Documentation",
+      tab: -1,
+      pages: sidebar(layout.items),
+    });
+  if (layout.sectioned)
+    for (const [index, tab] of layout.tabs.entries()) {
+      if (tab.items === undefined) continue;
+      const listed = tab.items.length ? sidebar(tab.items) : [];
+      // A tab's own page leads its section, even when its items leave it out.
+      const home = entryFor(tab.link);
+      sections.push({
+        label: tab.label,
+        tab: index,
+        pages: home && !listed.includes(home) ? [home, ...listed] : listed,
+      });
+    }
+  // Pages show the sidebar of the tab they select, or the top-level items
+  // when that tab has none (Sidebar.astro). A page that its own section does
+  // not list stays where the sidebar lists it first.
+  const sectionOf = (entry: DocsEntry): number => {
+    const tab = layout.sectioned
+      ? activeNavigationTab(layout.tabs, localePath(entry.route, options))
+      : -1;
+    const own = sections.findIndex(
+      (section) => section.tab === (layout.tabs[tab]?.items ? tab : -1),
+    );
+    return own >= 0 && sections[own]!.pages.includes(entry)
+      ? own
+      : sections.findIndex((section) => section.pages.includes(entry));
+  };
+  const listed = new Set<DocsEntry>();
+  const result = sections.map((section, index): [string, DocsEntry[]] => [
+    section.label,
+    section.pages.filter((entry) => {
+      if (listed.has(entry) || sectionOf(entry) !== index) return false;
+      listed.add(entry);
+      return true;
+    }),
+  ]);
+  const rest = entries.filter((entry) => !listed.has(entry));
+  if (rest.length > 0) result.push(["Other pages", rest]);
+  return result.filter(([, section]) => section.length > 0);
 }
 
 export function renderRobotsTxt(site: string, sitemap = true): string {

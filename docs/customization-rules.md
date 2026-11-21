@@ -130,12 +130,12 @@ render only on the Glaze website. Links to source code and artwork absent from
 the npm packages point to their upstream release and still need internet
 access. The published website keeps its online links.
 
-Start at `node_modules/@tenphi/cookbook/docs/customization-rules.md`. When the
-package manager uses a different layout, resolve the exported documentation
-path from the consuming project:
+Start at `node_modules/@tenphi/cookbook/docs/agents.md`: it names the page for
+each task. When the package manager uses a different layout, resolve the
+exported documentation path from the consuming project:
 
 ```sh
-node --input-type=module -e "console.log(import.meta.resolve('@tenphi/cookbook/docs/customization-rules.md'))"
+node --input-type=module -e "console.log(import.meta.resolve('@tenphi/cookbook/docs/agents.md'))"
 ```
 
 Read the resolved file as Markdown; documentation exports are file references,
@@ -149,10 +149,11 @@ instruction to your project's existing agent guidance, adjusting the path for
 the app that depends on Cookbook:
 
 ```md
-Before customizing this Cookbook site, read
-node_modules/@tenphi/cookbook/docs/customization-rules.md and follow its linked
-Tasty and Glaze references. Inspect docs.config.ts (and tasty.config.ts, if
-present) first.
+Before changing this Cookbook site, read
+node_modules/@tenphi/cookbook/docs/agents.md and the page it names for the
+task. Before customizing styles, read customization-rules.md there and follow
+its linked Tasty and Glaze references. Inspect docs.config.ts (and
+tasty.config.ts, if present) first.
 Use Cookbook's public styling APIs, semantic palette tokens, typography
 presets, and partial component overrides. Run the project's style lint,
 cookbook doctor, and build commands after changes.

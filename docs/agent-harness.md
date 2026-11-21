@@ -11,13 +11,13 @@ where they are.
 
 ## What the harness gives an agent
 
-| Unit                                                                                                          | What it does                                                                                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cookbook:rules/usage`                                                                                        | An always-on rule: where a site's files are, how to change its look, and how to check it.                                                                                     |
-| `cookbook:docs`                                                                                               | The index of these docs, at the installed version.                                                                                                                            |
-| `tasty:rules/usage`, `tasty:styles`, `tasty:docs`                                                             | Tasty's style rule, its docs, and a tool that prints the CSS a styles object produces. Cookbook's patch points the tool at the site's theme.                                  |
-| `glaze:rules/colors`, `glaze:inspect`, `glaze:color`, `glaze:contrast`, `glaze:docs`, the `glaze-theme` skill | Glaze's color rule, docs, tools, and skill. Cookbook's patch says that a site's colors live in `theme.brand` and `theme.palette`, and how to check them.                      |
-| `tasty-lint:rules/usage`, `tasty-lint:check`, `tasty-lint:docs`, an edit hook                                 | The Tasty lint plugin's rule and docs, a tool that runs only its rules, and a hook that lints each file the agent edits. Cookbook's patch says what the rules need in a site. |
+| Unit                                                                                                          | What it does                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cookbook:rules/usage`                                                                                        | An always-on rule: where a site's files are, how to change its look, and how to check it.                                                                                                      |
+| `cookbook:docs`                                                                                               | The index of these docs, at the installed version.                                                                                                                                             |
+| `tasty:rules/usage`, `tasty:styles`, `tasty:docs`                                                             | Tasty's style rule, its docs, and a tool that prints the CSS a styles object produces. Cookbook's patch points the tool at the site's theme.                                                   |
+| `glaze:rules/colors`, `glaze:inspect`, `glaze:color`, `glaze:contrast`, `glaze:docs`, the `glaze-theme` skill | Glaze's color rule, docs, tools, and skill. Cookbook's patch says that a site's colors live in `theme.brand` and `theme.palette`, and how to check them.                                       |
+| `tasty-lint:rules/usage`, `tasty-lint:check`, `tasty-lint:docs`, an edit hook                                 | The Tasty lint plugin's rule and docs, a tool that runs only its rules, and, in Claude Code, a hook that lints each file the agent edits. Cookbook's patch says what the rules need in a site. |
 
 The Tasty, Glaze, and lint units come from the versions that Cookbook depends
 on. `npx -y @tenphi/harnesspm help @tenphi/cookbook` prints Cookbook's rule.
@@ -36,6 +36,7 @@ npx harnesspm init
 ```
 
 With pnpm, run `pnpm add -D @tenphi/harnesspm` and `pnpm exec harnesspm init`.
+With Yarn, run `yarn add -D @tenphi/harnesspm` and `yarn harnesspm init`.
 
 `init` adds a block to `AGENTS.md`, links skills for Claude Code and Codex, and
 makes every install run `harnesspm sync`. Commit `AGENTS.md`, `CLAUDE.md`,
@@ -61,11 +62,11 @@ as new files. Commit only the files above and the creator's
 Rules, docs, and skills work at once. Scripts and hooks run code, so they stay
 off until the person trusts their packages:
 
-| Package                       | Tools                                                                                     |
-| ----------------------------- | ----------------------------------------------------------------------------------------- |
-| `@tenphi/tasty`               | `tasty:styles` prints the CSS of a styles object.                                         |
-| `@tenphi/glaze`               | `glaze:inspect`, `glaze:color`, and `glaze:contrast` resolve colors and measure contrast. |
-| `@tenphi/eslint-plugin-tasty` | `tasty-lint:check` lints files, and a hook lints each file that the agent edits.          |
+| Package                       | Tools                                                                                           |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `@tenphi/tasty`               | `tasty:styles` prints the CSS of a styles object.                                               |
+| `@tenphi/glaze`               | `glaze:inspect`, `glaze:color`, and `glaze:contrast` resolve colors and measure contrast.       |
+| `@tenphi/eslint-plugin-tasty` | `tasty-lint:check` lints files, and in Claude Code a hook lints each file that the agent edits. |
 
 Cookbook's own harness has no tools, so it needs no trust. Never add a package
 to `trust` yourself: tell the person what each pending tool does, and ask how far
@@ -102,7 +103,10 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
 ```
 
 - `tasty:styles` prints the CSS with the site's tokens, units, presets, and
-  states, and flags any value that stays unresolved.
+  states, and flags unknown units, presets, and recipes. It does not check
+  names: a misspelled `#color` or `$token` still prints as a `var()`
+  ([tasty#473](https://github.com/tenphi/tasty/issues/473)). Look a color up
+  with `glaze:inspect` and `--color <name>`.
 - `glaze:inspect` prints each color in light, dark, and both high-contrast
   schemes, with its contrast against its base.
 - The module reads the `docs.config.*` of the folder you run the tool in, also

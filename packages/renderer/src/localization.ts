@@ -18,6 +18,18 @@ type LocaleOptions = {
   trailingSlash?: TrailingSlash | undefined;
 };
 
+/** The locale that stands in for missing translations: `defaultLocale`, else the root locale, else the first one. */
+export function defaultLocaleKey(
+  options: Pick<LocaleOptions, "locales" | "defaultLocale">,
+): string {
+  return (
+    options.defaultLocale ??
+    (options.locales?.root
+      ? "root"
+      : (Object.keys(options.locales ?? {})[0] ?? "root"))
+  );
+}
+
 export function routeLocale(path: string, options: LocaleOptions): string {
   const first = normalizeNavigationPath(path).split("/")[1];
   return first && first !== "root" && options.locales?.[first] ? first : "root";
@@ -69,11 +81,7 @@ export function localeTarget(
       .filter((route) => route.discoverable !== false)
       .map((route) => route.route),
   );
-  const fallback =
-    options.defaultLocale ??
-    (options.locales?.root
-      ? "root"
-      : (Object.keys(options.locales ?? {})[0] ?? "root"));
+  const fallback = defaultLocaleKey(options);
   return [
     localizedRoute(path, locale, options),
     localizedRoute(path, fallback, options),
@@ -131,9 +139,7 @@ export function localizedNavigation(
       .filter((route) => route.discoverable !== false)
       .map((route) => [route.route, route]),
   );
-  const fallbackLocale =
-    options.defaultLocale ??
-    (options.locales.root ? "root" : Object.keys(options.locales)[0]!);
+  const fallbackLocale = defaultLocaleKey(options);
   const convert = (items: NavigationItem[]): NavigationItem[] =>
     items.flatMap((item): NavigationItem[] => {
       const link = typeof item === "string" ? item : item.link;
@@ -247,12 +253,7 @@ export function localeAlternates(
         : [];
     },
   );
-  const fallback = localizedRoute(
-    path,
-    options.defaultLocale ??
-      (options.locales.root ? "root" : Object.keys(options.locales)[0]!),
-    options,
-  );
+  const fallback = localizedRoute(path, defaultLocaleKey(options), options);
   if (available.has(fallback))
     alternates.push({ lang: "x-default", route: fallback });
   return alternates;

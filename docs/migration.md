@@ -28,12 +28,8 @@ range. Review the preview with your custom styles, plugins, fonts, languages,
 and versions before deploying. After deployment, run `cookbook check-build
 --url https://docs.example.com/` against that exact build output.
 
-If the site uses [harnesspm](./agent-harness.md), run `npx harnesspm sync`
-after the upgrade and commit the changed `harnesspm.lock.json` and `AGENTS.md`
-with it: the new release brings its own agent harness. When it brings new Tasty,
-Glaze, or lint versions of packages that `harnesspm.json` trusts with `"pin"`,
-their tools stay off, and `npx harnesspm sync --check` fails, until a person runs
-`npx harnesspm approve` in their own terminal.
+If the site uses harnesspm, the new release brings its own agent harness:
+follow [Keep it current](./agent-harness.md#keep-it-current) after the upgrade.
 
 The creator starts new projects; rerunning it over an existing project is not
 an upgrade path. Generated sites include `.agents/skills/upgrade-cookbook/`

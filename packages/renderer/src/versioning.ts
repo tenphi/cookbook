@@ -6,6 +6,7 @@ import {
   type DocsRoute,
   type SiteVersion,
 } from "@tenphi/docs";
+import { defaultLocaleKey } from "./localization.js";
 import { normalizeNavigationPath } from "./navigation.js";
 
 export function versionLinks(
@@ -34,11 +35,7 @@ export function versionLinks(
       .filter((route) => route.discoverable !== false)
       .map((route) => route.route),
   );
-  const defaultLocale =
-    options.defaultLocale ??
-    (options.locales?.root
-      ? "root"
-      : (Object.keys(options.locales ?? {})[0] ?? "root"));
+  const defaultLocale = defaultLocaleKey(options);
   const locales = [
     locale,
     defaultLocale,
