@@ -1,0 +1,11 @@
+## Where colors come from
+
+- Cookbook's palette is one Glaze theme, built in `packages/docs/src/theme/palette.ts` from a site's `theme.brand` and `theme.palette`. Components use its semantic tokens, such as `#text` or `#accent-text`. Never hard-code a color in a component.
+- A new color role is a `theme.palette` input that Glaze resolves for every scheme and contrast mode, with its public types, schema, docs and tests: see "Styling architecture" in `AGENTS.md`.
+- The reference site's own colors are in `apps/reference/docs.config.ts`.
+
+## Checking a theme
+
+- After `pnpm build`, run `glaze:inspect ../../packages/facade/harness/dev.harnesspm/theme.mjs` from `apps/reference` to see every color of the reference site in light, dark and high contrast. It reads the built `dist/` folders.
+- Cookbook adds its own contrast checks: `node packages/facade/dist/cli.js doctor --root apps/reference` and `pnpm check:theming` run them.
+- To try one color, run `glaze:color <color> --base '#ffffff' --contrast AA`. To check two literal colors, run `glaze:contrast <text> <background>`.

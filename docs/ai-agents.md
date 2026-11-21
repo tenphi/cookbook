@@ -1,74 +1,94 @@
 ---
 title: AI agents
-description: Create a Cookbook site with a coding agent and make the published docs easy for agents to find and read.
+description: What your coding agent gets from Cookbook, the optional harness that harnesspm adds, and how agents read the docs you publish.
 sidebar:
   order: 3
 ---
 
-Cookbook's project creator writes an `AGENTS.md` beside `docs.config.ts` and an
-`.agents/skills/upgrade-cookbook/SKILL.md` for dependency upgrades. They tell
-coding agents where content lives, where to find Cookbook's installed reference
-docs, how to upgrade Cookbook, and how to validate changes. Give an agent a
-concrete task, for example:
+A coding agent can do most of the work on a Cookbook site: create it, write and
+organize pages, change the theme, and deploy it. This page says what your agent
+gets from Cookbook, what harnesspm adds, and how agents read the site you publish.
+[Ask your agent](./ask-your-agent.md) has prompts for the common tasks.
 
-> Create a Cookbook site for this repository in `docs-site/`. Use the existing
-> README and `docs/` pages as sources. Set the public site URL to
-> `https://docs.example.com`, add a getting started page if one is missing,
-> and run the complete validation command.
+## What your agent gets
 
-From the repository root, the agent can run:
+- **The docs of your version.** `@tenphi/cookbook` installs these docs in
+  `node_modules/@tenphi/cookbook/docs/`, with an index in `llms.txt` and the
+  Tasty and Glaze docs of the same release.
+- **Instructions in the project.** The [project creator](./getting-started.md)
+  writes `AGENTS.md` beside `docs.config.ts` and an upgrade skill in
+  `.agents/skills/upgrade-cookbook/`.
+- **A part of these docs for agents.** [For AI agents](./agents.md) has every
+  step, the rules that always apply, and the page for each task.
 
-```sh
-npm create @tenphi/cookbook@latest docs-site -- --source . --site https://docs.example.com --yes
-cd docs-site
-npm run validate
+Installed docs help only when your agent reads them. In a project you set up
+yourself, add a line to your agent instructions:
+[Customization rules](./customization-rules.md#guide-coding-agents-explicitly)
+has one.
+
+## Optional: give your agent Cookbook's harness
+
+[harnesspm](https://harnesspm.tenphi.me) installs the agent harness that npm
+packages ship, and keeps it current with every install. Cookbook's harness gives
+your agent:
+
+- a short rule for changing a site, in its instructions in every session;
+- an index of Cookbook's docs at your version;
+- Tasty's and Glaze's rules and tools, which show the CSS a style produces and
+  every color of your theme in light, dark, and high contrast, from your site's
+  own theme;
+- the Tasty lint plugin's rule, a lint tool, and a hook that lints each style
+  file your agent edits.
+
+Your site builds the same without it. [Agent harness](./agent-harness.md) has
+the details for your agent.
+
+### Ask your agent
+
+Paste this into Claude Code or Codex, in the project of your site:
+
+```text
+Set up harnesspm in this Cookbook site:
+install @tenphi/harnesspm as a dev dependency
+and run `npx harnesspm init`.
+
+Then tell me what it wrote, which packages have
+tools that wait for my trust, and what each tool does.
+Do not change "trust" yourself.
+
+Steps: https://cookbook.tenphi.me/agent-harness/
 ```
 
-For a new project without existing documentation, omit `--source .`. To document
-an npm artifact, use `--package name@version` instead. The [getting started
-guide](./getting-started.md) covers all three paths. Agents should edit
-`docs.config.ts` for site metadata, navigation, and theme, and follow the
-[customization rules](./customization-rules.md) for styling.
-Replace the example URL with the site's actual public origin.
+### Decide what may run
 
-## Make the published site readable
+Rules and docs work at once. Tools run code, so they stay off until you trust
+their packages: Tasty and Glaze for the style and color tools, and the Tasty
+lint plugin for the lint tool and its hook. Cookbook's own harness has no tools,
+so it needs no trust.
 
-Set `site.url` in `docs.config.ts` to the public HTTPS origin. If the site is
-hosted under a path, set Astro's `base` in `astro.config.ts`. A production build
-then gives every page a canonical URL and creates a sitemap. Cookbook also writes:
+1. Ask what is waiting: "Which harnesspm tools are pending, and what does each
+   one do?"
+2. Say which packages you trust: "Trust @tenphi/tasty, @tenphi/glaze, and
+   @tenphi/eslint-plugin-tasty in harnesspm." You decide how far the trust goes:
+   `true` follows upgrades, and `"pin"` asks again for each new version.
+3. Let the lint hook run, and the tools run without a prompt: run
+   `npx harnesspm approve` in your own terminal.
 
-- `llms.txt`, a short index of published pages with titles, descriptions, links
-  to their HTML pages and, unless `site.seo.copyPage` is `false`, their Markdown
-  copies. Drafts, noindex pages, and non-canonical duplicates are omitted. This is an optional
-  discovery aid for agents that choose to read it.
-- `robots.txt` at origin-root deployments with `site.url` set, with a pointer to
-  the sitemap. A
-  `robots.txt` below a path such as `/project/` would not control the origin's
-  crawlers, so Cookbook does not generate one there.
+Your agent cannot do step 3: harnesspm never lets an agent give itself
+permissions. Review and commit what harnesspm wrote, as you would any change to
+your agent's instructions.
 
-You can supply your own `public/llms.txt` or `public/robots.txt`; Cookbook keeps
-those files. For sites under a path, configure an origin-root `robots.txt` at
-the hosting layer if you need one.
+## Make the published site readable for agents
 
-The HTML pages remain the primary source of information. Their text, headings,
-links, and page metadata are present in the static response, so an agent can
-read them without running client JavaScript. Write descriptive headings and
-link text, keep instructions current, and verify the production output with
-`npm run validate` and `npm run preview`.
+Agents read your published docs like any visitor. Cookbook gives them static HTML
+with the text, headings, and links in the response, a Markdown copy of each page,
+an `llms.txt` index grouped like your navigation, and a sitemap. What you decide:
 
-Google's [AI Search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
-prioritizes ordinary crawlability and useful content. It says `llms.txt` is
-not used by Google Search; Cookbook provides it for other agents that use the
-[llms.txt proposal](https://llmstxt.org/).
+- **The public URL.** Give it to your agent for `site.url`. Canonical URLs, the
+  sitemap, and `robots.txt` need it, and `llms.txt` uses it for full links.
+- **Whether pages offer Markdown copies.** They do unless you turn them off.
+- **Your own `llms.txt` or `robots.txt`.** Cookbook keeps a file you put in
+  `public/`, and its policy is then yours.
 
-## Read a published page
-
-Follow the page’s `rel="alternate" type="text/markdown"` link or its **Download Markdown**
-control for a clean reading representation with canonical/source/language/version
-metadata. Use the HTML for interactive component output omitted from Markdown.
-See [Publishing metadata](./publishing.md) for discovery and indexing controls.
-
-For maintenance, follow the [upgrade guide](./migration.md), then check the
-[deployed output](./deployment.md#validate-the-published-result). The
-[recipes](./recipes.md) provide complete starting configurations;
-[troubleshooting](./troubleshooting.md) explains common failures.
+[Publishing metadata](./publishing.md#page-text-for-readers-and-agents) has the
+details, and [Deployment](./deployment.md) covers `robots.txt` and hosting.

@@ -6,10 +6,17 @@ Static, repository-native documentation built with Astro,
 [Read the documentation](https://cookbook.tenphi.me) or browse the
 [repository-native source](docs/index.md).
 
-Before customizing a site, read the [customization rules](docs/customization-rules.md).
-For agent-assisted setup and publishing, see the [AI agent guide](docs/ai-agents.md).
+The docs have two parts: [for humans](docs/index.md), with prompts for a coding
+agent and the decisions that stay with you, and [for AI agents](docs/agents.md),
+with every step. Before customizing a site, read the
+[customization rules](docs/customization-rules.md).
+
 The published `@tenphi/cookbook` package includes these docs and versioned Tasty
-and Glaze references for local use by consumers and coding agents.
+and Glaze references for local use by consumers and coding agents. It also ships
+an optional harness for [harnesspm](https://harnesspm.tenphi.me): Cookbook's
+rule, its docs index, Tasty and Glaze tools that read a site's theme, and Tasty
+lint tools.
+See [AI agents](docs/ai-agents.md).
 
 ## Quick start
 
@@ -44,9 +51,14 @@ For work on this repository, follow [the repository instructions](AGENTS.md) and
 configuration, documentation workflows and UX; the review skills define the
 assessment and report format.
 
+This repository uses harnesspm too: `pnpm install` adds the Tasty, Glaze, and
+lint harnesses to the managed blocks in `AGENTS.md`. See
+[Agent harness in the repository instructions](AGENTS.md#agent-harness).
+
 Use `$review` in Codex or `/review` in Claude Code for a local review against
 the repository rules, including Entropy. Use `$entropy-review` or
-`/entropy-review` for a focused pass. Both agents use the same skill sources.
+`/entropy-review` for a focused pass. Both agents use the same skill sources:
+each skill in `.claude/skills/` has a link in `.agents/skills/`.
 
 A focused review can run in a read-only subagent with the diff, relevant sources
 and task requirements/accepted exceptions. It needs no dependency installation,

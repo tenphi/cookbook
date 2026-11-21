@@ -5,7 +5,22 @@ sidebar:
   order: 2
 ---
 
-Для Cookbook требуется Node.js 22.19 или новее.
+Для Cookbook требуется Node.js 22.19 или новее. Попросите агента программирования создать сайт или выполните команды сами.
+
+## Попросите агента
+
+Вставьте этот текст в Claude Code, Codex или другой агент программирования в своём репозитории:
+
+```text
+Create a Cookbook documentation site for this repository
+in `docs-site/`, from our README and `docs/` pages:
+run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
+Then run its `validate` script and tell me what it reports.
+
+Steps: https://cookbook.tenphi.me/agents/
+```
+
+Агент выполнит те же команды, что описаны в разделах ниже. Сообщите ему публичный URL сайта, когда он будет известен. Запросы для следующих задач собраны на странице [Ask your agent](../ask-your-agent.md) (на английском).
 
 ## Создайте первый сайт
 
@@ -108,4 +123,4 @@ npm run preview
 
 `validate` проверяет типы проекта, запускает предварительную проверку Cookbook, собирает сайт и проверяет результат. Если проект настроен вручную, добавьте скрипты из [описания команд CLI](../cli.md) или запустите `npx @tenphi/cookbook doctor`.
 
-Остальные руководства пока доступны на английском языке: [примеры](../examples.md), [компоненты для авторов](../authoring.mdx), [работа с ИИ-агентами](../ai-agents.md), [развёртывание](../deployment.md) и [обновление между версиями](../migration.md). Если проверка завершилась ошибкой, см. [решение проблем](../troubleshooting.md).
+Остальные руководства пока доступны на английском языке: [примеры](../examples.md), [компоненты для авторов](../authoring.mdx), [ИИ-агенты](../ai-agents.md), [развёртывание](../deployment.md) и [обновление между версиями](../migration.md). Если проверка завершилась ошибкой, см. [решение проблем](../troubleshooting.md).

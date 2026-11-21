@@ -40,7 +40,7 @@ export {
 } from "./types.js";
 export type * from "./types.js";
 
-export { resolveColorTheme } from "./theme/palette.js";
+export { createColorTheme, resolveColorTheme } from "./theme/palette.js";
 
 export {
   pagePublishing,

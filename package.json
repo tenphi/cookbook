@@ -18,6 +18,7 @@
     "knip": "knip",
     "build:reference": "pnpm --filter reference build",
     "check:boundaries": "node scripts/check-package-boundaries.mjs",
+    "check:harness": "harnesspm check packages/facade",
     "check:changelog": "node scripts/sync-root-changelog.mjs --check",
     "check:packages": "node scripts/smoke-packages.mjs",
     "check:install": "node scripts/smoke-install-paths.mjs",
@@ -38,7 +39,8 @@
     "check:authoring": "node scripts/smoke-authoring.mjs",
     "check:browser": "playwright test",
     "check:benchmark": "node scripts/benchmark-corpus.mjs",
-    "check:recipes": "node scripts/check-component-reference.mjs && node scripts/smoke-recipes.mjs"
+    "check:recipes": "node scripts/check-component-reference.mjs && node scripts/smoke-recipes.mjs",
+    "postinstall": "node -e \"try{require.resolve('@tenphi/harnesspm/package.json');process.exit(1)}catch{}\" || harnesspm sync"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
@@ -48,7 +50,8 @@
     "@changesets/cli": "^2.29.8",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.63.0",
-    "@tenphi/eslint-plugin-tasty": "1.21.0",
+    "@tenphi/eslint-plugin-tasty": "catalog:",
+    "@tenphi/harnesspm": "^0.9.0",
     "@types/node": "^22.15.2",
     "cross-spawn": "7.0.6",
     "eslint": "10.9.1",

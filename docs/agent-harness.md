@@ -1,0 +1,130 @@
+---
+title: Agent harness
+description: Give a coding agent Cookbook's rules, the docs of the installed version, Tasty and Glaze tools that read the site's theme, and Tasty lint tools, with harnesspm.
+---
+
+`@tenphi/cookbook` ships a harness for coding agents. [harnesspm](https://harnesspm.tenphi.me)
+puts it into the agent instructions of the project that installs Cookbook and
+keeps it current with every install. The harness is optional: a site builds the
+same without it, and the [installed docs](./agents.md#what-is-installed) stay
+where they are.
+
+## What the harness gives an agent
+
+| Unit                                                                                                          | What it does                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cookbook:rules/usage`                                                                                        | An always-on rule: where a site's files are, how to change its look, and how to check it.                                                                                     |
+| `cookbook:docs`                                                                                               | The index of these docs, at the installed version.                                                                                                                            |
+| `tasty:rules/usage`, `tasty:styles`, `tasty:docs`                                                             | Tasty's style rule, its docs, and a tool that prints the CSS a styles object produces. Cookbook's patch points the tool at the site's theme.                                  |
+| `glaze:rules/colors`, `glaze:inspect`, `glaze:color`, `glaze:contrast`, `glaze:docs`, the `glaze-theme` skill | Glaze's color rule, docs, tools, and skill. Cookbook's patch says that a site's colors live in `theme.brand` and `theme.palette`, and how to check them.                      |
+| `tasty-lint:rules/usage`, `tasty-lint:check`, `tasty-lint:docs`, an edit hook                                 | The Tasty lint plugin's rule and docs, a tool that runs only its rules, and a hook that lints each file the agent edits. Cookbook's patch says what the rules need in a site. |
+
+The Tasty, Glaze, and lint units come from the versions that Cookbook depends
+on. `npx -y @tenphi/harnesspm help @tenphi/cookbook` prints Cookbook's rule.
+`help @tenphi/glaze`, `help @tenphi/tasty`, and `help @tenphi/eslint-plugin-tasty`
+print the rules that Cookbook patches, as agents get them.
+
+## Set it up
+
+Ask the person before you start: harnesspm changes `AGENTS.md`, `CLAUDE.md`,
+`package.json`, and the lockfile. Then run, in the folder with the site's
+`package.json`:
+
+```sh
+npm i -D @tenphi/harnesspm
+npx harnesspm init
+```
+
+With pnpm, run `pnpm add -D @tenphi/harnesspm` and `pnpm exec harnesspm init`.
+
+`init` adds a block to `AGENTS.md`, links skills for Claude Code and Codex, and
+makes every install run `harnesspm sync`. Commit `AGENTS.md`, `CLAUDE.md`,
+`harnesspm.json`, `harnesspm.lock.json`, `package.json`, and the lockfile.
+harnesspm's [setup guide](https://harnesspm.tenphi.me/guides/setup) lists every
+file it writes.
+
+In a monorepo, install harnesspm and run `init` at the repository root (with pnpm,
+`pnpm add -Dw @tenphi/harnesspm`). Each workspace gets the harness
+of its own dependencies, so Cookbook's rule reaches only the workspace of the
+docs site, in its own `AGENTS.md`.
+
+## Turn on the tools
+
+Rules, docs, and skills work at once. Scripts and hooks run code, so they stay
+off until the person trusts their packages:
+
+| Package                       | Tools                                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| `@tenphi/tasty`               | `tasty:styles` prints the CSS of a styles object.                                         |
+| `@tenphi/glaze`               | `glaze:inspect`, `glaze:color`, and `glaze:contrast` resolve colors and measure contrast. |
+| `@tenphi/eslint-plugin-tasty` | `tasty-lint:check` lints files, and a hook lints each file that the agent edits.          |
+
+Cookbook's own harness has no tools, so it needs no trust. Never add a package
+to `trust` yourself: tell the person what each pending tool does, and ask how far
+the trust goes. `"pin"` keeps each package at the version they approved, as
+harnesspm advises for packages that their team does not control; `true` follows
+upgrades. When they agree, add the packages to `harnesspm.json` and run
+`npx harnesspm sync`:
+
+```json
+{
+  "trust": {
+    "@tenphi/eslint-plugin-tasty": "pin",
+    "@tenphi/glaze": "pin",
+    "@tenphi/tasty": "pin"
+  }
+}
+```
+
+The tools then run, with a prompt. The lint hook, the allow rules that skip the
+prompt, and a pinned version wait until the person runs `npx harnesspm approve`
+in their own terminal. See harnesspm's
+[Trust and safety](https://harnesspm.tenphi.me/guides/trust).
+
+## Check styles and colors with the site's theme
+
+Cookbook builds its Tasty configuration and its Glaze palette from
+`docs.config.ts`. The harness ships a module that loads them the same way,
+`harness/dev.harnesspm/theme.mjs`, and the patched rules point the Tasty and Glaze
+tools at it. Run them from the folder with `docs.config.ts`:
+
+```sh
+npx -y @tenphi/harnesspm run tasty:styles '{"fill":"#surface-2","padding":"2x","preset":"h4"}' --setup @tenphi/cookbook/harness/dev.harnesspm/theme.mjs
+npx -y @tenphi/harnesspm run glaze:inspect node_modules/@tenphi/cookbook/harness/dev.harnesspm/theme.mjs --color text
+```
+
+- `tasty:styles` prints the CSS with the site's tokens, units, presets, and
+  states, and flags any value that stays unresolved.
+- `glaze:inspect` prints each color in light, dark, and both high-contrast
+  schemes, with its contrast against its base. It takes a file path: in a
+  monorepo that installs packages at the root, give the path there.
+- The module reads the `docs.config.*` of the folder you run the tool in, also
+  with `-C`. Without one, it says so and loads Cookbook's default theme. A site
+  that passes its configuration to `cookbook()` in `astro.config.ts` gets the
+  defaults too.
+- `cookbook doctor` still has the last word on colors. It adds Cookbook's own
+  contrast checks to Glaze's floors and fails on any that a theme misses.
+
+## Lint styles in a site
+
+The lint rules recognize Cookbook's styling helpers and theme names only through
+the site's `tasty.config.ts`. Without it, `tasty-lint:check` and the edit hook
+check nothing in a Cookbook site and still report no problems. Before you rely on
+them, set up linting as [Custom components](./custom-components.md#linting-custom-styles)
+shows: a `tasty.config.ts` with `extends: "@tenphi/cookbook"`, and
+`@typescript-eslint/parser` for `.ts` modules. Keep styles in `.ts` modules,
+not in `.astro` files, so the rules can read them.
+
+## Keep it current
+
+- A full install, such as `npm install` or `pnpm install`, runs
+  `harnesspm sync`. After `npm install <package>` or `pnpm add <package>`, run
+  `npx harnesspm sync` yourself.
+- A Cookbook upgrade brings the harness of the new version. Commit the changed
+  `harnesspm.lock.json` and `AGENTS.md` with the upgrade. When it brings new
+  Tasty, Glaze, or lint versions, pinned tools stay off until the person runs
+  `npx harnesspm approve`.
+- To change Cookbook's rule for one project, patch it:
+  `npx harnesspm new patch cookbook:rules/usage`. See harnesspm's
+  [Change upstream units](https://harnesspm.tenphi.me/guides/change-upstream).
+- In CI, `npx harnesspm sync --check` after the install catches a missed sync.

@@ -1,0 +1,6 @@
+---
+"@tenphi/cookbook": minor
+"@tenphi/create-cookbook": patch
+---
+
+Ship an agent harness for [harnesspm](https://harnesspm.tenphi.me) in `@tenphi/cookbook`. A site that sets up harnesspm gives its coding agent a short Cookbook rule, an index of the installed docs (`docs/llms.txt`, also useful without harnesspm), and the Tasty, Glaze, and Tasty lint harnesses of the versions Cookbook uses. Cookbook adapts their rules: colors come from `theme.brand` and `theme.palette`, lint needs a `tasty.config.ts` that extends `@tenphi/cookbook`, and `harness/dev.harnesspm/theme.mjs` loads a site's `docs.config.ts`, so `tasty:styles --setup` and `glaze:inspect` see the site's tokens, units, presets, states, and palette. `@tenphi/cookbook` now depends on `@tenphi/tasty`, `@tenphi/glaze`, and `@tenphi/eslint-plugin-tasty` directly, at the versions the renderer already installs. The docs now have two parts, **For humans** and **For AI agents**, with new [For AI agents](https://cookbook.tenphi.me/agents/), [Ask your agent](https://cookbook.tenphi.me/ask-your-agent/), and [Agent harness](https://cookbook.tenphi.me/agent-harness/) pages. Generated sites point their agents at the new start page and mention harnesspm as an option, and the upgrade skill runs `harnesspm sync` in sites that use it.

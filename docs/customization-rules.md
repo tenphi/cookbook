@@ -117,7 +117,7 @@ imports, configuration, and rendering setup when adapting them.
 ## Documentation in the installed package
 
 The public `@tenphi/cookbook` package includes this guide and the rest of the
-Cookbook documentation in `docs/`. Its `docs/upstream/` directory contains
+Cookbook documentation in `docs/`, indexed by `docs/llms.txt`. Its `docs/upstream/` directory contains
 generated Tasty and Glaze documentation snapshots, their READMEs, and licenses.
 `docs/upstream/manifest.json` records the source package versions and release
 references. These match the dependencies used to build that Cookbook release;
@@ -157,6 +157,11 @@ Use Cookbook's public styling APIs, semantic palette tokens, typography
 presets, and partial component overrides. Run the project's style lint,
 cookbook doctor, and build commands after changes.
 ```
+
+With [harnesspm](./agent-harness.md), the project gets Cookbook's rule and the
+index of these docs in its agent instructions instead, at the installed version,
+together with Tasty and Glaze tools that read the site's theme and Tasty lint
+tools.
 
 ## Check the result
 

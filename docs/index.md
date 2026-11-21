@@ -51,6 +51,10 @@ sidebar:
 - **Pages ready to share and read.** Publish canonical URLs, social previews,
   sitemaps, downloadable Markdown, and an `llms.txt` index for coding agents.
   [Publishing metadata](./publishing.md).
+- **Ready for coding agents.** The installed package carries docs for your
+  version, and an optional [harnesspm](https://harnesspm.tenphi.me) harness
+  gives your agent Cookbook's rules and tools that read your theme.
+  [AI agents](./ai-agents.md).
 
 ## Start with your repository
 
@@ -78,20 +82,17 @@ Use the language selector in the header to read this page and the getting-starte
 guide in Spanish, Russian, Japanese, or Simplified Chinese. Other guides remain
 in English for now.
 
-## Explore the guide
+## Explore the docs
 
-- [Getting started](./getting-started.md) covers repositories, npm packages, and
-  existing Astro projects.
-- [Compare documentation tools](./comparison.md) explains Cookbook's content and
-  customization model alongside other options.
-- [Working examples](./examples.md) show repository, monorepo, package, and
-  shared-theme configurations.
-- [Search and navigation](./site-navigation.md) explains how readers find pages.
-- [Authoring](./authoring.mdx) covers pages, components, and interactive examples.
-- [Theme and components](./theme-and-components.md) starts with brand and tokens,
-  then points to fonts, built-in styles, and custom components.
-- [Deployment](./deployment.md) covers validation and static hosting.
+The docs have two parts, as tabs at the top of the navigation.
 
-For agent-assisted setup, see the [AI agent workflow](./ai-agents.md). The
-[configuration reference](./configuration.md), [publishing controls](./publishing.md),
-and [CLI reference](./cli.md) cover the full set of options.
+- **For humans** is short. Start with [Getting started](./getting-started.md),
+  [compare documentation tools](./comparison.md), or browse
+  [working examples](./examples.md). [Ask your agent](./ask-your-agent.md) has
+  prompts for common tasks and the decisions that stay with you, and
+  [AI agents](./ai-agents.md) says what your agent gets from Cookbook.
+- **For AI agents** has every step. [Its start page](./agents.md) gives the
+  rules that always apply and the page for each task: content, navigation,
+  authoring, theme, components, plugins, deployment, and upgrades, then the
+  [configuration](./configuration.md) and [CLI](./cli.md) references. People
+  read it too when they want every detail.

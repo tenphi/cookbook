@@ -1,0 +1,150 @@
+{
+  "lockfileVersion": 1,
+  "packages": {
+    "@tenphi/cookbook": {
+      "plugin": "cookbook",
+      "project": true
+    },
+    "@tenphi/eslint-plugin-tasty": {
+      "version": "1.21.0",
+      "plugin": "tasty-lint",
+      "integrity": "sha512-ZVNCtdVxGBugWiipW5A6hyAROlwKaTDDYhvFxjfydm1ZBZyMufCtTY/66pUfvoM+0E2Zrn7RzH41UvEMIbuHRg=="
+    },
+    "@tenphi/glaze": {
+      "version": "3.1.0",
+      "plugin": "glaze",
+      "integrity": "sha512-NOg3tsb6knAlNL1J9Y9Bkf0mDYf/1dHlTTcUHyYFoeOS5SGLXjBWMY4H85Zr342/p2UTpetSEVNCgCq2BN0Bfg=="
+    },
+    "@tenphi/harnesspm": {
+      "version": "0.9.0",
+      "plugin": "harnesspm",
+      "integrity": "sha512-mT90st37WWStKGx5egk0JWkQK0MTBVjGFHARs9rigcdTkqu0UxCSf3pgQK8KWP1n2WGTJfBpA6uxhy6cPG9srA=="
+    },
+    "@tenphi/tasty": {
+      "version": "3.19.1",
+      "plugin": "tasty",
+      "integrity": "sha512-eOXl0ePu1ciPXG93RSJwgfsrkbIPHJrGaenIJrhZ8pQcIwmbSslMp2wMk8GRtrSDgGuyiC65a8g3RQwwjwC4aA=="
+    }
+  },
+  "units": {
+    "cookbook:rules/usage": {
+      "kind": "rules",
+      "hash": "63b339755f9a3f21"
+    },
+    "glaze:docs": {
+      "kind": "docs",
+      "hash": "bb77afae7195f3cd"
+    },
+    "glaze:rules/colors": {
+      "kind": "rules",
+      "hash": "ab789d44c8d1a720"
+    },
+    "glaze:scripts/color": {
+      "kind": "scripts",
+      "hash": "83a0a05025c783ae"
+    },
+    "glaze:scripts/contrast": {
+      "kind": "scripts",
+      "hash": "0f19c41b5b03c811"
+    },
+    "glaze:scripts/inspect": {
+      "kind": "scripts",
+      "hash": "ed4efa32714fb96c"
+    },
+    "glaze:skills/glaze-theme": {
+      "kind": "skills",
+      "hash": "cfe520518fec25c5"
+    },
+    "harnesspm:docs": {
+      "kind": "docs",
+      "hash": "af59b48a258ae5ec"
+    },
+    "harnesspm:rules/generated-files": {
+      "kind": "rules",
+      "hash": "755c5b2ec8e867ce"
+    },
+    "harnesspm:rules/harnesspm-config": {
+      "kind": "rules",
+      "hash": "4ab34118776febeb"
+    },
+    "harnesspm:skills/harnesspm-export": {
+      "kind": "skills",
+      "hash": "fb92aa8cb29e1e26"
+    },
+    "harnesspm:skills/harnesspm-import": {
+      "kind": "skills",
+      "hash": "749fe5d4f3178085"
+    },
+    "harnesspm:skills/harnesspm-improve": {
+      "kind": "skills",
+      "hash": "7543189ff8b9b71d"
+    },
+    "tasty-lint:docs": {
+      "kind": "docs",
+      "hash": "50acc956f953f5c8"
+    },
+    "tasty-lint:hooks/check-edit": {
+      "kind": "hooks",
+      "hash": "60de055481a08446"
+    },
+    "tasty-lint:rules/usage": {
+      "kind": "rules",
+      "hash": "81c58e34f3549ff6"
+    },
+    "tasty-lint:scripts/check": {
+      "kind": "scripts",
+      "hash": "6c24d63fa8c49161"
+    },
+    "tasty-lint:scripts/check-edit": {
+      "kind": "scripts",
+      "hash": "81a36c54c1df4f0d"
+    },
+    "tasty:docs": {
+      "kind": "docs",
+      "hash": "ef7f2b98d4db3107"
+    },
+    "tasty:rules/usage": {
+      "kind": "rules",
+      "hash": "9c4da337ff660e95"
+    },
+    "tasty:scripts/styles": {
+      "kind": "scripts",
+      "hash": "bd020ff534f6ae40"
+    }
+  },
+  "patches": {
+    "cookbook:rules/usage": {
+      "harnesspm/patches/cookbook-usage.patch.md": {
+        "Checking a site": "8c07b0302c38534d",
+        "Site files": "5d423e1a497b3a93"
+      }
+    },
+    "glaze:rules/colors": {
+      "packages/facade/harness/dev.harnesspm/patches/glaze-colors.patch.md": {
+        "Checking a theme": "caf25f3b5adae6a8",
+        "Where colors come from": "ce40127f100138c6"
+      },
+      "harnesspm/patches/glaze-colors.patch.md": {
+        "Checking a theme": "27bd9ad7256eb5f3",
+        "Where colors come from": "a2f80195a159e1ad"
+      }
+    },
+    "tasty-lint:rules/usage": {
+      "packages/facade/harness/dev.harnesspm/patches/tasty-lint-usage.patch.md": {
+        "After you change styles": "b5a2a1dc94cb8a0d"
+      },
+      "harnesspm/patches/tasty-lint-usage.patch.md": {
+        "After you change styles": "279eb75b153e8c85",
+        "Exceptions": "14f40fdd7def7f18"
+      }
+    },
+    "tasty:rules/usage": {
+      "packages/facade/harness/dev.harnesspm/patches/tasty-usage.patch.md": {
+        "Checking styles": "6fc039e8c6929820"
+      },
+      "harnesspm/patches/tasty-usage.patch.md": {
+        "Checking styles": "44fa26960b4bec32"
+      }
+    }
+  }
+}

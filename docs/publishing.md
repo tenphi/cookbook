@@ -144,6 +144,18 @@ to disable page text and both controls. Customize the controls with
 `Icon`, `CopyIcon`, and `DownloadIcon`.
 
 `llms.txt` links to discoverable canonical pages and their Markdown representations.
+It follows the sidebar: one section per navigation tab, or a single
+**Documentation** section, with pages in sidebar order. Discoverable pages that the
+sidebar does not list, such as translations, follow under **Other pages**. Drafts,
+noindex pages, and non-canonical duplicates are omitted.
+
+`llms.txt` is an optional discovery aid for agents that use the
+[llms.txt proposal](https://llmstxt.org/). Google's
+[AI Search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
+says Google Search does not use it and prioritizes ordinary crawlability and
+useful content. The HTML pages stay the primary source: their text, headings,
+links, and metadata are in the static response, so an agent can read them without
+running client JavaScript. Write descriptive headings and link text.
 `_cookbook/publishing.json` records non-draft page URLs and publishing policy for
 validation tools. Existing `public/llms.txt` and root `public/robots.txt` take
 precedence; maintain their policy yourself.

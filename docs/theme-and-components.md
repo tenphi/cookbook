@@ -267,6 +267,11 @@ are composited onto their background before measuring. These checks cover
 Cookbook's semantic pairs; test actual pages after changing component styles,
 backgrounds, typography, or layout.
 
+To see every resolved color of a site in all four modes, with its Glaze contrast
+floor, run Glaze's `glaze:inspect` tool on the module that Cookbook's agent
+harness ships. [Agent harness](./agent-harness.md#check-styles-and-colors-with-the-sites-theme)
+shows the command.
+
 A `DOCS_SEMANTIC_CONTRAST_UNMET` or `DOCS_BRAND_CONTRAST_UNMET` error names the
 pair, mode, and required target. Adjust that pair's `theme.palette` declarations:
 use an absolute tone for reading text, reduce saturation when needed, and keep
