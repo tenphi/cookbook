@@ -144,9 +144,9 @@ to disable page text and both controls. Customize the controls with
 `Icon`, `CopyIcon`, and `DownloadIcon`.
 
 `llms.txt` links to discoverable canonical pages and their Markdown representations.
-It follows the sidebar: one section per navigation tab, or a single
-**Documentation** section, with pages in sidebar order. Discoverable pages that the
-sidebar does not list, such as translations, follow under **Other pages**. Drafts,
+It follows the default language's sidebar: one section per navigation tab, or a
+single **Documentation** section, with pages in sidebar order. Discoverable pages
+that the sidebar does not list, such as translations, follow under **Other pages**. Drafts,
 noindex pages, and non-canonical duplicates are omitted.
 
 `llms.txt` is an optional discovery aid for agents that use the

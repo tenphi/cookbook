@@ -163,6 +163,79 @@ describe("agent discovery", () => {
     expect(order).toEqual([...order].sort((left, right) => left - right));
   });
 
+  it("follows the default language's sidebar on a multilingual site", async () => {
+    const root = await mkdtemp(join(tmpdir(), "cookbook-agent-discovery-"));
+    roots.push(root);
+    const write = async (file: string, title: string) => {
+      await mkdir(join(root, file, ".."), { recursive: true });
+      await writeFile(join(root, file), `# ${title}\n`);
+    };
+    await write("index.md", "Home");
+    await write("guide.md", "Guide");
+    await write("es/index.md", "Inicio");
+    await write("es/guide.md", "Guía");
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        site: { title: "Example" },
+        locales: {
+          root: { label: "English", lang: "en" },
+          es: { label: "Español", lang: "es" },
+        },
+        content: { sources: [{ glob: "**/*.md", base: "." }] },
+      },
+    });
+    const body = renderLlmsTxt(graph);
+    const order = [
+      "## Documentation",
+      "[Home](/)",
+      "[Guide](/guide/)",
+      "## Other pages",
+      "[Inicio](/es/)",
+      "[Guía](/es/guide/)",
+    ].map((text) => body.indexOf(text));
+    expect(order).not.toContain(-1);
+    expect(order).toEqual([...order].sort((left, right) => left - right));
+  });
+
+  it("maps locale-free navigation links to a prefixed default language", async () => {
+    const root = await mkdtemp(join(tmpdir(), "cookbook-agent-discovery-"));
+    roots.push(root);
+    for (const [file, title] of [
+      ["en/index.md", "Home"],
+      ["en/guide.md", "Guide"],
+      ["en/api.md", "API"],
+      ["fr/index.md", "Accueil"],
+    ]) {
+      await mkdir(join(root, file, ".."), { recursive: true });
+      await writeFile(join(root, file), `# ${title}\n`);
+    }
+    const graph = await createDocsGraph({
+      root,
+      config: {
+        site: { title: "Example" },
+        locales: {
+          en: { label: "English", lang: "en" },
+          fr: { label: "Français", lang: "fr" },
+        },
+        defaultLocale: "en",
+        content: { sources: [{ glob: "**/*.md", base: "." }] },
+        navigation: ["/api", "/guide", "/"],
+      },
+    });
+    const body = renderLlmsTxt(graph);
+    const order = [
+      "## Documentation",
+      "[API](/en/api/)",
+      "[Guide](/en/guide/)",
+      "[Home](/en/)",
+      "## Other pages",
+      "[Accueil](/fr/)",
+    ].map((text) => body.indexOf(text));
+    expect(order).not.toContain(-1);
+    expect(order).toEqual([...order].sort((left, right) => left - right));
+  });
+
   it("writes root discovery while preserving owner supplied files", async () => {
     const { root, graph } = await fixture();
     await writeFile(join(root, "robots.txt"), "User-agent: *\nDisallow: /\n");

@@ -246,8 +246,8 @@ theme: {
 `@tenphi/cookbook/eslint-plugin` re-exports the Tasty ESLint plugin together with
 Cookbook's `validationConfig`. The renderer offers the same exports from
 `@tenphi/renderer/eslint-plugin`. Keep style definitions in `.ts` or `.tsx`
-modules, as in the site title example above, to lint them with either ESLint or
-oxlint.
+modules, as in the site title example above, or in `.js` or `.mjs` modules, to
+lint them with either ESLint or oxlint. Styles in `.astro` files are not linted.
 
 Create `tasty.config.ts` at your project root:
 
@@ -289,6 +289,12 @@ export default [
   },
 ];
 ```
+
+typescript-eslint supports TypeScript below 6.1. Sites from the project creator
+use TypeScript 7: there, keep style modules in `.js` or `.mjs` files and lint
+them with ESLint's own parser (`files: ["**/*.{js,mjs}"]`, no `parser` option
+and no `@typescript-eslint/parser`), use oxlint, which parses TypeScript itself,
+or install TypeScript 6 for the project.
 
 Run `pnpm exec eslint docs/components --max-warnings 0`. Use
 `tasty.configs.strict` for additional checks, including custom property names and

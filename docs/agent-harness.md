@@ -48,6 +48,14 @@ In a monorepo, install harnesspm and run `init` at the repository root (with pnp
 of its own dependencies, so Cookbook's rule reaches only the workspace of the
 docs site, in its own `AGENTS.md`.
 
+A site in a folder of a larger repository that is not a workspace, such as the
+`docs-site/` that [Getting started](./getting-started.md) creates, is a
+project below the git root. harnesspm 0.9.2 writes its per-machine excludes for
+the wrong folder there ([harnesspm#62](https://github.com/tenphi/harnesspm/issues/62)),
+so git lists harnesspm's links in `<site>/.claude/` and `<site>/.agents/skills/`
+as new files. Commit only the files above and the creator's
+`.agents/skills/upgrade-cookbook/`.
+
 ## Turn on the tools
 
 Rules, docs, and skills work at once. Scripts and hooks run code, so they stay
@@ -61,9 +69,9 @@ off until the person trusts their packages:
 
 Cookbook's own harness has no tools, so it needs no trust. Never add a package
 to `trust` yourself: tell the person what each pending tool does, and ask how far
-the trust goes. `"pin"` keeps each package at the version they approved, as
-harnesspm advises for packages that their team does not control; `true` follows
-upgrades. When they agree, add the packages to `harnesspm.json` and run
+the trust goes. `"pin"` trusts only the installed version and asks again for
+each new one, as harnesspm advises for packages that their team does not
+control; `true` follows upgrades. When they agree, add the packages to `harnesspm.json` and run
 `npx harnesspm sync`:
 
 ```json
@@ -76,9 +84,9 @@ upgrades. When they agree, add the packages to `harnesspm.json` and run
 }
 ```
 
-The tools then run, with a prompt. The lint hook, the allow rules that skip the
-prompt, and a pinned version wait until the person runs `npx harnesspm approve`
-in their own terminal. See harnesspm's
+The tools then run, with a prompt. The lint hook and the allow rules that skip
+the prompt wait until the person runs `npx harnesspm approve` in their own
+terminal. See harnesspm's
 [Trust and safety](https://harnesspm.tenphi.me/guides/trust).
 
 ## Check styles and colors with the site's theme
@@ -106,14 +114,24 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
 
 ## Lint styles in a site
 
-The lint rules recognize Cookbook's styling helpers and theme names only through
-the site's `tasty.config.ts`. Without it, `tasty-lint:check` and the edit hook
-check nothing in a Cookbook site: `tasty-lint:check` notes each file you name
-that it found no styles in, and the edit hook stays quiet. Before you rely on
-them, set up linting as [Custom components](./custom-components.md#linting-custom-styles)
-shows: a `tasty.config.ts` with `extends: "@tenphi/cookbook"`, and
-`@typescript-eslint/parser` for `.ts` modules. Keep styles in `.ts` modules,
-not in `.astro` files, so the rules can read them.
+The lint rules recognize Cookbook's styling helpers and the site's theme names
+only through the site's `tasty.config.ts`. Without it, `tasty-lint:check` and
+the edit hook check nothing in a Cookbook site: `tasty-lint:check` notes each
+file you name that it found no styles in, and the edit hook stays quiet. Before
+you rely on them, set up linting as [Custom components](./custom-components.md#linting-custom-styles)
+shows:
+
+- Build `tasty.config.ts` with `createValidationConfig(docs.theme)` from
+  `@tenphi/cookbook/eslint-plugin`, as [Custom theme names](./custom-components.md#custom-theme-names)
+  shows. The rules then know the site's palette colors, tokens, units, states,
+  presets, and recipes. With `extends: "@tenphi/cookbook"` alone, they report
+  a color from `theme.palette` as an unknown token.
+- Keep styles in `.js`, `.mjs`, `.ts`, or `.tsx` modules, not in `.astro`
+  files. The tool and the hook read `.ts` modules through typescript-eslint,
+  which needs TypeScript below 6.1, while sites from the project creator use
+  TypeScript 7. There, keep style modules in `.js` or `.mjs` files, or ask the
+  person before you install TypeScript 6
+  ([eslint-plugin-tasty#171](https://github.com/tenphi/eslint-plugin-tasty/issues/171)).
 
 ## Keep it current
 
@@ -122,8 +140,10 @@ not in `.astro` files, so the rules can read them.
   `npx harnesspm sync` yourself.
 - A Cookbook upgrade brings the harness of the new version. Commit the changed
   `harnesspm.lock.json` and `AGENTS.md` with the upgrade. When it brings new
-  Tasty, Glaze, or lint versions, pinned tools stay off until the person runs
-  `npx harnesspm approve`.
+  Tasty, Glaze, or lint versions of packages trusted with `"pin"`, their tools
+  stay off, and `npx harnesspm sync --check` fails in CI, until the person runs
+  `npx harnesspm approve` in their own terminal. Ask them to, and say so in your
+  report.
 - To change Cookbook's rule for one project, patch it:
   `npx harnesspm new patch cookbook:rules/usage`. See harnesspm's
   [Change upstream units](https://harnesspm.tenphi.me/guides/change-upstream).

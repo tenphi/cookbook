@@ -1,8 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { renderAgentMarkdown, routeUrl, type DocsGraph } from "@tenphi/docs";
+import { localizedNavigation, localizedRoute } from "./localization.js";
 import {
-  normalizeNavigationPath,
   pageSidebar,
   resolveNavigationLayout,
   type PageSidebarItem,
@@ -57,23 +57,36 @@ export function renderLlmsTxt(graph: DocsGraph): string {
 type DocsEntry = DocsGraph["entries"][number];
 
 /**
- * Group pages as the sidebar does: one section per navigation tab (or one for
- * an unsectioned sidebar), pages in sidebar order. Pages that the sidebar does
- * not list, such as translations, follow in their own section.
+ * Group pages as the default language's sidebar does: one section per
+ * navigation tab (or one for an unsectioned sidebar), pages in sidebar order.
+ * Pages that the sidebar does not list, such as translations, follow in their
+ * own section.
  */
 function llmsSections(
   graph: DocsGraph,
   entries: DocsEntry[],
 ): Array<[string, DocsEntry[]]> {
-  const layout = resolveNavigationLayout(graph.config.navigation);
-  const sidebar = pageSidebar(layout, graph.routes);
+  const { locales, defaultLocale, translations } = graph.config;
+  const options = { locales, defaultLocale, translations };
+  const locale = locales
+    ? (defaultLocale ?? (locales.root ? "root" : Object.keys(locales)[0]!))
+    : "root";
+  // Pages narrow the sidebar to their language first; do the same here.
+  const localized = localizedNavigation(
+    resolveNavigationLayout(graph.config.navigation),
+    graph.routes,
+    localizedRoute("/", locale, options),
+    options,
+  );
+  const layout = localized.layout;
+  const sidebar = pageSidebar(layout, localized.routes);
   const byRoute = new Map(entries.map((entry) => [entry.route, entry]));
   const listed = new Set<string>();
   const pages = (items: PageSidebarItem[]): DocsEntry[] =>
     items.flatMap((item) => {
       if (!("link" in item)) return pages(item.items);
       if (/^(?:[a-z][a-z\d+.-]*:|\/\/|[?#])/i.test(item.link)) return [];
-      const entry = byRoute.get(normalizeNavigationPath(item.link));
+      const entry = byRoute.get(localizedRoute(item.link, locale, options));
       if (!entry || listed.has(entry.route)) return [];
       listed.add(entry.route);
       return [entry];
