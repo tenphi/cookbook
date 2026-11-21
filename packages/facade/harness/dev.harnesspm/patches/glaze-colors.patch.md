@@ -7,6 +7,6 @@
 ## Checking a theme
 
 - After you change `theme.brand` or `theme.palette`, run `cookbook doctor` (the site's `doctor` script). It fails on every contrast floor that the theme misses.
-- To see every color of the site in light, dark and high contrast, with its contrast floor, run `glaze:inspect node_modules/@tenphi/cookbook/harness/dev.harnesspm/theme.mjs` from the folder with `docs.config.ts`; `-C` does not change that folder. Add `--color <part>` for fewer colors. In a monorepo, give the path where `@tenphi/cookbook` is installed.
+- To see every color of the site in light, dark and high contrast, with its contrast floor, run `glaze:inspect @tenphi/cookbook/harness/dev.harnesspm/theme.mjs` from the folder with `docs.config.ts`; `-C` does not change that folder. Add `--color <part>` for fewer colors.
 - To try a brand color before you set it, run `glaze:color <color> --base '#ffffff' --contrast AA`.
 - To check two literal colors, run `glaze:contrast <text> <background>`.

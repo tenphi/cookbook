@@ -6,19 +6,19 @@
       "project": true
     },
     "@tenphi/eslint-plugin-tasty": {
-      "version": "1.21.0",
+      "version": "1.21.1",
       "plugin": "tasty-lint",
-      "integrity": "sha512-ZVNCtdVxGBugWiipW5A6hyAROlwKaTDDYhvFxjfydm1ZBZyMufCtTY/66pUfvoM+0E2Zrn7RzH41UvEMIbuHRg=="
+      "integrity": "sha512-2UINvZf6zBotEqBtrogJXBId1CQPvopDAwLGXTcjP2InOm4e1H57cDvB68ycmBrUWY97mAVcAF83t7FMVenGmg=="
     },
     "@tenphi/glaze": {
-      "version": "3.1.0",
+      "version": "3.1.1",
       "plugin": "glaze",
-      "integrity": "sha512-NOg3tsb6knAlNL1J9Y9Bkf0mDYf/1dHlTTcUHyYFoeOS5SGLXjBWMY4H85Zr342/p2UTpetSEVNCgCq2BN0Bfg=="
+      "integrity": "sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA=="
     },
     "@tenphi/harnesspm": {
-      "version": "0.9.0",
+      "version": "0.9.2",
       "plugin": "harnesspm",
-      "integrity": "sha512-mT90st37WWStKGx5egk0JWkQK0MTBVjGFHARs9rigcdTkqu0UxCSf3pgQK8KWP1n2WGTJfBpA6uxhy6cPG9srA=="
+      "integrity": "sha512-ohD2STJHWXNXcGSiSUl6+S3iMWLyLxYslPWh6V9rdoWJiexvzqqW2NRkopK6G1Apetzq+ajzQ12PNDs0PnbMwQ=="
     },
     "@tenphi/tasty": {
       "version": "3.19.1",
@@ -37,7 +37,7 @@
     },
     "glaze:rules/colors": {
       "kind": "rules",
-      "hash": "ab789d44c8d1a720"
+      "hash": "18fb885178b9bd13"
     },
     "glaze:scripts/color": {
       "kind": "scripts",
@@ -49,15 +49,15 @@
     },
     "glaze:scripts/inspect": {
       "kind": "scripts",
-      "hash": "ed4efa32714fb96c"
+      "hash": "b01aa78b18b19580"
     },
     "glaze:skills/glaze-theme": {
       "kind": "skills",
-      "hash": "cfe520518fec25c5"
+      "hash": "89dbcdc39af57d9c"
     },
     "harnesspm:docs": {
       "kind": "docs",
-      "hash": "af59b48a258ae5ec"
+      "hash": "5eea068d0e28d79c"
     },
     "harnesspm:rules/generated-files": {
       "kind": "rules",
@@ -93,7 +93,7 @@
     },
     "tasty-lint:scripts/check": {
       "kind": "scripts",
-      "hash": "6c24d63fa8c49161"
+      "hash": "3aea38ccdfbdf22a"
     },
     "tasty-lint:scripts/check-edit": {
       "kind": "scripts",
@@ -105,7 +105,7 @@
     },
     "tasty:rules/usage": {
       "kind": "rules",
-      "hash": "9c4da337ff660e95"
+      "hash": "3a7acc0892b5975a"
     },
     "tasty:scripts/styles": {
       "kind": "scripts",
@@ -125,7 +125,7 @@
         "Where colors come from": "ce40127f100138c6"
       },
       "harnesspm/patches/glaze-colors.patch.md": {
-        "Checking a theme": "27bd9ad7256eb5f3",
+        "Checking a theme": "c2347088204f190a",
         "Where colors come from": "a2f80195a159e1ad"
       }
     },
@@ -134,7 +134,7 @@
         "After you change styles": "b5a2a1dc94cb8a0d"
       },
       "harnesspm/patches/tasty-lint-usage.patch.md": {
-        "After you change styles": "279eb75b153e8c85",
+        "After you change styles": "1d6dd67f68f3fea5",
         "Exceptions": "14f40fdd7def7f18"
       }
     },

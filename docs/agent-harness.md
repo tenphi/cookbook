@@ -90,14 +90,13 @@ tools at it. Run them from the folder with `docs.config.ts`:
 
 ```sh
 npx -y @tenphi/harnesspm run tasty:styles '{"fill":"#surface-2","padding":"2x","preset":"h4"}' --setup @tenphi/cookbook/harness/dev.harnesspm/theme.mjs
-npx -y @tenphi/harnesspm run glaze:inspect node_modules/@tenphi/cookbook/harness/dev.harnesspm/theme.mjs --color text
+npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnesspm/theme.mjs --color text
 ```
 
 - `tasty:styles` prints the CSS with the site's tokens, units, presets, and
   states, and flags any value that stays unresolved.
 - `glaze:inspect` prints each color in light, dark, and both high-contrast
-  schemes, with its contrast against its base. It takes a file path: in a
-  monorepo that installs packages at the root, give the path there.
+  schemes, with its contrast against its base.
 - The module reads the `docs.config.*` of the folder you run the tool in, also
   with `-C`. Without one, it says so and loads Cookbook's default theme. A site
   that passes its configuration to `cookbook()` in `astro.config.ts` gets the
@@ -109,7 +108,8 @@ npx -y @tenphi/harnesspm run glaze:inspect node_modules/@tenphi/cookbook/harness
 
 The lint rules recognize Cookbook's styling helpers and theme names only through
 the site's `tasty.config.ts`. Without it, `tasty-lint:check` and the edit hook
-check nothing in a Cookbook site and still report no problems. Before you rely on
+check nothing in a Cookbook site: `tasty-lint:check` notes each file you name
+that it found no styles in, and the edit hook stays quiet. Before you rely on
 them, set up linting as [Custom components](./custom-components.md#linting-custom-styles)
 shows: a `tasty.config.ts` with `extends: "@tenphi/cookbook"`, and
 `@typescript-eslint/parser` for `.ts` modules. Keep styles in `.ts` modules,

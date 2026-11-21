@@ -6,6 +6,6 @@
 
 ## Checking a theme
 
-- After `pnpm build`, run `glaze:inspect ../../packages/facade/harness/dev.harnesspm/theme.mjs` from `apps/reference` to see every color of the reference site in light, dark and high contrast. It reads the built `dist/` folders.
+- After `pnpm build`, run `glaze:inspect @tenphi/cookbook/harness/dev.harnesspm/theme.mjs` from `apps/reference` to see every color of the reference site in light, dark and high contrast. It reads the built `dist/` folders.
 - Cookbook adds its own contrast checks: `node packages/facade/dist/cli.js doctor --root apps/reference` and `pnpm check:theming` run them.
 - To try one color, run `glaze:color <color> --base '#ffffff' --contrast AA`. To check two literal colors, run `glaze:contrast <text> <background>`.

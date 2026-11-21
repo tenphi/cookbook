@@ -197,9 +197,7 @@ Write ordinary file-relative Markdown links. A root-relative link such as
 
 ```md
 [Install](./getting-started.md)
-![Architecture][diagram]
-
-[diagram]: ./assets/architecture.svg
+![Architecture](./assets/architecture.svg)
 ```
 
 Known document links are rewritten to public routes. Query strings and heading
