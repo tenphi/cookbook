@@ -1,7 +1,7 @@
 ## Where colors come from
 
 - Cookbook's palette is one Glaze theme, built in `packages/docs/src/theme/palette.ts` from a site's `theme.brand` and `theme.palette`. Components use its semantic tokens, such as `#text` or `#accent-text`. Never hard-code a color in a component.
-- A new color role is a `theme.palette` input that Glaze resolves for every scheme and contrast mode, with its public types, schema, docs and tests: see "Styling architecture" in `AGENTS.md`.
+- A new color role is a `theme.palette` input that Glaze resolves for every scheme and contrast mode, with its public types, schema, docs and tests: see "All component colors must use semantic theme color tokens" under "Behavior layer" in `AGENTS.md`.
 - The reference site's own colors are in `apps/reference/docs.config.ts`.
 
 ## Checking a theme

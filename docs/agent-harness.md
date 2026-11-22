@@ -109,10 +109,11 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
   with `glaze:inspect` and `--color <name>`.
 - `glaze:inspect` prints each color in light, dark, and both high-contrast
   schemes, with its contrast against its base.
-- The module reads the `docs.config.*` of the folder you run the tool in, also
-  with `-C`. Without one, it says so and loads Cookbook's default theme. A site
-  that passes its configuration to `cookbook()` in `astro.config.ts` gets the
-  defaults too.
+- The module reads the `docs.config.*` of the folder you run the tool in. `-C`
+  does not change that folder, so `cd` into the site first. Without one, the
+  module says so and loads Cookbook's default theme. A site that passes its
+  configuration to `cookbook()` in `astro.config.ts`, or names another file
+  with `configFile`, gets the defaults too.
 - `cookbook doctor` still has the last word on colors. It adds Cookbook's own
   contrast checks to Glaze's floors and fails on any that a theme misses.
 

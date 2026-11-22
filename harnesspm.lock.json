@@ -37,7 +37,7 @@
     },
     "glaze:rules/colors": {
       "kind": "rules",
-      "hash": "18fb885178b9bd13"
+      "hash": "c32c85ce67efd489"
     },
     "glaze:scripts/color": {
       "kind": "scripts",
@@ -89,7 +89,7 @@
     },
     "tasty-lint:rules/usage": {
       "kind": "rules",
-      "hash": "81c58e34f3549ff6"
+      "hash": "116ed24bbcdf367f"
     },
     "tasty-lint:scripts/check": {
       "kind": "scripts",

@@ -5,4 +5,4 @@
 
 ## Exceptions
 
-- Run `pnpm lint`: it allows no warnings. Disable a rule only in the cases that "Validation" in `AGENTS.md` lists, for one line, with a specific reason: `// eslint-disable-next-line tasty/<rule> -- <reason>`. Never weaken a rule or raise the warning limit.
+- Run `pnpm lint`: it allows no warnings. Disable a rule only in the cases that `AGENTS.md` allows (the ones "Validation" lists, and the compatibility ignore for empty legacy customization hooks under "Behavior layer"), for one line, with a specific reason: `// eslint-disable-next-line tasty/<rule> -- <reason>`. Never weaken a rule or raise the warning limit.

@@ -20,7 +20,7 @@ const { config, configFile } = await resolveDocsProject({
 // that name no color it shows. Write to stderr so the notice always shows.
 if (configFile === undefined)
   process.stderr.write(
-    `cookbook: no docs.config.* in ${process.cwd()}, so this is Cookbook's default theme. Run the tool from the folder with the site's docs.config.ts; -C does not change it.\n`,
+    `cookbook: no docs.config.* in ${process.cwd()}, so this is Cookbook's default theme. Run the tool from the folder with the site's docs.config.ts; -C does not change it. A site whose configuration is inline in astro.config.ts, or in another file named by configFile, gets the default theme here.\n`,
   );
 
 configureTastyTheme(config.theme);

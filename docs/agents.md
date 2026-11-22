@@ -32,6 +32,9 @@ the docs from the site's folder:
 node --input-type=module -e "console.log(import.meta.resolve('@tenphi/cookbook/docs/agents.md'))"
 ```
 
+Read the resolved file as Markdown: the package exports the docs as files, not
+as JavaScript modules.
+
 ## Rules that always apply
 
 1. **Read the configuration first.** `docs.config.ts` holds the site, its

@@ -131,16 +131,10 @@ the npm packages point to their upstream release and still need internet
 access. The published website keeps its online links.
 
 Start at `node_modules/@tenphi/cookbook/docs/agents.md`: it names the page for
-each task. When the package manager uses a different layout, resolve the
-exported documentation path from the consuming project:
-
-```sh
-node --input-type=module -e "console.log(import.meta.resolve('@tenphi/cookbook/docs/agents.md'))"
-```
-
-Read the resolved file as Markdown; documentation exports are file references,
-not JavaScript modules. The snapshots are generated during Cookbook's build
-and packaging, with no network fetch or consumer installation hook.
+each task. [What is installed](./agents.md#what-is-installed) shows how to find
+these docs when the package manager installs Cookbook elsewhere. The snapshots
+are generated during Cookbook's build and packaging, with no network fetch or
+consumer installation hook.
 
 ## Guide coding agents explicitly
 
