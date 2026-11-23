@@ -2,7 +2,7 @@
 
 - Colors that adapt to light, dark and high contrast come from a Glaze theme or palette. Change the theme, not the CSS or tokens exported from it, and do not write dark or high-contrast values by hand.
 - In a Cookbook site, that theme is `theme.brand` and `theme.palette` in `docs.config.ts`: Cookbook builds it with Glaze, and styles use its colors as tokens, such as `#text`, `#surface` or `#accent-text`. A new color role goes into `theme.palette` as a Glaze declaration with `base`, `tone` and `contrast`, before you use its `#name`. Do not make a Glaze theme of your own there.
-- The `glaze-theme` skill has the steps for a Cookbook site. Code that builds its own theme with `glaze(...)` follows Glaze's own skill: `npx harnesspm why glaze:skills/glaze-theme` names it under `original`.
+- The `glaze-theme` skill has the steps for a Cookbook site. In a repository where other packages use Glaze directly, harnesspm keeps Glaze's own skill and `sync` warns about it: read Cookbook's steps in `node_modules/.harnesspm/pkgs/@tenphi/cookbook/harness/skills/glaze-theme/SKILL.md` instead.
 
 ## Checking a theme
 

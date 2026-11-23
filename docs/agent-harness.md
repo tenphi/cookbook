@@ -37,8 +37,8 @@ npx harnesspm init
 
 With pnpm, run `pnpm add -D @tenphi/harnesspm` and `pnpm exec harnesspm init`.
 With Yarn, run `yarn add -D @tenphi/harnesspm` and `yarn harnesspm init`.
-Use harnesspm 0.10 or later. An older version cannot replace a skill, so every
-sync warns about Cookbook's `glaze-theme` skill.
+Use harnesspm 0.10.1 or later. Versions before 0.10 cannot replace a skill, and
+0.10.0 applies Cookbook's changes to the other workspaces of a monorepo too.
 
 `init` adds a block to `AGENTS.md`, links skills for Claude Code and Codex, and
 makes every install run `harnesspm sync`. Commit `AGENTS.md`, `CLAUDE.md`,
@@ -48,14 +48,13 @@ file it writes.
 
 In a monorepo, install harnesspm and run `init` at the repository root (with pnpm,
 `pnpm add -Dw @tenphi/harnesspm`). Each workspace gets the harness
-of its own dependencies, so Cookbook's rule reaches only the workspace of the
-docs site, in its own `AGENTS.md`. Cookbook's changes to the Tasty, Glaze, and
-lint rules and its `glaze-theme` skill reach every workspace that uses those
-packages, because harnesspm keeps one copy of each package for the whole
-repository ([harnesspm#65](https://github.com/tenphi/harnesspm/issues/65)). The
-changed rules mark the steps for a Cookbook site, and
-`npx harnesspm why glaze:skills/glaze-theme` names Glaze's own skill under
-`original` for other Glaze code.
+of its own dependencies, so Cookbook's rule and its changes to the Tasty, Glaze,
+and lint rules reach only the workspace of the docs site. Skills are shared by
+the whole repository: when another workspace uses Glaze directly, harnesspm
+keeps Glaze's own `glaze-theme` skill and `sync` warns about it. The site's
+agent then reads Cookbook's steps in
+`node_modules/.harnesspm/pkgs/@tenphi/cookbook/harness/skills/glaze-theme/SKILL.md`,
+as the patched Glaze rule says.
 
 ## Turn on the tools
 
@@ -107,10 +106,7 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
 ```
 
 - `tasty:styles` prints the CSS with the site's tokens, units, presets, and
-  states, and flags unknown units, presets, and recipes. It does not check
-  names: a misspelled `#color` or `$token` still prints as a `var()`
-  ([tasty#473](https://github.com/tenphi/tasty/issues/473)). Look a color up
-  with `glaze:inspect` and `--color <name>`.
+  states, and flags unknown units, presets, recipes, colors, and tokens.
 - `glaze:inspect` prints each color in light, dark, and both high-contrast
   schemes, with its contrast against its base.
 - The module reads the `docs.config.*` of the folder you run the tool in. `-C`
@@ -136,15 +132,11 @@ shows:
   presets, and recipes. With `extends: "@tenphi/cookbook"` alone, they report
   a color from `theme.palette` as an unknown token.
 - Keep styles in `.js`, `.mjs`, `.ts`, or `.tsx` modules, not in `.astro`
-  files. The tool and the hook read `.ts` modules through typescript-eslint,
-  which needs TypeScript below 6.1, while sites from the project creator use
-  TypeScript 7. There, keep style modules in `.js` or `.mjs` files, or ask the
-  person before you install TypeScript 6 and `@typescript-eslint/parser`
-  ([eslint-plugin-tasty#171](https://github.com/tenphi/eslint-plugin-tasty/issues/171)).
+  files. The tool and the hook lint `.ts` modules in TypeScript 7 sites too.
 - The rules do not read `theme.styles`, `theme.customStyles`, or
-  `theme.recipes` in `docs.config.ts`, and neither `cookbook doctor` nor the build checks their values. Check each
-  changed object there with `tasty:styles` instead, and look its colors up with
-  `glaze:inspect --color <name>`.
+  `theme.recipes` in `docs.config.ts`, and neither `cookbook doctor` nor the
+  build checks their values. Check each changed object there with
+  `tasty:styles` instead.
 
 ## Keep it current
 

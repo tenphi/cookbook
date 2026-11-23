@@ -6,9 +6,9 @@
       "project": true
     },
     "@tenphi/eslint-plugin-tasty": {
-      "version": "1.21.1",
+      "version": "1.21.2",
       "plugin": "tasty-lint",
-      "integrity": "sha512-2UINvZf6zBotEqBtrogJXBId1CQPvopDAwLGXTcjP2InOm4e1H57cDvB68ycmBrUWY97mAVcAF83t7FMVenGmg=="
+      "integrity": "sha512-5frkjRntKk6AQsmmjXPLe2tcqAk1fVFtzt0TrH5TWKRz1dE0jwLucKz2d7a6J7beg4jNr/5eTQVq0yde1/+h5Q=="
     },
     "@tenphi/glaze": {
       "version": "3.1.1",
@@ -16,14 +16,14 @@
       "integrity": "sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA=="
     },
     "@tenphi/harnesspm": {
-      "version": "0.10.0",
+      "version": "0.10.1",
       "plugin": "harnesspm",
-      "integrity": "sha512-Ea38ohpGAV/qiCWlgOMnD7uFF0e4rW9Gnl/ZSDKWhG6oHssMKLBD3wmB16bLblyNrPQR6FrXV93F3nhtXhA7Bg=="
+      "integrity": "sha512-vYYFQqLPgWmyuwED2wb2GJCSvDVFJvr4h1/H/x+GbIclOyc9q6MxodS25srITLiSlqwSGOC9f5MkV/07yjBOcA=="
     },
     "@tenphi/tasty": {
-      "version": "3.19.1",
+      "version": "3.19.2",
       "plugin": "tasty",
-      "integrity": "sha512-eOXl0ePu1ciPXG93RSJwgfsrkbIPHJrGaenIJrhZ8pQcIwmbSslMp2wMk8GRtrSDgGuyiC65a8g3RQwwjwC4aA=="
+      "integrity": "sha512-/ZYcAgC955SXmXvz7qkWA8KqQ7NOaclonvZzFrlKvlZbyUpXW7nqgCaaV6ejSe+tH8jdYxlkBsdtLmrxsSa92w=="
     }
   },
   "units": {
@@ -37,7 +37,7 @@
     },
     "glaze:rules/colors": {
       "kind": "rules",
-      "hash": "19d2fec35e5a2b09"
+      "hash": "37bd08b6bb8840c4"
     },
     "glaze:scripts/color": {
       "kind": "scripts",
@@ -53,11 +53,11 @@
     },
     "glaze:skills/glaze-theme": {
       "kind": "skills",
-      "hash": "5a6193f89731d6f6"
+      "hash": "6e582a1e4ec20240"
     },
     "harnesspm:docs": {
       "kind": "docs",
-      "hash": "fbfb4e05c8d968bd"
+      "hash": "d356d0a9919dfae1"
     },
     "harnesspm:rules/generated-files": {
       "kind": "rules",
@@ -93,11 +93,11 @@
     },
     "tasty-lint:scripts/check": {
       "kind": "scripts",
-      "hash": "3aea38ccdfbdf22a"
+      "hash": "336a540574d71444"
     },
     "tasty-lint:scripts/check-edit": {
       "kind": "scripts",
-      "hash": "81a36c54c1df4f0d"
+      "hash": "3c9e7a9ac1ef9e1f"
     },
     "tasty:docs": {
       "kind": "docs",
@@ -105,11 +105,11 @@
     },
     "tasty:rules/usage": {
       "kind": "rules",
-      "hash": "0b18b4242dc147f4"
+      "hash": "83935bcf74f68f95"
     },
     "tasty:scripts/styles": {
       "kind": "scripts",
-      "hash": "bd020ff534f6ae40"
+      "hash": "81cc5cdaf184d3e4"
     }
   },
   "patches": {
@@ -125,17 +125,17 @@
         "Where colors come from": "ce40127f100138c6"
       },
       "harnesspm/patches/glaze-colors.patch.md": {
-        "Checking a theme": "6291d13545939b40",
-        "Where colors come from": "d8584b6209d60640"
+        "Checking a theme": "f5021ce7211e077f",
+        "Where colors come from": "010fc769d4c0e5b0"
       }
     },
     "tasty-lint:rules/usage": {
+      "harnesspm/patches/tasty-lint-usage.patch.md": {
+        "After you change styles": "4252ad8297f73f1d",
+        "Exceptions": "14f40fdd7def7f18"
+      },
       "packages/facade/harness/dev.harnesspm/patches/tasty-lint-usage.patch.md": {
         "After you change styles": "b5a2a1dc94cb8a0d"
-      },
-      "harnesspm/patches/tasty-lint-usage.patch.md": {
-        "After you change styles": "39157645e216035c",
-        "Exceptions": "14f40fdd7def7f18"
       }
     },
     "tasty:rules/usage": {
@@ -143,7 +143,7 @@
         "Checking styles": "6fc039e8c6929820"
       },
       "harnesspm/patches/tasty-usage.patch.md": {
-        "Checking styles": "3f5178139afe16ac"
+        "Checking styles": "b2769f3c4dfafcde"
       }
     }
   }

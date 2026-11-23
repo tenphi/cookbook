@@ -7,8 +7,6 @@ description: Create or change the colors of a Cookbook site, set in theme.brand 
 
 Cookbook passes this skill on in place of Glaze's own: in a Cookbook site, Glaze runs inside Cookbook, which builds one Glaze theme from the site's configuration.
 
-For Glaze code outside a Cookbook site, such as a theme that another package in the repository builds with `glaze()`, follow Glaze's own skill instead: `npx harnesspm why glaze:skills/glaze-theme` names its file under `original`.
-
 ## 1. Read the docs
 
 Open Cookbook's docs index and Glaze's docs index from the harnesspm block in `AGENTS.md`. Read the pages the task needs:
