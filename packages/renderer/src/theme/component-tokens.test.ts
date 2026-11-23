@@ -11,9 +11,12 @@ describe("component tokens", () => {
     for (const file of await readdir(components)) {
       if (!file.endsWith(".js") || file.includes(".test.")) continue;
       const source = await readFile(`${components}${file}`, "utf8");
-      // A style key that defines a name, such as `"#callout-text": {` or
-      // `"$copy-button-size": "2rem"`. The `$` selector key is not a name.
-      for (const [, name] of source.matchAll(/"([#$][a-z][a-z\d-]*)"\s*:/g))
+      // A style key that defines a name, quoted or not, such as
+      // `"#callout-text": {`, `"$copy-button-size": "2rem"`, `$bg: "#text"` or
+      // `$_line: "#text"`. The `$` selector key is not a name.
+      for (const [, name] of source.matchAll(
+        /(?:^|[{,\s])"?([#$][\w-]+)"?\s*:/gm,
+      ))
         defined.add(name!);
     }
     expect(defined.size).toBeGreaterThan(0);

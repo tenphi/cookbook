@@ -2,7 +2,8 @@ import { configure } from "@tenphi/tasty/core";
 
 /**
  * Color and token names that Cookbook's own style trees define on a
- * component's root or parts, such as `#callout-text` or `$copy-button-size`.
+ * component's root or parts, such as `#callout-text`, `$copy-button-size` or
+ * Mermaid's `$bg`.
  * A site's `theme.styles` overrides may use them. `component-tokens.test.ts`
  * keeps this list equal to the names the style modules define.
  */
@@ -10,7 +11,22 @@ export const COMPONENT_TOKENS = [
   "#callout-border",
   "#callout-surface",
   "#callout-text",
+  "$_arrow",
+  "$_group-fill",
+  "$_group-hdr",
+  "$_inner-stroke",
+  "$_key-badge",
+  "$_line",
+  "$_node-fill",
+  "$_node-stroke",
+  "$_text",
+  "$_text-faint",
+  "$_text-muted",
+  "$_text-sec",
+  "$accent",
   "$backdrop-blur",
+  "$bg",
+  "$border",
   "$copy-button-size",
   "$details-border-width",
   "$dialog-transition",
@@ -21,11 +37,14 @@ export const COMPONENT_TOKENS = [
   "$docs-nav-height",
   "$docs-nav-pad-x",
   "$docs-sidebar-pad-x",
+  "$fg",
   "$hover-offset",
   "$indicator-height",
   "$item-gap",
+  "$line",
   "$margin-block-end",
   "$margin-block-start",
+  "$muted",
   "$padding-block-end",
   "$padding-block-start",
   "$pagefind-ui-background",
@@ -38,6 +57,7 @@ export const COMPONENT_TOKENS = [
   "$resting-shadow-blur",
   "$resting-shadow-offset",
   "$sidebar-transition",
+  "$surface",
   "$visually-hidden-size",
 ] as const;
 

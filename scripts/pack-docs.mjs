@@ -103,15 +103,12 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
           join(dirname(file), decodeURIComponent(pathname)),
         );
         if (files.has(target)) return url;
-        const packagedPath = normalizePath(relative(source.directory, target));
-        if (packagedPath.startsWith("../") || isAbsolute(packagedPath)) {
+        const upstreamPath = normalizePath(relative(source.directory, target));
+        if (upstreamPath.startsWith("../") || isAbsolute(upstreamPath)) {
           throw new Error(`Upstream link escapes its package: ${file}: ${url}`);
         }
-        // Packaged docs/ came from the package's own docs folder.
-        const upstreamPath = packagedPath.startsWith("docs/")
-          ? `${source.docs}/${packagedPath.slice("docs/".length)}`
-          : packagedPath;
-        // Source files and artwork omitted from npm remain available at the release ref.
+        // Source files and artwork omitted from npm remain available at the
+        // release ref, where both repositories keep their docs sources in docs/.
         const encoded = upstreamPath
           .split("/")
           .map(encodeURIComponent)

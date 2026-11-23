@@ -141,6 +141,14 @@ covers that, for a lint script):
   a color from `theme.palette` as an unknown token.
 - Keep styles in `.js`, `.mjs`, `.ts`, or `.tsx` modules, not in `.astro`
   files. The tool and the hook lint `.ts` modules in TypeScript 7 sites too.
+- The tool and the hook follow a site's own lint config only when that config
+  names `@tenphi/eslint-plugin-tasty`. A config set up as
+  [Custom components](./custom-components.md#linting-custom-styles) shows,
+  through `@tenphi/cookbook/eslint-plugin` or `oxlint.config.mjs`, does not.
+  The tools then run the recommended rules, and the tool's last line says
+  `(recommended rules)`. Add `--strict` to `tasty-lint:check` when the site's
+  config uses the strict preset, and run the site's lint script before you
+  finish.
 - The rules do not read `theme.styles`, `theme.customStyles`, or
   `theme.recipes` in `docs.config.ts`, and neither `cookbook doctor` nor the
   build checks their values. Check each changed object there with

@@ -181,6 +181,8 @@ console.log(JSON.stringify({
         tool,
         JSON.stringify({
           Title: { color: "#callout-text" },
+          // Mermaid writes these keys without quotes.
+          Diagram: { fill: "$bg", color: "$_line" },
           width: "$copy-button-size",
           fill: "#surfce",
         }),
@@ -190,7 +192,7 @@ console.log(JSON.stringify({
       { cwd: site },
     );
     expect(stdout).toContain('Color "#surfce" is not in the loaded config');
-    expect(stdout).not.toContain('"#callout-text" is not');
-    expect(stdout).not.toContain('"$copy-button-size" is not');
+    for (const name of ["#callout-text", "$copy-button-size", "$bg", "$_line"])
+      expect(stdout).not.toContain(`"${name}" is not`);
   });
 });

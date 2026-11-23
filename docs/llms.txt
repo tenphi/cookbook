@@ -43,4 +43,4 @@
 ## Tasty and Glaze
 
 - [Tasty docs](upstream/tasty/docs/llms.txt): the docs of the Tasty version that Cookbook uses. Start with its style rules for AI agents.
-- [Glaze API reference](upstream/glaze/docs/reference/index.md): the docs of the Glaze version that Cookbook uses.
+- [Glaze docs](upstream/glaze/docs/llms.txt): the docs of the Glaze version that Cookbook uses. Start with "Designing a palette"; the API reference is listed there too.
