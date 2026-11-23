@@ -38,7 +38,7 @@ catalog:
   astro: ^7.3.2
   "@tenphi/tasty": 3.19.2
   "@tenphi/glaze": 3.2.0
-  "@tenphi/eslint-plugin-tasty": 1.21.2
+  "@tenphi/eslint-plugin-tasty": 1.21.3
   "@uniaria/core": 0.3.0
   "@uniaria/elements": 0.3.0
   typescript: ^7.0.2

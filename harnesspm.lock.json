@@ -6,9 +6,9 @@
       "project": true
     },
     "@tenphi/eslint-plugin-tasty": {
-      "version": "1.21.2",
+      "version": "1.21.3",
       "plugin": "tasty-lint",
-      "integrity": "sha512-5frkjRntKk6AQsmmjXPLe2tcqAk1fVFtzt0TrH5TWKRz1dE0jwLucKz2d7a6J7beg4jNr/5eTQVq0yde1/+h5Q=="
+      "integrity": "sha512-LVH2iFapiJSbYHg9TEss2N7ZrEbUhrFHvnCOcNfAj/BD3DSd/W0CXg+jIfbs+4UdAyJw5kQTpiSQTb+LnVqMMQ=="
     },
     "@tenphi/glaze": {
       "version": "3.2.0",
@@ -93,11 +93,11 @@
     },
     "tasty-lint:scripts/check": {
       "kind": "scripts",
-      "hash": "336a540574d71444"
+      "hash": "3eb16188031919f9"
     },
     "tasty-lint:scripts/check-edit": {
       "kind": "scripts",
-      "hash": "3c9e7a9ac1ef9e1f"
+      "hash": "2e2b9a26fbbe5ec9"
     },
     "tasty:docs": {
       "kind": "docs",
