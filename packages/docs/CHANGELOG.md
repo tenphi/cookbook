@@ -1,5 +1,11 @@
 # @tenphi/docs
 
+## 0.34.0
+
+### Minor Changes
+
+- [#210](https://github.com/tenphi/cookbook/pull/210) [`9f0a649`](https://github.com/tenphi/cookbook/commit/9f0a649602d19eb2ab87e751fd6a9c356b6a8c01) Thanks [@tenphi](https://github.com/tenphi)! - Add `createColorTheme(theme)` to `@tenphi/docs`, which returns a site's colors as one Glaze theme, and `configureTastyTheme(theme)` to `@tenphi/renderer`, which configures Tasty with a site's theme as a Cookbook build does. Agent tools use them to read a site's theme. `declareComponentTokensForTools()` in `@tenphi/renderer` tells Tasty's `tasty:styles` tool about the color and token names that Cookbook's components define on their own roots, such as `#callout-text`, so the tool does not report them as undefined; builds never call it. Update Tasty to 3.19.2, whose `tasty:styles` tool resolves `--setup` modules from the current folder and warns about color and token names the theme does not define, and Glaze to 3.2.0, whose `glaze:inspect` tool takes a module inside an installed package.
+
 ## 0.33.2
 
 ### Patch Changes
