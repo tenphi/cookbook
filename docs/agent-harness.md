@@ -141,6 +141,10 @@ shows:
   TypeScript 7. There, keep style modules in `.js` or `.mjs` files, or ask the
   person before you install TypeScript 6 and `@typescript-eslint/parser`
   ([eslint-plugin-tasty#171](https://github.com/tenphi/eslint-plugin-tasty/issues/171)).
+- The rules do not read `theme.styles` or `theme.recipes` in `docs.config.ts`,
+  and neither `cookbook doctor` nor the build checks their values. Check each
+  changed object there with `tasty:styles` instead, and look its colors up with
+  `glaze:inspect --color <name>`.
 
 ## Keep it current
 
