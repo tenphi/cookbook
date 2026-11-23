@@ -1,5 +1,22 @@
 # @tenphi/renderer
 
+## 0.34.0
+
+### Minor Changes
+
+- [#210](https://github.com/tenphi/cookbook/pull/210) [`9f0a649`](https://github.com/tenphi/cookbook/commit/9f0a649602d19eb2ab87e751fd6a9c356b6a8c01) Thanks [@tenphi](https://github.com/tenphi)! - Generated `llms.txt` files follow the default language's sidebar, with pages in sidebar order: a **Documentation** section for the top-level navigation items, and one section for each navigation tab with items. Each page is listed under the tab that pages show for it, so agents see the same structure as readers. Discoverable pages that the sidebar does not list, such as translations, follow under **Other pages**.
+
+- [#210](https://github.com/tenphi/cookbook/pull/210) [`9f0a649`](https://github.com/tenphi/cookbook/commit/9f0a649602d19eb2ab87e751fd6a9c356b6a8c01) Thanks [@tenphi](https://github.com/tenphi)! - Add `createColorTheme(theme)` to `@tenphi/docs`, which returns a site's colors as one Glaze theme, and `configureTastyTheme(theme)` to `@tenphi/renderer`, which configures Tasty with a site's theme as a Cookbook build does. Agent tools use them to read a site's theme. `declareComponentTokensForTools()` in `@tenphi/renderer` tells Tasty's `tasty:styles` tool about the color and token names that Cookbook's components define on their own roots, such as `#callout-text`, so the tool does not report them as undefined; builds never call it. Update Tasty to 3.19.2, whose `tasty:styles` tool resolves `--setup` modules from the current folder and warns about color and token names the theme does not define, and Glaze to 3.2.0, whose `glaze:inspect` tool takes a module inside an installed package.
+
+### Patch Changes
+
+- [#210](https://github.com/tenphi/cookbook/pull/210) [`9f0a649`](https://github.com/tenphi/cookbook/commit/9f0a649602d19eb2ab87e751fd6a9c356b6a8c01) Thanks [@tenphi](https://github.com/tenphi)! - A navigation tab whose items are all drafts, or empty, no longer shifts the sidebar of every tab after it: each tab's pages show that tab's sidebar again.
+
+- [#212](https://github.com/tenphi/cookbook/pull/212) [`0957f7e`](https://github.com/tenphi/cookbook/commit/0957f7e6d218a75bf2a60f0145891486d94b4cae) Thanks [@tenphi](https://github.com/tenphi)! - Use Tasty ESLint 1.21.2 so Cookbook lint presets support TypeScript 7 and the optional Oxc parser fallback.
+
+- Updated dependencies [[`9f0a649`](https://github.com/tenphi/cookbook/commit/9f0a649602d19eb2ab87e751fd6a9c356b6a8c01)]:
+  - @tenphi/docs@0.34.0
+
 ## 0.33.2
 
 ### Patch Changes
