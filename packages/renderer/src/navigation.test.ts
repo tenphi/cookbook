@@ -241,6 +241,38 @@ describe("section navigation", () => {
     ]);
   });
 
+  it("keeps each tab's sidebar group in place when a tab has no visible pages", () => {
+    const tabs = resolveNavigationLayout({
+      tabs: [
+        { label: "Drafts", link: "/wip", items: ["/wip"] },
+        { label: "Empty", link: "/empty", items: [] },
+        { label: "Guide", link: "/guide", items: ["/guide"] },
+      ],
+    });
+    const sidebar = pageSidebar(tabs, [
+      {
+        route: "/wip",
+        entryId: "wip",
+        sourcePath: "wip.md",
+        title: "Work in progress",
+        discoverable: false,
+      },
+      {
+        route: "/guide",
+        entryId: "guide",
+        sourcePath: "guide.md",
+        title: "Guide",
+      },
+    ]);
+    // A draft tab and an empty tab keep their places, so the Guide tab's
+    // pages still find the Guide group.
+    expect(tabs.tabs.map((tab) => sidebar[tab.sidebarGroup!])).toEqual([
+      { label: "Drafts", items: [] },
+      { label: "Empty", items: [] },
+      { label: "Guide", items: [{ label: "Guide", link: "/guide" }] },
+    ]);
+  });
+
   it("applies graph sidebar labels, ordering, groups, and visibility", () => {
     const routes = [
       {

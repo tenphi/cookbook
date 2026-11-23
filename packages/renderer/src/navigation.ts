@@ -141,21 +141,22 @@ export function pageSidebar(
   const fallback = layout.items?.length
     ? layout.items.map(convert)
     : groupedRoutes(visibleRoutes);
-  const sidebar = !layout.sectioned
-    ? fallback
-    : [
-        ...(layout.fallbackSidebarGroup !== undefined
-          ? [{ label: "Documentation", items: fallback }]
-          : []),
-        ...layout.tabs.flatMap((tab) =>
-          tab.items !== undefined
-            ? [{ label: tab.label, items: tab.items.map(convert) }]
-            : [],
-        ),
-      ];
-  return routes
-    .filter((route) => route.discoverable === false)
-    .reduce((items, route) => withoutRoute(items, route.route), sidebar);
+  const hidden = routes.filter((route) => route.discoverable === false);
+  const visible = (items: PageSidebarItem[]) =>
+    hidden.reduce((rest, route) => withoutRoute(rest, route.route), items);
+  if (!layout.sectioned) return visible(fallback);
+  // Pages pick their group by its index (`sidebarGroup`), so every group keeps
+  // its place, even when it has no visible pages left.
+  return [
+    ...(layout.fallbackSidebarGroup !== undefined
+      ? [{ label: "Documentation", items: visible(fallback) }]
+      : []),
+    ...layout.tabs.flatMap((tab) =>
+      tab.items !== undefined
+        ? [{ label: tab.label, items: visible(tab.items.map(convert)) }]
+        : [],
+    ),
+  ];
 }
 
 function withoutRoute(
