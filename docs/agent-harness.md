@@ -37,8 +37,8 @@ npx harnesspm init
 
 With pnpm, run `pnpm add -D @tenphi/harnesspm` and `pnpm exec harnesspm init`.
 With Yarn, run `yarn add -D @tenphi/harnesspm` and `yarn harnesspm init`.
-Cookbook's harness needs harnesspm 0.10 or later: an older version keeps
-Glaze's own `glaze-theme` skill, which does not know Cookbook's palette.
+Use harnesspm 0.10 or later. An older version cannot replace a skill, so every
+sync warns about Cookbook's `glaze-theme` skill.
 
 `init` adds a block to `AGENTS.md`, links skills for Claude Code and Codex, and
 makes every install run `harnesspm sync`. Commit `AGENTS.md`, `CLAUDE.md`,
@@ -49,7 +49,13 @@ file it writes.
 In a monorepo, install harnesspm and run `init` at the repository root (with pnpm,
 `pnpm add -Dw @tenphi/harnesspm`). Each workspace gets the harness
 of its own dependencies, so Cookbook's rule reaches only the workspace of the
-docs site, in its own `AGENTS.md`.
+docs site, in its own `AGENTS.md`. Cookbook's changes to the Tasty, Glaze, and
+lint rules and its `glaze-theme` skill reach every workspace that uses those
+packages, because harnesspm keeps one copy of each package for the whole
+repository ([harnesspm#65](https://github.com/tenphi/harnesspm/issues/65)). The
+changed rules mark the steps for a Cookbook site, and
+`npx harnesspm why glaze:skills/glaze-theme` names Glaze's own skill under
+`original` for other Glaze code.
 
 ## Turn on the tools
 
@@ -61,8 +67,12 @@ off until the person trusts their packages:
 | `@tenphi/tasty`               | `tasty:styles` prints the CSS of a styles object.                                               |
 | `@tenphi/glaze`               | `glaze:inspect`, `glaze:color`, and `glaze:contrast` resolve colors and measure contrast.       |
 | `@tenphi/eslint-plugin-tasty` | `tasty-lint:check` lints files, and in Claude Code a hook lints each file that the agent edits. |
+| `@tenphi/cookbook`            | No tools. Trust lets Claude Code run its `glaze-theme` skill without asking.                    |
 
-Cookbook's own harness has no tools, so it needs no trust. Never add a package
+Cookbook's own harness runs no code. harnesspm counts its `glaze-theme` skill as
+Cookbook's file, though, so until the person trusts `@tenphi/cookbook` too,
+Claude Code asks before it runs the skill and a run without a person denies it.
+Never add a package
 to `trust` yourself: tell the person what each pending tool does, and ask how far
 the trust goes. `"pin"` trusts only the installed version and asks again for
 each new one, as harnesspm advises for packages that their team does not
@@ -138,9 +148,10 @@ shows:
   `harnesspm sync`. After `npm install <package>` or `pnpm add <package>`, run
   `npx harnesspm sync` yourself.
 - A Cookbook upgrade brings the harness of the new version. Commit the changed
-  `harnesspm.lock.json` and `AGENTS.md` with the upgrade. When it brings new
-  Tasty, Glaze, or lint versions of packages trusted with `"pin"`, their tools
-  stay off, and `npx harnesspm sync --check` fails in CI, until the person runs
+  `harnesspm.lock.json` and `AGENTS.md` with the upgrade. When it brings a new
+  version of a package trusted with `"pin"`, such as Cookbook itself or Tasty,
+  Glaze, or the lint plugin, that package's tools and allow rules wait, and
+  `npx harnesspm sync --check` fails in CI, until the person runs
   `npx harnesspm approve` in their own terminal. Ask them to, and say so in your
   report.
 - To change Cookbook's rule for one project, patch it:

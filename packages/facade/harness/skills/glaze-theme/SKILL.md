@@ -7,6 +7,8 @@ description: Create or change the colors of a Cookbook site, set in theme.brand 
 
 Cookbook passes this skill on in place of Glaze's own: in a Cookbook site, Glaze runs inside Cookbook, which builds one Glaze theme from the site's configuration.
 
+For Glaze code outside a Cookbook site, such as a theme that another package in the repository builds with `glaze()`, follow Glaze's own skill instead: `npx harnesspm why glaze:skills/glaze-theme` names its file under `original`.
+
 ## 1. Read the docs
 
 Open Cookbook's docs index and Glaze's docs index from the harnesspm block in `AGENTS.md`. Read the pages the task needs:
@@ -29,7 +31,7 @@ The site's colors are `theme.brand` and `theme.palette` in `docs.config.ts`. `th
 
 ## 3. Write colors
 
-1. **The brand** is a Glaze `from` declaration: `brand: { from: "#2f5bff" }`. To see where a brand color lands before you set it, run `npx harnesspm run glaze:color '#2f5bff' --base '#ffffff' --contrast AA`.
+1. **The brand** is a Glaze `from` declaration: `brand: { from: "#2f5bff" }`. It seeds the hue and saturation; Cookbook derives the accent text, the filled controls and the focus ring from it, each with its own contrast floor. To see them, set the brand and run `glaze:inspect` (step 4.2) with `--color accent,focus`.
 2. **Names.** A palette role is a lowercase name with hyphens. `review-panel` becomes the token `#review-panel`. A built-in name, such as `surface` or `text`, changes that role. Give new roles a project prefix, so a future built-in role cannot take the name.
 3. **Surfaces** get an absolute `tone` (0–100).
 4. **Dependent colors** name a `base`, another role, with a tone step such as `tone: "-2"`. Order in the file does not matter, and references can name built-in roles.

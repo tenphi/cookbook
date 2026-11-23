@@ -64,8 +64,8 @@ Steps: https://cookbook.tenphi.me/agent-harness/
 
 Rules and docs work at once. Tools run code, so they stay off until you trust
 their packages: Tasty and Glaze for the style and color tools, and the Tasty
-lint plugin for the lint tool and its hook. Cookbook's own harness has no tools,
-so it needs no trust.
+lint plugin for the lint tool and its hook. Cookbook's own harness has no tools;
+trust it too if its color skill should run without asking in Claude Code.
 
 1. Ask what is waiting: "Which harnesspm tools are pending, and what does each
    one do?"

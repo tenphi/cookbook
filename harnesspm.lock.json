@@ -37,7 +37,7 @@
     },
     "glaze:rules/colors": {
       "kind": "rules",
-      "hash": "df1ba7ee8ece5531"
+      "hash": "9428abc316d12bfe"
     },
     "glaze:scripts/color": {
       "kind": "scripts",
@@ -53,7 +53,7 @@
     },
     "glaze:skills/glaze-theme": {
       "kind": "skills",
-      "hash": "eeca493ae19608d0"
+      "hash": "5a6193f89731d6f6"
     },
     "harnesspm:docs": {
       "kind": "docs",
@@ -125,8 +125,8 @@
         "Where colors come from": "ce40127f100138c6"
       },
       "harnesspm/patches/glaze-colors.patch.md": {
-        "Checking a theme": "c2347088204f190a",
-        "Where colors come from": "2d37a9033c4a080f"
+        "Checking a theme": "9c5aa7ad0fc56624",
+        "Where colors come from": "7b5728be54cfeecd"
       }
     },
     "tasty-lint:rules/usage": {
@@ -134,7 +134,7 @@
         "After you change styles": "b5a2a1dc94cb8a0d"
       },
       "harnesspm/patches/tasty-lint-usage.patch.md": {
-        "After you change styles": "a7e19ca4f8b1aaf0",
+        "After you change styles": "61b78365fab3f73e",
         "Exceptions": "14f40fdd7def7f18"
       }
     },
@@ -143,7 +143,7 @@
         "Checking styles": "6fc039e8c6929820"
       },
       "harnesspm/patches/tasty-usage.patch.md": {
-        "Checking styles": "08a115a7abe0cbbb"
+        "Checking styles": "3f5178139afe16ac"
       }
     }
   }
