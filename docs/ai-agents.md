@@ -37,6 +37,7 @@ your agent:
 - Tasty's and Glaze's rules and tools, which show the CSS a style produces and
   every color of your theme in light, dark, and high contrast, from your site's
   own theme;
+- a skill with the steps to change your site's colors;
 - the Tasty lint plugin's rule, a lint tool, and, in Claude Code, a hook that
   lints each style file your agent edits.
 

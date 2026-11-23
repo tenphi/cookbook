@@ -10,7 +10,8 @@ import { afterEach, describe, expect, it } from "vitest";
   The harness ships in the package for projects that use harnesspm.
   `harnesspm check` validates its files at prepack; these tests guard what it
   cannot see: the packages `extends` names, the upstream sections the patches
-  replace, the docs index and the theme module the patches point agents at.
+  replace, the upstream skills the harness replaces, the docs index and the
+  theme module the patches point agents at.
 */
 const execFileAsync = promisify(execFile);
 const packageRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -32,9 +33,25 @@ interface HarnessManifest {
     "dev.harnesspm": {
       extends: string[];
       docs: string;
+      replace: Record<string, string>;
       patch: Record<string, string>;
     };
   };
+}
+
+// The npm package of each plugin name that a unit ID can start with.
+const plugins: Record<string, string> = {
+  glaze: "@tenphi/glaze",
+  tasty: "@tenphi/tasty",
+  "tasty-lint": "@tenphi/eslint-plugin-tasty",
+};
+
+function upstreamFile(id: string, file: string): Promise<string> {
+  const [plugin] = id.split(":") as [string];
+  return readFile(
+    join(packageRoot, "node_modules", plugins[plugin]!, "harness", file),
+    "utf8",
+  );
 }
 
 async function manifest(): Promise<HarnessManifest> {
@@ -61,11 +78,6 @@ describe("Cookbook harness", () => {
   });
 
   it("patches sections that the upstream rules still have", async () => {
-    const plugins: Record<string, string> = {
-      glaze: "@tenphi/glaze",
-      tasty: "@tenphi/tasty",
-      "tasty-lint": "@tenphi/eslint-plugin-tasty",
-    };
     const patches = (await manifest()).extensions["dev.harnesspm"].patch;
     expect(Object.keys(patches).sort()).toEqual([
       "glaze:rules/colors",
@@ -73,21 +85,25 @@ describe("Cookbook harness", () => {
       "tasty:rules/usage",
     ]);
     for (const [id, path] of Object.entries(patches)) {
-      const [plugin, unit] = id.split(":") as [string, string];
-      const upstream = await readFile(
-        join(
-          packageRoot,
-          "node_modules",
-          plugins[plugin]!,
-          "harness/dev.harnesspm",
-          `${unit}.md`,
-        ),
-        "utf8",
-      );
+      const unit = id.split(":")[1]!;
+      const upstream = await upstreamFile(id, `dev.harnesspm/${unit}.md`);
       const patch = await readFile(join(harness, path), "utf8");
       expect(headings(patch).length).toBeGreaterThan(0);
       for (const heading of headings(patch))
         expect(headings(upstream), `${id}: ${heading}`).toContain(heading);
+    }
+  });
+
+  it("replaces skills that the upstream packages still have, by name", async () => {
+    const replaced = (await manifest()).extensions["dev.harnesspm"].replace;
+    expect(Object.keys(replaced)).toEqual(["glaze:skills/glaze-theme"]);
+    const name = (skill: string) => /^name:\s*(.+)$/m.exec(skill)?.[1];
+    for (const [id, path] of Object.entries(replaced)) {
+      const unit = id.split(":")[1]!;
+      const upstream = await upstreamFile(id, `${unit}/SKILL.md`);
+      const skill = await readFile(join(harness, path, "SKILL.md"), "utf8");
+      // A replacement takes the skill's place, so it keeps the skill's name.
+      expect(name(skill), id).toBe(name(upstream));
     }
   });
 

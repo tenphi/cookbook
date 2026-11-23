@@ -16,9 +16,9 @@
       "integrity": "sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA=="
     },
     "@tenphi/harnesspm": {
-      "version": "0.9.2",
+      "version": "0.10.0",
       "plugin": "harnesspm",
-      "integrity": "sha512-ohD2STJHWXNXcGSiSUl6+S3iMWLyLxYslPWh6V9rdoWJiexvzqqW2NRkopK6G1Apetzq+ajzQ12PNDs0PnbMwQ=="
+      "integrity": "sha512-Ea38ohpGAV/qiCWlgOMnD7uFF0e4rW9Gnl/ZSDKWhG6oHssMKLBD3wmB16bLblyNrPQR6FrXV93F3nhtXhA7Bg=="
     },
     "@tenphi/tasty": {
       "version": "3.19.1",
@@ -37,7 +37,7 @@
     },
     "glaze:rules/colors": {
       "kind": "rules",
-      "hash": "c32c85ce67efd489"
+      "hash": "df1ba7ee8ece5531"
     },
     "glaze:scripts/color": {
       "kind": "scripts",
@@ -53,11 +53,11 @@
     },
     "glaze:skills/glaze-theme": {
       "kind": "skills",
-      "hash": "89dbcdc39af57d9c"
+      "hash": "eeca493ae19608d0"
     },
     "harnesspm:docs": {
       "kind": "docs",
-      "hash": "5eea068d0e28d79c"
+      "hash": "fbfb4e05c8d968bd"
     },
     "harnesspm:rules/generated-files": {
       "kind": "rules",
@@ -65,15 +65,15 @@
     },
     "harnesspm:rules/harnesspm-config": {
       "kind": "rules",
-      "hash": "4ab34118776febeb"
+      "hash": "d63e2afc5e1cff0c"
     },
     "harnesspm:skills/harnesspm-export": {
       "kind": "skills",
-      "hash": "fb92aa8cb29e1e26"
+      "hash": "57a522200fd69144"
     },
     "harnesspm:skills/harnesspm-import": {
       "kind": "skills",
-      "hash": "749fe5d4f3178085"
+      "hash": "c20dd78843f5a5e7"
     },
     "harnesspm:skills/harnesspm-improve": {
       "kind": "skills",
@@ -126,7 +126,7 @@
       },
       "harnesspm/patches/glaze-colors.patch.md": {
         "Checking a theme": "c2347088204f190a",
-        "Where colors come from": "a2f80195a159e1ad"
+        "Where colors come from": "2d37a9033c4a080f"
       }
     },
     "tasty-lint:rules/usage": {

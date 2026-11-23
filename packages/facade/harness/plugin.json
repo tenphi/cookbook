@@ -13,6 +13,9 @@
         "@tenphi/eslint-plugin-tasty"
       ],
       "docs": "../docs",
+      "replace": {
+        "glaze:skills/glaze-theme": "./skills/glaze-theme"
+      },
       "patch": {
         "glaze:rules/colors": "./dev.harnesspm/patches/glaze-colors.patch.md",
         "tasty-lint:rules/usage": "./dev.harnesspm/patches/tasty-lint-usage.patch.md",

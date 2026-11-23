@@ -11,13 +11,13 @@ where they are.
 
 ## What the harness gives an agent
 
-| Unit                                                                                                          | What it does                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cookbook:rules/usage`                                                                                        | An always-on rule: where a site's files are, how to change its look, and how to check it.                                                                                                      |
-| `cookbook:docs`                                                                                               | The index of these docs, at the installed version.                                                                                                                                             |
-| `tasty:rules/usage`, `tasty:styles`, `tasty:docs`                                                             | Tasty's style rule, its docs, and a tool that prints the CSS a styles object produces. Cookbook's patch points the tool at the site's theme.                                                   |
-| `glaze:rules/colors`, `glaze:inspect`, `glaze:color`, `glaze:contrast`, `glaze:docs`, the `glaze-theme` skill | Glaze's color rule, docs, tools, and skill. Cookbook's patch says that a site's colors live in `theme.brand` and `theme.palette`, and how to check them.                                       |
-| `tasty-lint:rules/usage`, `tasty-lint:check`, `tasty-lint:docs`, an edit hook                                 | The Tasty lint plugin's rule and docs, a tool that runs only its rules, and, in Claude Code, a hook that lints each file the agent edits. Cookbook's patch says what the rules need in a site. |
+| Unit                                                                                                          | What it does                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cookbook:rules/usage`                                                                                        | An always-on rule: where a site's files are, how to change its look, and how to check it.                                                                                                                                           |
+| `cookbook:docs`                                                                                               | The index of these docs, at the installed version.                                                                                                                                                                                  |
+| `tasty:rules/usage`, `tasty:styles`, `tasty:docs`                                                             | Tasty's style rule, its docs, and a tool that prints the CSS a styles object produces. Cookbook's patch points the tool at the site's theme.                                                                                        |
+| `glaze:rules/colors`, `glaze:inspect`, `glaze:color`, `glaze:contrast`, `glaze:docs`, the `glaze-theme` skill | Glaze's color rule, docs, and tools. Cookbook's patch says that a site's colors live in `theme.brand` and `theme.palette`, and how to check them. Cookbook replaces Glaze's skill with one that has the steps for a site's palette. |
+| `tasty-lint:rules/usage`, `tasty-lint:check`, `tasty-lint:docs`, an edit hook                                 | The Tasty lint plugin's rule and docs, a tool that runs only its rules, and, in Claude Code, a hook that lints each file the agent edits. Cookbook's patch says what the rules need in a site.                                      |
 
 The Tasty, Glaze, and lint units come from the versions that Cookbook depends
 on. `npx -y @tenphi/harnesspm help @tenphi/cookbook` prints Cookbook's rule.
@@ -37,6 +37,8 @@ npx harnesspm init
 
 With pnpm, run `pnpm add -D @tenphi/harnesspm` and `pnpm exec harnesspm init`.
 With Yarn, run `yarn add -D @tenphi/harnesspm` and `yarn harnesspm init`.
+Cookbook's harness needs harnesspm 0.10 or later: an older version keeps
+Glaze's own `glaze-theme` skill, which does not know Cookbook's palette.
 
 `init` adds a block to `AGENTS.md`, links skills for Claude Code and Codex, and
 makes every install run `harnesspm sync`. Commit `AGENTS.md`, `CLAUDE.md`,
@@ -48,14 +50,6 @@ In a monorepo, install harnesspm and run `init` at the repository root (with pnp
 `pnpm add -Dw @tenphi/harnesspm`). Each workspace gets the harness
 of its own dependencies, so Cookbook's rule reaches only the workspace of the
 docs site, in its own `AGENTS.md`.
-
-A site in a folder of a larger repository that is not a workspace, such as the
-`docs-site/` that [Getting started](./getting-started.md) creates, is a
-project below the git root. harnesspm 0.9.2 writes its per-machine excludes for
-the wrong folder there ([harnesspm#62](https://github.com/tenphi/harnesspm/issues/62)),
-so git lists harnesspm's links in `<site>/.claude/` and `<site>/.agents/skills/`
-as new files. Commit only the files above and the creator's
-`.agents/skills/upgrade-cookbook/`.
 
 ## Turn on the tools
 

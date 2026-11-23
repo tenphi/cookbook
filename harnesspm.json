@@ -1,6 +1,5 @@
 {
   "$schema": "https://unpkg.com/@tenphi/harnesspm/schema/harnesspm.schema.json",
-  "exclude": ["cookbook:docs"],
   "patch": {
     "cookbook:rules/usage": "./harnesspm/patches/cookbook-usage.patch.md",
     "glaze:rules/colors": "./harnesspm/patches/glaze-colors.patch.md",

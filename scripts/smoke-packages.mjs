@@ -70,7 +70,9 @@ try {
         "harness/dev.harnesspm/rules/usage.md",
         "harness/dev.harnesspm/patches/glaze-colors.patch.md",
         "harness/dev.harnesspm/patches/tasty-usage.patch.md",
+        "harness/dev.harnesspm/patches/tasty-lint-usage.patch.md",
         "harness/dev.harnesspm/theme.mjs",
+        "harness/skills/glaze-theme/SKILL.md",
       ]) {
         if (!files.has(`package/${required}`))
           throw new Error(`${tarball} is missing ${required}.`);
