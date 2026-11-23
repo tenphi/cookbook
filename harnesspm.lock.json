@@ -126,7 +126,7 @@
       },
       "harnesspm/patches/glaze-colors.patch.md": {
         "Checking a theme": "f5021ce7211e077f",
-        "Where colors come from": "2c838724ac9d7ed3"
+        "Where colors come from": "84a40a1555abf831"
       }
     },
     "tasty-lint:rules/usage": {
