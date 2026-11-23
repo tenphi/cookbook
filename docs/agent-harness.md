@@ -126,10 +126,14 @@ The lint rules recognize Cookbook's styling helpers and the site's theme names
 only through the site's `tasty.config.ts`. Without it, `tasty-lint:check` and
 the edit hook check nothing in a Cookbook site: `tasty-lint:check` notes each
 file you name that it found no styles in, and the edit hook stays quiet. The
-tool and the hook need only that file, not an ESLint or oxlint setup of the
-site's own ([Custom components](./custom-components.md#linting-custom-styles)
+tool and the hook need only that file and the `eslint` package, not an ESLint
+or oxlint setup of the site's own ([Custom components](./custom-components.md#linting-custom-styles)
 covers that, for a lint script):
 
+- In a Yarn site, add `eslint` as a dev dependency: `yarn add -D eslint`. npm
+  and pnpm install it with Cookbook, as a peer of the lint plugin, but Yarn
+  does not. Without it, `tasty-lint:check` stops and asks for it, and the edit
+  hook lints nothing and says nothing.
 - Build `tasty.config.ts` with `createValidationConfig(docs.theme)` from
   `@tenphi/cookbook/eslint-plugin`, as [Custom theme names](./custom-components.md#custom-theme-names)
   shows. The rules then know the site's palette colors, tokens, units, states,

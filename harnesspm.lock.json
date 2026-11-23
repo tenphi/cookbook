@@ -131,7 +131,7 @@
     },
     "tasty-lint:rules/usage": {
       "harnesspm/patches/tasty-lint-usage.patch.md": {
-        "After you change styles": "4252ad8297f73f1d",
+        "After you change styles": "a4090d6b33436de0",
         "Exceptions": "14f40fdd7def7f18"
       },
       "packages/facade/harness/dev.harnesspm/patches/tasty-lint-usage.patch.md": {
