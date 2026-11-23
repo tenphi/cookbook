@@ -232,67 +232,69 @@ if ((guide.match(/data-variant="primary"/g) ?? []).length !== 1) {
     "Primary header button variants must only apply in the desktop header.",
   );
 }
-const initialSidebar = sidebarHtml(
-  await readFile(join(output, "getting-started/index.html"), "utf8"),
-);
-for (const section of [
-  "Start",
-  "Author",
-  "Customize",
-  "Extend",
-  "Publish",
-  "Maintain",
-]) {
-  if (
-    !initialSidebar.includes(
-      `<h2 data-element="SectionHeading"><span>${section}</span>`,
-    ) ||
-    /<details\b/.test(initialSidebar)
-  ) {
-    throw new Error(
-      `Guide journey ${section} must be a visible, flat section.`,
-    );
+const assertSidebar = (sidebar, tab, sections, routes) => {
+  for (const section of sections) {
+    if (
+      !sidebar.includes(
+        `<h2 data-element="SectionHeading"><span>${section}</span>`,
+      ) ||
+      /<details\b/.test(sidebar)
+    ) {
+      throw new Error(`${tab} section ${section} must be visible and flat.`);
+    }
   }
-}
-for (const route of [
-  "getting-started",
-  "ai-agents",
-  "site-navigation",
-  "recipes",
-  "theme-and-components",
-  "fonts-and-typography",
-  "custom-components",
-  "plugins",
-  "deployment",
-  "migration",
-  "quality-checks",
-  "troubleshooting",
-]) {
-  if (!initialSidebar.includes(`href="/${route}/"`))
-    throw new Error(`Missing guide journey: ${route}`);
-}
-const referenceSidebar = sidebarHtml(
+  for (const route of routes) {
+    if (!sidebar.includes(`href="/${route}/"`))
+      throw new Error(`Missing ${tab} page: ${route}`);
+  }
+};
+assertSidebar(
+  sidebarHtml(
+    await readFile(join(output, "getting-started/index.html"), "utf8"),
+  ),
+  "For humans",
+  ["Start", "With your agent"],
+  ["getting-started", "comparison", "examples", "ask-your-agent", "ai-agents"],
+);
+const agentSidebar = sidebarHtml(
   await readFile(join(output, "component-styles/index.html"), "utf8"),
 );
 if (
   !/<a\b[^>]*href="\/component-styles\/"[^>]*aria-current="page"/.test(
-    referenceSidebar,
+    agentSidebar,
   )
 ) {
   throw new Error(
-    "The component reference must be current in the Reference tab.",
+    "The component reference must be current in the For AI agents tab.",
   );
 }
-for (const route of [
-  "configuration",
-  "component-styles",
-  "publishing",
-  "cli",
-  "architecture",
-]) {
-  if (!referenceSidebar.includes(`href="/${route}/"`))
-    throw new Error(`Missing reference page: ${route}`);
-}
+assertSidebar(
+  agentSidebar,
+  "For AI agents",
+  ["Author", "Customize", "Extend", "Publish", "Maintain", "Reference"],
+  [
+    "agents",
+    "content-sources",
+    "site-navigation",
+    "authoring",
+    "customization-rules",
+    "theme-and-components",
+    "fonts-and-typography",
+    "custom-components",
+    "recipes",
+    "plugins",
+    "deployment",
+    "agent-harness",
+    "migration",
+    "quality-checks",
+    "troubleshooting",
+    "configuration",
+    "component-styles",
+    "publishing",
+    "cli",
+    "architecture",
+  ],
+);
 for (const [pattern, label] of [
   [
     /<link\b(?=[^>]*rel="icon")(?=[^>]*sizes="32x32")(?=[^>]*href="\/_cookbook\/icons\/favicon-32x32\.png")[^>]*>/,

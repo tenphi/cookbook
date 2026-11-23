@@ -17,11 +17,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec harnesspm sync --check
       - run: pnpm check:boundaries
       - run: pnpm check:changelog
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      - run: pnpm check:harness
       - run: pnpm test
       - run: pnpm check:types
       - run: pnpm check:development

@@ -28,6 +28,9 @@ range. Review the preview with your custom styles, plugins, fonts, languages,
 and versions before deploying. After deployment, run `cookbook check-build
 --url https://docs.example.com/` against that exact build output.
 
+If the site uses harnesspm, the new release brings its own agent harness:
+follow [Keep it current](./agent-harness.md#keep-it-current) after the upgrade.
+
 The creator starts new projects; rerunning it over an existing project is not
 an upgrade path. Generated sites include `.agents/skills/upgrade-cookbook/`
 for an agent-assisted upgrade. See [quality checks](./quality-checks.md) for

@@ -16,9 +16,10 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
     join(repositoryRoot, "packages/renderer/package.json"),
   );
   const upstream = [];
-  for (const [name, site] of [
-    ["tasty", "https://tasty.style"],
-    ["glaze", "https://glaze.tenphi.me"],
+  // Each package's docs folder is packaged as upstream/<name>/docs.
+  for (const [name, site, docs] of [
+    ["tasty", "https://tasty.style", "docs"],
+    ["glaze", "https://glaze.tenphi.me", "harness/docs"],
   ]) {
     const packageName = `@tenphi/${name}`;
     const root = await packageRoot(
@@ -37,6 +38,7 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
       site,
       ref: manifest.gitHead || `v${manifest.version}`,
       directory: `upstream/${name}`,
+      docs,
     });
   }
 
@@ -45,8 +47,12 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
   for (const source of upstream) {
     const destination = join(output, source.directory);
     await mkdir(destination, { recursive: true });
-    for (const entry of ["README.md", "LICENSE", "docs"]) {
-      await cp(join(source.root, entry), join(destination, entry), {
+    for (const [entry, target] of [
+      ["README.md", "README.md"],
+      ["LICENSE", "LICENSE"],
+      [source.docs, "docs"],
+    ]) {
+      await cp(join(source.root, entry), join(destination, target), {
         recursive: true,
       });
     }
@@ -86,6 +92,9 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
             ? new URL(url, source.site).href
             : url;
         const local = localReference(absolute, files);
+        // A page's link to itself on its site, such as Glaze's "built from the
+        // Glaze site" line, keeps pointing at the site's live version.
+        if (local && splitUrl(local).pathname === file) return absolute;
         if (local) return relativeUrl(file, local);
         if (absolute !== url) return absolute;
         if (!source || !isLocalUrl(url)) return url;
@@ -98,7 +107,8 @@ export async function packDocs(output = join(facadeRoot, "docs")) {
         if (upstreamPath.startsWith("../") || isAbsolute(upstreamPath)) {
           throw new Error(`Upstream link escapes its package: ${file}: ${url}`);
         }
-        // Source files and artwork omitted from npm remain available at the release ref.
+        // Source files and artwork omitted from npm remain available at the
+        // release ref, where both repositories keep their docs sources in docs/.
         const encoded = upstreamPath
           .split("/")
           .map(encodeURIComponent)
@@ -222,10 +232,10 @@ function localReference(url, files) {
         ? "upstream/tasty/docs/README.md"
         : `upstream/tasty${path}.md`;
   } else if (parsed.origin === "https://glaze.tenphi.me") {
-    // Glaze ships guides as .mdx and the API reference as a folder index.
+    // Glaze ships guides as .md files and the API reference as a folder index.
     target = !path
       ? "upstream/glaze/README.md"
-      : [".md", ".mdx", "/index.md"]
+      : [".md", "/index.md"]
           .map((extension) => `upstream/glaze/docs${path}${extension}`)
           .find((candidate) => files.has(candidate));
   } else if (parsed.origin === "https://cookbook.tenphi.me") {

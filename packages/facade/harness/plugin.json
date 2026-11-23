@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cookbook",
+  "description": "Cookbook documentation sites: a rule for changing a site, the docs of the installed version, and the Tasty, Glaze and Tasty lint harnesses, adapted to the site's theme",
+  "homepage": "https://cookbook.tenphi.me",
+  "repository": "https://github.com/tenphi/cookbook",
+  "keywords": ["cookbook", "documentation", "astro", "tasty", "glaze"],
+  "extensions": {
+    "dev.harnesspm": {
+      "extends": [
+        "@tenphi/tasty",
+        "@tenphi/glaze",
+        "@tenphi/eslint-plugin-tasty"
+      ],
+      "docs": "../docs",
+      "replace": {
+        "glaze:skills/glaze-theme": "./skills/glaze-theme"
+      },
+      "patch": {
+        "glaze:rules/colors": "./dev.harnesspm/patches/glaze-colors.patch.md",
+        "tasty-lint:rules/usage": "./dev.harnesspm/patches/tasty-lint-usage.patch.md",
+        "tasty:rules/usage": "./dev.harnesspm/patches/tasty-usage.patch.md"
+      }
+    }
+  }
+}

@@ -43,6 +43,7 @@
   "files": [
     "dist",
     "docs",
+    "harness",
     "tasty.config.mjs",
     "README.md",
     "LICENSE"
@@ -52,7 +53,7 @@
   },
   "scripts": {
     "build": "tsdown --config tsdown.config.ts && node ../../scripts/pack-docs.mjs",
-    "prepack": "node ../../scripts/pack-docs.mjs",
+    "prepack": "node ../../scripts/pack-docs.mjs && harnesspm check",
     "clean": "rm -rf dist docs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
@@ -76,14 +77,18 @@
   "license": "MIT",
   "dependencies": {
     "@tenphi/docs": "workspace:*",
-    "@tenphi/renderer": "workspace:*"
+    "@tenphi/eslint-plugin-tasty": "catalog:",
+    "@tenphi/glaze": "catalog:",
+    "@tenphi/renderer": "workspace:*",
+    "@tenphi/tasty": "catalog:"
   },
   "peerDependencies": {
     "astro": "catalog:"
   },
   "devDependencies": {
-    "astro": "catalog:",
+    "@tenphi/harnesspm": "^0.10.1",
     "@types/node": "^22.15.2",
+    "astro": "catalog:",
     "tsdown": "^0.22.14",
     "typescript": "catalog:",
     "vitest": "catalog:"

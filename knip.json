@@ -9,7 +9,16 @@
       "entry": ["docs.config.ts"]
     },
     "packages/facade": {
-      "entry": ["tasty.config.mjs", "type-tests/index.ts"]
+      "entry": [
+        "tasty.config.mjs",
+        "type-tests/index.ts",
+        "harness/dev.harnesspm/theme.mjs"
+      ],
+      "ignoreDependencies": [
+        "@tenphi/eslint-plugin-tasty",
+        "@tenphi/glaze",
+        "@tenphi/tasty"
+      ]
     },
     "packages/renderer": {
       "entry": ["tasty.config.mjs"]

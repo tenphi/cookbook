@@ -64,6 +64,15 @@ try {
         "docs/upstream/glaze/docs/reference/index.md",
         "docs/upstream/tasty/LICENSE",
         "docs/upstream/glaze/LICENSE",
+        "docs/llms.txt",
+        "docs/agents.md",
+        "harness/plugin.json",
+        "harness/dev.harnesspm/rules/usage.md",
+        "harness/dev.harnesspm/patches/glaze-colors.patch.md",
+        "harness/dev.harnesspm/patches/tasty-usage.patch.md",
+        "harness/dev.harnesspm/patches/tasty-lint-usage.patch.md",
+        "harness/dev.harnesspm/theme.mjs",
+        "harness/skills/glaze-theme/SKILL.md",
       ]) {
         if (!files.has(`package/${required}`))
           throw new Error(`${tarball} is missing ${required}.`);

@@ -2,7 +2,10 @@
 // Cookbook also supports owner-provided translations for other sites.
 export const translations: Record<string, Record<string, string>> = {
   es: {
-    "navigation.Guide": "Guía",
+    "navigation.For humans": "Para personas",
+    "navigation.For AI agents": "Para agentes de IA (en inglés)",
+    "navigation.With your agent": "Con tu agente (en inglés)",
+    "navigation.Start here": "Empieza aquí",
     "navigation.Reference": "Referencia (en inglés)",
     "navigation.Start": "Primeros pasos",
     "navigation.Author": "Redacción",
@@ -77,7 +80,10 @@ export const translations: Record<string, Record<string, string>> = {
     "pagefind.one_result": "[COUNT] resultado",
   },
   ru: {
-    "navigation.Guide": "Руководство",
+    "navigation.For humans": "Для людей",
+    "navigation.For AI agents": "Для ИИ-агентов (на английском)",
+    "navigation.With your agent": "С вашим агентом (на английском)",
+    "navigation.Start here": "Начните здесь",
     "navigation.Reference": "Справочник (на английском)",
     "navigation.Start": "Начало работы",
     "navigation.Author": "Подготовка материалов",
@@ -151,7 +157,10 @@ export const translations: Record<string, Record<string, string>> = {
     "pagefind.one_result": "Результатов: [COUNT]",
   },
   ja: {
-    "navigation.Guide": "ガイド",
+    "navigation.For humans": "人間向け",
+    "navigation.For AI agents": "AI エージェント向け（英語）",
+    "navigation.With your agent": "エージェントと使う（英語）",
+    "navigation.Start here": "ここから始める",
     "navigation.Reference": "リファレンス（英語）",
     "navigation.Start": "はじめに",
     "navigation.Author": "執筆",
@@ -225,7 +234,10 @@ export const translations: Record<string, Record<string, string>> = {
     "pagefind.one_result": "[COUNT] 件の結果",
   },
   "zh-Hans": {
-    "navigation.Guide": "指南",
+    "navigation.For humans": "面向人类",
+    "navigation.For AI agents": "面向 AI 智能体（英文）",
+    "navigation.With your agent": "与智能体协作（英文）",
+    "navigation.Start here": "从这里开始",
     "navigation.Reference": "参考资料（英文）",
     "navigation.Start": "入门",
     "navigation.Author": "内容编写",

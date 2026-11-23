@@ -355,6 +355,31 @@ for (const path of ['upstream/tasty/docs/ai-agents.md', 'upstream/glaze/docs/ref
       ],
       { cwd: site },
     );
+    // The agent harness loads a site's theme for tasty:styles and glaze:inspect
+    // from the installed package, with only Cookbook's own dependencies. This
+    // fixture site configures Cookbook inline, so check a docs.config.mjs folder.
+    const themeSite = join(site, "harness-theme");
+    await mkdir(themeSite, { recursive: true });
+    await writeFile(
+      join(themeSite, "docs.config.mjs"),
+      "export default { theme: { palette: { note: { base: 'surface', tone: 30 } }, units: { gutter: '24px' } } };\n",
+    );
+    await run(
+      process.execPath,
+      [
+        "--input-type=module",
+        "-e",
+        `
+const module = new URL('../harness/dev.harnesspm/theme.mjs', import.meta.resolve('@tenphi/cookbook'));
+const { theme } = await import(module.href);
+if (!theme.resolve().get('note'))
+  throw new Error('The harness theme module did not read the site palette.');
+if (globalThis.__tenphiCookbookTastyRuntime?.units?.gutter !== '24px')
+  throw new Error('The harness theme module did not configure Tasty with the site theme.');
+`,
+      ],
+      { cwd: themeSite },
+    );
     await checkStyleLinting({ site, root, run });
     await writeFile(
       join(site, "tsconfig.json"),

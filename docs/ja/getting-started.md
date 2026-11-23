@@ -5,7 +5,22 @@ sidebar:
   order: 2
 ---
 
-Cookbook には Node.js 22.19 以降が必要です。
+Cookbook には Node.js 22.19 以降が必要です。サイトの作成はコーディングエージェントに依頼することも、自分でコマンドを実行することもできます。
+
+## エージェントに依頼する
+
+リポジトリで、Claude Code、Codex などのコーディングエージェントに次の内容を貼り付けます。
+
+```text
+Create a Cookbook documentation site for this repository
+in `docs-site/`, from our README and `docs/` pages:
+run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
+Then run its `validate` script and tell me what it reports.
+
+Steps: https://cookbook.tenphi.me/agents/
+```
+
+エージェントは以下のセクションと同じコマンドを実行します。サイトの公開 URL が決まったら伝えてください。その後の作業に使えるプロンプトは [Ask your agent](../ask-your-agent.md)（英語）にまとめています。
 
 ## 最初のサイトを作る
 
@@ -108,4 +123,4 @@ npm run preview
 
 `validate` はプロジェクトの型チェック、Cookbook の事前チェック、サイトのビルド、出力の検証を行います。自分で構成したプロジェクトでは、[CLI コマンド](../cli.md)に記載されたスクリプトを追加するか、`npx @tenphi/cookbook doctor` を実行してください。
 
-ほかのガイドは現在英語で公開されています。[使用例](../examples.md)、[執筆用コンポーネント](../authoring.mdx)、[AI エージェントの作業手順](../ai-agents.md)、[デプロイ](../deployment.md)、[バージョン別のアップグレードガイド](../migration.md)を参照してください。検証に失敗した場合は[トラブルシューティング](../troubleshooting.md)を参照してください。
+ほかのガイドは現在英語で公開されています。[使用例](../examples.md)、[執筆用コンポーネント](../authoring.mdx)、[AI エージェント](../ai-agents.md)、[デプロイ](../deployment.md)、[バージョン別のアップグレードガイド](../migration.md)を参照してください。検証に失敗した場合は[トラブルシューティング](../troubleshooting.md)を参照してください。

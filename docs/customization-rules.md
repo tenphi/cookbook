@@ -117,30 +117,25 @@ imports, configuration, and rendering setup when adapting them.
 ## Documentation in the installed package
 
 The public `@tenphi/cookbook` package includes this guide and the rest of the
-Cookbook documentation in `docs/`. Its `docs/upstream/` directory contains
+Cookbook documentation in `docs/`, indexed by `docs/llms.txt`. Its `docs/upstream/` directory contains
 generated Tasty and Glaze documentation snapshots, their READMEs, and licenses.
 `docs/upstream/manifest.json` records the source package versions and release
 references. These match the dependencies used to build that Cookbook release;
 consumer dependency overrides can change the installed runtime independently.
 
 In the packaged copies, links to available upstream reference pages point to
-these local snapshots. The Markdown references work offline. Glaze's guides
-are MDX: their prose, code, and tables read offline, but their live examples
-render only on the Glaze website. Links to source code and artwork absent from
-the npm packages point to their upstream release and still need internet
-access. The published website keeps its online links.
+these local snapshots. The Markdown references work offline. Each Glaze guide
+prints the code of the examples that render live on the Glaze website, with
+tables of the colors they resolve to, and links to its page there. Links to
+source code and artwork absent from the npm packages point to their upstream
+release and still need internet access. The published website keeps its
+online links.
 
-Start at `node_modules/@tenphi/cookbook/docs/customization-rules.md`. When the
-package manager uses a different layout, resolve the exported documentation
-path from the consuming project:
-
-```sh
-node --input-type=module -e "console.log(import.meta.resolve('@tenphi/cookbook/docs/customization-rules.md'))"
-```
-
-Read the resolved file as Markdown; documentation exports are file references,
-not JavaScript modules. The snapshots are generated during Cookbook's build
-and packaging, with no network fetch or consumer installation hook.
+Start at `node_modules/@tenphi/cookbook/docs/agents.md`: it names the page for
+each task. [What is installed](./agents.md#what-is-installed) shows how to find
+these docs when the package manager installs Cookbook elsewhere. The snapshots
+are generated during Cookbook's build and packaging, with no network fetch or
+consumer installation hook.
 
 ## Guide coding agents explicitly
 
@@ -149,14 +144,20 @@ instruction to your project's existing agent guidance, adjusting the path for
 the app that depends on Cookbook:
 
 ```md
-Before customizing this Cookbook site, read
-node_modules/@tenphi/cookbook/docs/customization-rules.md and follow its linked
-Tasty and Glaze references. Inspect docs.config.ts (and tasty.config.ts, if
-present) first.
+Before changing this Cookbook site, read
+node_modules/@tenphi/cookbook/docs/agents.md and the page it names for the
+task. Before customizing styles, read customization-rules.md there and follow
+its linked Tasty and Glaze references. Inspect docs.config.ts (and
+tasty.config.ts, if present) first.
 Use Cookbook's public styling APIs, semantic palette tokens, typography
 presets, and partial component overrides. Run the project's style lint,
 cookbook doctor, and build commands after changes.
 ```
+
+With [harnesspm](./agent-harness.md), the project gets Cookbook's rule and the
+index of these docs in its agent instructions instead, at the installed version,
+together with Tasty and Glaze tools that read the site's theme and Tasty lint
+tools.
 
 ## Check the result
 

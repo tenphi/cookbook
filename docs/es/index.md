@@ -32,6 +32,7 @@ sidebar:
 - **Idiomas y versiones.** Ofrece páginas traducidas y documentación versionada, con selectores que llevan a la página equivalente cuando existe. [Idiomas y versiones](../site-navigation.md#contents-languages-and-versions).
 - **Comprobaciones antes de publicar.** Detecta enlaces rotos, recursos ausentes, rutas duplicadas y navegación inválida con errores que señalan el archivo de origen. Publica HTML prerenderizado en cualquier alojamiento estático. [Comprobaciones de calidad](../quality-checks.md).
 - **Páginas listas para compartir y leer.** Publica URL canónicas, vistas previas para redes sociales, mapas del sitio, Markdown descargable y un índice `llms.txt` para agentes de programación. [Metadatos de publicación](../publishing.md).
+- **Listo para agentes de programación.** El paquete instalado incluye la documentación de tu versión, y un harness opcional de [harnesspm](https://harnesspm.tenphi.me) da a tu agente las reglas de Cookbook y herramientas que leen tu tema. [Agentes de IA](../ai-agents.md).
 
 ## Empieza con tu repositorio
 
@@ -59,4 +60,4 @@ Esta página procede de [docs/es/index.md](https://github.com/tenphi/cookbook/bl
 - [Tema y componentes](../theme-and-components.md) introduce la marca y los tokens y enlaza con fuentes, estilos y componentes propios.
 - [Despliegue](../deployment.md) cubre la validación y el alojamiento estático.
 
-El resto de la documentación aún está disponible en inglés. Consulta también el [flujo para agentes de IA](../ai-agents.md), la [referencia de configuración](../configuration.md), las [opciones de publicación](../publishing.md) y la [referencia de la CLI](../cli.md).
+El resto de la documentación aún está disponible en inglés, en dos partes. **Para personas** incluye [indicaciones para tu agente](../ask-your-agent.md) y [qué recibe tu agente de Cookbook](../ai-agents.md). **Para agentes de IA** tiene todos los pasos: [su página de inicio](../agents.md), cada guía y las referencias de [configuración](../configuration.md), [publicación](../publishing.md) y [la CLI](../cli.md).

@@ -1,0 +1,46 @@
+# Cookbook
+
+> Docs for `@tenphi/cookbook`, the version installed in this project. A coding agent starts with "For AI agents": the rules that always apply and the page for each task.
+
+## For AI agents
+
+- [For AI agents](agents.md): what is installed, the rules that always apply, and the page for each task. Read it first.
+- [Customization rules](customization-rules.md): the supported ways to change a site's look, with the Tasty and Glaze references. Read it before you change styles.
+- [Agent harness](agent-harness.md): Cookbook's harness for harnesspm, its tools, and the module that loads a site's theme for them.
+
+## Guides
+
+- [Content sources](content-sources.md): local files, OpenAPI specs, and locked npm package docs; links and assets.
+- [Search and navigation](site-navigation.md): search, tabs, sections, page contents, languages, and versions.
+- [Authoring components](authoring.mdx): pages and frontmatter, tabs, callouts, code groups, cards, steps, and isolated previews.
+- [Theme and components](theme-and-components.md): brand color, semantic palette, design tokens, and logo.
+- [Fonts and typography](fonts-and-typography.md): local and Google fonts, font loading, and typography presets.
+- [Custom components](custom-components.md): `defineComponent()`, global style trees, and style linting.
+- [Theme recipes](recipes.md): complete, build-checked configurations for branding, styles, fonts, and shared themes.
+- [Working examples](examples.md): configurations for repositories, monorepos, npm content, languages, and previews.
+- [Extend Cookbook](plugins.md): Markdown transforms, metadata validation, and the content graph.
+- [Deployment](deployment.md): validate the build and publish it to a static host.
+- [Upgrade Cookbook](migration.md): version-specific changes and runtime upgrades.
+- [Quality checks](quality-checks.md): what each check covers, supported environments, and output budgets.
+- [Troubleshooting](troubleshooting.md): configuration, contrast, fonts, plugins, routes, and deployment failures.
+
+## Reference
+
+- [Configuration reference](configuration.md): every `docs.config.ts` field.
+- [Component styles](component-styles.md): every built-in component name and its named sub-elements for `theme.styles`.
+- [Publishing metadata](publishing.md): titles, social previews, canonical URLs, indexing, and `llms.txt`.
+- [CLI commands](cli.md): `cookbook doctor`, `check-build`, and `update`, and the project creator's options.
+- [Architecture](architecture.md): the four packages and the static content pipeline.
+
+## For humans
+
+- [Cookbook](index.md): what Cookbook does, and where to start.
+- [Getting started](getting-started.md): create a site with an agent or by hand, for a repository, an npm package, or an Astro project.
+- [Ask your agent](ask-your-agent.md): prompts for common tasks and the decisions that stay with the person.
+- [AI agents](ai-agents.md): what an agent gets from Cookbook, the optional harness, and agent-readable published sites.
+- [Compare documentation tools](comparison.md): Cookbook next to other documentation tools.
+
+## Tasty and Glaze
+
+- [Tasty docs](upstream/tasty/docs/llms.txt): the docs of the Tasty version that Cookbook uses. Start with its style rules for AI agents.
+- [Glaze docs](upstream/glaze/docs/llms.txt): the docs of the Glaze version that Cookbook uses. Start with "Designing a palette"; the API reference is listed there too.

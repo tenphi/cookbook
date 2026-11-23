@@ -31,11 +31,6 @@ import {
   type DocsConfig,
   type TrailingSlash,
 } from "@tenphi/docs";
-import {
-  configure,
-  type ConfigTokens,
-  type TypographyPreset,
-} from "@tenphi/tasty/core";
 import { tastyIntegration } from "@tenphi/tasty/ssr/astro";
 import type { AstroIntegration, HookParameters } from "astro";
 import {
@@ -64,17 +59,12 @@ import {
   cookbookShikiConfig,
   configureCodeHighlighting,
 } from "./theme/shiki-theme.js";
-import {
-  TASTY_UNITS,
-  tastyTokens,
-  TASTY_SPACING_PROPERTIES,
-} from "./theme/tasty-config.js";
+import { configureTastyTheme } from "./theme/configure-tasty.js";
 import {
   configureComponentStyles,
   unusedCustomStyleNames,
 } from "./components/component-styles.js";
 import { resolveComponentOverrides } from "./component-overrides.js";
-import { cookbookStates } from "./components/tasty-states.js";
 import { createSiteIcons, type SiteIconSet } from "./site-icons.js";
 import {
   createDefaultSocialImage,
@@ -1066,37 +1056,6 @@ function assetContentType(pathname: string): string {
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
-}
-
-function configureTastyTheme(
-  theme: DocsConfig["theme"],
-  resolved: ReturnType<typeof resolveDocsTheme>,
-): void {
-  const tokens = tastyTokens(resolved) as ConfigTokens;
-
-  // Recipes and custom parser units are module-local in Tasty. Astro evaluates
-  // renderer code in a separate server module graph. Share configuration only
-  // inside the build process; never serialize this state into the page.
-  (
-    globalThis as typeof globalThis & { __tenphiCookbookTastyRuntime?: unknown }
-  ).__tenphiCookbookTastyRuntime = {
-    units: { ...TASTY_UNITS, ...theme?.units },
-    recipes: theme?.recipes ?? {},
-    states: theme?.states ?? {},
-    presets: resolved.presets,
-    tokens,
-  };
-  configure({
-    states: {
-      ...cookbookStates,
-      ...theme?.states,
-    },
-    units: { ...TASTY_UNITS, ...theme?.units },
-    recipes: theme?.recipes ?? {},
-    tokens,
-    properties: TASTY_SPACING_PROPERTIES,
-    presets: resolved.presets as Record<string, TypographyPreset>,
-  });
 }
 
 async function callInner<K extends keyof AstroIntegration["hooks"]>(

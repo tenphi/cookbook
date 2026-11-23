@@ -101,12 +101,19 @@ describe("creator defaults", () => {
     expect(agentInstructions).toContain(
       ".agents/skills/upgrade-cookbook/SKILL.md",
     );
+    expect(agentInstructions).toContain(
+      "node_modules/@tenphi/cookbook/docs/agents.md",
+    );
+    expect(agentInstructions).toContain(
+      "node_modules/@tenphi/cookbook/docs/agent-harness.md",
+    );
     const upgradeSkill = await readFile(
       join(destination, ".agents", "skills", "upgrade-cookbook", "SKILL.md"),
       "utf8",
     );
     expect(upgradeSkill).toContain("cookbook.lock.json");
     expect(upgradeSkill).toContain("Run the site's `validate` script");
+    expect(upgradeSkill).toContain("npx harnesspm sync");
   });
   it("keeps existing repository content outside the generated app", async () => {
     const { root, destination, project, graph } = await localFixture(true);

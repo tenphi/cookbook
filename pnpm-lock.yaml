@@ -6,12 +6,15 @@ settings:
 
 catalogs:
   default:
+    '@tenphi/eslint-plugin-tasty':
+      specifier: 1.21.3
+      version: 1.21.3
     '@tenphi/glaze':
-      specifier: 3.1.1
-      version: 3.1.1
+      specifier: 3.2.0
+      version: 3.2.0
     '@tenphi/tasty':
-      specifier: 3.19.0
-      version: 3.19.0
+      specifier: 3.19.2
+      version: 3.19.2
     '@uniaria/core':
       specifier: 0.3.0
       version: 0.3.0
@@ -54,8 +57,11 @@ importers:
         specifier: 1.63.0
         version: 1.63.0
       '@tenphi/eslint-plugin-tasty':
-        specifier: 1.21.2
-        version: 1.21.2(@tenphi/tasty@3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
+        specifier: 'catalog:'
+        version: 1.21.3(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
+      '@tenphi/harnesspm':
+        specifier: ^0.10.1
+        version: 0.10.1
       '@types/node':
         specifier: ^22.15.2
         version: 22.20.1
@@ -139,10 +145,10 @@ importers:
     dependencies:
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.1.1
+        version: 3.2.0
       '@tenphi/tasty':
         specifier: 'catalog:'
-        version: 3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+        version: 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
@@ -225,10 +231,22 @@ importers:
       '@tenphi/docs':
         specifier: workspace:*
         version: link:../docs
+      '@tenphi/eslint-plugin-tasty':
+        specifier: 'catalog:'
+        version: 1.21.3(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
+      '@tenphi/glaze':
+        specifier: 'catalog:'
+        version: 3.2.0
       '@tenphi/renderer':
         specifier: workspace:*
         version: link:../renderer
+      '@tenphi/tasty':
+        specifier: 'catalog:'
+        version: 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
     devDependencies:
+      '@tenphi/harnesspm':
+        specifier: ^0.10.1
+        version: 0.10.1
       '@types/node':
         specifier: ^22.15.2
         version: 22.20.1
@@ -272,14 +290,14 @@ importers:
         specifier: workspace:*
         version: link:../docs
       '@tenphi/eslint-plugin-tasty':
-        specifier: 1.21.2
-        version: 1.21.2(@tenphi/tasty@3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
+        specifier: 'catalog:'
+        version: 1.21.3(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.1.1
+        version: 3.2.0
       '@tenphi/tasty':
         specifier: 'catalog:'
-        version: 3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+        version: 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       '@uniaria/core':
         specifier: 'catalog:'
         version: 0.3.0
@@ -1748,8 +1766,8 @@ packages:
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
-  '@tenphi/eslint-plugin-tasty@1.21.2':
-    resolution: {integrity: sha512-5frkjRntKk6AQsmmjXPLe2tcqAk1fVFtzt0TrH5TWKRz1dE0jwLucKz2d7a6J7beg4jNr/5eTQVq0yde1/+h5Q==}
+  '@tenphi/eslint-plugin-tasty@1.21.3':
+    resolution: {integrity: sha512-LVH2iFapiJSbYHg9TEss2N7ZrEbUhrFHvnCOcNfAj/BD3DSd/W0CXg+jIfbs+4UdAyJw5kQTpiSQTb+LnVqMMQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@tenphi/tasty': '>=3.8.0'
@@ -1761,12 +1779,17 @@ packages:
       typescript:
         optional: true
 
-  '@tenphi/glaze@3.1.1':
-    resolution: {integrity: sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA==}
+  '@tenphi/glaze@3.2.0':
+    resolution: {integrity: sha512-KcI9hpEeBQtf5Yy93KwQ+APrPPO3a8/HHXSVeRmuqCLhAo1SSjVBpZX5HGzDFPczAwqCbu9/fWYjxVVLY658dQ==}
     engines: {node: '>=20'}
 
-  '@tenphi/tasty@3.19.0':
-    resolution: {integrity: sha512-lLYO1InS44HLteR4p4LP/3Tk7o3exI7JMsS8j2Y4aTJCFQUOlad1zQe6mPBDYqVyKCgwm/8vkCs2FUYHizeGxw==}
+  '@tenphi/harnesspm@0.10.1':
+    resolution: {integrity: sha512-vYYFQqLPgWmyuwED2wb2GJCSvDVFJvr4h1/H/x+GbIclOyc9q6MxodS25srITLiSlqwSGOC9f5MkV/07yjBOcA==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  '@tenphi/tasty@3.19.2':
+    resolution: {integrity: sha512-/ZYcAgC955SXmXvz7qkWA8KqQ7NOaclonvZzFrlKvlZbyUpXW7nqgCaaV6ejSe+tH8jdYxlkBsdtLmrxsSa92w==}
     engines: {node: '>=20'}
     peerDependencies:
       '@babel/core': ^7.24.0 || ^8.0.0
@@ -4670,12 +4693,15 @@ packages:
 
   yuku-ast@0.8.7:
     resolution: {integrity: sha512-h6+4bDfyootiMB9vckk5uKo5r5j0GHrkr17FQTDNfEsFT3DWlN9uu1HJwQwc64pgmLCI945fWM3lbTIqxjT3GQ==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   yuku-codegen@0.8.7:
     resolution: {integrity: sha512-adwDZSh8oVDzhE6Du9PwVWxcOxeV0e2EVhUuMKWfhSY4wkrDq9eqixlxFF3l/XGUV1E7UFzhpz9393MUumkyNw==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   yuku-parser@0.8.7:
     resolution: {integrity: sha512-vRD9nwt4L3aYpxNqeSC4WqLv58xrXef0Ong1Mc45CTXTIpvLafx7JO05sczmQZwdLEZvywrLOGdNC5+Rp5N1BQ==}
+    deprecated: 'Yuku is now one package with one core. Use "yuku" instead: https://yuku.fyi/javascript/. Existing installs keep working but get no more fixes.'
 
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
@@ -5986,21 +6012,25 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@tenphi/eslint-plugin-tasty@1.21.2(@tenphi/tasty@3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)':
+  '@tenphi/eslint-plugin-tasty@1.21.3(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)':
     dependencies:
       eslint: 10.9.1(jiti@2.7.0)(supports-color@10.2.2)
       jiti: 2.7.0
       postcss-selector-parser: 7.1.6
       semver: 7.8.5
     optionalDependencies:
-      '@tenphi/tasty': 3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
+      '@tenphi/tasty': 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
       '@typescript-eslint/scope-manager': 8.68.0
       oxc-parser: 0.159.0
       typescript: 7.0.2
 
-  '@tenphi/glaze@3.1.1': {}
+  '@tenphi/glaze@3.2.0': {}
 
-  '@tenphi/tasty@3.19.0(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)':
+  '@tenphi/harnesspm@0.10.1':
+    dependencies:
+      yaml: 2.9.1
+
+  '@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)':
     dependencies:
       csstype: 3.2.3
     optionalDependencies:

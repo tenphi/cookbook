@@ -5,7 +5,22 @@ sidebar:
   order: 2
 ---
 
-Cookbook requiere Node.js 22.19 o una versión posterior.
+Cookbook requiere Node.js 22.19 o una versión posterior. Pide a un agente de programación que cree el sitio o ejecuta tú mismo los comandos.
+
+## Pídeselo a tu agente
+
+Pega esto en Claude Code, Codex u otro agente de programación, dentro de tu repositorio:
+
+```text
+Create a Cookbook documentation site for this repository
+in `docs-site/`, from our README and `docs/` pages:
+run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
+Then run its `validate` script and tell me what it reports.
+
+Steps: https://cookbook.tenphi.me/agents/
+```
+
+Tu agente ejecuta los mismos comandos que las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Ask your agent](../ask-your-agent.md) (en inglés) reúne indicaciones para las tareas siguientes.
 
 ## Crea tu primer sitio
 
@@ -108,4 +123,4 @@ npm run preview
 
 `validate` comprueba los tipos del proyecto, ejecuta la verificación previa de Cookbook, compila el sitio y revisa el resultado. En un proyecto que configuraste tú mismo, añade los scripts de los [comandos de la CLI](../cli.md) o ejecuta `npx @tenphi/cookbook doctor`.
 
-El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [flujo para agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).
+El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).

@@ -12,6 +12,7 @@ import {
   type MixColorDef,
   type ShadowColorDef,
   type GlazeColorValue,
+  type GlazeTheme,
   type RegularColorDef,
 } from "@tenphi/glaze";
 import type {
@@ -48,7 +49,83 @@ export interface ResolvedColorTheme {
   diagnostics: DocsDiagnostic[];
 }
 
+/**
+ * The site's colors as one Glaze theme, with every color Cookbook defines from
+ * `theme.brand` and `theme.palette`. Agent tools such as `glaze:inspect` read
+ * it to show each color and contrast floor in every scheme.
+ */
+export function createColorTheme(theme: ThemeConfig = {}): GlazeTheme {
+  return definePalette(theme).colorTheme;
+}
+
 export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
+  const { colorTheme, definitions, normalTarget, highTarget } =
+    definePalette(theme);
+  const resolvedColors = colorTheme.resolve();
+  const resolvedSurface = requiredResolvedColor(resolvedColors, "surface");
+  const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
+
+  const scores = {
+    light: measureColorContrast(resolvedAccent.light, resolvedSurface.light),
+    dark: measureColorContrast(resolvedAccent.dark, resolvedSurface.dark),
+    lightContrast: measureColorContrast(
+      resolvedAccent.lightContrast,
+      resolvedSurface.lightContrast,
+    ),
+    darkContrast: measureColorContrast(
+      resolvedAccent.darkContrast,
+      resolvedSurface.darkContrast,
+    ),
+  };
+  const { checks: contrastChecks, diagnostics } = checkColorContrast(
+    resolvedColors,
+    definitions,
+    theme.contrastLevel,
+    [normalTarget, highTarget],
+    theme.glaze?.inferRole,
+  );
+  const outputOptions = { modes: { highContrast: true } } as const;
+  const tastyOptions = {
+    ...outputOptions,
+    states: {
+      dark: "theme=dark | (@media(prefers-color-scheme: dark) & :not([data-theme]))",
+      highContrast:
+        "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))",
+    },
+  } as const;
+  const resolvedPalette = colorTheme.json(outputOptions);
+  const colorTokens = colorTheme.tasty(tastyOptions);
+  const colors = {
+    surface: requiredJsonColor(resolvedPalette, "surface"),
+    "surface-2": requiredJsonColor(resolvedPalette, "surface-2"),
+    "surface-3": requiredJsonColor(resolvedPalette, "surface-3"),
+    text: requiredJsonColor(resolvedPalette, "text"),
+    heading: requiredJsonColor(resolvedPalette, "heading"),
+    "text-soft": requiredJsonColor(resolvedPalette, "text-soft"),
+    "accent-text": requiredJsonColor(resolvedPalette, "accent-text"),
+    "accent-surface": requiredJsonColor(resolvedPalette, "accent-surface"),
+    "accent-surface-text": requiredJsonColor(
+      resolvedPalette,
+      "accent-surface-text",
+    ),
+    focus: requiredJsonColor(resolvedPalette, "focus"),
+    shadow: requiredJsonColor(resolvedPalette, "shadow"),
+  };
+  return {
+    colors,
+    colorTokens,
+    contrast: scores,
+    contrastChecks,
+    diagnostics,
+  };
+}
+
+function definePalette(theme: ThemeConfig): {
+  colorTheme: GlazeTheme;
+  definitions: ColorMap;
+  normalTarget: number;
+  highTarget: number;
+} {
   const brand = normalizeBrand(theme.brand);
   const authoredTarget = brand.contrast?.apca ?? 45;
   const normalTarget = Array.isArray(authoredTarget)
@@ -344,64 +421,7 @@ export function resolveColorTheme(theme: ThemeConfig = {}): ResolvedColorTheme {
     definitions[name] = paletteDefinition(input, defaults ?? { mode: "auto" });
   }
   colorTheme.colors(definitions);
-
-  const resolvedColors = colorTheme.resolve();
-  const resolvedSurface = requiredResolvedColor(resolvedColors, "surface");
-  const resolvedAccent = requiredResolvedColor(resolvedColors, "accent-text");
-
-  const scores = {
-    light: measureColorContrast(resolvedAccent.light, resolvedSurface.light),
-    dark: measureColorContrast(resolvedAccent.dark, resolvedSurface.dark),
-    lightContrast: measureColorContrast(
-      resolvedAccent.lightContrast,
-      resolvedSurface.lightContrast,
-    ),
-    darkContrast: measureColorContrast(
-      resolvedAccent.darkContrast,
-      resolvedSurface.darkContrast,
-    ),
-  };
-  const { checks: contrastChecks, diagnostics } = checkColorContrast(
-    resolvedColors,
-    definitions,
-    theme.contrastLevel,
-    [normalTarget, highTarget],
-    theme.glaze?.inferRole,
-  );
-  const outputOptions = { modes: { highContrast: true } } as const;
-  const tastyOptions = {
-    ...outputOptions,
-    states: {
-      dark: "theme=dark | (@media(prefers-color-scheme: dark) & :not([data-theme]))",
-      highContrast:
-        "contrast=more | (@media(prefers-contrast: more) & :not([data-contrast]))",
-    },
-  } as const;
-  const resolvedPalette = colorTheme.json(outputOptions);
-  const colorTokens = colorTheme.tasty(tastyOptions);
-  const colors = {
-    surface: requiredJsonColor(resolvedPalette, "surface"),
-    "surface-2": requiredJsonColor(resolvedPalette, "surface-2"),
-    "surface-3": requiredJsonColor(resolvedPalette, "surface-3"),
-    text: requiredJsonColor(resolvedPalette, "text"),
-    heading: requiredJsonColor(resolvedPalette, "heading"),
-    "text-soft": requiredJsonColor(resolvedPalette, "text-soft"),
-    "accent-text": requiredJsonColor(resolvedPalette, "accent-text"),
-    "accent-surface": requiredJsonColor(resolvedPalette, "accent-surface"),
-    "accent-surface-text": requiredJsonColor(
-      resolvedPalette,
-      "accent-surface-text",
-    ),
-    focus: requiredJsonColor(resolvedPalette, "focus"),
-    shadow: requiredJsonColor(resolvedPalette, "shadow"),
-  };
-  return {
-    colors,
-    colorTokens,
-    contrast: scores,
-    contrastChecks,
-    diagnostics,
-  };
+  return { colorTheme, definitions, normalTarget, highTarget };
 }
 
 function mix(

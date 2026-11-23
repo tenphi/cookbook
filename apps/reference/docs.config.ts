@@ -56,52 +56,68 @@ export default defineDocsConfig({
     sources: [{ glob: "docs/**/*.{md,mdx}", base: "docs" }],
   },
   navigation: {
+    /*
+      Two tabs, as harnesspm's docs have. "For humans" is short: what Cookbook
+      is, how to start, and the prompts and decisions for working with a
+      coding agent. "For AI agents" has every step: a start page, the guides
+      and the reference. People read it too when they want the details.
+    */
     tabs: [
       {
-        label: "Guide",
+        label: "For humans",
         link: "/",
         items: [
           "/",
           {
             label: "Start",
-            items: ["/getting-started", "/comparison", "/ai-agents"],
+            items: ["/getting-started", "/comparison", "/examples"],
           },
           {
+            label: "With your agent",
+            items: ["/ask-your-agent", "/ai-agents"],
+          },
+        ],
+      },
+      {
+        label: "For AI agents",
+        link: "/agents",
+        items: [
+          { label: "Start here", link: "/agents" },
+          {
             label: "Author",
-            items: [
-              "/content-sources",
-              "/site-navigation",
-              "/authoring",
-              "/examples",
-            ],
+            items: ["/content-sources", "/site-navigation", "/authoring"],
           },
           {
             label: "Customize",
             items: [
-              "/recipes",
+              "/customization-rules",
               "/theme-and-components",
               "/fonts-and-typography",
               "/custom-components",
-              "/customization-rules",
+              "/recipes",
             ],
           },
           { label: "Extend", items: ["/plugins"] },
           { label: "Publish", items: ["/deployment"] },
           {
             label: "Maintain",
-            items: ["/migration", "/quality-checks", "/troubleshooting"],
+            items: [
+              "/agent-harness",
+              "/migration",
+              "/quality-checks",
+              "/troubleshooting",
+            ],
           },
-        ],
-      },
-      {
-        label: "Reference",
-        link: "/configuration",
-        items: [
-          "/configuration",
-          "/component-styles",
-          "/publishing",
-          "/cli",
-          "/architecture",
+          {
+            label: "Reference",
+            items: [
+              "/configuration",
+              "/component-styles",
+              "/publishing",
+              "/cli",
+              "/architecture",
+            ],
+          },
         ],
       },
     ],

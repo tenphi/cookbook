@@ -2,6 +2,9 @@
 
 Use Node.js 22.19+ and pnpm 11. Run `pnpm install`, then `pnpm test`,
 `pnpm typecheck`, and `pnpm build`. Public package changes require a Changeset.
+`pnpm install` also runs `harnesspm sync`; after a change to the agent harness or
+its configuration, run `pnpm exec harnesspm sync` and commit what it changes (see
+[Agent harness](AGENTS.md#agent-harness)).
 
 Follow [the repository rules](AGENTS.md) and [the Entropy policy](.claude/rules/entropy.md).
 Before requesting review, use [the local review procedure](.claude/skills/review/SKILL.md)
@@ -24,6 +27,7 @@ Run these checks after `pnpm build`:
 | ---------------------------- | -------------------------------------------------------------------------------------------- |
 | `pnpm test`                  | Configuration, graph, rendering helpers, diagnostics, and interaction logic                  |
 | `pnpm lint`                  | ESLint with zero warnings, including Tasty style rules                                       |
+| `pnpm check:harness`         | The agent harness that `@tenphi/cookbook` ships, with its packaged docs                      |
 | `pnpm check:locales`         | Real locale/fallback/navigation consumers                                                    |
 | `pnpm check:publishing-site` | Combined base paths, locales, versions, drafts, SEO, and agent Markdown                      |
 | `pnpm check:theming`         | Consumer components, colors, units, recipes, presets, overrides, and logos                   |

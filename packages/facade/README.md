@@ -84,3 +84,20 @@ theme names and custom styling helpers, including `defineComponent`. `extends`
 merges your additional tokens, states, and presets with these built-ins.
 See [Linting custom styles](https://cookbook.tenphi.me/custom-components/#linting-custom-styles)
 for ESLint and oxlint configuration examples.
+
+## Coding agents
+
+The package ships its docs for coding agents in `docs/`, with an index in
+`docs/llms.txt`. It also ships a harness for coding agents: a rule for changing a
+site, that docs index, and the Tasty, Glaze, and Tasty lint rules and tools,
+adapted to read the site's theme. To give it to Claude Code and Codex, set up
+[harnesspm](https://harnesspm.tenphi.me) in your project:
+
+```sh
+npm i -D @tenphi/harnesspm
+npx harnesspm init
+```
+
+See [AI agents](https://cookbook.tenphi.me/ai-agents/) for the decisions that stay
+with you, and [Agent harness](https://cookbook.tenphi.me/agent-harness/) for every
+step.
