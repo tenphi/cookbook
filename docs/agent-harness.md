@@ -50,9 +50,10 @@ In a monorepo, install harnesspm and run `init` at the repository root (with pnp
 `pnpm add -Dw @tenphi/harnesspm`). Each workspace gets the harness
 of its own dependencies, so Cookbook's rule and its changes to the Tasty, Glaze,
 and lint rules reach only the workspace of the docs site. Skills are shared by
-the whole repository: when another workspace uses Glaze directly, harnesspm
-keeps Glaze's own `glaze-theme` skill and `sync` warns about it. The site's
-agent then reads Cookbook's steps in
+the whole repository: when another workspace gets Glaze's harness without
+Cookbook, directly or through a package such as UI Kit, harnesspm keeps Glaze's
+own `glaze-theme` skill and `sync` warns about it. The site's agent then reads
+Cookbook's steps in
 `node_modules/.harnesspm/pkgs/@tenphi/cookbook/harness/skills/glaze-theme/SKILL.md`,
 as the patched Glaze rule says.
 
@@ -122,9 +123,10 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
 The lint rules recognize Cookbook's styling helpers and the site's theme names
 only through the site's `tasty.config.ts`. Without it, `tasty-lint:check` and
 the edit hook check nothing in a Cookbook site: `tasty-lint:check` notes each
-file you name that it found no styles in, and the edit hook stays quiet. Before
-you rely on them, set up linting as [Custom components](./custom-components.md#linting-custom-styles)
-shows:
+file you name that it found no styles in, and the edit hook stays quiet. The
+tool and the hook need only that file, not an ESLint or oxlint setup of the
+site's own ([Custom components](./custom-components.md#linting-custom-styles)
+covers that, for a lint script):
 
 - Build `tasty.config.ts` with `createValidationConfig(docs.theme)` from
   `@tenphi/cookbook/eslint-plugin`, as [Custom theme names](./custom-components.md#custom-theme-names)
