@@ -149,8 +149,9 @@ also emits `robots.txt` pointing to the sitemap. Host these files with the rest 
 manage the origin's `robots.txt` in the hosting configuration.
 
 See [Publishing metadata](./publishing.md) for title templates, social images,
-preview noindex, older-version policies, breadcrumbs, and Markdown downloads,
-and [AI agents](./ai-agents.md) for how agents read the published site.
+preview noindex, older-version policies, and breadcrumbs, and
+[Page text for readers and agents](./publishing.md#page-text-for-readers-and-agents)
+for Markdown downloads and how agents read the published site.
 
 ## Validate the published result
 
