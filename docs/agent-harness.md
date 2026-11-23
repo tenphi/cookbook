@@ -107,7 +107,9 @@ npx -y @tenphi/harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnessp
 ```
 
 - `tasty:styles` prints the CSS with the site's tokens, units, presets, and
-  states, and flags unknown units, presets, recipes, colors, and tokens.
+  states, and flags unknown units, presets, recipes, colors, and tokens. It
+  knows the names that Cookbook's components define on their own roots, such
+  as `#callout-text`, so a `theme.styles` override can use them.
 - `glaze:inspect` prints each color in light, dark, and both high-contrast
   schemes, with its contrast against its base.
 - The module reads the `docs.config.*` of the folder you run the tool in. `-C`

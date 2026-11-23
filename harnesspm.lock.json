@@ -105,7 +105,7 @@
     },
     "tasty:rules/usage": {
       "kind": "rules",
-      "hash": "83935bcf74f68f95"
+      "hash": "9097f850a0ed1798"
     },
     "tasty:scripts/styles": {
       "kind": "scripts",
@@ -143,7 +143,7 @@
         "Checking styles": "6fc039e8c6929820"
       },
       "harnesspm/patches/tasty-usage.patch.md": {
-        "Checking styles": "b2769f3c4dfafcde"
+        "Checking styles": "d374f1ed170c2777"
       }
     }
   }

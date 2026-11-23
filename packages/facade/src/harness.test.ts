@@ -162,4 +162,35 @@ console.log(JSON.stringify({
     expect(result.units).toEqual(expect.arrayContaining(["x", "gutter"]));
     expect(result.presets).toEqual(expect.arrayContaining(["h1", "small"]));
   });
+
+  it("lets tasty:styles know the names Cookbook's components define", async () => {
+    const site = await mkdtemp(join(tmpdir(), "cookbook-harness-"));
+    fixtures.push(site);
+    await writeFile(
+      join(site, "docs.config.mjs"),
+      `export default { site: { title: "Tokens" } };\n`,
+    );
+    // Tasty's own tool, run as `tasty:styles` runs it.
+    const tool = join(
+      packageRoot,
+      "node_modules/@tenphi/tasty/harness/dev.harnesspm/scripts/styles.mjs",
+    );
+    const { stdout } = await execFileAsync(
+      process.execPath,
+      [
+        tool,
+        JSON.stringify({
+          Title: { color: "#callout-text" },
+          width: "$copy-button-size",
+          fill: "#surfce",
+        }),
+        "--setup",
+        join(harness, "dev.harnesspm/theme.mjs"),
+      ],
+      { cwd: site },
+    );
+    expect(stdout).toContain('Color "#surfce" is not in the loaded config');
+    expect(stdout).not.toContain('"#callout-text" is not');
+    expect(stdout).not.toContain('"$copy-button-size" is not');
+  });
 });

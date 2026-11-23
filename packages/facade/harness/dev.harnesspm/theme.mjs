@@ -5,12 +5,17 @@
  *
  * - `tasty:styles --setup` imports it: on import, it configures Tasty as a
  *   Cookbook build does, with the site's tokens, units, presets and states.
+ *   It also declares the color and token names that Cookbook's components
+ *   define, such as `#callout-text`, so the tool does not report them.
  * - `glaze:inspect` reads its `theme` export: the site's colors as one Glaze
  *   theme, with every color Cookbook derives from `theme.brand` and
  *   `theme.palette`.
  */
 import { createColorTheme, resolveDocsProject } from "@tenphi/docs";
-import { configureTastyTheme } from "@tenphi/renderer";
+import {
+  configureTastyTheme,
+  declareComponentTokensForTools,
+} from "@tenphi/renderer";
 
 const { config, configFile } = await resolveDocsProject({
   root: process.cwd(),
@@ -24,5 +29,6 @@ if (configFile === undefined)
   );
 
 configureTastyTheme(config.theme);
+declareComponentTokensForTools();
 
 export const theme = createColorTheme(config.theme);
