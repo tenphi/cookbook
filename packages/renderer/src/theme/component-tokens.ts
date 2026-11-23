@@ -1,3 +1,4 @@
+import { COOKBOOK_PALETTE_NAMES } from "@tenphi/docs";
 import { configure } from "@tenphi/tasty/core";
 
 /**
@@ -66,12 +67,17 @@ export const COMPONENT_TOKENS = [
  * defined, so `tasty:styles` does not report them as missing when it checks a
  * `theme.styles` override. Call it after `configureTastyTheme()`. It adds the
  * names to Tasty's global styles with neutral values, so a build never calls it.
+ *
+ * It skips a `$name` that shares its name with a palette color, such as
+ * Mermaid's `$surface` and `#surface`: declaring it would hide a `$surface`
+ * typed for `#surface` in any override, so the tool keeps reporting it.
  */
 export function declareComponentTokensForTools(): void {
+  const palette = new Set(COOKBOOK_PALETTE_NAMES.map((name) => `$${name}`));
   configure({
     globalStyles: {
       ":root": Object.fromEntries(
-        COMPONENT_TOKENS.map((name) => [
+        COMPONENT_TOKENS.filter((name) => !palette.has(name)).map((name) => [
           name,
           name.startsWith("#") ? "#clear" : "initial",
         ]),

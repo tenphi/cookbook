@@ -128,7 +128,7 @@ the edit hook check nothing in a Cookbook site: `tasty-lint:check` notes each
 file you name that it found no styles in, and the edit hook stays quiet. The
 tool and the hook need only that file and the `eslint` package, not an ESLint
 or oxlint setup of the site's own ([Custom components](./custom-components.md#linting-custom-styles)
-covers that, for a lint script):
+covers that, for the site's own lint command):
 
 - In a Yarn site, add `eslint` as a dev dependency: `yarn add -D eslint`. npm
   and pnpm install it with Cookbook, as a peer of the lint plugin, but Yarn
@@ -147,8 +147,10 @@ covers that, for a lint script):
   through `@tenphi/cookbook/eslint-plugin` or `oxlint.config.mjs`, does not.
   The tools then run the recommended rules, and the tool's last line says
   `(recommended rules)`. Add `--strict` to `tasty-lint:check` when the site's
-  config uses the strict preset, and run the site's lint script before you
-  finish.
+  config uses the strict preset, and run the site's own lint command before
+  you finish: its `lint` script if it has one, else the `eslint` or
+  `oxlint --config oxlint.config.mjs` command that Custom components shows. A
+  bare `oxlint` skips `oxlint.config.mjs`.
 - The rules do not read `theme.styles`, `theme.customStyles`, or
   `theme.recipes` in `docs.config.ts`, and neither `cookbook doctor` nor the
   build checks their values. Check each changed object there with

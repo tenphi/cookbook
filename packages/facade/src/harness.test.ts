@@ -185,6 +185,8 @@ console.log(JSON.stringify({
           Diagram: { fill: "$bg", color: "$_line" },
           width: "$copy-button-size",
           fill: "#surfce",
+          // Mermaid's `$surface` twins the palette's `#surface`: still a typo.
+          outline: "1bw solid $surface",
         }),
         "--setup",
         join(harness, "dev.harnesspm/theme.mjs"),
@@ -192,6 +194,7 @@ console.log(JSON.stringify({
       { cwd: site },
     );
     expect(stdout).toContain('Color "#surfce" is not in the loaded config');
+    expect(stdout).toContain('Token "$surface" is not in the loaded config');
     for (const name of ["#callout-text", "$copy-button-size", "$bg", "$_line"])
       expect(stdout).not.toContain(`"${name}" is not`);
   });
