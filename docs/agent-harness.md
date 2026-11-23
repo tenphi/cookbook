@@ -127,13 +127,14 @@ only through the site's `tasty.config.ts`. Without it, `tasty-lint:check` and
 the edit hook check nothing in a Cookbook site: `tasty-lint:check` notes each
 file you name that it found no styles in, and the edit hook stays quiet. The
 tool and the hook need only that file and the `eslint` package, not an ESLint
-or oxlint setup of the site's own ([Custom components](./custom-components.md#linting-custom-styles)
-covers that, for the site's own lint command):
+or oxlint setup of the site's own. When the site has one, as
+[Custom components](./custom-components.md#linting-custom-styles) shows, they
+follow its rule levels:
 
 - In a Yarn site, add `eslint` as a dev dependency: `yarn add -D eslint`. npm
   and pnpm install it with Cookbook, as a peer of the lint plugin, but Yarn
   does not. Without it, `tasty-lint:check` stops and asks for it, and the edit
-  hook lints nothing and says nothing.
+  hook tells the agent once per session that it did not lint the edit.
 - Build `tasty.config.ts` with `createValidationConfig(docs.theme)` from
   `@tenphi/cookbook/eslint-plugin`, as [Custom theme names](./custom-components.md#custom-theme-names)
   shows. The rules then know the site's palette colors, tokens, units, states,
@@ -141,16 +142,6 @@ covers that, for the site's own lint command):
   a color from `theme.palette` as an unknown token.
 - Keep styles in `.js`, `.mjs`, `.ts`, or `.tsx` modules, not in `.astro`
   files. The tool and the hook lint `.ts` modules in TypeScript 7 sites too.
-- The tool and the hook follow a site's own lint config only when that config
-  names `@tenphi/eslint-plugin-tasty`. A config set up as
-  [Custom components](./custom-components.md#linting-custom-styles) shows,
-  through `@tenphi/cookbook/eslint-plugin` or `oxlint.config.mjs`, does not.
-  The tools then run the recommended rules, and the tool's last line says
-  `(recommended rules)`. Add `--strict` to `tasty-lint:check` when the site's
-  config uses the strict preset, and run the site's own lint command before
-  you finish: its `lint` script if it has one, else the `eslint` or
-  `oxlint --config oxlint.config.mjs` command that Custom components shows. A
-  bare `oxlint` skips `oxlint.config.mjs`.
 - The rules do not read `theme.styles`, `theme.customStyles`, or
   `theme.recipes` in `docs.config.ts`, and neither `cookbook doctor` nor the
   build checks their values. Check each changed object there with
