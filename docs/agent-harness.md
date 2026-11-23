@@ -139,7 +139,7 @@ shows:
   files. The tool and the hook read `.ts` modules through typescript-eslint,
   which needs TypeScript below 6.1, while sites from the project creator use
   TypeScript 7. There, keep style modules in `.js` or `.mjs` files, or ask the
-  person before you install TypeScript 6
+  person before you install TypeScript 6 and `@typescript-eslint/parser`
   ([eslint-plugin-tasty#171](https://github.com/tenphi/eslint-plugin-tasty/issues/171)).
 
 ## Keep it current
