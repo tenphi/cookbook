@@ -10,8 +10,8 @@ catalogs:
       specifier: 1.21.2
       version: 1.21.2
     '@tenphi/glaze':
-      specifier: 3.1.1
-      version: 3.1.1
+      specifier: 3.2.0
+      version: 3.2.0
     '@tenphi/tasty':
       specifier: 3.19.2
       version: 3.19.2
@@ -145,7 +145,7 @@ importers:
     dependencies:
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.1.1
+        version: 3.2.0
       '@tenphi/tasty':
         specifier: 'catalog:'
         version: 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
@@ -236,7 +236,7 @@ importers:
         version: 1.21.2(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.1.1
+        version: 3.2.0
       '@tenphi/renderer':
         specifier: workspace:*
         version: link:../renderer
@@ -294,7 +294,7 @@ importers:
         version: 1.21.2(@tenphi/tasty@3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8))(eslint@10.9.1(jiti@2.7.0)(supports-color@10.2.2))(typescript@7.0.2)
       '@tenphi/glaze':
         specifier: 'catalog:'
-        version: 3.1.1
+        version: 3.2.0
       '@tenphi/tasty':
         specifier: 'catalog:'
         version: 3.19.2(@babel/core@7.29.7(supports-color@10.2.2))(@babel/helper-plugin-utils@7.29.7)(@babel/types@7.29.8)(jiti@2.7.0)(react@19.2.8)
@@ -1779,8 +1779,8 @@ packages:
       typescript:
         optional: true
 
-  '@tenphi/glaze@3.1.1':
-    resolution: {integrity: sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA==}
+  '@tenphi/glaze@3.2.0':
+    resolution: {integrity: sha512-KcI9hpEeBQtf5Yy93KwQ+APrPPO3a8/HHXSVeRmuqCLhAo1SSjVBpZX5HGzDFPczAwqCbu9/fWYjxVVLY658dQ==}
     engines: {node: '>=20'}
 
   '@tenphi/harnesspm@0.10.1':
@@ -6021,7 +6021,7 @@ snapshots:
       oxc-parser: 0.159.0
       typescript: 7.0.2
 
-  '@tenphi/glaze@3.1.1': {}
+  '@tenphi/glaze@3.2.0': {}
 
   '@tenphi/harnesspm@0.10.1':
     dependencies:

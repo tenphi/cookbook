@@ -110,14 +110,20 @@ description: https://example.com/guide
       expect(files).toContain(file);
     const guide = await readFile(join(root, "customization-rules.md"), "utf8");
     expect(guide).toContain("./upstream/tasty/docs/ai-agents.md");
-    expect(guide).toContain("./upstream/glaze/docs/methodology.mdx");
+    expect(guide).toContain("./upstream/glaze/docs/methodology.md");
     expect(guide).toContain("./upstream/glaze/docs/reference/index.md");
+    // Glaze 3.2 ships its docs as harness/docs; they are packaged as docs.
     const gettingStarted = await readFile(
-      join(root, "upstream/glaze/docs/getting-started.mdx"),
+      join(root, "upstream/glaze/docs/getting-started.md"),
       "utf8",
     );
-    expect(gettingStarted).toContain('href="./methodology.mdx"');
-    expect(gettingStarted).toContain('href="./reference/index.md"');
+    expect(gettingStarted).toContain("](./contrast.md)");
+    expect(gettingStarted).toContain("](./reference/output.md)");
+    // Its link to the same page on the Glaze site, where examples render
+    // live, stays on the site.
+    expect(gettingStarted).toContain(
+      "[Glaze site](https://glaze.tenphi.me/getting-started/)",
+    );
     const metadata = await readFile(
       join(root, "upstream/manifest.json"),
       "utf8",

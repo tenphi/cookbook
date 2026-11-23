@@ -11,9 +11,9 @@
       "integrity": "sha512-5frkjRntKk6AQsmmjXPLe2tcqAk1fVFtzt0TrH5TWKRz1dE0jwLucKz2d7a6J7beg4jNr/5eTQVq0yde1/+h5Q=="
     },
     "@tenphi/glaze": {
-      "version": "3.1.1",
+      "version": "3.2.0",
       "plugin": "glaze",
-      "integrity": "sha512-mxfXtGBwUXZXI5hDOJt1fb5ySPuhdw9gep1ufBRR7S8QH1Ay5kf9jzpFRS5L1PdrFFNe1YrJQSkNEH0EQRrIAA=="
+      "integrity": "sha512-KcI9hpEeBQtf5Yy93KwQ+APrPPO3a8/HHXSVeRmuqCLhAo1SSjVBpZX5HGzDFPczAwqCbu9/fWYjxVVLY658dQ=="
     },
     "@tenphi/harnesspm": {
       "version": "0.10.1",
@@ -33,7 +33,7 @@
     },
     "glaze:docs": {
       "kind": "docs",
-      "hash": "bb77afae7195f3cd"
+      "hash": "01faa2a9664b0f07"
     },
     "glaze:rules/colors": {
       "kind": "rules",

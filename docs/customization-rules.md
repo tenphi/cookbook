@@ -124,11 +124,12 @@ references. These match the dependencies used to build that Cookbook release;
 consumer dependency overrides can change the installed runtime independently.
 
 In the packaged copies, links to available upstream reference pages point to
-these local snapshots. The Markdown references work offline. Glaze's guides
-are MDX: their prose, code, and tables read offline, but their live examples
-render only on the Glaze website. Links to source code and artwork absent from
-the npm packages point to their upstream release and still need internet
-access. The published website keeps its online links.
+these local snapshots. The Markdown references work offline. Each Glaze guide
+prints the code of the examples that render live on the Glaze website, with
+tables of the colors they resolve to, and links to its page there. Links to
+source code and artwork absent from the npm packages point to their upstream
+release and still need internet access. The published website keeps its
+online links.
 
 Start at `node_modules/@tenphi/cookbook/docs/agents.md`: it names the page for
 each task. [What is installed](./agents.md#what-is-installed) shows how to find
