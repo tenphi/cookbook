@@ -69,6 +69,9 @@ theme: {
 }
 ```
 
+Setting only `body` keeps headings in Onest. Give `heading` the same value to
+use one font everywhere.
+
 The `body` role also feeds navigation and small text. `heading` feeds `h1`
 through `h6`, while `code` covers code text. Each role has a system fallback.
 

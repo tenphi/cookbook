@@ -26,8 +26,10 @@ responsive states. The renderer package also exposes them from
 | `Styles`                 | TypeScript type for a Tasty style object.                                          |
 
 Cookbook supplies the React renderer and extracts these styles into its static
-CSS. No additional Tasty dependency, Astro integration, or `client:*` directive
-is needed for static components. Set shared tokens, presets, and states in
+CSS, so no other Tasty dependency or Astro integration is needed. Keep styled
+components on the server; see
+[Keep styling on the server](./customization-rules.md#keep-styling-on-the-server).
+Set shared tokens, presets, and states in
 `docs.config.ts` before rendering. Import the styling entry point in component
 modules; configuration files should import `defineDocsConfig()` from
 `@tenphi/cookbook/config`.
@@ -55,7 +57,16 @@ export const StatusBadge = defineComponent("StatusBadge", {
 });
 ```
 
-Use `<StatusBadge><strong>Stable</strong></StatusBadge>` in a local MDX page.
+A local MDX page in `docs/` imports it with a path relative to the page:
+
+```mdx
+import { StatusBadge } from "./components/StatusBadge";
+
+<StatusBadge>
+  <strong>Stable</strong>
+</StatusBadge>
+```
+
 A site can change just one part in `docs.config.ts`:
 
 ```ts
@@ -122,8 +133,10 @@ The merge order is the base component's configured styles and selected variant,
 the extension's styles, its named theme override, and styles passed while
 rendering. Tasty merges named sub-elements and state maps using its usual
 [extending and replacing rules](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
-Changing a descendant never mutates its base or siblings. If a base exposes
-parts such as `Button.Label`, the descendant exposes those same components.
+Changing a descendant never mutates its base or siblings. If a base defines
+parts with `elements`, such as `DemoBadge.Label` in
+[Register units and recipes](./theme-and-components.md#register-units-and-recipes),
+a component extended from it exposes the same parts.
 
 Extension options accept styles and default values for existing props. Define
 new `elements`, `variants`, `styleProps`, `modProps`, `tokenProps`, or an `as`
@@ -245,9 +258,9 @@ theme: {
 
 `@tenphi/cookbook/eslint-plugin` re-exports the Tasty ESLint plugin together with
 Cookbook's `validationConfig`. The renderer offers the same exports from
-`@tenphi/renderer/eslint-plugin`. Keep style definitions in `.ts` or `.tsx`
-modules, as in the site title example above, or in `.js` or `.mjs` modules, to
-lint them with either ESLint or oxlint. Styles in `.astro` files are not linted.
+`@tenphi/renderer/eslint-plugin`. Keep style definitions in `.js`, `.mjs`,
+`.ts`, or `.tsx` modules, as in the site title example above; styles in
+`.astro` files are not linted.
 
 Create `tasty.config.ts` at your project root:
 
@@ -257,7 +270,9 @@ export default {
 };
 ```
 
-Renderer-only consumers can use `extends: "@tenphi/renderer"` instead.
+When your theme adds palette colors, tokens, or other names, build this file
+from the theme instead; see [Custom theme names](#custom-theme-names).
+Renderer-only consumers can use `extends: "@tenphi/renderer"`.
 The preset registers both Cookbook styling import paths, its built-in tokens,
 units, responsive states, and typography presets. It also describes
 `defineComponent`, `extendComponent`, and `resolveComponentStyles`, so their inline
@@ -269,13 +284,27 @@ base styles.
 
 ### ESLint
 
-Install ESLint and a TypeScript parser:
+Install ESLint:
 
 ```sh
-pnpm add -D eslint @typescript-eslint/parser
+pnpm add -D eslint
 ```
 
-Add the plugin to `eslint.config.mjs`:
+ESLint's own parser reads style modules in `.js` or `.mjs` files. Add the
+plugin to `eslint.config.mjs`:
+
+```js
+import tasty from "@tenphi/cookbook/eslint-plugin";
+
+export default [{ ...tasty.configs.recommended, files: ["**/*.{js,mjs}"] }];
+```
+
+To lint `.ts` or `.tsx` modules, ESLint needs `@typescript-eslint/parser`. It
+supports TypeScript below 6.1, so it fails in sites from the project creator,
+which use TypeScript 7. There, keep style modules in `.js` or `.mjs` files, use
+[oxlint](#oxlint), which parses TypeScript itself, or install TypeScript 6 for
+the project. With TypeScript below 6.1, install the parser
+(`pnpm add -D @typescript-eslint/parser`) and set it for those files:
 
 ```js
 import parser from "@typescript-eslint/parser";
@@ -289,12 +318,6 @@ export default [
   },
 ];
 ```
-
-typescript-eslint supports TypeScript below 6.1. Sites from the project creator
-use TypeScript 7: there, keep style modules in `.js` or `.mjs` files and lint
-them with ESLint's own parser (`files: ["**/*.{js,mjs}"]`, no `parser` option
-and no `@typescript-eslint/parser`), use oxlint, which parses TypeScript itself,
-or install TypeScript 6 for the project.
 
 Run `pnpm exec eslint docs/components --max-warnings 0`. Use
 `tasty.configs.strict` for additional checks, including custom property names and

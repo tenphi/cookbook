@@ -5,12 +5,18 @@ sidebar:
   order: 5
 ---
 
-Cookbook resolves Glaze colors and Tasty styles during the build, then ships
-static CSS. Start with a brand color; add semantic palette roles, typography,
-and component overrides only where the default needs to change. The
-[theme recipes](./recipes.md) show complete, build-checked starting
-points. Read the [customization rules](./customization-rules.md) before writing
-new styles.
+Cookbook styles a site with two libraries. Glaze derives light, dark, and
+high-contrast colors from the brand and palette inputs. Tasty applies those
+colors and other design values through semantic tokens. See the
+[Glaze reference](https://glaze.tenphi.me) for color declarations and the
+[Tasty style DSL](https://tasty.style/docs/dsl) for state maps, tokens, units,
+and sub-elements.
+
+Both run during the build, and the site ships static CSS. Start with a brand
+color; add semantic palette roles, typography, and component overrides only
+where the default needs to change. The [theme recipes](./recipes.md) show
+complete, build-checked starting points. Read the
+[customization rules](./customization-rules.md) before writing new styles.
 
 | To change                                    | Start here                                        |
 | -------------------------------------------- | ------------------------------------------------- |
@@ -20,15 +26,10 @@ new styles.
 | Your own Astro or MDX components and linting | [Custom components](./custom-components.md)       |
 | Complete configuration fields                | [Configuration reference](./configuration.md)     |
 
-Glaze derives light, dark, and high-contrast values from the brand and palette
-inputs. Tasty applies those values through semantic tokens. See the
-[Glaze reference](https://glaze.tenphi.me) for color declarations and the
-[Tasty style DSL](https://tasty.style/docs/dsl) for state maps, tokens, units,
-and sub-elements.
-
 ## Brand color
 
-The default brand is a calm blue with 68% OKHSL saturation. Set a brand color
+The default brand is a calm blue with 68% saturation in OKHSL, the perceptual
+hue, saturation, and lightness model that Glaze works in. Set a brand color
 with Glaze's `from` declaration:
 
 ```ts
@@ -39,7 +40,9 @@ export default defineDocsConfig({
 });
 ```
 
-Add a higher contrast target when brand-colored text needs more contrast:
+Brand contrast targets use APCA, a perceptual contrast score for text: a higher
+value means more contrast. Add a higher target when brand-colored text needs
+more contrast:
 
 ```ts
 theme: {
@@ -53,15 +56,16 @@ theme: {
 The default brand target is APCA 45 (60 in high contrast).
 
 The brand supplies the hue and saturation seed. Cookbook derives separate text,
-filled-control, and focus roles from it. Small accent text keeps APCA floors of
-75 (90 in high contrast), and filled-control labels keep 80 (95 in high
-contrast); diagnostics also enforce WCAG 4.5:1 / 7:1 on their actual
-backgrounds. Only authored brand targets above these floors raise them. Glaze adjusts tones only as far as these floors require;
-dark and high-contrast schemes resolve independently.
+filled-control, and focus roles from it. Brand text (`accent-text`) keeps an
+APCA floor of 75 (90 in high contrast), and filled-control labels keep 80 (95).
+A brand target above 75 (90 in high contrast) raises the brand text floor; the
+filled-control floor stays 80 (95). Diagnostics also enforce WCAG 4.5:1 / 7:1
+on their actual backgrounds. Glaze adjusts tones only as far as these floors
+require; dark and high-contrast schemes resolve independently.
 
-Cookbook rejects a normal APCA target below 45 unless
-`unsafeContrast: true` is present. That escape hatch is intentionally visible
-in configuration reviews. Literal color shorthand and structured
+A target below 45 needs `unsafeContrast: true`, and it cannot lower these
+floors. Cookbook rejects it without the flag, so the choice stays visible in
+configuration reviews. Literal color shorthand and structured
 `hue`/`saturation`/`tone` input also remain supported for the brand.
 
 ## Semantic palette
@@ -123,16 +127,12 @@ and its `-surface` tint only; set the matching `-text` role as well.
 Cookbook keeps literal surface seeds desaturated in the dark scheme so a nearly
 white tint does not become vivid dark chrome when its tone is inverted.
 
-Components consume semantic colors consistently: `surface`, `header`, `surface-2`,
-`surface-3`, `text`, `heading`, `text-soft`, `sidebar-text`, `border`, `border-strong`, `accent-text`,
-`accent-surface`, `accent-surface-text`, `logo-surface`, `logo-mark`, and `focus`.
-Tasty components can use these as `#surface`, `#text`, `#border`, and so on; the Astro shell consumes the
-same resolved values. Glaze also generates hover and pressed states, subtle
-accent fills, overlays, shadows, and the orange, green, blue, purple, and red
-roles available to content components. No browser color mixes or
-upstream fallback palette values participate in the rendered theme. Surface
-elevation uses Glaze's contrast-uniform tone axis: `surface-2` advances two tone
-steps and `surface-3` advances four from the base surface, with proportionally
+Components use these roles as Tasty tokens such as `#surface`, `#text`, and
+`#border`; the [built-in palette inventory](#built-in-palette-inventory) lists
+every role. No browser color mixes or upstream fallback palette values
+participate in the rendered theme. Surface elevation uses Glaze's
+contrast-uniform tone axis: `surface-2` advances two tone steps and
+`surface-3` advances four from the base surface, with proportionally
 wider steps in high-contrast mode. Their saturation also steps down to 75% and
 65% of the authored surface seed so tinted surfaces remain restrained as they
 move farther from the base tone.
@@ -162,10 +162,18 @@ theme: {
     "review-panel": { base: "surface", tone: "-2", saturation: 0.05 },
   },
   styles: {
-    Callout: { fill: "#review-panel", color: "#review-ink" },
+    Callout: {
+      fill: "#review-panel",
+      Title: { color: "#review-ink" },
+      Body: { color: "#review-ink" },
+    },
   },
 },
 ```
+
+`Callout`'s `Title` and `Body` set their own text colors, so the override names
+them. The border keeps each callout kind's status color; set `border` as well
+to change it.
 
 Relative and absolute declarations inherit the brand's hue and saturation.
 Use saturation factors from `0` (neutral) to `1` (full seed saturation), and
@@ -345,6 +353,7 @@ theme: {
 ```
 
 ```ts
+// docs/components/DemoBadge.ts
 import { defineComponent } from "@tenphi/cookbook/styling";
 
 export const DemoBadge = defineComponent("DemoBadge", {
@@ -358,10 +367,19 @@ export const DemoBadge = defineComponent("DemoBadge", {
 });
 ```
 
-Use `<DemoBadge><DemoBadge.Label>Review ready</DemoBadge.Label></DemoBadge>` in
-MDX. Keep these styled components server-rendered: their CSS is extracted at
-build time. Add behavior with a small client script targeting the rendered
-markup. This recipe produces 12px padding. Units merge by name, with the later
+An MDX page in `docs/` imports it with a path relative to the page:
+
+```mdx
+import { DemoBadge } from "./components/DemoBadge";
+
+<DemoBadge>
+  <DemoBadge.Label>Review ready</DemoBadge.Label>
+</DemoBadge>
+```
+
+Keep styled components on the server; see
+[Keep styling on the server](./customization-rules.md#keep-styling-on-the-server).
+This recipe produces 12px padding. Units merge by name, with the later
 configuration winning. Recipes merge using Tasty `mergeStyles`, including state
 maps. Recipes are flat: define named sub-elements on the owning component, and
 compose recipes with `recipe: "base elevated"` rather than referencing a recipe
@@ -463,10 +481,10 @@ cache behavior, and preset details.
 
 ## Component styles and custom components
 
-Use a partial Tasty style object at `theme.styles.<ComponentName>` to change a
-built-in surface. Cookbook merges it with the complete base style object before
-CSS extraction. The [component styles reference](./component-styles.md) gives
-examples and the complete list of named sub-elements for every surface.
+Change a built-in surface with a partial Tasty style object at
+`theme.styles.<ComponentName>`. The [component styles reference](./component-styles.md)
+explains how it merges, gives examples, and lists the named sub-elements of
+every surface.
 
 For your own components, use `defineComponent()` for a configurable component
 root and `resolveComponentStyles()` for an owned global style tree, then adopt
@@ -504,10 +522,3 @@ the `storage` event. Your app can map the same values onto its own attributes.
 
 Browsers keep `localStorage` per origin: the scheme, host, and port must all
 match, so a docs subdomain does not share the preference.
-
-## Static behavior
-
-The page content remains readable without client JavaScript. Search, menus,
-copy controls, and appearance persistence enhance the static HTML. See
-[Component styles](./component-styles.md#static-behavior) for the boundary and
-responsive UI behavior.
