@@ -27,7 +27,7 @@ sidebar:
 - **Genera una referencia de API.** Convierte una especificación OpenAPI local en un resumen con búsqueda y una página por operación, con parámetros, cuerpos de petición, respuestas y ejemplos. [Referencias OpenAPI](../content-sources.md#openapi-references).
 - **Búsqueda integrada.** Pagefind indexa las páginas y los encabezados localmente, con un atajo de teclado y recursos de búsqueda que se cargan cuando hacen falta. [Búsqueda](../site-navigation.md#search).
 - **Navegación para documentación que crece.** Organiza secciones con pestañas y barras laterales agrupadas, añade índices de página y enlaces anterior/siguiente, y ofrece un menú de navegación móvil. [Búsqueda y navegación](../site-navigation.md).
-- **Componentes para documentación técnica.** Usa pestañas, avisos, tarjetas, pasos, grupos de código, código resaltado con controles de copia y ejemplos interactivos aislados en MDX. [Componentes de contenido](../authoring.mdx).
+- **Componentes para documentación técnica.** Usa pestañas, avisos, tarjetas, pasos, grupos de código, código resaltado con controles de copia y ejemplos interactivos aislados en MDX. [Componentes de redacción](../authoring.mdx).
 - **Un tema adaptado a tu producto.** Configura colores de marca, paletas semánticas, fuentes, tipografía y partes de componentes con [Tasty](https://tasty.style) y [Glaze](https://glaze.tenphi.me). Los modos claro, oscuro y de alto contraste reciben CSS estático generado durante la compilación. [Tema y componentes](../theme-and-components.md).
 - **Idiomas y versiones.** Ofrece páginas traducidas y documentación versionada, con selectores que llevan a la página equivalente cuando existe. [Idiomas y versiones](../site-navigation.md#contents-languages-and-versions).
 - **Comprobaciones antes de publicar.** Detecta enlaces rotos, recursos ausentes, rutas duplicadas y navegación inválida con errores que señalan el archivo de origen. Publica HTML prerenderizado en cualquier alojamiento estático. [Comprobaciones de calidad](../quality-checks.md).
@@ -52,11 +52,11 @@ Esta página procede de [docs/es/index.md](https://github.com/tenphi/cookbook/bl
 
 ## Explora la guía
 
-- [Primeros pasos](./getting-started.md) explica cómo empezar con repositorios, paquetes npm y proyectos Astro existentes.
+- [Primeros pasos](./getting-started.md) explica cómo empezar con repositorios, paquetes npm y proyectos Astro existentes, a mano o con un agente de programación.
 - [Comparación de herramientas](../comparison.md) describe el modelo de contenido y personalización de Cookbook.
-- [Ejemplos](../examples.md) muestran configuraciones para repositorios, monorepos, paquetes y temas compartidos.
+- [Ejemplos](../examples.md) muestran configuraciones para repositorios, monorepos, paquetes npm, idiomas y sitios de vista previa.
 - [Búsqueda y navegación](../site-navigation.md) explica cómo encuentran los lectores las páginas.
-- [Redacción](../authoring.mdx) cubre páginas, componentes y ejemplos interactivos.
+- [Componentes de redacción](../authoring.mdx) trata las páginas, los componentes y los ejemplos interactivos.
 - [Tema y componentes](../theme-and-components.md) introduce la marca y los tokens y enlaza con fuentes, estilos y componentes propios.
 - [Despliegue](../deployment.md) cubre la validación y el alojamiento estático.
 

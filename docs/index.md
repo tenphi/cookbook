@@ -91,8 +91,8 @@ in English for now.
   the decisions that stay with you.
 - [Compare documentation tools](./comparison.md) explains Cookbook's content and
   customization model alongside other options.
-- [Working examples](./examples.md) show repository, monorepo, package, and
-  shared-theme configurations.
+- [Working examples](./examples.md) show repository, monorepo, npm package,
+  language, and preview-site configurations.
 - [Search and navigation](./site-navigation.md) explains how readers find pages.
 - [Authoring](./authoring.mdx) covers pages, components, and interactive examples.
 - [Theme and components](./theme-and-components.md) starts with brand and tokens,

@@ -52,9 +52,9 @@ Cookbook 会直接读取原位置的文件。如果想让编程智能体来完�
 
 ## 浏览指南
 
-- [入门](./getting-started.md)：仓库、npm 包和现有 Astro 项目的使用方法。
+- [入门](./getting-started.md)：仓库、npm 包和现有 Astro 项目的使用方法，可以手动完成，也可以借助编程智能体。
 - [文档工具对比](../comparison.md)：Cookbook 的内容与自定义方式。
-- [示例](../examples.md)：仓库、单体仓库、软件包和共享主题配置。
+- [示例](../examples.md)：仓库、单体仓库、npm 包、多语言和预览站点配置。
 - [搜索与导航](../site-navigation.md)：读者如何找到页面。
 - [内容编写](../authoring.mdx)：页面、组件和交互示例。
 - [主题与组件](../theme-and-components.md)：品牌、设计标记、字体、内置样式和自定义组件。

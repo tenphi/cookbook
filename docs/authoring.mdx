@@ -189,10 +189,10 @@ a classic script, so use a self-contained IIFE or UMD build without `import` or
 Inlining keeps the preview isolated and needs no request, so the demo works in
 `astro dev`, `astro preview`, and offline as well as on the deployed site. A
 `<script src>` in `html` is a cross-site request from the sandboxed frame:
-`astro dev` rejects it, and Chrome blocks it from local servers. View source
-shows each inlined file as a `<script src>` tag. Every preview embeds its own
-copy, so keep demo bundles small. A missing file or a path outside the public
-directory fails the build.
+`astro dev` rejects it, and Chrome blocks it from local servers. The preview's
+**View source** disclosure shows each inlined file as a `<script src>` tag.
+Every preview embeds its own copy, so keep demo bundles small. A missing file or
+a path outside the public directory fails the build.
 
 ### Frame size
 

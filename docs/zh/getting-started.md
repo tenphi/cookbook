@@ -43,7 +43,7 @@ npm run dev
 
 生成的 `docs.config.ts` 会指向你的仓库。仓库根目录的 README 成为首页，`docs/**/*.{md,mdx}` 提供其他页面。Cookbook 直接读取这些文件，不会复制或改写。
 
-使用 `--no-install` 可先生成文件而不安装依赖。在非交互模式下，创建工具不会覆盖非空的目标目录。
+使用 `--yes` 时，创建工具不会询问，因此不会覆盖非空的目标目录。`--no-install`、`--brand`、`--site`、`--deploy` 等选项见 [CLI 参考](../cli.md#creator-flags)。
 
 ## 为已发布的 npm 包编写文档
 
@@ -58,7 +58,7 @@ npm run dev
 
 ## 加入现有 Astro 项目
 
-Cookbook 要求 Astro 使用 `output: "static"`。如果你的项目使用 `output: "server"`，请为文档新建一个独立的静态 Astro 项目。
+Cookbook 要求使用 Astro 7.3.2 或更高的 7.x 版本，并将 Astro 设为 `output: "static"`。如果你的项目使用 `output: "server"`，请为文档新建一个独立的静态 Astro 项目。
 
 ```sh
 npx astro add @tenphi/cookbook
@@ -99,7 +99,7 @@ export default defineDocsConfig({
 
 完整的起点可参考[品牌、标志和字体示例](../recipes.md)。若要深入调整样式或添加组件，请阅读[自定义规则](../customization-rules.md)。这些规则和上游参考资料也包含在安装后的 Cookbook 包中。
 
-集成和 CLI 读取同一份配置。支持的文件名依优先顺序为 `docs.config.ts`、`.mts`、`.js` 和 `.mjs`。在集成中显式传入的 `config` 对象优先；`configFile: false` 会关闭自动查找。若配置文件位于其他位置，可使用 `cookbook({ configFile: "./config/manual.ts" })` 和 `cookbook doctor --config ./config/manual.ts`。由于 `root` 相对于配置文件所在目录解析，该文件需要设置 `root: ".."`，才能继续从应用目录读取 `README.md` 和 `docs/`。
+其他可用的配置文件名，以及如何把配置文件放在其他位置，请参阅[配置参考](../configuration.md#project-resolution-and-presets)。
 
 ## 单体仓库的根目录
 
@@ -111,7 +111,7 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({ root: "../.." });
 ```
 
-`root` 相对于文档配置文件，用来定位内容、本地资源和 `cookbook.lock.json`。从应用目录运行 `npm run doctor`，它会解析出与集成相同的仓库根目录。对于包含多个软件包的站点，每个内容来源也可以单独声明根目录。
+`root` 相对于文档配置文件，用来定位内容、本地资源和 `cookbook.lock.json`。从应用目录运行 `npm run doctor`，它会解析出与集成相同的仓库根目录。对于包含多个软件包的站点，[每个内容来源也可以单独声明根目录](../examples.md#monorepo-with-two-packages)。
 
 ## 验证并发布
 
@@ -120,6 +120,6 @@ npm run validate
 npm run preview
 ```
 
-`validate` 会对项目进行类型检查、运行 Cookbook 预检、构建站点并检查输出。对于自行配置的项目，请添加 [CLI 命令](../cli.md)中列出的脚本，或运行 `npx @tenphi/cookbook doctor`。
+`validate` 会对项目进行类型检查、运行 `cookbook doctor`、构建站点并检查输出。对于自行配置的项目，请添加 [CLI 命令](../cli.md)中列出的脚本，或运行 `npx @tenphi/cookbook doctor`。然后部署 `dist/` 目录。
 
 其他指南目前仍以英文提供，包括[示例](../examples.md)、[内容编写组件](../authoring.mdx)、[与编程智能体协作](../ai-agents.md)、[部署](../deployment.md)和[按版本升级指南](../migration.md)。如果验证失败，请查看[故障排查](../troubleshooting.md)。

@@ -58,7 +58,8 @@ JavaScript is unavailable.
 
 ## Sidebar badges
 
-Add a short `badge` beside a navigation link or group label:
+Add a short `badge` beside a navigation link or group label (an array is
+shorthand for `navigation.items`):
 
 ```ts
 navigation: [
@@ -104,16 +105,9 @@ Translate explicitly configured badges with keys such as `"navigation.NEW"` in
 
 ## Contents, languages, and versions
 
-Desktop articles show an on-page table of contents. Enable an optional compact
-contents list below the header on smaller screens with:
-
-```ts
-tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
-```
-
-The same field in page frontmatter overrides the site setting for that page;
-`tableOfContents: false` hides both lists. See [Authoring](./authoring.mdx#on-page-navigation)
-for heading behavior.
+Desktop articles show an on-page table of contents;
+[on-page navigation](./authoring.mdx#on-page-navigation) explains its heading
+levels, the optional list for smaller screens, and page settings.
 
 Configure `locales` to offer translated pages and `site.versions` to offer
 documentation versions. The language selector opens the translated page when it

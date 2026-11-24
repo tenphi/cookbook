@@ -5,12 +5,10 @@ sidebar:
   order: 3
 ---
 
-Cookbook first collects every source and assigns each one a canonical route.
-Only then does it rewrite links and assets. That two-phase graph lets pages
-link across directories and source declarations without depending on discovery
-order.
+Cookbook collects every source before it resolves links, so pages can link
+across folders and source declarations in any order.
 
-## Convention mode
+## Default sources
 
 When `content.sources` is omitted, Cookbook includes these sources when they
 exist:
@@ -22,8 +20,8 @@ exist:
 ];
 ```
 
-Files or directories beginning with `_` are excluded from glob discovery.
-Explicit `content.sources` replace these conventions.
+Glob sources skip files and directories whose names begin with `_` or `.`.
+Explicit `content.sources` replace these defaults.
 
 ## Local files
 
@@ -97,8 +95,8 @@ fragments are preserved.
 A frontmatter `slug` is relative to `routeBase`, including when it begins with
 `/`. For example, `slug: intro` under `/v2` creates `/v2/intro`. File sources also
 accept `routeBase`, which prefixes their explicit `route`. Empty `sources: []`
-means no sources, so the build fails with no pages; omit the property to enable
-conventions.
+means no sources, so the build fails with no pages; omit the property to use
+the [default sources](#default-sources).
 
 ## OpenAPI references
 
@@ -174,6 +172,9 @@ patterns (default `docs/**/*.{md,mdx}`) and `cookbook.exclude`. The home page is
 `routeBase`. Other pages drop a leading `docs/`, so `docs/guide.md` becomes
 `/guide`.
 
+`registry` sets another registry (default: the npm public registry). It must
+serve the package without authentication.
+
 Run `cookbook update` to create or reconcile the lock after editing sources.
 Every build and development server uses the exact requested specifier, version,
 and integrity stored in `cookbook.lock.json`. The project creator writes this
@@ -214,9 +215,10 @@ current package's `repository` manifest field. GitHub/GitLab `blob`, `tree`, and
 are preserved. Only pages from the same source root as the linking page are
 matched; links without a matching collected page remain external.
 
-Missing relative links are errors in strict mode; missing assets, paths
-escaping an allowed source root, and unsafe URL protocols such as `javascript:`
-are always errors.
+Missing relative links are errors by default; set
+[`build.strict: false`](./configuration.md#build) to make them warnings. Missing
+assets, paths escaping an allowed source root, and unsafe URL protocols such as
+`javascript:` are always errors.
 
 Run the [doctor command](./cli.md#validate-with-doctor) before committing a
 large content move.

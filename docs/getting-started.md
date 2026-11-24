@@ -52,8 +52,9 @@ The generated `docs.config.ts` points back to your repository. Your root README
 becomes the home page and `docs/**/*.{md,mdx}` supplies the other pages. Cookbook
 reads those files without copying or rewriting them.
 
-Use `--no-install` to generate files before installing dependencies. The creator
-refuses to overwrite a non-empty destination in non-interactive mode.
+With `--yes`, the creator does not prompt, so it refuses to overwrite a
+non-empty destination. See [creator flags](./cli.md#creator-flags) for
+`--no-install`, `--brand`, `--site`, `--deploy`, and the other options.
 
 ## Document a published npm package
 
@@ -71,8 +72,9 @@ Run `npm run update` when you want to resolve the requested tag or range again.
 
 ## Add to an existing Astro project
 
-Cookbook requires Astro's `output: "static"` setting. If your project uses
-`output: "server"`, create a separate static Astro project for its documentation.
+Cookbook requires Astro 7.3.2 or a later 7.x release, and Astro's
+`output: "static"` setting. If your project uses `output: "server"`, create a
+separate static Astro project for its documentation.
 
 ```sh
 npx astro add @tenphi/cookbook
@@ -122,14 +124,9 @@ Before deeper style changes or new components, read the
 [customization rules](./customization-rules.md). These rules and upstream
 references are also included in the installed Cookbook package.
 
-The integration and CLI load the same configuration. Supported filenames are
-`docs.config.ts`, `.mts`, `.js`, and `.mjs`, in that order. An explicit integration
-`config` object takes precedence; `configFile: false` disables discovery.
-Use `cookbook({ configFile: "./config/manual.ts" })` and
-`cookbook doctor --config ./config/manual.ts` for a nonstandard location.
-Because `root` resolves from the configuration file's directory, that file
-needs `root: ".."` to keep reading `README.md` and `docs/` from the app
-directory.
+See [project resolution](./configuration.md#project-resolution-and-presets) for
+the other configuration filenames and for a configuration file in another
+location.
 
 ## Monorepo roots
 
@@ -143,8 +140,9 @@ export default defineDocsConfig({ root: "../.." });
 
 `root` is relative to the documentation configuration file. It controls content,
 local assets, and `cookbook.lock.json`. Run `npm run doctor` from the app directory;
-it resolves the same repository root as the integration. Individual sources can
-also declare their own roots for multi-package sites.
+it resolves the same repository root as the integration.
+[Individual sources can also declare their own roots](./examples.md#monorepo-with-two-packages)
+for multi-package sites.
 
 ## Validate and publish
 
@@ -153,8 +151,8 @@ npm run validate
 npm run preview
 ```
 
-`validate` type-checks the project, runs Cookbook's preflight, builds the site,
-and checks the output. In a project you set up yourself, add the scripts listed
+`validate` type-checks the project, runs `cookbook doctor`, builds the site, and
+checks the output. In a project you set up yourself, add the scripts listed
 in [CLI commands](./cli.md) or run `npx @tenphi/cookbook doctor`. Then
 [deploy](./deployment.md) the `dist/` directory. If validation fails, see
 [troubleshooting](./troubleshooting.md).
