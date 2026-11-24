@@ -1,5 +1,14 @@
 # @tenphi/renderer
 
+## 0.34.1
+
+### Patch Changes
+
+- [#216](https://github.com/tenphi/cookbook/pull/216) [`e5c9694`](https://github.com/tenphi/cookbook/commit/e5c9694e7f7d3cd7b5f06674de7a81367a24c41f) Thanks [@tenphi](https://github.com/tenphi)! - A component module beside content outside the site's folder, such as `docs/components/StatusBadge.ts` in a site created with `--source`, can import `@tenphi/cookbook/styling`. Node resolution from that folder could not reach the site's `node_modules`, so `astro dev` and `astro build` failed to resolve the import. Cookbook now resolves its own entries from the site for every importer.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.34.1
+
 ## 0.34.0
 
 ### Minor Changes
