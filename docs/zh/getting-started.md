@@ -29,7 +29,7 @@ cd my-docs
 npm run dev
 ```
 
-创建工具会生成 README、Astro 配置和 `docs.config.ts`，然后安装依赖。它还会写入包含编程智能体指令的 `AGENTS.md`。编辑 `README.md` 可更改首页；添加 `docs/guide.md` 可创建 `/guide`。新增或修改的页面会直接出现在开发服务器中，无须重启。
+创建工具会生成 README、Astro 配置和 `docs.config.ts`，然后安装依赖。它还会写入包含编程智能体指令的 `AGENTS.md`，以及为 Claude Code 导入该文件的 `CLAUDE.md`。编辑 `README.md` 可更改首页；添加 `docs/guide.md` 可创建 `/guide`。新增或修改的页面会直接出现在开发服务器中，无须重启。
 
 ## 为现有仓库编写文档
 

@@ -107,6 +107,9 @@ describe("creator defaults", () => {
     expect(agentInstructions).toContain(
       "node_modules/@tenphi/cookbook/docs/agent-harness.md",
     );
+    expect(await readFile(join(destination, "CLAUDE.md"), "utf8")).toBe(
+      "@AGENTS.md\n",
+    );
     const upgradeSkill = await readFile(
       join(destination, ".agents", "skills", "upgrade-cookbook", "SKILL.md"),
       "utf8",
@@ -125,9 +128,10 @@ describe("creator defaults", () => {
       "Edit the source repository's README.md",
     );
   });
-  it("preserves an existing agent instructions file", async () => {
+  it("preserves existing agent instruction files", async () => {
     const { destination } = await localFixture();
     await writeFile(join(destination, "AGENTS.md"), "# Local rules\n");
+    await writeFile(join(destination, "CLAUDE.md"), "# Claude rules\n");
     const skillPath = join(
       destination,
       ".agents",
@@ -143,6 +147,9 @@ describe("creator defaults", () => {
     });
     expect(await readFile(join(destination, "AGENTS.md"), "utf8")).toBe(
       "# Local rules\n",
+    );
+    expect(await readFile(join(destination, "CLAUDE.md"), "utf8")).toBe(
+      "# Claude rules\n",
     );
     expect(await readFile(skillPath, "utf8")).toBe(
       "# Local upgrade workflow\n",

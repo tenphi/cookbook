@@ -35,7 +35,7 @@ npm run dev
 
 The creator writes a README, Astro configuration, and `docs.config.ts`, then
 installs dependencies. It also writes `AGENTS.md` with instructions for coding
-agents. Edit `README.md` to change the home page. Add
+agents, and a `CLAUDE.md` that imports it for Claude Code. Edit `README.md` to change the home page. Add
 `docs/guide.md` to create `/guide`. New and edited pages appear in the development
 server without a restart.
 

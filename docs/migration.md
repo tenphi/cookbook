@@ -33,8 +33,11 @@ follow [Keep it current](./agent-harness.md#keep-it-current) after the upgrade.
 
 The creator starts new projects; rerunning it over an existing project is not
 an upgrade path. Generated sites include `.agents/skills/upgrade-cookbook/`
-for an agent-assisted upgrade. See [quality checks](./quality-checks.md) for
-validation coverage and [troubleshooting](./troubleshooting.md) for failures.
+for an agent-assisted upgrade. Sites created before 0.34.1 have no `CLAUDE.md`
+beside `AGENTS.md`: add one that contains `@AGENTS.md`, so Claude Code reads the
+site's instructions in a repository that has a `CLAUDE.md` of its own. See
+[quality checks](./quality-checks.md) for validation coverage and
+[troubleshooting](./troubleshooting.md) for failures.
 
 ### Runtime updates versus documentation updates
 

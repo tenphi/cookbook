@@ -29,7 +29,7 @@ cd my-docs
 npm run dev
 ```
 
-El creador genera un README, la configuración de Astro y `docs.config.ts`, e instala las dependencias. También escribe `AGENTS.md` con instrucciones para agentes de programación. Edita `README.md` para cambiar la página de inicio. Añade `docs/guide.md` para crear `/guide`. Las páginas nuevas o modificadas aparecen en el servidor de desarrollo sin reiniciarlo.
+El creador genera un README, la configuración de Astro y `docs.config.ts`, e instala las dependencias. También escribe `AGENTS.md` con instrucciones para agentes de programación, y un `CLAUDE.md` que lo importa para Claude Code. Edita `README.md` para cambiar la página de inicio. Añade `docs/guide.md` para crear `/guide`. Las páginas nuevas o modificadas aparecen en el servidor de desarrollo sin reiniciarlo.
 
 ## Documenta un repositorio existente
 

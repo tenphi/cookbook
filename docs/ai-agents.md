@@ -188,8 +188,8 @@ Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
   [For AI agents](./agents.md): the rules that always apply and the page for
   each task.
 - **Instructions in the project.** The [project creator](./getting-started.md)
-  writes `AGENTS.md` beside `docs.config.ts` and an upgrade skill in
-  `.agents/skills/upgrade-cookbook/`.
+  writes `AGENTS.md` beside `docs.config.ts`, a `CLAUDE.md` that imports it
+  for Claude Code, and an upgrade skill in `.agents/skills/upgrade-cookbook/`.
 
 Installed docs help only when your agent reads them. In a project you set up
 yourself, add a line to your agent instructions:

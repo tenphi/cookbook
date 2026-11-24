@@ -170,6 +170,9 @@ export async function scaffold(
     join(destination, "AGENTS.md"),
     renderAgentInstructions(options, packageManager),
   );
+  // Claude Code skips AGENTS.md when a CLAUDE.md exists in its folder or
+  // above, as in most repositories documented with --source, so import it.
+  await writeNewFile(join(destination, "CLAUDE.md"), "@AGENTS.md\n");
   await writeUpgradeSkill(destination);
   if (workflow) {
     await mkdir(dirname(workflow.path), { recursive: true });

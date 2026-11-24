@@ -20,7 +20,7 @@ commands are yours to find there.
 | Where                                                    | What                                                                                                                                                   |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `node_modules/@tenphi/cookbook/docs/`                    | These docs at the installed version. `llms.txt` there is their index, and `upstream/` holds the Tasty and Glaze docs of the versions Cookbook uses.    |
-| `AGENTS.md` beside `docs.config.ts`                      | Written by the project creator: where the content lives, the docs to read, and the command that validates the site.                                    |
+| `AGENTS.md` beside `docs.config.ts`                      | Written by the project creator: where the content lives, the docs to read, and the command that validates the site. Its `CLAUDE.md` imports it.        |
 | `.agents/skills/upgrade-cookbook/SKILL.md`               | Written by the project creator: the steps to upgrade Cookbook in the site.                                                                             |
 | The harnesspm block in `AGENTS.md`, when the site has it | Cookbook's rule, its docs index, and the Tasty, Glaze, and lint rules and tools, adapted to the site's theme. See [Agent harness](./agent-harness.md). |
 
