@@ -117,8 +117,8 @@ for heading behavior.
 
 Configure `locales` to offer translated pages and `site.versions` to offer
 documentation versions. The language selector opens the translated page when it
-exists; otherwise it links to the same page in the default language and marks it
-as a fallback. The version selector opens the same page in the other version,
+exists; otherwise it links to the same page in the default language, marked as
+a fallback, or to a home page when neither exists. The version selector opens the same page in the other version,
 or that version's home page when the page does not exist there.
 Only available translations appear in alternate-language metadata. See the
 [language](./configuration.md#languages) and

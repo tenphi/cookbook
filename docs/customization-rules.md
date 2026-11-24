@@ -139,8 +139,9 @@ consumer installation hook.
 
 ## Guide coding agents explicitly
 
-Having documentation installed does not ensure an agent reads it. Add a short
-instruction to your project's existing agent guidance, adjusting the path for
+Having documentation installed does not ensure an agent reads it. Sites from
+the project creator have this in their `AGENTS.md`. In a project you set up
+yourself, add a short instruction to its agent guidance, adjusting the path for
 the app that depends on Cookbook:
 
 ```md

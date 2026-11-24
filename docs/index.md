@@ -66,7 +66,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook reads those files where they live. To have a coding agent do it,
+Cookbook reads those files where they live. To have a coding agent set this up,
 [ask your agent](./getting-started.md#ask-your-agent). You can also
 [start a new site](./getting-started.md#create-your-first-site),
 [document the exact files published to npm](./getting-started.md#document-a-published-npm-package),

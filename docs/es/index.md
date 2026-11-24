@@ -44,7 +44,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook lee los archivos donde ya están. Para que lo haga un agente de programación, [pídeselo a tu agente](./getting-started.md#pídeselo-a-tu-agente). También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
+Cookbook lee los archivos donde ya están. Para que un agente de programación lo configure por ti, [pídeselo a tu agente](./getting-started.md#pídeselo-a-tu-agente). También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
 
 ## Este sitio es el ejemplo
 

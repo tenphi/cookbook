@@ -22,8 +22,7 @@ Cookbook's steps for agents: https://cookbook.tenphi.me/agents/
 
 Your agent follows the same steps as the sections below. Tell it the public URL
 of the site when you know it. [Work with a coding agent](./ai-agents.md) has
-prompts for what comes next: your brand, your domain, a package you publish, and
-upgrades.
+prompts for what comes next.
 
 ## Create your first site
 

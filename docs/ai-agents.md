@@ -130,9 +130,10 @@ Add a Spanish version of our Cookbook site. Translate the home
 page and getting started first; the other pages stay in English.
 ```
 
-- **Your agent** adds the language and the translated pages. Readers of a page
-  you have not translated get it in the default language:
-  [Languages](./configuration.md#languages).
+- **Your agent** adds the language, its interface text, and the translated
+  pages. Readers of a page you have not translated get it in the default
+  language: [Languages](./configuration.md#languages),
+  [interface text](./configuration.md#translations).
 - **You decide** which languages to offer and who reviews the translations.
 
 ### Document a package you publish to npm
@@ -165,7 +166,7 @@ site builds the same without it.
 Set up harnesspm in this Cookbook site, so you get Cookbook's
 rules and its tools for styles and colors. Then tell me what it
 wrote, which tools wait for my trust, and what each one does.
-Do not trust any package yourself.
+Do not trust any package until I choose.
 
 Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 ```
@@ -173,7 +174,8 @@ Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 - **Your agent** sets up harnesspm and lists the tools that wait for your trust:
   [Agent harness](./agent-harness.md).
 - **You decide** which packages may run code in your project, and whether that
-  trust follows their upgrades or asks again for each new version. Then run
+  trust follows their upgrades or asks again for each new version. Your agent
+  records your choice. Then run
   `npx harnesspm approve` in your own terminal, so the lint hook runs and the
   tools run without a prompt. Your agent cannot do this step: harnesspm never
   lets an agent give itself permissions.
@@ -182,14 +184,10 @@ Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 
 ## What your agent reads
 
-- **The docs of your version.** `@tenphi/cookbook` installs these docs in
-  `node_modules/@tenphi/cookbook/docs/`, with an index in `llms.txt` and the
-  Tasty and Glaze docs of the same release. Your agent starts at
-  [For AI agents](./agents.md): the rules that always apply and the page for
-  each task.
-- **Instructions in the project.** The [project creator](./getting-started.md)
-  writes `AGENTS.md` beside `docs.config.ts`, a `CLAUDE.md` that imports it
-  for Claude Code, and an upgrade skill in `.agents/skills/upgrade-cookbook/`.
+`@tenphi/cookbook` installs these docs at your version, and the
+[project creator](./getting-started.md) writes agent instructions and an upgrade
+skill into the site. Your agent starts at [For AI agents](./agents.md): what is
+installed, the rules that always apply, and the page for each task.
 
 Installed docs help only when your agent reads them. In a project you set up
 yourself, add a line to your agent instructions:
@@ -200,6 +198,7 @@ has one.
 
 Agents read your published docs like any visitor. Cookbook gives them static
 HTML with the text in the response, a Markdown copy of each page, an `llms.txt`
-index grouped like your navigation, and a sitemap. You decide whether pages
+index grouped like your navigation, and, once the site has its public URL, a
+sitemap. You decide whether pages
 offer Markdown copies, and whether to publish your own `llms.txt` or
 `robots.txt` instead: [Publishing metadata](./publishing.md#page-text-for-readers-and-agents).

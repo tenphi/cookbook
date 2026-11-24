@@ -63,23 +63,23 @@ as JavaScript modules.
 
 ## Pick the task
 
-| The person asks to                                        | Read                                                                                  |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Create a site, or document a repository or an npm package | [Getting started](./getting-started.md), then [Content sources](./content-sources.md) |
-| Organize pages into sections and tabs                     | [Search and navigation](./site-navigation.md)                                         |
-| Add a language or a version                               | [Languages](./configuration.md#languages), [versions](./configuration.md#site)        |
-| Write a page, or use tabs, callouts, or code groups in it | [Authoring components](./authoring.mdx)                                               |
-| Add an API reference from an OpenAPI spec                 | [OpenAPI references](./content-sources.md#openapi-references)                         |
-| Change the brand, colors, tokens, or logo                 | [Theme and components](./theme-and-components.md)                                     |
-| Change fonts or typography                                | [Fonts and typography](./fonts-and-typography.md)                                     |
-| Restyle a built-in part of the interface                  | [Component styles](./component-styles.md)                                             |
-| Add a component of their own                              | [Custom components](./custom-components.md)                                           |
-| Start from a complete configuration                       | [Theme recipes](./recipes.md), [Working examples](./examples.md)                      |
-| Add a Markdown transform or a content check               | [Extend Cookbook](./plugins.md)                                                       |
-| Deploy the site                                           | [Deployment](./deployment.md)                                                         |
-| Set titles, social previews, indexing, or the agent index | [Publishing metadata](./publishing.md)                                                |
-| Set up harnesspm for the site                             | [Agent harness](./agent-harness.md)                                                   |
-| Upgrade Cookbook                                          | [Upgrade Cookbook](./migration.md)                                                    |
-| Fix a failing check                                       | [Troubleshooting](./troubleshooting.md), [Quality checks](./quality-checks.md)        |
-| Look up a field or a command                              | [Configuration reference](./configuration.md), [CLI commands](./cli.md)               |
-| Understand how the packages fit together                  | [Architecture](./architecture.md)                                                     |
+| The person asks to                                        | Read                                                                                                                              |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Create a site, or document a repository or an npm package | [Getting started](./getting-started.md), then [Content sources](./content-sources.md)                                             |
+| Organize pages into sections and tabs                     | [Search and navigation](./site-navigation.md)                                                                                     |
+| Add a language or a version                               | [Languages](./configuration.md#languages), [interface text](./configuration.md#translations), [versions](./configuration.md#site) |
+| Write a page, or use tabs, callouts, or code groups in it | [Authoring components](./authoring.mdx)                                                                                           |
+| Add an API reference from an OpenAPI spec                 | [OpenAPI references](./content-sources.md#openapi-references)                                                                     |
+| Change the brand, colors, tokens, or logo                 | [Theme and components](./theme-and-components.md)                                                                                 |
+| Change fonts or typography                                | [Fonts and typography](./fonts-and-typography.md)                                                                                 |
+| Restyle a built-in part of the interface                  | [Component styles](./component-styles.md)                                                                                         |
+| Add a component of their own                              | [Custom components](./custom-components.md)                                                                                       |
+| Start from a complete configuration                       | [Theme recipes](./recipes.md), [Working examples](./examples.md)                                                                  |
+| Add a Markdown transform or a content check               | [Extend Cookbook](./plugins.md)                                                                                                   |
+| Deploy the site                                           | [Deployment](./deployment.md)                                                                                                     |
+| Set titles, social previews, indexing, or the agent index | [Publishing metadata](./publishing.md)                                                                                            |
+| Set up harnesspm for the site                             | [Agent harness](./agent-harness.md)                                                                                               |
+| Upgrade Cookbook                                          | [Upgrade Cookbook](./migration.md)                                                                                                |
+| Fix a failing check                                       | [Troubleshooting](./troubleshooting.md), [Quality checks](./quality-checks.md)                                                    |
+| Look up a field or a command                              | [Configuration reference](./configuration.md), [CLI commands](./cli.md)                                                           |
+| Understand how the packages fit together                  | [Architecture](./architecture.md)                                                                                                 |
