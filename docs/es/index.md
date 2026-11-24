@@ -44,7 +44,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook lee los archivos donde ya están. También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
+Cookbook lee los archivos donde ya están. Para que lo haga un agente de programación, [pídeselo a tu agente](./getting-started.md#pídeselo-a-tu-agente). También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
 
 ## Este sitio es el ejemplo
 
@@ -60,4 +60,4 @@ Esta página procede de [docs/es/index.md](https://github.com/tenphi/cookbook/bl
 - [Tema y componentes](../theme-and-components.md) introduce la marca y los tokens y enlaza con fuentes, estilos y componentes propios.
 - [Despliegue](../deployment.md) cubre la validación y el alojamiento estático.
 
-El resto de la documentación aún está disponible en inglés. Consulta también [cómo trabajar con un agente de programación](../ai-agents.md), la [referencia de configuración](../configuration.md), las [opciones de publicación](../publishing.md) y la [referencia de la CLI](../cli.md). Un agente de programación empieza en [su página de inicio](../agents.md): las reglas que siempre se aplican y la página de cada tarea.
+El resto de la documentación aún está disponible en inglés. Consulta también [cómo trabajar con un agente de programación](../ai-agents.md), la [referencia de configuración](../configuration.md), las [opciones de publicación](../publishing.md) y la [referencia de la CLI](../cli.md). Un agente de programación empieza en [la página para agentes de IA](../agents.md): las reglas que siempre se aplican y la página de cada tarea.

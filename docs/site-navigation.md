@@ -116,8 +116,10 @@ The same field in page frontmatter overrides the site setting for that page;
 for heading behavior.
 
 Configure `locales` to offer translated pages and `site.versions` to offer
-documentation versions. The selectors prefer the equivalent page when it
-exists and fall back to a real language or version home when it does not.
+documentation versions. The language selector opens the translated page when it
+exists; otherwise it links to the same page in the default language and marks it
+as a fallback. The version selector opens the same page in the other version,
+or that version's home page when the page does not exist there.
 Only available translations appear in alternate-language metadata. See the
 [language](./configuration.md#languages) and
 [version](./configuration.md#site) configuration examples.

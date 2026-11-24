@@ -3,9 +3,9 @@
 export const translations: Record<string, Record<string, string>> = {
   es: {
     "navigation.Guide": "Guía",
-    "navigation.AI agents": "Agentes de IA (en inglés)",
+    "navigation.AI agents": "Agentes de IA",
     "navigation.Reference": "Referencia (en inglés)",
-    "navigation.Start": "Primeros pasos",
+    "navigation.Start": "Para empezar",
     "navigation.Author": "Redacción",
     "navigation.Customize": "Personalización",
     "navigation.Extend": "Extensiones",
@@ -79,9 +79,9 @@ export const translations: Record<string, Record<string, string>> = {
   },
   ru: {
     "navigation.Guide": "Руководство",
-    "navigation.AI agents": "ИИ-агенты (на английском)",
+    "navigation.AI agents": "ИИ-агенты",
     "navigation.Reference": "Справочник (на английском)",
-    "navigation.Start": "Начало работы",
+    "navigation.Start": "Первые шаги",
     "navigation.Author": "Подготовка материалов",
     "navigation.Customize": "Настройка",
     "navigation.Extend": "Расширение",
@@ -154,9 +154,9 @@ export const translations: Record<string, Record<string, string>> = {
   },
   ja: {
     "navigation.Guide": "ガイド",
-    "navigation.AI agents": "AI エージェント（英語）",
+    "navigation.AI agents": "AI エージェント",
     "navigation.Reference": "リファレンス（英語）",
-    "navigation.Start": "はじめに",
+    "navigation.Start": "スタート",
     "navigation.Author": "執筆",
     "navigation.Customize": "カスタマイズ",
     "navigation.Extend": "拡張",
@@ -229,9 +229,9 @@ export const translations: Record<string, Record<string, string>> = {
   },
   "zh-Hans": {
     "navigation.Guide": "指南",
-    "navigation.AI agents": "AI 智能体（英文）",
+    "navigation.AI agents": "AI 智能体",
     "navigation.Reference": "参考资料（英文）",
-    "navigation.Start": "入门",
+    "navigation.Start": "开始",
     "navigation.Author": "内容编写",
     "navigation.Customize": "自定义",
     "navigation.Extend": "扩展",

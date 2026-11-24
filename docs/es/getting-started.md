@@ -19,7 +19,7 @@ el sitio se compila y dime qué comprobaste y qué me queda por decidir.
 Pasos de Cookbook para agentes: https://cookbook.tenphi.me/agents/
 ```
 
-Tu agente sigue los mismos pasos que las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Trabajar con un agente de programación](../ai-agents.md) (en inglés) reúne indicaciones para lo que viene después: tu marca, tu dominio, un paquete que publicas y las actualizaciones.
+Tu agente sigue los mismos pasos que se describen en las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Trabajar con un agente de programación](../ai-agents.md) (en inglés) reúne indicaciones para lo que viene después: tu marca, tu dominio, un paquete que publicas y las actualizaciones.
 
 ## Crea tu primer sitio
 

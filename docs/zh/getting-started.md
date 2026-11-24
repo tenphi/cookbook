@@ -13,7 +13,7 @@ Cookbook 需要 Node.js 22.19 或更高版本。你可以让编程智能体创�
 
 ```text
 使用 Cookbook，根据我们的 README 和 docs/ 中的页面，
-为这个仓库创建文档站点。确认站点可以构建，
+为这个仓库创建文档站点。确认站点能成功构建，
 然后告诉我你检查了什么，以及还有哪些需要我决定。
 
 Cookbook 面向智能体的步骤：https://cookbook.tenphi.me/agents/

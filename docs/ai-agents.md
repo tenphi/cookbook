@@ -6,9 +6,9 @@ sidebar:
   order: 3
 ---
 
-A coding agent can do most of the work on a Cookbook site: create it, organize
-the pages, match your brand, and publish it. You say what you want and make the
-decisions. Your agent reads Cookbook's docs and does the steps.
+A coding agent can do most of the work on a Cookbook site: create it, write and
+organize the pages, match your brand, and publish it. You say what you want and
+make the decisions. Your agent reads Cookbook's docs and does the steps.
 
 ## How to ask
 
@@ -30,6 +30,111 @@ are examples: use your own words, names, and URLs. To create a site for your
 repository, start with the prompt in
 [Getting started](./getting-started.md#ask-your-agent).
 
+### Write or update a page
+
+```text
+Add a page to our Cookbook site on installing our CLI, with the
+npm, pnpm, and Yarn commands side by side. Draft it from our
+README and src/cli/; I'll check what it says about the product.
+```
+
+- **Your agent** writes the page next to your other docs pages and adds it to
+  the navigation. It can use tabs, callouts, code groups, and steps:
+  [Authoring components](./authoring.mdx).
+- **You decide** what the page says about your product. Read the draft before
+  it ships.
+
+### Match your product's look
+
+```text
+Make our Cookbook site look like our product: brand color #0f766e,
+the logo in assets/logo.svg, and the Inter font.
+Keep the text easy to read in light, dark, and high-contrast modes.
+```
+
+- **Your agent** sets the brand color, logo, and fonts. Cookbook derives accent
+  text, buttons, and focus rings from the brand for every appearance, and its
+  checks reject a color that is too hard to read:
+  [Theme and components](./theme-and-components.md),
+  [Fonts and typography](./fonts-and-typography.md).
+- **You decide** the brand. Look at the result in both color schemes and with
+  high contrast on.
+
+### Organize the pages
+
+```text
+Our Cookbook site lists guides and API pages in one long list.
+Make it easier for readers to find each kind of page.
+Show me the structure before you change it.
+```
+
+- **Your agent** proposes tabs and groups, then sets the site's navigation.
+  Cookbook's checks report a link that leads nowhere:
+  [Search and navigation](./site-navigation.md).
+- **You decide** the structure your readers see.
+
+### Publish on your domain
+
+```text
+Publish our Cookbook site at https://docs.example.com
+on GitHub Pages. Tell me what I have to set up myself.
+```
+
+- **Your agent** sets the public URL, adds a deploy workflow, and checks the
+  built site: [Deployment](./deployment.md).
+- **You decide** the host and the domain. You turn on publishing and the custom
+  domain in the host's settings, and point the domain's DNS at the host. After
+  the first deployment, ask your agent to check the live site.
+
+### Fix a part that looks wrong
+
+Say what you see and where. Your agent finds the part to change.
+
+```text
+In our Cookbook site, long links in the sidebar are cut off.
+Let them wrap onto a second line.
+```
+
+- **Your agent** finds the part and changes only that part; the rest of
+  Cookbook's styles stay as they are: [Component styles](./component-styles.md).
+- **You review** the result on a phone and on a wide screen.
+
+### Keep the site current
+
+```text
+Upgrade Cookbook in our docs site to the latest version
+and tell me what changed for us.
+```
+
+- **Your agent** follows Cookbook's upgrade steps and the notes for every
+  version it crosses: [Upgrade Cookbook](./migration.md).
+- **You review** a preview before you deploy.
+
+### Add an API reference
+
+You have an OpenAPI spec and want a page for each operation.
+
+```text
+Add an API reference to our Cookbook site from api/openapi.yaml,
+in its own tab next to the guides.
+```
+
+- **Your agent** adds the spec to the site's content, and Cookbook generates the
+  pages: [OpenAPI references](./content-sources.md#openapi-references).
+- **You decide** where the reference sits in the navigation.
+
+### Offer the docs in another language
+
+```text
+Add a Spanish version of our Cookbook site. Translate the home
+page and getting started first; the other pages stay in English.
+```
+
+- **Your agent** adds the language and the translated pages. Readers of a page
+  you have not translated get it in the default language:
+  [Languages](./configuration.md#languages).
+- **You decide** which languages to offer and who reviews the translations.
+
 ### Document a package you publish to npm
 
 Readers should see the docs of the version they install, not your main branch.
@@ -42,101 +147,38 @@ the docs of the released version, not of our main branch.
 Cookbook's steps for agents: https://cookbook.tenphi.me/agents/
 ```
 
-- **Your agent** builds the site from the files in the published package and
-  locks their exact version and integrity.
+- **Your agent** builds the site from the docs in the published package and
+  pins that release, so the site changes only when you ask:
+  [Document a published npm package](./getting-started.md#document-a-published-npm-package).
 - **You decide** when the site follows a new release: ask your agent to update
   it. You also decide whether the package's MDX may run code in your build. It
   does not unless you allow it.
 
-### Add an API reference
+### Give your agent Cookbook's tools
 
-You have an OpenAPI spec and want a page for each operation.
-
-```text
-Add an API reference to our Cookbook site from api/openapi.yaml,
-in its own tab next to the guides.
-```
-
-- **Your agent** adds the spec to the site's content. Cookbook writes a
-  searchable overview and a page for each operation, with parameters, request
-  bodies, responses, and examples.
-- **You decide** where the reference sits in the navigation.
-
-### Match your product's look
+[harnesspm](https://harnesspm.tenphi.me) adds Cookbook's rule and the index of
+its docs to your agent's instructions, with tools that show the CSS a style
+produces and every color of your theme in light, dark, and high contrast. Your
+site builds the same without it.
 
 ```text
-Make our Cookbook site look like our product: brand color #0f766e,
-the logo in assets/logo.svg, and the Inter font.
-Keep the text easy to read in light, dark, and high-contrast modes.
+Set up harnesspm in this Cookbook site, so you get Cookbook's
+rules and its tools for styles and colors. Then tell me what it
+wrote, which tools wait for my trust, and what each one does.
+Do not trust any package yourself.
+
+Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 ```
 
-- **Your agent** sets the brand, logo, and fonts in the site's theme. Cookbook
-  derives accent text, buttons, and focus rings from the brand for every
-  appearance, and its checks reject a color that misses a contrast floor.
-- **You decide** the brand. Look at the result in both color schemes and with
-  high contrast on.
-
-### Fix a part that looks wrong
-
-Say what you see and where. Your agent finds the part to change.
-
-```text
-In our Cookbook site, long links in the sidebar are cut off.
-Let them wrap onto a second line.
-```
-
-- **Your agent** finds the component and its named part in
-  [Component styles](./component-styles.md) and changes only what it needs.
-  Cookbook merges the change into its default styles.
-- **You review** the result on a phone and on a wide screen.
-
-### Organize the pages
-
-```text
-Our Cookbook site lists guides and API pages in one long list.
-Make it easier for readers to find each kind of page.
-Show me the structure before you change it.
-```
-
-- **Your agent** proposes tabs and groups, then sets the site's navigation.
-  Cookbook's checks report a link that leads nowhere.
-- **You decide** the structure your readers see.
-
-### Offer the docs in another language
-
-```text
-Add a Spanish version of our Cookbook site. Translate the home
-page and getting started first; the other pages stay in English.
-```
-
-- **Your agent** adds the language and the translated pages. The language
-  selector opens the translated page when it exists and the language's home
-  page when it does not.
-- **You decide** which languages to offer and who reviews the translations.
-
-### Publish on your domain
-
-```text
-Publish our Cookbook site at https://docs.example.com
-on GitHub Pages. Tell me what I have to set up on GitHub myself.
-```
-
-- **Your agent** sets the public URL, adds a workflow from
-  [Deployment](./deployment.md), and checks the built site.
-- **You decide** the host and the domain, and turn on publishing and the custom
-  domain in the host's settings. After the first deployment, ask your agent to
-  check the live site.
-
-### Keep the site current
-
-```text
-Upgrade Cookbook in our docs site to the latest version
-and tell me what changed for us.
-```
-
-- **Your agent** follows the upgrade skill that the project creator wrote and
-  the notes in [Upgrade Cookbook](./migration.md) for every version it crosses.
-- **You review** a preview before you deploy.
+- **Your agent** sets up harnesspm and lists the tools that wait for your trust:
+  [Agent harness](./agent-harness.md).
+- **You decide** which packages may run code in your project, and whether that
+  trust follows their upgrades or asks again for each new version. Then run
+  `npx harnesspm approve` in your own terminal, so the lint hook runs and the
+  tools run without a prompt. Your agent cannot do this step: harnesspm never
+  lets an agent give itself permissions.
+- **You review** and commit what harnesspm wrote, as you would any change to
+  your agent's instructions.
 
 ## What your agent reads
 
@@ -154,67 +196,10 @@ yourself, add a line to your agent instructions:
 [Customization rules](./customization-rules.md#guide-coding-agents-explicitly)
 has one.
 
-## Optional: give your agent Cookbook's harness
+## Agents that read your published docs
 
-[harnesspm](https://harnesspm.tenphi.me) installs the agent harness that npm
-packages ship, and keeps it current with every install. Cookbook's harness gives
-your agent:
-
-- a short rule for changing a site, in its instructions in every session;
-- an index of Cookbook's docs at your version;
-- Tasty's and Glaze's rules and tools, which show the CSS a style produces and
-  every color of your theme in light, dark, and high contrast, from your site's
-  own theme;
-- a skill with the steps to change your site's colors;
-- the Tasty lint plugin's rule, a lint tool, and, in Claude Code, a hook that
-  lints each style file your agent edits.
-
-Your site builds the same without it. [Agent harness](./agent-harness.md) has
-the details for your agent.
-
-### Ask your agent
-
-Paste this into Claude Code or Codex, in the project of your site:
-
-```text
-Set up harnesspm in this Cookbook site, so you get Cookbook's
-rules and its tools for styles and colors. Then tell me what it
-wrote, which tools wait for my trust, and what each one does.
-Do not trust any package yourself.
-
-Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
-```
-
-### Decide what may run
-
-Rules and docs work at once. Tools run code, so they stay off until you trust
-their packages: Tasty and Glaze for the style and color tools, and the Tasty
-lint plugin for the lint tool and its hook. Cookbook's own harness has no tools;
-trust it too if its color skill should run without asking in Claude Code.
-
-1. Ask what is waiting: "Which harnesspm tools are pending, and what does each
-   one do?"
-2. Say which packages you trust: "Trust @tenphi/tasty, @tenphi/glaze, and
-   @tenphi/eslint-plugin-tasty in harnesspm." You decide how far the trust goes:
-   `true` follows upgrades, and `"pin"` asks again for each new version.
-3. Let the lint hook run, and the tools run without a prompt: run
-   `npx harnesspm approve` in your own terminal.
-
-Your agent cannot do step 3: harnesspm never lets an agent give itself
-permissions. Review and commit what harnesspm wrote, as you would any change to
-your agent's instructions.
-
-## Make the published site readable for agents
-
-Agents read your published docs like any visitor. Cookbook gives them static HTML
-with the text, headings, and links in the response, a Markdown copy of each page,
-an `llms.txt` index grouped like your navigation, and a sitemap. What you decide:
-
-- **The public URL.** Give it to your agent for `site.url`. Canonical URLs, the
-  sitemap, and `robots.txt` need it, and `llms.txt` uses it for full links.
-- **Whether pages offer Markdown copies.** They do unless you turn them off.
-- **Your own `llms.txt` or `robots.txt`.** Cookbook keeps a file you put in
-  `public/`, and its policy is then yours.
-
-[Publishing metadata](./publishing.md#page-text-for-readers-and-agents) has the
-details, and [Deployment](./deployment.md) covers `robots.txt` and hosting.
+Agents read your published docs like any visitor. Cookbook gives them static
+HTML with the text in the response, a Markdown copy of each page, an `llms.txt`
+index grouped like your navigation, and a sitemap. You decide whether pages
+offer Markdown copies, and whether to publish your own `llms.txt` or
+`robots.txt` instead: [Publishing metadata](./publishing.md#page-text-for-readers-and-agents).
