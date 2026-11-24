@@ -67,6 +67,11 @@ import { StatusBadge } from "./components/StatusBadge";
 </StatusBadge>
 ```
 
+This works when the content lives outside the site's folder too, as in a site
+created with `--source`: Cookbook resolves `@tenphi/cookbook` from the site. A
+component module that imports another package finds it from its own folder, so
+install that package there or in a folder above it, such as the repository root.
+
 A site can change just one part in `docs.config.ts`:
 
 ```ts
