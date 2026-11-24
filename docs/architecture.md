@@ -34,8 +34,8 @@ not compose renderer internals themselves.
 6. Reject unsafe paths and report strict diagnostics.
 7. Render static pages through Astro and Cookbook components.
 8. Copy content-hashed assets and build the local Pagefind index.
-9. Write `llms.txt`, Markdown copies of pages, and, where they apply, the
-   sitemap and `robots.txt`; see [Discovery files](./deployment.md#discovery-files).
+9. Write `llms.txt` and, where they apply, Markdown copies of pages, the
+   sitemap, and `robots.txt`; see [Discovery files](./deployment.md#discovery-files).
 
 Source documents are read-only throughout this process. The transformed body
 exists in the in-memory graph and the renderer's virtual module; a build never
@@ -142,7 +142,7 @@ diagnostics without importing the renderer.
 The monorepo's `apps/reference` project is both the deployed documentation site
 and an end-to-end fixture. Its integration discovers `docs.config.ts`, whose
 `root: "../.."` loads this `docs/` tree through the same route pipeline used by
-convention-mode sites. CI builds the same app before GitHub Pages publishes it.
+sites that use the default sources. CI builds the same app before GitHub Pages publishes it.
 The site is deployed only after a package release: the release workflow creates
 a version tag and starts the Pages workflow from that tag, so the public
 reference matches the published code.
