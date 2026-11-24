@@ -57,14 +57,13 @@ export default defineDocsConfig({
   },
   navigation: {
     /*
-      Two tabs, as harnesspm's docs have. "For humans" is short: what Cookbook
-      is, how to start, and the prompts and decisions for working with a
-      coding agent. "For AI agents" has every step: a start page, the guides
-      and the reference. People read it too when they want the details.
+      One set of docs for people and their coding agents. Agents do not use
+      the sidebar: they start at /agents through llms.txt, the installed docs,
+      and the prompts on /ai-agents. The AI agents group holds those pages.
     */
     tabs: [
       {
-        label: "For humans",
+        label: "Guide",
         link: "/",
         items: [
           "/",
@@ -73,16 +72,9 @@ export default defineDocsConfig({
             items: ["/getting-started", "/comparison", "/examples"],
           },
           {
-            label: "With your agent",
-            items: ["/ask-your-agent", "/ai-agents"],
+            label: "AI agents",
+            items: ["/ai-agents", "/agents", "/agent-harness"],
           },
-        ],
-      },
-      {
-        label: "For AI agents",
-        link: "/agents",
-        items: [
-          { label: "Start here", link: "/agents" },
           {
             label: "Author",
             items: ["/content-sources", "/site-navigation", "/authoring"],
@@ -90,34 +82,30 @@ export default defineDocsConfig({
           {
             label: "Customize",
             items: [
-              "/customization-rules",
+              "/recipes",
               "/theme-and-components",
               "/fonts-and-typography",
               "/custom-components",
-              "/recipes",
+              "/customization-rules",
             ],
           },
           { label: "Extend", items: ["/plugins"] },
           { label: "Publish", items: ["/deployment"] },
           {
             label: "Maintain",
-            items: [
-              "/agent-harness",
-              "/migration",
-              "/quality-checks",
-              "/troubleshooting",
-            ],
+            items: ["/migration", "/quality-checks", "/troubleshooting"],
           },
-          {
-            label: "Reference",
-            items: [
-              "/configuration",
-              "/component-styles",
-              "/publishing",
-              "/cli",
-              "/architecture",
-            ],
-          },
+        ],
+      },
+      {
+        label: "Reference",
+        link: "/configuration",
+        items: [
+          "/configuration",
+          "/component-styles",
+          "/publishing",
+          "/cli",
+          "/architecture",
         ],
       },
     ],

@@ -32,7 +32,7 @@ sidebar:
 - **语言与版本。** 提供翻译页面和不同版本的文档；切换时，如果存在对应页面，就会直接打开该页面。[语言与版本](../site-navigation.md#contents-languages-and-versions)。
 - **发布前检查。** 检测无效链接、缺失资源、重复路由和错误的导航配置，并指出源文件位置。将预渲染 HTML 部署到任意静态托管服务。[质量检查](../quality-checks.md)。
 - **便于分享和读取的页面。** 发布规范网址、社交预览、站点地图、可下载的 Markdown，以及供编程智能体使用的 `llms.txt` 索引。[发布元数据](../publishing.md)。
-- **适配编程智能体。** 安装的软件包附带对应版本的文档；可选的 [harnesspm](https://harnesspm.tenphi.me) harness 还会为智能体提供 Cookbook 的规则，以及能读取站点主题的工具。[AI 智能体](../ai-agents.md)。
+- **适配编程智能体。** 安装的软件包附带对应版本的文档；可选的 [harnesspm](https://harnesspm.tenphi.me) harness 还会为智能体提供 Cookbook 的规则，以及能读取站点主题的工具。[与编程智能体协作](../ai-agents.md)。
 
 ## 从你的仓库开始
 
@@ -44,7 +44,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook 会直接读取原位置的文件。你也可以[创建新站点](./getting-started.md#创建第一个站点)、[为实际发布到 npm 的文件编写文档](./getting-started.md#为已发布的-npm-包编写文档)，或[将 Cookbook 加入现有 Astro 项目](./getting-started.md#加入现有-astro-项目)。
+Cookbook 会直接读取原位置的文件。如果想让编程智能体来完成，请[让智能体来做](./getting-started.md#让智能体来做)。你也可以[创建新站点](./getting-started.md#创建第一个站点)、[为实际发布到 npm 的文件编写文档](./getting-started.md#为已发布的-npm-包编写文档)，或[将 Cookbook 加入现有 Astro 项目](./getting-started.md#加入现有-astro-项目)。
 
 ## 本站就是一个示例
 
@@ -52,12 +52,12 @@ Cookbook 会直接读取原位置的文件。你也可以[创建新站点](./get
 
 ## 浏览指南
 
-- [入门](./getting-started.md)：仓库、npm 包和现有 Astro 项目的使用方法。
+- [入门](./getting-started.md)：仓库、npm 包和现有 Astro 项目的使用方法，可以手动完成，也可以借助编程智能体。
 - [文档工具对比](../comparison.md)：Cookbook 的内容与自定义方式。
-- [示例](../examples.md)：仓库、单体仓库、软件包和共享主题配置。
+- [示例](../examples.md)：仓库、单体仓库、npm 包、多语言和预览站点配置。
 - [搜索与导航](../site-navigation.md)：读者如何找到页面。
 - [内容编写](../authoring.mdx)：页面、组件和交互示例。
 - [主题与组件](../theme-and-components.md)：品牌、设计标记、字体、内置样式和自定义组件。
 - [部署](../deployment.md)：验证与静态托管。
 
-其他文档目前仍以英文提供，分为两部分。**面向人类**包括[给智能体的提示词](../ask-your-agent.md)和[智能体能从 Cookbook 获得什么](../ai-agents.md)。**面向 AI 智能体**包含全部步骤：[起始页](../agents.md)、各篇指南，以及[配置](../configuration.md)、[发布](../publishing.md)和 [CLI](../cli.md) 参考。
+其他文档目前仍以英文提供。另请参阅[与编程智能体协作](../ai-agents.md)、[配置参考](../configuration.md)、[发布选项](../publishing.md)和 [CLI 参考](../cli.md)。编程智能体从[面向智能体的起始页](../agents.md)开始：其中有始终适用的规则和每项任务对应的页面。

@@ -58,7 +58,8 @@ JavaScript is unavailable.
 
 ## Sidebar badges
 
-Add a short `badge` beside a navigation link or group label:
+Add a short `badge` beside a navigation link or group label (an array is
+shorthand for `navigation.items`):
 
 ```ts
 navigation: [
@@ -104,20 +105,15 @@ Translate explicitly configured badges with keys such as `"navigation.NEW"` in
 
 ## Contents, languages, and versions
 
-Desktop articles show an on-page table of contents. Enable an optional compact
-contents list below the header on smaller screens with:
-
-```ts
-tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
-```
-
-The same field in page frontmatter overrides the site setting for that page;
-`tableOfContents: false` hides both lists. See [Authoring](./authoring.mdx#on-page-navigation)
-for heading behavior.
+Desktop articles show an on-page table of contents;
+[on-page navigation](./authoring.mdx#on-page-navigation) explains its heading
+levels, the optional list for smaller screens, and page settings.
 
 Configure `locales` to offer translated pages and `site.versions` to offer
-documentation versions. The selectors prefer the equivalent page when it
-exists and fall back to a real language or version home when it does not.
+documentation versions. The language selector opens the translated page when it
+exists; otherwise it links to the same page in the default language, marked as
+a fallback, or to a home page when neither exists. The version selector opens the same page in the other version,
+or that version's home page when the page does not exist there.
 Only available translations appear in alternate-language metadata. See the
 [language](./configuration.md#languages) and
 [version](./configuration.md#site) configuration examples.

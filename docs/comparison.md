@@ -63,18 +63,23 @@ for the supported configuration and names.
   [VitePress](https://vitepress.dev/guide/getting-started), or another site
   builder. Choose the framework and editing workflow you prefer; Cookbook can
   read the existing files in place.
-- **Markdown inside a published npm package:**
-  [Cookbook's package source](./content-sources.md#npm-package-sources) reads
-  the published artifact, pins its version and integrity, and builds without
-  installing that package.
+- **Markdown inside a published npm package:** Cookbook reads the published
+  artifact; see [when the package is the source](#when-the-package-is-the-source).
 - **TypeScript exports and code comments:** [TypeDoc](https://typedoc.org/index.html)
-  generates reference pages from the code model and can use package entry
-  points.
+  reads exports and comments, including entry points discovered from
+  `package.json`, and emits an HTML or JSON reference. It is the direct choice
+  when exported types and signatures are the documentation. Cookbook does not
+  extract API signatures from TypeScript.
 - **UI components and their stories:** [Storybook Autodocs](https://storybook.js.org/docs/writing-docs)
-  documents components alongside rendered stories.
-- **An OpenAPI specification:** Choose [Cookbook's static reference](./content-sources.md#openapi-references)
-  or a tool with an [interactive API playground](https://mintlify.com/docs/api-playground/overview)
+  documents components alongside rendered stories, for docs whose main
+  experience is runnable component examples.
+- **An OpenAPI specification:** [Cookbook's static reference](./content-sources.md#openapi-references)
+  does not make requests. Choose a tool with an
+  [interactive API playground](https://mintlify.com/docs/api-playground/overview)
   if readers need to make requests from the docs.
+
+TypeDoc or Storybook can complement a Cookbook guide site: link to their output
+from Cookbook navigation when each serves a different reader need.
 
 ## Compare complete documentation sites
 
@@ -102,28 +107,18 @@ APIs and do not run in Cookbook; see [Cookbook extensions](./plugins.md).
 
 ## When the package _is_ the source
 
-“Package to website” can mean two different jobs:
+“Package to website” can mean two jobs: publishing the prose included in an npm
+release, or generating reference pages from source code with a tool such as
+TypeDoc. Cookbook does the first. It reads the actual tarball's selected
+`README.md` and Markdown files, without installing the package. Package MDX requires an explicit
+trust opt-in before its code can run. `cookbook update` records the requested
+specifier, resolved version, and integrity in `cookbook.lock.json`; a production
+build uses that lock. This is useful when the docs site should describe exactly
+what package consumers received. See
+[package sources](./content-sources.md#npm-package-sources) and the
+[package quick start](./getting-started.md#document-a-published-npm-package).
 
-1. **Publish the prose included in an npm release.** Cookbook reads the actual
-   tarball's selected `README.md` and Markdown files. Package MDX requires an
-   explicit trust opt-in before its code can run. `cookbook update`
-   records the requested specifier, resolved version, and integrity in
-   `cookbook.lock.json`; a production build uses that lock. This is useful when
-   the docs site should describe exactly what package consumers received. See
-   [package sources](./content-sources.md#npm-package-sources) and the
-   [package quick start](./getting-started.md#document-a-published-npm-package).
-2. **Generate reference pages from source code.** [TypeDoc](https://typedoc.org/index.html)
-   reads TypeScript exports and comments, including entry points discovered
-   from `package.json`, and emits an HTML or JSON reference. It is the direct
-   choice when exported types and signatures are the documentation.
-
-For a component library, [Storybook](https://storybook.js.org/docs/writing-docs)
-is a separate option when the main experience should be runnable component
-examples. TypeDoc or Storybook can complement a guide site; link to their output
-from Cookbook navigation when each serves a different reader need.
-
-Cookbook does not extract API signatures from TypeScript or provide an
-interactive OpenAPI client. Its strengths are design system customization,
-source-aware prose, validated links and assets, and a reproducible npm artifact
-input. See [content sources](./content-sources.md) and
+Cookbook's strengths are design system customization, source-aware prose,
+validated links and assets, and a reproducible npm artifact input. See
+[content sources](./content-sources.md) and
 [theme and components](./theme-and-components.md) for the supported scope.

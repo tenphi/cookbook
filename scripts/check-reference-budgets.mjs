@@ -252,48 +252,55 @@ assertSidebar(
   sidebarHtml(
     await readFile(join(output, "getting-started/index.html"), "utf8"),
   ),
-  "For humans",
-  ["Start", "With your agent"],
-  ["getting-started", "comparison", "examples", "ask-your-agent", "ai-agents"],
+  "Guide",
+  [
+    "Start",
+    "AI agents",
+    "Author",
+    "Customize",
+    "Extend",
+    "Publish",
+    "Maintain",
+  ],
+  [
+    "getting-started",
+    "comparison",
+    "examples",
+    "ai-agents",
+    "agents",
+    "agent-harness",
+    "content-sources",
+    "site-navigation",
+    "authoring",
+    "recipes",
+    "theme-and-components",
+    "fonts-and-typography",
+    "custom-components",
+    "customization-rules",
+    "plugins",
+    "deployment",
+    "migration",
+    "quality-checks",
+    "troubleshooting",
+  ],
 );
-const agentSidebar = sidebarHtml(
+const referenceSidebar = sidebarHtml(
   await readFile(join(output, "component-styles/index.html"), "utf8"),
 );
 if (
   !/<a\b[^>]*href="\/component-styles\/"[^>]*aria-current="page"/.test(
-    agentSidebar,
+    referenceSidebar,
   )
 ) {
   throw new Error(
-    "The component reference must be current in the For AI agents tab.",
+    "The component reference must be current in the Reference tab.",
   );
 }
 assertSidebar(
-  agentSidebar,
-  "For AI agents",
-  ["Author", "Customize", "Extend", "Publish", "Maintain", "Reference"],
-  [
-    "agents",
-    "content-sources",
-    "site-navigation",
-    "authoring",
-    "customization-rules",
-    "theme-and-components",
-    "fonts-and-typography",
-    "custom-components",
-    "recipes",
-    "plugins",
-    "deployment",
-    "agent-harness",
-    "migration",
-    "quality-checks",
-    "troubleshooting",
-    "configuration",
-    "component-styles",
-    "publishing",
-    "cli",
-    "architecture",
-  ],
+  referenceSidebar,
+  "Reference",
+  [],
+  ["configuration", "component-styles", "publishing", "cli", "architecture"],
 );
 for (const [pattern, label] of [
   [

@@ -6,17 +6,15 @@ Static, repository-native documentation built with Astro,
 [Read the documentation](https://cookbook.tenphi.me) or browse the
 [repository-native source](docs/index.md).
 
-The docs have two parts: [for humans](docs/index.md), with prompts for a coding
-agent and the decisions that stay with you, and [for AI agents](docs/agents.md),
-with every step. Before customizing a site, read the
-[customization rules](docs/customization-rules.md).
+Before customizing a site, read the [customization rules](docs/customization-rules.md).
+To work with a coding agent, see [Work with a coding agent](docs/ai-agents.md);
+agents start at [For AI agents](docs/agents.md).
 
 The published `@tenphi/cookbook` package includes these docs and versioned Tasty
 and Glaze references for local use by consumers and coding agents. It also ships
 an optional harness for [harnesspm](https://harnesspm.tenphi.me): Cookbook's
 rule, its docs index, Tasty and Glaze tools that read a site's theme, and Tasty
 lint tools.
-See [AI agents](docs/ai-agents.md).
 
 ## Quick start
 

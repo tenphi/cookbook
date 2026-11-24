@@ -5,7 +5,7 @@ description: Configure titles, social previews, canonical URLs, indexing, and ag
 
 Set `site.url` (or Astro's `site`) to your public origin. Astro's `base` is applied
 to page URLs, local social images, sitemaps, and Markdown downloads automatically.
-Conflicting Cookbook and Astro origins fail configuration validation.
+If the two differ, `astro dev` and `astro build` stop with an error.
 
 ## Titles and social previews
 

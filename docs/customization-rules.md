@@ -5,10 +5,8 @@ sidebar:
   order: 5
 ---
 
-Read this guide before changing a Cookbook site's appearance. It applies to
-consumer projects and custom components. Cookbook's repository `AGENTS.md`
-also covers engine maintenance; consumers do not need to edit its component
-registries or internal helpers.
+Read this guide before changing a Cookbook site's appearance. It applies to the
+site's configuration and its custom components.
 
 ## Read the configuration first
 
@@ -36,13 +34,11 @@ before overriding a built-in component.
 | Markup or behavior                      | `components.overrides` with an owned Astro component   |
 
 Prefer configuration changes when the markup and behavior already fit. Supply
-only the properties you want to change: Cookbook merges partial overrides into
-its complete base styles using Tasty's `mergeStyles`. Do not copy the entire
-default style tree or rebuild it in user configuration. Built-in names belong
-in `theme.styles`; custom names belong in `theme.customStyles`.
-
-This merge happens before CSS extraction, so built-in appearance changes do not
-need a second stylesheet or `!important` rules to override default declarations.
+only the properties you want to change; Cookbook
+[merges them into its complete base styles](./component-styles.md#style-customization).
+Do not copy the default style tree, add a second stylesheet, or use
+`!important`. The base `SiteTitle` preset is a state map with a mobile value,
+so this override sets both states:
 
 ```ts
 import { defineDocsConfig } from "@tenphi/cookbook/config";
@@ -50,7 +46,9 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({
   theme: {
     styles: {
-      Header: { SiteTitle: { preset: "h4 / strong" } },
+      Header: {
+        SiteTitle: { preset: { "": "h4 / strong", "!@md": "h5 / strong" } },
+      },
     },
   },
 });
@@ -61,8 +59,9 @@ export default defineDocsConfig({
 Tasty and Glaze run during build/server rendering. The browser receives extracted
 CSS; never initialize their configuration or ship their runtime in client scripts
 or hydrated islands. Use server-rendered styled components with small client
-scripts for behavior. Cookbook rejects browser imports of its styling API,
-Tasty, and Glaze, including transitive dependencies.
+scripts for behavior, or pass already-styled static markup into a client
+island. Cookbook rejects browser imports of its styling API, Tasty, and Glaze,
+including transitive dependencies.
 
 ## Write styles through Cookbook
 
@@ -139,9 +138,11 @@ consumer installation hook.
 
 ## Guide coding agents explicitly
 
-Having documentation installed does not ensure an agent reads it. Add a short
-instruction to your project's existing agent guidance, adjusting the path for
-the app that depends on Cookbook:
+Having documentation installed does not ensure an agent reads it. Sites from
+the project creator have this in their `AGENTS.md`. In a project you set up
+yourself, add the `validate` script that [CLI commands](./cli.md) lists, and a
+short instruction to its agent guidance, adjusting the path for the app that
+depends on Cookbook:
 
 ```md
 Before changing this Cookbook site, read
@@ -150,8 +151,8 @@ task. Before customizing styles, read customization-rules.md there and follow
 its linked Tasty and Glaze references. Inspect docs.config.ts (and
 tasty.config.ts, if present) first.
 Use Cookbook's public styling APIs, semantic palette tokens, typography
-presets, and partial component overrides. Run the project's style lint,
-cookbook doctor, and build commands after changes.
+presets, and partial component overrides. After changes, run the project's
+validate script, and its style lint if it has one.
 ```
 
 With [harnesspm](./agent-harness.md), the project gets Cookbook's rule and the
@@ -161,19 +162,15 @@ tools.
 
 ## Check the result
 
-Adopt the [Cookbook Tasty lint configuration](./custom-components.md#linting-custom-styles)
-and extend its built-in vocabulary in `tasty.config.ts`:
+Build the site's `tasty.config.ts` with
+[`createValidationConfig(docs.theme)`](./custom-components.md#custom-theme-names),
+so the lint rules know your theme's palette colors, tokens, and other names.
+[Linting custom styles](./custom-components.md#linting-custom-styles) sets up
+ESLint or oxlint.
 
-```ts
-export default { extends: "@tenphi/cookbook" };
-```
-
-To derive your theme's names automatically, use
-[`createValidationConfig(docs.theme)`](./custom-components.md#custom-theme-names)
-instead.
-
-Run the configured style linter, `cookbook doctor`, and the site build. The
-linter checks supported Tasty rules; it does not enforce every architectural
-rule above or inspect arbitrary CSS. Review custom components at mobile and
-desktop sizes, with keyboard navigation, in light and dark schemes, and with
-normal and high contrast.
+Run the site's `validate` script, and its style lint if it has one. The linter
+checks supported Tasty rules in your component modules; it does not check
+[`theme.styles` values](./component-styles.md#style-customization), enforce
+every architectural rule above, or inspect arbitrary CSS. Review custom
+components at mobile and desktop sizes, with keyboard navigation, in light and
+dark schemes, and with normal and high contrast.

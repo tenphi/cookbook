@@ -62,6 +62,9 @@ Cookbook keeps unknown frontmatter fields as JSON metadata by default
 Validate or add custom fields with `frontmatterSchema`:
 
 ```ts
+import { defineConfig } from "astro/config";
+import cookbook from "@tenphi/cookbook";
+
 export default defineConfig({
   integrations: [
     cookbook({
@@ -81,6 +84,10 @@ The schema receives only custom metadata and may provide `parse` or
 over the original metadata, so fields the schema omits are kept. It cannot set
 route, title, draft, or other reserved page fields. Returned values must be
 JSON-safe because the renderer passes them through a build-time virtual module.
+
+`frontmatterSchema` lives in `astro.config.ts`, so it runs during `astro dev`
+and `astro build`, not in `cookbook doctor`. A failure stops with
+`Invalid plugin frontmatter in <file>` and the schema's message.
 
 ## Read the content graph
 

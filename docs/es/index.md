@@ -27,12 +27,12 @@ sidebar:
 - **Genera una referencia de API.** Convierte una especificación OpenAPI local en un resumen con búsqueda y una página por operación, con parámetros, cuerpos de petición, respuestas y ejemplos. [Referencias OpenAPI](../content-sources.md#openapi-references).
 - **Búsqueda integrada.** Pagefind indexa las páginas y los encabezados localmente, con un atajo de teclado y recursos de búsqueda que se cargan cuando hacen falta. [Búsqueda](../site-navigation.md#search).
 - **Navegación para documentación que crece.** Organiza secciones con pestañas y barras laterales agrupadas, añade índices de página y enlaces anterior/siguiente, y ofrece un menú de navegación móvil. [Búsqueda y navegación](../site-navigation.md).
-- **Componentes para documentación técnica.** Usa pestañas, avisos, tarjetas, pasos, grupos de código, código resaltado con controles de copia y ejemplos interactivos aislados en MDX. [Componentes de contenido](../authoring.mdx).
+- **Componentes para documentación técnica.** Usa pestañas, avisos, tarjetas, pasos, grupos de código, código resaltado con controles de copia y ejemplos interactivos aislados en MDX. [Componentes de redacción](../authoring.mdx).
 - **Un tema adaptado a tu producto.** Configura colores de marca, paletas semánticas, fuentes, tipografía y partes de componentes con [Tasty](https://tasty.style) y [Glaze](https://glaze.tenphi.me). Los modos claro, oscuro y de alto contraste reciben CSS estático generado durante la compilación. [Tema y componentes](../theme-and-components.md).
 - **Idiomas y versiones.** Ofrece páginas traducidas y documentación versionada, con selectores que llevan a la página equivalente cuando existe. [Idiomas y versiones](../site-navigation.md#contents-languages-and-versions).
 - **Comprobaciones antes de publicar.** Detecta enlaces rotos, recursos ausentes, rutas duplicadas y navegación inválida con errores que señalan el archivo de origen. Publica HTML prerenderizado en cualquier alojamiento estático. [Comprobaciones de calidad](../quality-checks.md).
 - **Páginas listas para compartir y leer.** Publica URL canónicas, vistas previas para redes sociales, mapas del sitio, Markdown descargable y un índice `llms.txt` para agentes de programación. [Metadatos de publicación](../publishing.md).
-- **Listo para agentes de programación.** El paquete instalado incluye la documentación de tu versión, y un harness opcional de [harnesspm](https://harnesspm.tenphi.me) da a tu agente las reglas de Cookbook y herramientas que leen tu tema. [Agentes de IA](../ai-agents.md).
+- **Listo para agentes de programación.** El paquete instalado incluye la documentación de tu versión, y un harness opcional de [harnesspm](https://harnesspm.tenphi.me) da a tu agente las reglas de Cookbook y herramientas que leen tu tema. [Trabajar con un agente de programación](../ai-agents.md).
 
 ## Empieza con tu repositorio
 
@@ -44,7 +44,7 @@ cd docs-site
 npm run dev
 ```
 
-Cookbook lee los archivos donde ya están. También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
+Cookbook lee los archivos donde ya están. Para que un agente de programación lo configure por ti, [pídeselo a tu agente](./getting-started.md#pídeselo-a-tu-agente). También puedes [crear un sitio nuevo](./getting-started.md#crea-tu-primer-sitio), [documentar exactamente los archivos publicados en npm](./getting-started.md#documenta-un-paquete-npm-publicado) o [añadir Cookbook a un proyecto Astro](./getting-started.md#añádelo-a-un-proyecto-astro-existente).
 
 ## Este sitio es el ejemplo
 
@@ -52,12 +52,12 @@ Esta página procede de [docs/es/index.md](https://github.com/tenphi/cookbook/bl
 
 ## Explora la guía
 
-- [Primeros pasos](./getting-started.md) explica cómo empezar con repositorios, paquetes npm y proyectos Astro existentes.
+- [Primeros pasos](./getting-started.md) explica cómo empezar con repositorios, paquetes npm y proyectos Astro existentes, a mano o con un agente de programación.
 - [Comparación de herramientas](../comparison.md) describe el modelo de contenido y personalización de Cookbook.
-- [Ejemplos](../examples.md) muestran configuraciones para repositorios, monorepos, paquetes y temas compartidos.
+- [Ejemplos](../examples.md) muestran configuraciones para repositorios, monorepos, paquetes npm, idiomas y sitios de vista previa.
 - [Búsqueda y navegación](../site-navigation.md) explica cómo encuentran los lectores las páginas.
-- [Redacción](../authoring.mdx) cubre páginas, componentes y ejemplos interactivos.
+- [Componentes de redacción](../authoring.mdx) trata las páginas, los componentes y los ejemplos interactivos.
 - [Tema y componentes](../theme-and-components.md) introduce la marca y los tokens y enlaza con fuentes, estilos y componentes propios.
 - [Despliegue](../deployment.md) cubre la validación y el alojamiento estático.
 
-El resto de la documentación aún está disponible en inglés, en dos partes. **Para personas** incluye [indicaciones para tu agente](../ask-your-agent.md) y [qué recibe tu agente de Cookbook](../ai-agents.md). **Para agentes de IA** tiene todos los pasos: [su página de inicio](../agents.md), cada guía y las referencias de [configuración](../configuration.md), [publicación](../publishing.md) y [la CLI](../cli.md).
+El resto de la documentación aún está disponible en inglés. Consulta también [cómo trabajar con un agente de programación](../ai-agents.md), la [referencia de configuración](../configuration.md), las [opciones de publicación](../publishing.md) y la [referencia de la CLI](../cli.md). Un agente de programación empieza en [la página para agentes de IA](../agents.md): las reglas que siempre se aplican y la página de cada tarea.

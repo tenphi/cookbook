@@ -53,8 +53,8 @@ directory relative to this file to change where content, local assets, and
 configuration file's directory, that file needs `root: ".."` to keep reading
 `README.md` and `docs/` from the app directory. `--root` chooses the CLI's
 project directory. An inline integration `config` object skips discovery and
-resolves its `root` relative to the integration root; `configFile: false`
-disables discovery.
+resolves its `root` relative to `cookbook({ root })`, or to the Astro project
+root when that is not set; `configFile: false` disables discovery.
 
 Use `mergeDocsConfig(preset, overrides)` to compose shared configuration. Objects
 merge recursively and arrays replace. Each `theme.brand`, `theme.palette` role,
@@ -238,24 +238,24 @@ the page supplies one explicitly.
 
 Pages accept these frontmatter fields:
 
-| Field             | Purpose                                                                                       |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| `title`           | Page title; defaults to the source declaration's title, then the first heading, then the file |
-| `description`     | Meta description and `llms.txt` summary                                                       |
-| `slug`            | Route relative to the source's `routeBase`; see [content sources](./content-sources.md)       |
-| `aliases`         | Old routes that redirect to this page; see [redirects](#redirects)                            |
-| `draft`           | Publish at its URL but omit from discovery; see [draft pages](#draft-pages)                   |
-| `sidebar`         | `false`, or `label`, `order`, `group`, and `badge` for generated sidebars                     |
-| `tableOfContents` | `false`, or `mobile`, `minHeadingLevel`, and `maxHeadingLevel`                                |
-| `template`        | `doc` (default) or `splash` for a wide layout without sidebars                                |
-| `hero`            | `title`, `tagline`, `image`, and `actions` for a page hero                                    |
-| `banner`          | `content` for a notice above the page                                                         |
-| `prev`, `next`    | `false` to hide, a route, or `{ link, label }` to replace the pagination link                 |
-| `editUrl`         | `false` or an explicit edit URL                                                               |
-| `lastUpdated`     | `false` or an explicit date                                                                   |
-| `pagefind`        | `false` to omit the page from search                                                          |
-| `head`            | Extra `<head>` entries for this page, in the same shape as [`head`](#head)                    |
-| `seo`             | Page title, image, canonical, indexing, and breadcrumbs; see [publishing](./publishing.md)    |
+| Field             | Purpose                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| `title`           | Page title; defaults to the source declaration's title, then the first `#` heading, then the file |
+| `description`     | Meta description and `llms.txt` summary                                                           |
+| `slug`            | Route relative to the source's `routeBase`; see [content sources](./content-sources.md)           |
+| `aliases`         | Old routes that redirect to this page; see [redirects](#redirects)                                |
+| `draft`           | Publish at its URL but omit from discovery; see [draft pages](#draft-pages)                       |
+| `sidebar`         | `false`, or `label`, `order`, `group`, and `badge` for generated sidebars                         |
+| `tableOfContents` | `false`, or `mobile`, `minHeadingLevel`, and `maxHeadingLevel`                                    |
+| `template`        | `doc` (default) or `splash` for a wide layout without sidebars                                    |
+| `hero`            | `title`, `tagline`, `image`, and `actions` for a page hero                                        |
+| `banner`          | `content` for a notice above the page                                                             |
+| `prev`, `next`    | `false` to hide, a route, or `{ link, label }` to replace the pagination link                     |
+| `editUrl`         | `false` or an explicit edit URL                                                                   |
+| `lastUpdated`     | `false` or an explicit date                                                                       |
+| `pagefind`        | `false` to omit the page from search                                                              |
+| `head`            | Extra `<head>` entries for this page, in the same shape as [`head`](#head)                        |
+| `seo`             | Page title, image, canonical, indexing, and breadcrumbs; see [publishing](./publishing.md)        |
 
 For example:
 
@@ -313,8 +313,9 @@ tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
 
 `mobile: true` adds a compact contents disclosure below the header on smaller
 screens; it defaults to `false`. Heading levels accept 1 through 6. A page's
-`tableOfContents` frontmatter overrides these values, and `false` hides both
-lists. See [on-page navigation](./authoring.mdx#on-page-navigation).
+`tableOfContents` frontmatter replaces the heading levels: levels it leaves out
+use 2 and 3, while `mobile` falls back to this setting. `false`, here or on a
+page, hides both lists. See [on-page navigation](./authoring.mdx#on-page-navigation).
 
 ## Languages
 
@@ -364,7 +365,7 @@ Automatically generated links use the title from the translated page.
 The supported keys below keep independent overrides, including similar labels:
 `auto` controls contrast, while `themeSelect.auto` controls color scheme;
 `search.label` labels the search control, while `pagefind.search` supplies the
-search input prompt. No migration or key renaming is needed.
+search input prompt.
 
 | Keys                                                                                                                | Controls or feedback                                                            |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -418,10 +419,8 @@ content: {
 ```
 
 See [Content sources](./content-sources.md) for every declaration and its route
-rules. Enable `localizeRepositoryLinks` to turn absolute repository `blob`,
-`tree`, `raw`, or Bitbucket `src` links back into local Cookbook routes when a
-matching page was collected. Cookbook uses `site.repository` for local sources
-and each package manifest's `repository` metadata for package sources.
+rules, and [links and assets](./content-sources.md#links-and-assets) for
+`localizeRepositoryLinks`.
 
 ## Navigation
 
@@ -596,19 +595,13 @@ families by name or local files from `public/`. See
 [Fonts and typography](./fonts-and-typography.md) for both flows.
 
 The default layout is capped at `87.5rem` (1400px), with a `58rem` reading
-column and a `17.5rem` sidebar. `brand.from` supplies the color seed.
-`theme.palette` supplies semantic Glaze declarations that inherit its hue and
-saturation unless a role has its own `from`. Reading text uses absolute tones:
-body text starts at 0 and headings at 4. Glaze applies normal-mode tone
-boundaries and adapts the values for dark mode; `base` and `contrast` supply
-minimum contrast safeguards. `palette.heading` follows an explicit
-`palette.text` declaration unless configured separately.
-
-Glaze resolves light, dark, and both high-contrast modes independently.
-Literal brand color shorthand and structured hue/saturation/tone declarations
-remain supported. An APCA floor below 45 requires `unsafeContrast: true`.
-See [Theme and components](./theme-and-components.md) for the color model and
-examples.
+column and a `17.5rem` sidebar. `brand.from` supplies the color seed, and
+`theme.palette` supplies semantic Glaze roles that inherit its hue and
+saturation unless a role has its own `from`. Glaze resolves light, dark, and
+both high-contrast modes independently. A `theme.brand.contrast.apca` floor
+below 45 requires `unsafeContrast: true`. See
+[Theme and components](./theme-and-components.md) for the color model, contrast
+floors, and examples.
 
 `theme.styles` is keyed by Cookbook UI surface name. A plain Tasty style object
 contains only the properties to override; Cookbook deep-merges it into that
@@ -657,9 +650,10 @@ The default `sanitize` policy preserves safe elements, including `details`,
 `summary`, tables, and inline emphasis, while removing executable markup,
 event handlers, and presentational attributes. Links and images in sanitized
 HTML pass through the content graph. `strip` removes HTML with a warning,
-`allow` preserves trusted HTML, and `reject` reports a graph error. Package Markdown in safe mode is
-always sanitized even when the global policy is `"allow"`, and package MDX
-requires an explicit `trust: "mdx"` source declaration.
+`allow` preserves trusted HTML, and `reject` reports a graph error. Markdown from
+an untrusted package source, the default, is always sanitized even when the
+global policy is `"allow"`, and package MDX requires an explicit `trust: "mdx"`
+source declaration.
 
 Configure renderer-level Markdown options such as custom remark or rehype
 plugins and Shiki languages through Astro's top-level `markdown` configuration.
@@ -757,8 +751,8 @@ components: {
 },
 ```
 
-Disabling the complete footer also removes its edit link, last-updated metadata,
-and previous/next-page navigation.
+Replacing or disabling the footer removes its edit link, last-updated date,
+Copy and Download Markdown controls, previous/next links, and credit.
 
 ## Build
 
@@ -775,8 +769,9 @@ build: {
 }
 ```
 
-`strict` makes missing internal links errors instead of warnings. `ci` makes
-missing heading fragments errors and defaults to `true` when `CI=true`.
+`strict` (default `true`) makes missing internal links errors; set it to
+`false` to report them as warnings. `ci` makes missing heading fragments errors
+and defaults to `true` when `CI=true`.
 Cookbook derives its public base path from Astro's top-level `base` setting so
 routes and assets cannot drift between two configurations. Page URLs likewise
 follow Astro's `trailingSlash` and `build.format`; see

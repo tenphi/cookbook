@@ -93,6 +93,10 @@ jobs:
         uses: actions/deploy-pages@v5
 ```
 
+The workflow runs on pushes to `main`; change `branches` if your default branch
+differs. With pnpm, the workflow adds a `pnpm/action-setup` step; with Yarn, it
+runs `corepack enable`.
+
 In the repository's Pages settings, select **GitHub Actions** as the source.
 The `github-pages` environment keeps the deployment URL and protection rules
 visible in the repository.
@@ -105,9 +109,8 @@ workflow runs its commands in `docs-site`, caches dependencies from the app's
 lockfile, and uploads `docs-site/dist`. The creator does not overwrite an
 existing `deploy-docs.yml`; it stops before writing any files.
 
-For an organization or user site, keep Astro's `base: "/"`. For a project site
-served at `https://owner.github.io/repository/`, set Astro's
-`base: "/repository/"`.
+An organization or user site keeps Astro's `base: "/"`, and a project site sets
+`base` as in [Public URL and base path](#public-url-and-base-path).
 
 ### Custom domains
 
@@ -138,7 +141,7 @@ gets `netlify.toml`. You can also use the host's ordinary static-site settings:
 - Node.js: 22.19 or newer
 
 If the host serves the site below a path rather than at an origin root, set
-Astro's `base`; Cookbook derives it automatically.
+Astro's `base`; Cookbook derives its routes and assets from it.
 
 ## Discovery files
 

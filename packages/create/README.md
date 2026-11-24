@@ -15,8 +15,8 @@ npm create @tenphi/cookbook@latest my-docs -- --source ../my-project
 
 The generated `docs.config.ts` is shared by Astro and `cookbook doctor`.
 The creator also writes `AGENTS.md` with setup and validation guidance for
-coding agents and `.agents/skills/upgrade-cookbook/SKILL.md` for upgrading the
-generated site. Existing agent instructions and skills are preserved.
+coding agents, a `CLAUDE.md` that imports it for Claude Code, and
+`.agents/skills/upgrade-cookbook/SKILL.md` for upgrading the generated site. Existing agent instructions and skills are preserved.
 Or create a site from the actual contents of a published package:
 
 ```sh

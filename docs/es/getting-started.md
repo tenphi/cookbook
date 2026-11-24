@@ -12,15 +12,14 @@ Cookbook requiere Node.js 22.19 o una versión posterior. Pide a un agente de pr
 Pega esto en Claude Code, Codex u otro agente de programación, dentro de tu repositorio:
 
 ```text
-Create a Cookbook documentation site for this repository
-in `docs-site/`, from our README and `docs/` pages:
-run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
-Then run its `validate` script and tell me what it reports.
+Crea un sitio de documentación para este repositorio con Cookbook,
+a partir de nuestro README y las páginas de docs/. Comprueba que
+el sitio se compila y dime qué comprobaste y qué me queda por decidir.
 
-Steps: https://cookbook.tenphi.me/agents/
+Pasos de Cookbook para agentes: https://cookbook.tenphi.me/agents/
 ```
 
-Tu agente ejecuta los mismos comandos que las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Ask your agent](../ask-your-agent.md) (en inglés) reúne indicaciones para las tareas siguientes.
+Tu agente sigue los mismos pasos que se describen en las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Trabajar con un agente de programación](../ai-agents.md) (en inglés) reúne indicaciones para lo que viene después.
 
 ## Crea tu primer sitio
 
@@ -30,7 +29,7 @@ cd my-docs
 npm run dev
 ```
 
-El creador genera un README, la configuración de Astro y `docs.config.ts`, e instala las dependencias. También escribe `AGENTS.md` con instrucciones para agentes de programación. Edita `README.md` para cambiar la página de inicio. Añade `docs/guide.md` para crear `/guide`. Las páginas nuevas o modificadas aparecen en el servidor de desarrollo sin reiniciarlo.
+El creador genera un README, la configuración de Astro y `docs.config.ts`, e instala las dependencias. También escribe `AGENTS.md` con instrucciones para agentes de programación, y un `CLAUDE.md` que lo importa para Claude Code. Edita `README.md` para cambiar la página de inicio. Añade `docs/guide.md` para crear `/guide`. Las páginas nuevas o modificadas aparecen en el servidor de desarrollo sin reiniciarlo.
 
 ## Documenta un repositorio existente
 
@@ -44,7 +43,7 @@ npm run dev
 
 El archivo `docs.config.ts` generado apunta a tu repositorio. El README de la raíz se convierte en la página de inicio y `docs/**/*.{md,mdx}` aporta las demás páginas. Cookbook lee esos archivos sin copiarlos ni modificarlos.
 
-Usa `--no-install` para generar los archivos sin instalar las dependencias. En modo no interactivo, el creador se niega a sobrescribir un directorio de destino que no esté vacío.
+Con `--yes`, el creador no hace preguntas, así que se niega a sobrescribir un directorio de destino que no esté vacío. Las [opciones del creador](../cli.md#creator-flags) describen `--no-install`, `--brand`, `--site`, `--deploy` y las demás.
 
 ## Documenta un paquete npm publicado
 
@@ -59,7 +58,7 @@ El creador descubre la documentación dentro del paquete publicado y guarda su v
 
 ## Añádelo a un proyecto Astro existente
 
-Cookbook requiere `output: "static"` en Astro. Si tu proyecto usa `output: "server"`, crea un proyecto Astro independiente para la documentación estática.
+Cookbook requiere Astro 7.3.2 o una versión 7.x posterior, y la opción `output: "static"` de Astro. Si tu proyecto usa `output: "server"`, crea un proyecto Astro independiente para la documentación estática.
 
 ```sh
 npx astro add @tenphi/cookbook
@@ -100,7 +99,7 @@ Cambia `theme.fonts` para usar [Google Fonts por nombre o tus propios archivos d
 
 Para partir de una configuración completa, consulta las [recetas de marca, logotipo y fuentes](../recipes.md). Para cambios de estilo más detallados o componentes nuevos, consulta las [reglas de personalización](../customization-rules.md). Estas reglas y las referencias originales también se incluyen en el paquete instalado de Cookbook.
 
-La integración y la CLI cargan la misma configuración. Se admiten `docs.config.ts`, `.mts`, `.js` y `.mjs`, en ese orden. Un objeto `config` explícito en la integración tiene prioridad; `configFile: false` desactiva la detección. Usa `cookbook({ configFile: "./config/manual.ts" })` y `cookbook doctor --config ./config/manual.ts` para una ubicación no estándar. Como `root` se resuelve desde el directorio del archivo de configuración, ese archivo necesita `root: ".."` para seguir leyendo `README.md` y `docs/` desde el directorio de la aplicación.
+La [referencia de configuración](../configuration.md#project-resolution-and-presets) indica los demás nombres de archivo de configuración y cómo usar un archivo en otra ubicación.
 
 ## Raíces de monorepositorios
 
@@ -112,7 +111,7 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({ root: "../.." });
 ```
 
-`root` es relativo al archivo de configuración de la documentación. Determina dónde se encuentran el contenido, los recursos locales y `cookbook.lock.json`. Ejecuta `npm run doctor` desde el directorio de la aplicación: resolverá la misma raíz que la integración. Cada fuente también puede declarar su propia raíz para sitios con varios paquetes.
+`root` es relativo al archivo de configuración de la documentación. Determina dónde se encuentran el contenido, los recursos locales y `cookbook.lock.json`. Ejecuta `npm run doctor` desde el directorio de la aplicación: resolverá la misma raíz que la integración. [Cada fuente también puede declarar su propia raíz](../examples.md#monorepo-with-two-packages) para sitios con varios paquetes.
 
 ## Valida y publica
 
@@ -121,6 +120,6 @@ npm run validate
 npm run preview
 ```
 
-`validate` comprueba los tipos del proyecto, ejecuta la verificación previa de Cookbook, compila el sitio y revisa el resultado. En un proyecto que configuraste tú mismo, añade los scripts de los [comandos de la CLI](../cli.md) o ejecuta `npx @tenphi/cookbook doctor`.
+`validate` comprueba los tipos del proyecto, ejecuta `cookbook doctor`, compila el sitio y revisa el resultado. En un proyecto que configuraste tú mismo, añade los scripts de los [comandos de la CLI](../cli.md) o ejecuta `npx @tenphi/cookbook doctor`. Después, despliega el directorio `dist/`.
 
-El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).
+El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes de redacción](../authoring.mdx), [trabajar con un agente de programación](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).

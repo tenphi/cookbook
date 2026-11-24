@@ -45,7 +45,7 @@ modes.
 Root properties customize each surface's container. Overriding
 `Sidebar.LinkLabel.whiteSpace` keeps the other base `LinkLabel` properties
 because the configured object is merged. See
-[state maps](#state-maps-and-validation) for how conditional values merge.
+[state maps](#state-maps) for how conditional values merge.
 
 Built-in names belong in `theme.styles`, which rejects unknown names and
 misspelled sub-elements. Register your own components in `theme.customStyles`;
@@ -56,6 +56,13 @@ when a configured custom name has no matching component style resolver.
 Astro component; prefer `theme.styles` when the markup and behavior stay the
 same. Fonts and document defaults belong to the page shell, so replacing
 `Header` keeps the rest of the site's styling.
+
+After editing `docs.config.ts`, run the site's `validate` script
+(`npm run validate` or your package manager's equivalent). It type-checks the
+theme, then runs Cookbook's preflight, build, and output checks. A misspelled
+preset or built-in sub-element property fails type checking. Style lint checks
+your component modules only; it does not check the `theme.styles` or
+`theme.customStyles` values in `docs.config.ts`.
 
 ### Find the right name
 
@@ -76,12 +83,9 @@ parts:
 | Page layout                   | `PageFrame`, `Layout`, `MainPane`                                                                                       |
 | Footer and page controls      | `Footer`, `Pagination`, `PageActions`, `ThemeSelect`                                                                    |
 
-Owned markup uses Tasty's built-in `data-element` identities for its named
-parts. For example, Header's `Logo` styles target `data-element="Logo"`
-directly; no anatomy class or separate marker is required. A configured image
-logo owns its dimensions under `SiteLogo`. `SocialIcons` styles the shared
-icon-button links in the header and mobile menu, and `ThemeSelect` styles the
-combined Appearance panel.
+A configured image logo owns its dimensions under `SiteLogo`. `SocialIcons`
+styles the shared icon-button links in the header and mobile menu, and
+`ThemeSelect` styles the combined Appearance panel.
 
 ### Complete component anatomy
 
@@ -219,34 +223,27 @@ Markdown styles share three conditions that skip elements inside isolated
 sections marked `data-not-content`, while preserving surrounding prose in the
 same Markdown root:
 
-| State            | Selects                                                                   |
-| ---------------- | ------------------------------------------------------------------------- |
-| `@prose`         | Any selected element outside isolated sections                            |
-| `@prose-block`   | A block that follows block content, including linked Cards (`data-block`) |
-| `@prose-heading` | A heading that follows non-heading content                                |
+| State            | Selects                                                                          |
+| ---------------- | -------------------------------------------------------------------------------- |
+| `@prose`         | Any selected element outside isolated sections                                   |
+| `@prose-block`   | A block that follows block content, including linked Cards (`data-block`)        |
+| `@prose-heading` | An element that does not directly follow a heading (`h1`–`h6` or `data-heading`) |
 
-### State maps and validation
+### State maps
 
-In a generated site, run `npm run validate` (or the matching package manager's
-command) after editing `docs.config.ts`. It checks TypeScript theme properties,
-then runs Cookbook's preflight and production output checks. A misspelled
-preset or built-in sub-element property fails type checking.
-
-Provide only the root and named
-[sub-element](https://tasty.style/docs/dsl#sub-element) properties you want to
-override. Cookbook deep-merges that partial style object into the complete
-base style object inside the renderer, following Tasty's
+Overrides follow Tasty's
 [state-map merge semantics](https://tasty.style/docs/dsl#extending-vs-replacing-state-maps).
-
 Keep `$` selectors structural and put attribute or pseudo-class conditions in
 property state maps. Use `@own(...)` for a descendant's state and ordinary
 state keys for the component root. A sub-element cannot target its containing
 element: use root state maps for callout kinds, hover/active buttons, compact
 selectors, and syntax wrapping. Use Tasty element names such as `Primary > Search`
 instead of spelling out `[data-element="Primary"] > [data-element="Search"]`.
-For a state on the owning root, use a plain key: `DiffCode: { display: { "diff": "block" } }`.
-Use `@own(:first-child)` when a structurally selected link needs its own condition,
-instead of repeating its `Panel a` selector.
+For a state on the owning root, use a plain key: `MarkdownCodeBlock.DiffCode`
+sets `display: { diff: "block" }` for a diff code block. When a structurally
+selected element needs its own condition, use `@own(...)`:
+`HeaderLinks.FirstPanelLink` selects `Panel a` and adds its padding under
+`@own(:first-child)`, instead of a `Panel a:first-child` selector.
 
 A scalar override replaces the property's
 whole state map; use the matching state key without a default entry to change
@@ -266,9 +263,13 @@ A sub-element whose selector ends in a pseudo-element, such as
 `Pagination.NextIcon` (`a[rel="next"]::before`), keeps the conditions on the
 element it belongs to in that selector. Its `@own(...)` states describe the
 pseudo-element itself, so Tasty ignores modifier, attribute, and tree-position
-states there. Cookbook also retains four empty legacy customization hooks whose
-conditional override scopes must remain compatible. Each has a narrow lint
-exception in its owning style module. Use state maps for new definitions.
+states there.
+
+Four empty legacy hooks keep a condition in their selector, so their styles
+apply only under it: `LanguageSelect.HoverLabel` (on hover),
+`LanguageSelect.CompactSelect` and `LanguageSelect.CompactLabelIcon` (in the
+compact selector), and `Pagination.LoneNextLink` (a Next link without a
+Previous link). Use state maps in your own definitions.
 
 Heading levels are states of the same element. Customize them through a root
 property map such as `Heading: { textWrap: { "": "balance", ":is(h1)": "pretty" } }`.
@@ -290,7 +291,7 @@ theme: {
     },
     TopNavigation: {
       Link: { preset: "body" },
-      CurrentLink: { color: { '@own([aria-current="page"])': "#accent-text" } }
+      CurrentLink: { color: { '@own([aria-current="page"])': "#heading" } }
     },
     Sidebar: {
       LinkLabel: { whiteSpace: "normal" }
@@ -429,12 +430,9 @@ previews must use style blocks rather than style attributes.
 
 Documentation content, navigation, headings, code, and images remain readable
 without client JavaScript. Search, mobile navigation, copy controls, appearance
-persistence, and executable previews enhance the static output. Cookbook runs
-Tasty in Astro extract mode and ships no Tasty or Glaze browser runtime, theme
-configuration, or style hydration setup. Browser scripts and `client:*` islands
-must not import Cookbook styling, Tasty, or Glaze; the build rejects these
-imports. Attach small interaction scripts to server-rendered markup or pass
-already-styled static markup into a client island.
+persistence, and executable previews enhance the static output. Styles stay on
+the server; see
+[Keep styling on the server](./customization-rules.md#keep-styling-on-the-server).
 
 ### Appearance and navigation
 

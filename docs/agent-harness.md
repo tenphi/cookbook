@@ -26,9 +26,10 @@ print the rules that Cookbook patches, as agents get them.
 
 ## Set it up
 
-Ask the person before you start: harnesspm changes `AGENTS.md`, `CLAUDE.md`,
-`package.json`, and the lockfile. Then run, in the folder with the site's
-`package.json`:
+The harness ships in `@tenphi/cookbook` 0.34.0 and later: in an older site,
+[upgrade Cookbook](./migration.md) first. harnesspm changes `AGENTS.md`,
+`CLAUDE.md`, `package.json`, and the lockfile, so set it up only when the person
+asks. Run, in the folder with the site's `package.json`:
 
 ```sh
 npm i -D @tenphi/harnesspm

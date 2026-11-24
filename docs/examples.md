@@ -7,8 +7,8 @@ sidebar:
 
 These are complete `docs.config.ts` files for common content layouts. For
 branding, component styles, fonts, and shared themes, see the
-[theme recipes](./recipes.md). Every example marked for verification is
-type-checked and built by Cookbook's test suite.
+[theme recipes](./recipes.md). Cookbook's test suite type-checks and builds the
+local repository, languages, and preview examples.
 
 Each example uses the same Astro integration:
 
@@ -30,12 +30,13 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({ site: { title: "My library" } });
 ```
 
-Run `cookbook doctor`, then `astro dev` or `astro build`.
+Run `npx @tenphi/cookbook doctor`, then `npx astro dev` or `npx astro build`.
 
 ## Monorepo with two packages
 
 For an app in `apps/docs/`, resolve content from the repository, then give each
-source an ID, a root, and a route mount:
+package source an ID, a root, and a route mount. The repository README is the
+home page, which the site title in the header links to:
 
 ```ts
 import { defineDocsConfig } from "@tenphi/cookbook/config";
@@ -45,6 +46,7 @@ export default defineDocsConfig({
   site: { title: "SDK documentation" },
   content: {
     sources: [
+      { file: "README.md", route: "/" },
       {
         id: "api",
         root: "packages/api",
@@ -64,14 +66,16 @@ export default defineDocsConfig({
 });
 ```
 
-Glob sources skip only paths beginning with `_` and the declared `exclude`
-patterns, so exclude each package's dependencies, build output, and changelog.
-Use `source:ui/README.md` for an explicit link to the UI package. Ordinary
-relative links stay in their own source mount when the same file appears in
-several mounts. A frontmatter `slug`, even one starting with `/`, is appended
-to that source's `routeBase`.
+List each package's dependencies, build output, and changelog in `exclude`, or
+the glob collects them too. Use `source:ui/README.md` to link to the UI package.
+See
+[source identities and repeated mounts](./content-sources.md#source-identities-and-repeated-mounts)
+for how links and slugs resolve between sources.
 
 ## Locked npm documentation
+
+The site's own `README.md` is the home page, which the site title in the header
+links to. The package's pages start at `/api`:
 
 ```ts
 import { defineDocsConfig } from "@tenphi/cookbook/config";
@@ -79,17 +83,19 @@ import { defineDocsConfig } from "@tenphi/cookbook/config";
 export default defineDocsConfig({
   site: { title: "Published API" },
   content: {
-    sources: [{ id: "api", package: "@scope/package@^2", routeBase: "/api" }],
+    sources: [
+      { file: "README.md", route: "/" },
+      { id: "api", package: "@scope/package@^2", routeBase: "/api" },
+    ],
   },
 });
 ```
 
-Run `cookbook update` once, commit `cookbook.lock.json`, then run `cookbook doctor`
-and `astro build`. When changing `^2` to `^3`, run update again. A stale lock fails
-with instructions instead of rendering the old version.
-
-A package source can specify `registry` for an alternative registry. The default
-is the npm public registry. Keep credentials out of committed configuration.
+Run `npx @tenphi/cookbook update` once, commit `cookbook.lock.json`, then run
+`npx @tenphi/cookbook doctor` and `npx astro build`. When changing `^2` to `^3`,
+run update again. A stale lock fails with instructions instead of rendering the
+old version. To read the package from another registry, set
+[`registry`](./content-sources.md#npm-package-sources).
 
 ## English and French
 
@@ -112,30 +118,34 @@ export default defineDocsConfig({
 });
 ```
 
-Navigation adapts to real translations. Missing translations use a real fallback
-in the language picker; they do not generate phantom routes or alternate links.
-See [languages](./configuration.md#languages) and
+Navigation lists the pages of the current language. When a page has no
+translation, the language picker links to the default-language page instead;
+Cookbook creates no copy of the page and no alternate-language link for it. See
+[languages and versions](./site-navigation.md#contents-languages-and-versions),
+[languages](./configuration.md#languages), and
 [translations](./configuration.md#translations).
 
 ## Preview publishing
 
-Set the preview's own URL and Astro `base` if hosted in a subdirectory. Serve
-private previews behind host authentication.
+A preview keeps the production `url`, so its canonical links point to the
+production site. Serve it from another host, behind host authentication when it
+is private. `index: false` adds `noindex` to every page:
 
 ```ts cookbook-verify=preview
 import { defineDocsConfig } from "@tenphi/cookbook/config";
 
 export default defineDocsConfig({
   site: {
-    title: "Acme preview",
-    url: "https://preview.example.com",
+    title: "Acme",
+    url: "https://docs.example.com",
     seo: { index: false, copyPage: false },
   },
-  tableOfContents: { mobile: true },
 });
 ```
 
-Build, run `cookbook check-build`, deploy that output, then run
-`cookbook check-build --url https://preview.example.com/`. See
-[deployment](./deployment.md) for production metadata, host headers, and sitemap
-checks, and [troubleshooting](./troubleshooting.md) when a check fails.
+`copyPage: false` removes the pages' Markdown copies, which the HTML `noindex`
+does not cover. Use it on hosts that cannot send a `noindex` header. Build the
+site, run `npx @tenphi/cookbook check-build`, deploy that output, then run
+`npx @tenphi/cookbook check-build --url https://preview.example.com/`. See
+[publishing metadata](./publishing.md) for previews, indexing, and Markdown
+copies, and [troubleshooting](./troubleshooting.md) when a check fails.

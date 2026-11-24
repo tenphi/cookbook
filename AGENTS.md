@@ -64,8 +64,8 @@ These folders have harness rules of their own in their `AGENTS.md`: `apps/conven
 
 ## Documentation
 
-- The reference site has two tabs, set in `apps/reference/docs.config.ts`. **For humans** is short: the home page, how to start, and pages with prompts for a coding agent and the decisions that stay with a person. **For AI agents** has every step: its start page (`docs/agents.md`), the guides and the reference.
-- A fact lives in one place. A page for humans says what to ask and what to decide, then links to the guide with the steps. Every prompt names Cookbook; a prompt for a repository without Cookbook also says how to create the site and links to its steps.
+- The reference site has two tabs, set in `apps/reference/docs.config.ts`: **Guide** and **Reference**. Write every page for people and their coding agents alike; do not split pages or tabs by audience. Agents do not use the sidebar: they start at `docs/agents.md` through `docs/llms.txt`, the installed docs and the prompts. The Guide's **AI agents** group holds that start page, `docs/ai-agents.md` and `docs/agent-harness.md`.
+- A fact lives in one place. `docs/ai-agents.md` is organized by cases: each has a prompt, what the agent does and what the person decides, then links to the guide with the steps. A prompt states the person's goal and the facts only they know, never commands, configuration keys or checks: the agent finds those in the docs. Every prompt names Cookbook; a prompt for a repository without Cookbook also links to `https://cookbook.tenphi.me/agents/`.
 - `docs/llms.txt` indexes the docs that ship in `@tenphi/cookbook`, for agents and for harnesspm. List every new English page there; `packages/facade/src/harness.test.ts` checks it.
 
 ## Agent harness
