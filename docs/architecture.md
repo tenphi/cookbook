@@ -34,6 +34,8 @@ not compose renderer internals themselves.
 6. Reject unsafe paths and report strict diagnostics.
 7. Render static pages through Astro and Cookbook components.
 8. Copy content-hashed assets and build the local Pagefind index.
+9. Write `llms.txt`, Markdown copies of pages, and, where they apply, the
+   sitemap and `robots.txt`; see [Discovery files](./deployment.md#discovery-files).
 
 Source documents are read-only throughout this process. The transformed body
 exists in the in-memory graph and the renderer's virtual module; a build never
@@ -107,7 +109,9 @@ consumer and browser tests exercise theme overrides and component replacements.
 
 ## Public graph API
 
-Renderer and tooling authors can work directly with `@tenphi/docs`:
+Renderer and tooling authors can work directly with `@tenphi/docs`. Install it
+at the same version as `@tenphi/cookbook` to import it: `@tenphi/cookbook` does
+not re-export `createDocsGraph` or `assertValidDocs`.
 
 ```ts
 import {

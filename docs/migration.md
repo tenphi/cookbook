@@ -75,7 +75,7 @@ check custom palettes in every appearance. See the
 - **Glows.** Palette roles accept Glaze `glow` declarations, which lighten
   `bg` by an exact tone step. Tune each glow with its own `tuning`.
 
-## Upcoming custom-element naming
+## 0.30.x to 0.31
 
 All Cookbook-owned custom elements now use the `cookbook-*` prefix, including
 UniAria behaviors and the search wrapper. Built-in components update their markup
@@ -94,11 +94,11 @@ Update tag selectors, `customElements.get()` and `whenDefined()` calls, and
 DOM IDs, and stored reader preferences keep their existing names. Custom
 elements authored by your site can continue using your own prefix.
 
-## Upcoming Tasty upgrade
+## 0.29.x to 0.30
 
-Cookbook now uses Tasty 3.14 and the Tasty ESLint plugin 1.12. Built-in themes
-need no configuration migration. Review custom styles for these changes from
-Tasty 3.12:
+Cookbook 0.30 updates Tasty from 3.11 to 3.14 and the Tasty ESLint plugin to
+1.12. Built-in themes need no configuration migration. Review custom styles for
+these changes:
 
 - Color opacity suffixes such as `#accent-text.5` now emit `color-mix()`. If the
   palette color is already translucent, the suffix multiplies its alpha rather
@@ -378,7 +378,7 @@ These changes were introduced in 0.18:
 - **Page text:** the footer offers copy/download Markdown by default. Set
   `site.seo.copyPage: false` to disable the controls and generated page files.
   Configure static host headers if raw Markdown must be excluded from indexing;
-  see [deployment](./deployment.md).
+  see [page text for readers and agents](./publishing.md#page-text-for-readers-and-agents).
 - **Validation:** existing projects can add
   `"validate": "cookbook doctor && astro build && cookbook check-build"`
   to their scripts. `doctor` is explicitly a preflight; successful MDX compilation

@@ -63,16 +63,20 @@ rendered output works.
 
 ## Missing pages or unexpected navigation
 
-Check the source `glob`, `base`, `routeBase`, and frontmatter `slug` with
-`doctor`. Use stable source IDs for repeated mounts and `source:<id>/<path>`
-for ambiguous cross-source links. Public routes omit Astro's deployment `base`
-in configuration; Cookbook adds it to rendered links.
+Check the source `glob`, `base`, `routeBase`, and frontmatter `slug`. `doctor`
+reports a source that matches no files (`DOCS_SOURCE_NOT_FOUND`), a route that
+two files claim (`DOCS_DUPLICATE_ROUTE`), and a site without pages
+(`DOCS_NO_PAGES`). It counts the pages it finds but does not list their routes.
+Use stable source IDs for repeated mounts and `source:<id>/<path>` for
+ambiguous cross-source links. Public routes omit Astro's deployment `base` in
+configuration; Cookbook adds it to rendered links.
 
 A draft remains directly accessible in production but is unlisted. A missing
 translation does not create a duplicate page: the language picker points to a
 real default-language fallback, and locale navigation lists real translated
 pages. Version roots need an existing home, including a localized home when
-configured. See [locales and versions](./configuration.md).
+configured. See [languages](./configuration.md#languages) and
+[versions](./configuration.md#site).
 
 ## Preview indexing or deployment mismatch
 
