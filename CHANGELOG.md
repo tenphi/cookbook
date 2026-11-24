@@ -2,6 +2,14 @@
 
 All notable changes to Cookbook are documented here. Package-specific details remain in `packages/*/CHANGELOG.md`.
 
+## 0.34.1
+
+### Patch Changes
+
+- [#214](https://github.com/tenphi/cookbook/pull/214) [`ffcc0a5`](https://github.com/tenphi/cookbook/commit/ffcc0a5330400c5a9bf2181ad12dea884c95f307) Thanks [@tenphi](https://github.com/tenphi)! - New sites also get a `CLAUDE.md` that imports `AGENTS.md`. Claude Code reads `AGENTS.md` only when no `CLAUDE.md` exists in its folder or above, so a site created with `--source` inside a repository that has one lost its agent instructions in Claude Code. An existing `CLAUDE.md` is kept.
+- [#214](https://github.com/tenphi/cookbook/pull/214) [`ffcc0a5`](https://github.com/tenphi/cookbook/commit/ffcc0a5330400c5a9bf2181ad12dea884c95f307) Thanks [@tenphi](https://github.com/tenphi)! - The docs are one guide again, with **Guide** and **Reference** tabs, for people and their coding agents alike. [Work with a coding agent](https://cookbook.tenphi.me/ai-agents/) now holds the prompts of the former Ask your agent page, whose URL redirects there. They are organized by case: each prompt says what you want and the facts only you know, and leaves the commands to your agent. The agent start page, [For AI agents](https://cookbook.tenphi.me/agents/), and the packaged `docs/llms.txt` index stay where they were.
+- [#216](https://github.com/tenphi/cookbook/pull/216) [`e5c9694`](https://github.com/tenphi/cookbook/commit/e5c9694e7f7d3cd7b5f06674de7a81367a24c41f) Thanks [@tenphi](https://github.com/tenphi)! - A component module beside content outside the site's folder, such as `docs/components/StatusBadge.ts` in a site created with `--source`, can import `@tenphi/cookbook/styling`. Node resolution from that folder could not reach the site's `node_modules`, so `astro dev` and `astro build` failed to resolve the import. Cookbook now resolves its own entries from the site for every importer.
+
 ## 0.34.0
 
 ### Minor Changes

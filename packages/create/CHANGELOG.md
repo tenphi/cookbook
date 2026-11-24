@@ -1,5 +1,14 @@
 # @tenphi/create-cookbook
 
+## 0.34.1
+
+### Patch Changes
+
+- [#214](https://github.com/tenphi/cookbook/pull/214) [`ffcc0a5`](https://github.com/tenphi/cookbook/commit/ffcc0a5330400c5a9bf2181ad12dea884c95f307) Thanks [@tenphi](https://github.com/tenphi)! - New sites also get a `CLAUDE.md` that imports `AGENTS.md`. Claude Code reads `AGENTS.md` only when no `CLAUDE.md` exists in its folder or above, so a site created with `--source` inside a repository that has one lost its agent instructions in Claude Code. An existing `CLAUDE.md` is kept.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.34.1
+
 ## 0.34.0
 
 ### Patch Changes
