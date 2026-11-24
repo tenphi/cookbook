@@ -67,6 +67,11 @@ import { StatusBadge } from "./components/StatusBadge";
 </StatusBadge>
 ```
 
+This works when the content lives outside the site's folder too, as in a site
+created with `--source`: Cookbook resolves `@tenphi/cookbook` from the site. A
+component module that imports another package finds it from its own folder, so
+install that package there or in a folder above it, such as the repository root.
+
 A site can change just one part in `docs.config.ts`:
 
 ```ts
@@ -304,7 +309,7 @@ supports TypeScript below 6.1, so it fails in sites from the project creator,
 which use TypeScript 7. There, keep style modules in `.js` or `.mjs` files, use
 [oxlint](#oxlint), which parses TypeScript itself, or install TypeScript 6 for
 the project. With TypeScript below 6.1, install the parser
-(`pnpm add -D @typescript-eslint/parser`) and set it for those files:
+(`pnpm add -D @typescript-eslint/parser`) and add an entry for those files:
 
 ```js
 import parser from "@typescript-eslint/parser";

@@ -630,6 +630,11 @@ function configuredCookbook(options: CookbookOptions): AstroIntegration {
               ),
             ],
             resolve: {
+              // Content and its component modules can live outside the
+              // site's folder (`root: ".."`, as with --source), where Node
+              // resolution cannot reach the site's node_modules. Resolve
+              // Cookbook's own entries from the site for every importer.
+              dedupe: ["@tenphi/cookbook"],
               alias: [
                 {
                   find: "@tenphi/tasty/ssr/astro-middleware-static",

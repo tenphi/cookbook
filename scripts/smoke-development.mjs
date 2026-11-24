@@ -159,6 +159,17 @@ try {
   await waitFor("/v2/live/", 'href="/v2/next/"');
   await write("docs/live.mdx", "# Edited MDX\n\n[Next](./next.mdx)\n");
   await waitFor("/v2/live/", "Edited MDX");
+  // A component module beside content outside the site's folder, as in a
+  // --source site, imports Cookbook's styling entry from the site.
+  await write(
+    "docs/components/badge.js",
+    'import { defineComponent } from "@tenphi/cookbook/styling";\nexport const Badge = defineComponent("ContentBadge", { as: "span", styles: { display: "inline-flex", Label: { $: "> strong", preset: "strong" } } });\n',
+  );
+  await write(
+    "docs/badge.mdx",
+    '# Badge\n\nimport { Badge } from "./components/badge.js";\n\n<Badge data-content-badge><strong>Stable</strong></Badge>\n',
+  );
+  await waitFor("/v2/badge/", "data-content-badge");
   await writeFile(
     join(app, "astro.config.mjs"),
     'import cookbook from "@tenphi/cookbook"; export default {base:"/manual/",integrations:[cookbook()]};',
@@ -213,6 +224,10 @@ try {
       maxBuffer: 8 * 1024 * 1024,
     },
   );
+  assert.match(
+    await readFile(join(app, "dist/v2/badge/index.html"), "utf8"),
+    /data-content-badge[^>]*><strong>Stable<\/strong>/,
+  );
   const staticRedirect = await readFile(
     join(app, "dist/v2/previous/index.html"),
     "utf8",
@@ -241,7 +256,7 @@ try {
   assert.ok(!sitemap.includes("/draft/"));
   assert.ok(sitemap.includes("/manual/v2/next/"));
   console.log(
-    "Development smoke passed: startup, config discovery, external content root, edits, additions, removals, error recovery, config reload, live aliases, repeated MDX mounts, and static redirects under a URL base.",
+    "Development smoke passed: startup, config discovery, external content root, edits, additions, removals, error recovery, config reload, live aliases, repeated MDX mounts, component modules beside external content, and static redirects under a URL base.",
   );
 } finally {
   if (child && child.exitCode === null) {

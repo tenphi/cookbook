@@ -186,6 +186,7 @@ line, and hint. Errors fail the command; warnings do not.
 | Deployment (`--url`)         | `DOCS_DEPLOYMENT_HTTP`, `DOCS_DEPLOYMENT_PAGE_MISMATCH`, `DOCS_DEPLOYMENT_NOINDEX`, `DOCS_DEPLOYMENT_ASSET_INVALID`, `DOCS_DEPLOYMENT_FETCH`                                                                                                                                                                                    |
 | Command line                 | `COOKBOOK_CLI_ERROR` for invalid arguments and other command failures                                                                                                                                                                                                                                                           |
 
-`astro build` also stops on the two contrast errors, without their codes.
+`astro dev` and `astro build` also stop on the two contrast errors, without
+their codes.
 
 See [troubleshooting](./troubleshooting.md) for common fixes.
