@@ -12,15 +12,14 @@ Cookbook requiere Node.js 22.19 o una versión posterior. Pide a un agente de pr
 Pega esto en Claude Code, Codex u otro agente de programación, dentro de tu repositorio:
 
 ```text
-Create a Cookbook documentation site for this repository
-in `docs-site/`, from our README and `docs/` pages:
-run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
-Then run its `validate` script and tell me what it reports.
+Crea un sitio de documentación para este repositorio con Cookbook,
+a partir de nuestro README y las páginas de docs/. Comprueba que
+el sitio se compila y dime qué comprobaste y qué me queda por decidir.
 
-Steps: https://cookbook.tenphi.me/agents/
+Pasos de Cookbook para agentes: https://cookbook.tenphi.me/agents/
 ```
 
-Tu agente ejecuta los mismos comandos que las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Ask your agent](../ask-your-agent.md) (en inglés) reúne indicaciones para las tareas siguientes.
+Tu agente sigue los mismos pasos que las secciones siguientes. Indícale la URL pública del sitio cuando la conozcas. [Trabajar con un agente de programación](../ai-agents.md) (en inglés) reúne indicaciones para lo que viene después: tu marca, tu dominio, un paquete que publicas y las actualizaciones.
 
 ## Crea tu primer sitio
 
@@ -123,4 +122,4 @@ npm run preview
 
 `validate` comprueba los tipos del proyecto, ejecuta la verificación previa de Cookbook, compila el sitio y revisa el resultado. En un proyecto que configuraste tú mismo, añade los scripts de los [comandos de la CLI](../cli.md) o ejecuta `npx @tenphi/cookbook doctor`.
 
-El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [agentes de IA](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).
+El resto de las guías se encuentra actualmente en inglés: [ejemplos](../examples.md), [componentes para redactar](../authoring.mdx), [trabajar con un agente de programación](../ai-agents.md), [despliegue](../deployment.md) y [actualización entre versiones](../migration.md). Si falla la validación, consulta [solución de problemas](../troubleshooting.md).

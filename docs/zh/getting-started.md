@@ -12,15 +12,14 @@ Cookbook 需要 Node.js 22.19 或更高版本。你可以让编程智能体创�
 在你的仓库中，将以下内容粘贴到 Claude Code、Codex 或其他编程智能体：
 
 ```text
-Create a Cookbook documentation site for this repository
-in `docs-site/`, from our README and `docs/` pages:
-run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
-Then run its `validate` script and tell me what it reports.
+使用 Cookbook，根据我们的 README 和 docs/ 中的页面，
+为这个仓库创建文档站点。确认站点可以构建，
+然后告诉我你检查了什么，以及还有哪些需要我决定。
 
-Steps: https://cookbook.tenphi.me/agents/
+Cookbook 面向智能体的步骤：https://cookbook.tenphi.me/agents/
 ```
 
-智能体会运行与下文各节相同的命令。确定站点的公开网址后，请告诉它。后续任务的提示词见 [Ask your agent](../ask-your-agent.md)（英文）。
+智能体会按照与下文各节相同的步骤操作。确定站点的公开网址后，请告诉它。后续任务（品牌、域名、你发布的软件包和升级）的提示词见[与编程智能体协作](../ai-agents.md)（英文）。
 
 ## 创建第一个站点
 
@@ -123,4 +122,4 @@ npm run preview
 
 `validate` 会对项目进行类型检查、运行 Cookbook 预检、构建站点并检查输出。对于自行配置的项目，请添加 [CLI 命令](../cli.md)中列出的脚本，或运行 `npx @tenphi/cookbook doctor`。
 
-其他指南目前仍以英文提供，包括[示例](../examples.md)、[内容编写组件](../authoring.mdx)、[AI 智能体](../ai-agents.md)、[部署](../deployment.md)和[按版本升级指南](../migration.md)。如果验证失败，请查看[故障排查](../troubleshooting.md)。
+其他指南目前仍以英文提供，包括[示例](../examples.md)、[内容编写组件](../authoring.mdx)、[与编程智能体协作](../ai-agents.md)、[部署](../deployment.md)和[按版本升级指南](../migration.md)。如果验证失败，请查看[故障排查](../troubleshooting.md)。

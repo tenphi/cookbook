@@ -13,17 +13,17 @@ site, or run the commands yourself.
 Paste this into Claude Code, Codex, or another coding agent, in your repository:
 
 ```text
-Create a Cookbook documentation site for this repository
-in `docs-site/`, from our README and `docs/` pages:
-run `npm create @tenphi/cookbook@latest docs-site -- --source . --yes`.
-Then run its `validate` script and tell me what it reports.
+Create a documentation site for this repository with Cookbook,
+from our README and docs/ pages. Check that the site builds,
+then tell me what you checked and what is left for me to decide.
 
-Steps: https://cookbook.tenphi.me/agents/
+Cookbook's steps for agents: https://cookbook.tenphi.me/agents/
 ```
 
-Your agent runs the same commands as the sections below. Tell it the public URL
-of the site when you know it. [Ask your agent](./ask-your-agent.md) has prompts
-for the tasks that follow.
+Your agent follows the same steps as the sections below. Tell it the public URL
+of the site when you know it. [Work with a coding agent](./ai-agents.md) has
+prompts for what comes next: your brand, your domain, a package you publish, and
+upgrades.
 
 ## Create your first site
 
@@ -161,5 +161,6 @@ in [CLI commands](./cli.md) or run `npx @tenphi/cookbook doctor`. Then
 [troubleshooting](./troubleshooting.md).
 
 Continue with [working examples](./examples.md),
-[authoring components](./authoring.mdx), and [AI agents](./ai-agents.md). Existing users should read the
+[authoring components](./authoring.mdx), and
+[working with a coding agent](./ai-agents.md). Existing users should read the
 [version-specific upgrade guide](./migration.md).

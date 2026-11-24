@@ -10,6 +10,10 @@
 
 ## Guides
 
+- [Cookbook](index.md): what Cookbook does, and where to start.
+- [Getting started](getting-started.md): create a site with an agent or by hand, for a repository, an npm package, or an Astro project.
+- [Work with a coding agent](ai-agents.md): prompts for common cases, the decisions that stay with the person, the optional harness, and agent-readable published sites.
+- [Compare documentation tools](comparison.md): Cookbook next to other documentation tools.
 - [Content sources](content-sources.md): local files, OpenAPI specs, and locked npm package docs; links and assets.
 - [Search and navigation](site-navigation.md): search, tabs, sections, page contents, languages, and versions.
 - [Authoring components](authoring.mdx): pages and frontmatter, tabs, callouts, code groups, cards, steps, and isolated previews.
@@ -31,14 +35,6 @@
 - [Publishing metadata](publishing.md): titles, social previews, canonical URLs, indexing, and `llms.txt`.
 - [CLI commands](cli.md): `cookbook doctor`, `check-build`, and `update`, and the project creator's options.
 - [Architecture](architecture.md): the four packages and the static content pipeline.
-
-## For humans
-
-- [Cookbook](index.md): what Cookbook does, and where to start.
-- [Getting started](getting-started.md): create a site with an agent or by hand, for a repository, an npm package, or an Astro project.
-- [Ask your agent](ask-your-agent.md): prompts for common tasks and the decisions that stay with the person.
-- [AI agents](ai-agents.md): what an agent gets from Cookbook, the optional harness, and agent-readable published sites.
-- [Compare documentation tools](comparison.md): Cookbook next to other documentation tools.
 
 ## Tasty and Glaze
 

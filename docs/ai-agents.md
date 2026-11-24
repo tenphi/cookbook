@@ -1,25 +1,153 @@
 ---
-title: AI agents
-description: What your coding agent gets from Cookbook, the optional harness that harnesspm adds, and how agents read the docs you publish.
+title: Work with a coding agent
+description: What to ask a coding agent in common Cookbook cases, the decisions that stay with you, and what your agent reads.
+aliases: ["/ask-your-agent"]
 sidebar:
   order: 3
 ---
 
-A coding agent can do most of the work on a Cookbook site: create it, write and
-organize pages, change the theme, and deploy it. This page says what your agent
-gets from Cookbook, what harnesspm adds, and how agents read the site you publish.
-[Ask your agent](./ask-your-agent.md) has prompts for the common tasks.
+A coding agent can do most of the work on a Cookbook site: create it, organize
+the pages, match your brand, and publish it. You say what you want and make the
+decisions. Your agent reads Cookbook's docs and does the steps.
 
-## What your agent gets
+## How to ask
+
+- **Say what you want, not how.** Describe the result and who reads the docs.
+  Leave commands and configuration to your agent: Cookbook's docs tell it what
+  to change and how to check its work.
+- **Give the facts only you know:** the public URL, the host, your brand color,
+  logo, and fonts, the languages your readers use.
+- **Name Cookbook** so your agent reads Cookbook's docs instead of guessing. In
+  a repository without Cookbook yet, add the link
+  `https://cookbook.tenphi.me/agents/`, where an agent starts.
+- **Ask for a report.** Your agent says what it changed, what it checked, and
+  what is left for you.
+
+## Cases
+
+Each case has a prompt, what your agent does, and what you decide. The prompts
+are examples: use your own words, names, and URLs. To create a site for your
+repository, start with the prompt in
+[Getting started](./getting-started.md#ask-your-agent).
+
+### Document a package you publish to npm
+
+Readers should see the docs of the version they install, not your main branch.
+
+```text
+Create a Cookbook documentation site for our npm package
+@acme/widgets, from the docs it publishes. Readers should see
+the docs of the released version, not of our main branch.
+
+Cookbook's steps for agents: https://cookbook.tenphi.me/agents/
+```
+
+- **Your agent** builds the site from the files in the published package and
+  locks their exact version and integrity.
+- **You decide** when the site follows a new release: ask your agent to update
+  it. You also decide whether the package's MDX may run code in your build. It
+  does not unless you allow it.
+
+### Add an API reference
+
+You have an OpenAPI spec and want a page for each operation.
+
+```text
+Add an API reference to our Cookbook site from api/openapi.yaml,
+in its own tab next to the guides.
+```
+
+- **Your agent** adds the spec to the site's content. Cookbook writes a
+  searchable overview and a page for each operation, with parameters, request
+  bodies, responses, and examples.
+- **You decide** where the reference sits in the navigation.
+
+### Match your product's look
+
+```text
+Make our Cookbook site look like our product: brand color #0f766e,
+the logo in assets/logo.svg, and the Inter font.
+Keep the text easy to read in light, dark, and high-contrast modes.
+```
+
+- **Your agent** sets the brand, logo, and fonts in the site's theme. Cookbook
+  derives accent text, buttons, and focus rings from the brand for every
+  appearance, and its checks reject a color that misses a contrast floor.
+- **You decide** the brand. Look at the result in both color schemes and with
+  high contrast on.
+
+### Fix a part that looks wrong
+
+Say what you see and where. Your agent finds the part to change.
+
+```text
+In our Cookbook site, long links in the sidebar are cut off.
+Let them wrap onto a second line.
+```
+
+- **Your agent** finds the component and its named part in
+  [Component styles](./component-styles.md) and changes only what it needs.
+  Cookbook merges the change into its default styles.
+- **You review** the result on a phone and on a wide screen.
+
+### Organize the pages
+
+```text
+Our Cookbook site lists guides and API pages in one long list.
+Make it easier for readers to find each kind of page.
+Show me the structure before you change it.
+```
+
+- **Your agent** proposes tabs and groups, then sets the site's navigation.
+  Cookbook's checks report a link that leads nowhere.
+- **You decide** the structure your readers see.
+
+### Offer the docs in another language
+
+```text
+Add a Spanish version of our Cookbook site. Translate the home
+page and getting started first; the other pages stay in English.
+```
+
+- **Your agent** adds the language and the translated pages. The language
+  selector opens the translated page when it exists and the language's home
+  page when it does not.
+- **You decide** which languages to offer and who reviews the translations.
+
+### Publish on your domain
+
+```text
+Publish our Cookbook site at https://docs.example.com
+on GitHub Pages. Tell me what I have to set up on GitHub myself.
+```
+
+- **Your agent** sets the public URL, adds a workflow from
+  [Deployment](./deployment.md), and checks the built site.
+- **You decide** the host and the domain, and turn on publishing and the custom
+  domain in the host's settings. After the first deployment, ask your agent to
+  check the live site.
+
+### Keep the site current
+
+```text
+Upgrade Cookbook in our docs site to the latest version
+and tell me what changed for us.
+```
+
+- **Your agent** follows the upgrade skill that the project creator wrote and
+  the notes in [Upgrade Cookbook](./migration.md) for every version it crosses.
+- **You review** a preview before you deploy.
+
+## What your agent reads
 
 - **The docs of your version.** `@tenphi/cookbook` installs these docs in
   `node_modules/@tenphi/cookbook/docs/`, with an index in `llms.txt` and the
-  Tasty and Glaze docs of the same release.
+  Tasty and Glaze docs of the same release. Your agent starts at
+  [For AI agents](./agents.md): the rules that always apply and the page for
+  each task.
 - **Instructions in the project.** The [project creator](./getting-started.md)
   writes `AGENTS.md` beside `docs.config.ts` and an upgrade skill in
   `.agents/skills/upgrade-cookbook/`.
-- **A part of these docs for agents.** [For AI agents](./agents.md) has every
-  step, the rules that always apply, and the page for each task.
 
 Installed docs help only when your agent reads them. In a project you set up
 yourself, add a line to your agent instructions:
@@ -49,15 +177,12 @@ the details for your agent.
 Paste this into Claude Code or Codex, in the project of your site:
 
 ```text
-Set up harnesspm in this Cookbook site:
-install @tenphi/harnesspm as a dev dependency
-and run `npx harnesspm init`.
+Set up harnesspm in this Cookbook site, so you get Cookbook's
+rules and its tools for styles and colors. Then tell me what it
+wrote, which tools wait for my trust, and what each one does.
+Do not trust any package yourself.
 
-Then tell me what it wrote, which packages have
-tools that wait for my trust, and what each tool does.
-Do not change "trust" yourself.
-
-Steps: https://cookbook.tenphi.me/agent-harness/
+Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 ```
 
 ### Decide what may run

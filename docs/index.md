@@ -54,7 +54,7 @@ sidebar:
 - **Ready for coding agents.** The installed package carries docs for your
   version, and an optional [harnesspm](https://harnesspm.tenphi.me) harness
   gives your agent Cookbook's rules and tools that read your theme.
-  [AI agents](./ai-agents.md).
+  [Work with a coding agent](./ai-agents.md).
 
 ## Start with your repository
 
@@ -84,15 +84,21 @@ in English for now.
 
 ## Explore the docs
 
-The docs have two parts, as tabs at the top of the navigation.
+- [Getting started](./getting-started.md) covers repositories, npm packages, and
+  existing Astro projects, by hand or with a coding agent.
+- [Work with a coding agent](./ai-agents.md) has prompts for common cases and
+  the decisions that stay with you.
+- [Compare documentation tools](./comparison.md) explains Cookbook's content and
+  customization model alongside other options.
+- [Working examples](./examples.md) show repository, monorepo, package, and
+  shared-theme configurations.
+- [Search and navigation](./site-navigation.md) explains how readers find pages.
+- [Authoring](./authoring.mdx) covers pages, components, and interactive examples.
+- [Theme and components](./theme-and-components.md) starts with brand and tokens,
+  then points to fonts, built-in styles, and custom components.
+- [Deployment](./deployment.md) covers validation and static hosting.
 
-- **For humans** is short. Start with [Getting started](./getting-started.md),
-  [compare documentation tools](./comparison.md), or browse
-  [working examples](./examples.md). [Ask your agent](./ask-your-agent.md) has
-  prompts for common tasks and the decisions that stay with you, and
-  [AI agents](./ai-agents.md) says what your agent gets from Cookbook.
-- **For AI agents** has every step. [Its start page](./agents.md) gives the
-  rules that always apply and the page for each task: content, navigation,
-  authoring, theme, components, plugins, deployment, and upgrades, then the
-  [configuration](./configuration.md) and [CLI](./cli.md) references. People
-  read it too when they want every detail.
+The [configuration reference](./configuration.md), [publishing controls](./publishing.md),
+and [CLI reference](./cli.md) cover the full set of options. A coding agent
+starts at [For AI agents](./agents.md): the rules that always apply and the
+page for each task.

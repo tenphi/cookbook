@@ -3,9 +3,10 @@ title: For AI agents
 description: Where a coding agent starts with Cookbook — what is installed, the rules that always apply, and the page for each task.
 ---
 
-This part of the docs is for you, a coding agent that a person asked to create,
-change, or maintain a Cookbook site. It has every step. People read it too when
-they want the details.
+This page is for you, a coding agent that a person asked to create, change, or
+maintain a Cookbook site. It gives the rules that always apply and the page with
+the steps for each task. The person describes what they want; the steps and the
+commands are yours to find there.
 
 - In a project that already uses Cookbook, read the installed docs first. They
   match the installed version; this site describes the latest release.
