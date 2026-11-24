@@ -314,8 +314,9 @@ tableOfContents: { mobile: true, minHeadingLevel: 2, maxHeadingLevel: 3 }
 `mobile: true` adds a compact contents disclosure below the header on smaller
 screens; it defaults to `false`. Heading levels accept 1 through 6. A page's
 `tableOfContents` frontmatter replaces the heading levels: levels it leaves out
-use 2 and 3, while `mobile` falls back to this setting. `false`, here or on a
-page, hides both lists. See [on-page navigation](./authoring.mdx#on-page-navigation).
+use 2 and 3, while `mobile` falls back to this setting. `false` on a page hides
+both lists; `false` here hides them on pages without their own
+`tableOfContents`. See [on-page navigation](./authoring.mdx#on-page-navigation).
 
 ## Languages
 
@@ -598,7 +599,7 @@ The default layout is capped at `87.5rem` (1400px), with a `58rem` reading
 column and a `17.5rem` sidebar. `brand.from` supplies the color seed, and
 `theme.palette` supplies semantic Glaze roles that inherit its hue and
 saturation unless a role has its own `from`. Glaze resolves light, dark, and
-both high-contrast modes independently. A `theme.brand.contrast.apca` floor
+both high-contrast modes independently. A `theme.brand.contrast.apca` target
 below 45 requires `unsafeContrast: true`. See
 [Theme and components](./theme-and-components.md) for the color model, contrast
 floors, and examples.

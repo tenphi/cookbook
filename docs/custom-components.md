@@ -304,7 +304,7 @@ supports TypeScript below 6.1, so it fails in sites from the project creator,
 which use TypeScript 7. There, keep style modules in `.js` or `.mjs` files, use
 [oxlint](#oxlint), which parses TypeScript itself, or install TypeScript 6 for
 the project. With TypeScript below 6.1, install the parser
-(`pnpm add -D @typescript-eslint/parser`) and set it for those files:
+(`pnpm add -D @typescript-eslint/parser`) and add an entry for those files:
 
 ```js
 import parser from "@typescript-eslint/parser";

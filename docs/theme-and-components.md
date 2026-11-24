@@ -63,9 +63,10 @@ filled-control floor stays 80 (95). Diagnostics also enforce WCAG 4.5:1 / 7:1
 on their actual backgrounds. Glaze adjusts tones only as far as these floors
 require; dark and high-contrast schemes resolve independently.
 
-A target below 45 needs `unsafeContrast: true`, and it cannot lower these
-floors. Cookbook rejects it without the flag, so the choice stays visible in
-configuration reviews. Literal color shorthand and structured
+A target matters only above these floors: the default 45 (60) leaves them as
+they are, and a target above 75 (90) raises brand text contrast. Cookbook still
+rejects a target below 45 unless `unsafeContrast: true` is set, so the choice
+stays visible in configuration reviews. Literal color shorthand and structured
 `hue`/`saturation`/`tone` input also remain supported for the brand.
 
 ## Semantic palette

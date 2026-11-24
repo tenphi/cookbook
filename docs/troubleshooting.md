@@ -66,7 +66,8 @@ rendered output works.
 Check the source `glob`, `base`, `routeBase`, and frontmatter `slug`. `doctor`
 reports a source that matches no files (`DOCS_SOURCE_NOT_FOUND`), a route that
 two files claim (`DOCS_DUPLICATE_ROUTE`), and a site without pages
-(`DOCS_NO_PAGES`). It counts the pages it finds but does not list their routes.
+(`DOCS_NO_PAGES`). Its success line, or its `--json` output, counts the pages it finds but does
+not list their routes.
 Use stable source IDs for repeated mounts and `source:<id>/<path>` for
 ambiguous cross-source links. Public routes omit Astro's deployment `base` in
 configuration; Cookbook adds it to rendered links.
