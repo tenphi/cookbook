@@ -7,7 +7,7 @@
 ## @tenphi/glaze
 
 - Always-on rule: Glaze colors — Where colors come from, Checking a theme. Read it with `help @tenphi/glaze` (glaze:rules/colors)
-- Docs: ../../node_modules/.harnesspm/pkgs/@tenphi/glaze/harness/docs/llms.txt (glaze:docs)
+- Docs: ../../node_modules/.harnesspm/docs/glaze/llms.txt (glaze:docs)
 - Tool: `glaze:inspect` — Resolve a theme or palette in light, dark and high contrast, and check every contrast floor (filter with --color, --theme) (glaze:scripts/inspect)
 - Tool: `glaze:color` — Resolve one color without a theme: its values and tone in light, dark and high contrast, and its contrast on a --base (glaze:scripts/color)
 - Tool: `glaze:contrast` — Measure the WCAG and APCA contrast of a text color on a background (glaze:scripts/contrast)
@@ -15,7 +15,7 @@
 ## @tenphi/tasty
 
 - Always-on rule: Tasty styles — Writing styles, Checking styles. Read it with `help @tenphi/tasty` (tasty:rules/usage)
-- Docs: ../../node_modules/.harnesspm/pkgs/@tenphi/tasty/docs/llms.txt (tasty:docs)
+- Docs: ../../node_modules/.harnesspm/docs/tasty/llms.txt (tasty:docs)
 - Tool: `tasty:styles` — Print the CSS a Tasty styles object produces and report rendering warnings, including unknown token references when the --setup config defines tokens (tasty:scripts/styles)
 
 <!-- END:harnesspm -->
