@@ -1,0 +1,8 @@
+# Lets search tools that read this file, such as ripgrep and Claude Code's Grep,
+# into the harness docs copies that `harnesspm sync` writes to .harnesspm/docs/,
+# which .gitignore lists and which is hidden.
+# This copy is committed, so harnesspm leaves it as it is and warns when a line
+# is missing: keep these lines, in this order.
+!/.harnesspm/
+/.harnesspm/*
+!/.harnesspm/docs/
