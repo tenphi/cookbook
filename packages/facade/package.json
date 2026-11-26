@@ -86,7 +86,7 @@
     "astro": "catalog:"
   },
   "devDependencies": {
-    "@tenphi/harnesspm": "^0.13.2",
+    "@tenphi/harnesspm": "^0.14.0",
     "@types/node": "^22.15.2",
     "astro": "catalog:",
     "tsdown": "^0.22.14",
