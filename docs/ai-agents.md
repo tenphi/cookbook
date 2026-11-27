@@ -176,7 +176,7 @@ Cookbook's steps for agents: https://cookbook.tenphi.me/agent-harness/
 - **You decide** which packages may run code in your project, and whether that
   trust follows their upgrades or asks again for each new version. Your agent
   records your choice. Then run
-  `npx harnesspm approve` in your own terminal, so the lint hook runs and the
+  `npx -y @harnesspm/cli approve` in your own terminal, so the lint hook runs and the
   tools run without a prompt. Your agent cannot do this step: harnesspm never
   lets an agent give itself permissions.
 - **You review** and commit what harnesspm wrote, as you would any change to

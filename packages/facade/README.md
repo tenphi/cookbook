@@ -94,8 +94,8 @@ adapted to read the site's theme. To give it to Claude Code and Codex, set up
 [harnesspm](https://harnesspm.tenphi.me) in your project:
 
 ```sh
-npm i -D @tenphi/harnesspm
-npx harnesspm init
+npm i -D @harnesspm/cli
+npx -y @harnesspm/cli init
 ```
 
 See [AI agents](https://cookbook.tenphi.me/ai-agents/) for the decisions that stay

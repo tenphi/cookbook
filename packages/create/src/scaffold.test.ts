@@ -116,7 +116,7 @@ describe("creator defaults", () => {
     );
     expect(upgradeSkill).toContain("cookbook.lock.json");
     expect(upgradeSkill).toContain("Run the site's `validate` script");
-    expect(upgradeSkill).toContain("npx harnesspm sync");
+    expect(upgradeSkill).toContain("npx -y @harnesspm/cli sync");
   });
   it("keeps existing repository content outside the generated app", async () => {
     const { root, destination, project, graph } = await localFixture(true);
