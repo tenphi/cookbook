@@ -44,10 +44,10 @@ Use a new color in styles as `#name` only after it is in `theme.palette`.
 Run the tools from the folder with `docs.config.ts`. `-C` does not change that folder.
 
 1. Run the site's `doctor` script (`cookbook doctor`). It fails on every contrast floor the theme misses and names the pair, the scheme and the target.
-2. To see every color in light, dark and both high-contrast schemes, with its contrast against its base, run `npx harnesspm run glaze:inspect @tenphi/cookbook/harness/dev.harnesspm/theme.mjs`. Add `--color <part>` for fewer colors. A ✗ is a missed floor.
+2. To see every color in light, dark and both high-contrast schemes, with its contrast against its base, run `npx -y @harnesspm/cli run glaze:inspect @tenphi/cookbook/harness/dev.harnesspm/theme.mjs`. Add `--color <part>` for fewer colors. A ✗ is a missed floor.
 3. Fix each miss and each Glaze warning: use an absolute tone for reading text, choose a base further away, lower the saturation, or give the high-contrast side its own value with a pair. Keep `autoFlip` on when a color needs to cross its base.
 4. Run both again until every floor is met. The high-contrast columns count: a user with "increase contrast" on sees them.
-5. To check two literal colors, run `npx harnesspm run glaze:contrast <text> <background>`. The text color comes first.
+5. To check two literal colors, run `npx -y @harnesspm/cli run glaze:contrast <text> <background>`. The text color comes first.
 6. Run the site's `validate` script before you finish.
 
 There is no export step: the build turns the palette into the site's CSS.

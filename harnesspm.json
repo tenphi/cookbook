@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@tenphi/harnesspm/schema/harnesspm.schema.json",
+  "$schema": "https://unpkg.com/@harnesspm/cli/schema/harnesspm.schema.json",
   "replace": {
     "glaze:skills/glaze-theme": "./packages/facade/harness/skills/glaze-theme"
   },

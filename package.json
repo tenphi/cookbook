@@ -40,7 +40,7 @@
     "check:browser": "playwright test",
     "check:benchmark": "node scripts/benchmark-corpus.mjs",
     "check:recipes": "node scripts/check-component-reference.mjs && node scripts/smoke-recipes.mjs",
-    "postinstall": "node -e \"try{require.resolve('@tenphi/harnesspm/package.json');process.exit(1)}catch{}\" || harnesspm sync"
+    "postinstall": "node -e \"try{require.resolve('@harnesspm/cli/package.json');process.exit(1)}catch{}\" || harnesspm sync"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
@@ -49,9 +49,9 @@
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.29.8",
     "@eslint/js": "10.0.1",
+    "@harnesspm/cli": "^0.18.2",
     "@playwright/test": "1.63.0",
     "@tenphi/eslint-plugin-tasty": "catalog:",
-    "@tenphi/harnesspm": "^0.14.0",
     "@types/node": "^22.15.2",
     "cross-spawn": "7.0.6",
     "eslint": "10.9.1",
