@@ -1,5 +1,12 @@
 # @tenphi/renderer
 
+## 0.34.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tenphi/docs@0.34.2
+
 ## 0.34.1
 
 ### Patch Changes

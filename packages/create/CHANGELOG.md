@@ -1,5 +1,14 @@
 # @tenphi/create-cookbook
 
+## 0.34.2
+
+### Patch Changes
+
+- [#218](https://github.com/tenphi/cookbook/pull/218) [`7172e51`](https://github.com/tenphi/cookbook/commit/7172e51e7c4100c3d7e4d94a2aaa1f2096cf4302) Thanks [@tenphi](https://github.com/tenphi)! - The agent harness, the docs and the `upgrade-cookbook` skill now name harnesspm by its new package, `@harnesspm/cli`, and type `npx -y @harnesspm/cli`, which also works outside the project folder.
+
+- Updated dependencies []:
+  - @tenphi/docs@0.34.2
+
 ## 0.34.1
 
 ### Patch Changes
